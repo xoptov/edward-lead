@@ -2,15 +2,18 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="region")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\RegionRepository")
+ * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
 class Region
 {
+    use TimeTrackableTrait;
+
     /**
      * @var int
      *
@@ -35,19 +38,16 @@ class Region
     private $enabled = false;
 
     /**
-     * @var \DateTime
+     * @var ArrayCollection
      *
-     * @ORM\Column(name="created_at", type="datetime")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Company", mappedBy="regions")
      */
-    private $createdAt;
+    private $companies;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
+    public function __construct()
+    {
+        $this->companies = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -95,38 +95,6 @@ class Region
     public function isEnabled(): bool
     {
         return $this->enabled;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
     }
 }
 
