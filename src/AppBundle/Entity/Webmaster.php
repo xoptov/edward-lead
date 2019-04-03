@@ -40,7 +40,7 @@ class Webmaster
     /**
      * @var string
      *
-     * @ORM\Column(name="phone", type="string", length=11)
+     * @ORM\Column(name="phone", type="string", length=12)
      */
     private $phone;
 

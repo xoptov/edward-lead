@@ -3,12 +3,15 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже существует")
  */
 class User implements AdvancedUserInterface
 {
@@ -40,6 +43,24 @@ class User implements AdvancedUserInterface
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Имя должно быть указано.")
+     * @ORM\Column(name="name", type="string", length=30)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @Assert\NotBlank(message="Телефон должен быть указан.")
+     * @ORM\Column(name="phone", type="string", length=12)
+     */
+    private $phone;
+
+    /**
+     * @var string
+     *
+     * @Assert\Email(message="Невалидное значение поля")
+     * @Assert\NotBlank(message="Значение в поле должно быть указано.")
      * @ORM\Column(name="email", type="string", length=30, unique=true)
      */
     private $email;
@@ -53,6 +74,8 @@ class User implements AdvancedUserInterface
 
     /**
      * @var string|null
+     *
+     * @Assert\NotBlank(groups={"Registration"}, message="Пароль должен быть указан")
      */
     private $plainPassword;
 
@@ -69,6 +92,20 @@ class User implements AdvancedUserInterface
      * @ORM\Column(name="enabled", type="boolean")
      */
     private $enabled = false;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="confirm_token", type="string", length=40, nullable=true)
+     */
+    private $confirmToken;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="reset_token", type="string", length=40, nullable=true)
+     */
+    private $resetToken;
 
     /**
      * @return int
@@ -119,6 +156,46 @@ class User implements AdvancedUserInterface
     }
 
     /**
+     * @param string $name
+     *
+     * @return User
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $phone
+     *
+     * @return User
+     */
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
      * @param string $email
      *
      * @return User
@@ -131,9 +208,9 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
@@ -237,6 +314,46 @@ class User implements AdvancedUserInterface
     public function isEnabled(): bool
     {
         return $this->enabled;
+    }
+
+    /**
+     * @param null|string $confirmToken
+     *
+     * @return User
+     */
+    public function setConfirmToken(?string $confirmToken): self
+    {
+        $this->confirmToken = $confirmToken;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getConfirmToken(): ?string
+    {
+        return $this->confirmToken;
+    }
+
+    /**
+     * @param null|string $resetToken
+     *
+     * @return User
+     */
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
     }
 
     /**
