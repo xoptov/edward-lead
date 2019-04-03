@@ -62,7 +62,7 @@ class DefaultController extends Controller
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
-                return $this->render('@App/registration.html.twig', [
+                return $this->render('@App/Default/registration.html.twig', [
                     'form' => $form->createView()
                 ]);
             }
@@ -86,7 +86,7 @@ class DefaultController extends Controller
             }
         }
 
-        return $this->render('@App/registration.html.twig', [
+        return $this->render('@App/Default/registration.html.twig', [
             'form' => $form->createView()
         ]);
     }

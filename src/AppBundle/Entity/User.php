@@ -43,6 +43,22 @@ class User implements AdvancedUserInterface
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Имя должно быть указано.")
+     * @ORM\Column(name="name", type="string", length=30)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @Assert\NotBlank(message="Телефон должен быть указан.")
+     * @ORM\Column(name="phone", type="string", length=12)
+     */
+    private $phone;
+
+    /**
+     * @var string
+     *
      * @Assert\Email(message="Невалидное значение поля")
      * @Assert\NotBlank(message="Значение в поле должно быть указано.")
      * @ORM\Column(name="email", type="string", length=30, unique=true)
@@ -137,6 +153,46 @@ class User implements AdvancedUserInterface
     public function getWebmaster(): ?Webmaster
     {
         return $this->webmaster;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return User
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $phone
+     *
+     * @return User
+     */
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 
     /**

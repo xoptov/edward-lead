@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    <title></title>
+</head>
+
+<body>
+
+<div class="container"></div>
+<div class="form__wrapper">
+    <header class="header">
+        <div class="header__content">
+            <div class="header__logo"><img src="{{ asset('bundles/app/img/logo_dark.png') }}"></div>
+            <div class="header__sign-up--box"><span class="header__text">Уже есть аккаут?</span>
+                <button class="btn btn--blue">Войти</button>
+            </div>
+
+        </div>
+    </header>
+
+    <div class="form__reg form">
+
+        {{ form_start(form, {'attr': {'class': 'form_content', 'novalidate': true}}) }}
+        {#<form class="form__content" name="form-reg" method="post">#}
+            <p class="form__header">Регистрация</p>
+            <p class="form__text">Заполните форму ниже для регистрации на платформе Edward.</p>
+            <div class="form__input--box">
+                <div class="form__input--item">
+                    {{ form_label(form.email, null, {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.email) }}
+                        {{ form_widget(form.email, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш Email' }}) }}
+                    </div>
+                </div>
+                <div class="form__input--item">
+                    {{ form_label(form.phone, 'Телефон', {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.phone) }}
+                        {{ form_widget(form.phone, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш номер' }}) }}
+                    </div>
+                </div>
+                <div class="form__input--item">
+                    {{ form_label(form.name, 'Имя', {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.name) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваше имя' }}) }}
+                    </div>
+                </div>
+                <div class="form__input--item">
+                    {{ form_label(form.plainPassword.first, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.plainPassword.first) }}
+                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль' }}) }}
+                    </div>
+                </div>
+                <div class="form__input--item">
+                    {{ form_label(form.plainPassword.second, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.plainPassword.second) }}
+                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль ещё раз' }}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {{ form_widget(form.submit, {'label': 'Завершить регистрацию', 'attr': {'class': 'btn  btn--form btn--form-reg btn--green'}}) }}
+            </div>
+            <div class="row">
+                {{ form_errors(form.agree) }}
+                {{ form_widget(form.agree) }}
+                {{ form_label(form.agree, 'Отправляя сведения через электронную форму, вы соглашаетесь с условиями оферты, даете согласие на обработку персональных данных, их сбор, хранение и передачу третьим лицам представленной вами информации на условиях.', {'label_attr': {'class': 'form__label-reg'}}) }}
+                <a href="#" class="label__link" style="padding:5px 0;font-size:12px;">Политики конфиденциальности</a>
+            </div>
+        {{ form_end(form) }}
+        {#</form>#}
+
+        <div class="form__divide-line">
+            <div class="form__line">&nbsp;</div>
+            <span class="form__line-span">или</span>
+            <div class="form__line">&nbsp;</div>
+        </div>
+        <div class="form__button-block">
+            <button class="btn btn-form-signup"><i class="sprite sprite-vk"></i>Войти через Вконтакте</button>
+            <button class="btn btn-form-signup"><i class="sprite sprite-facebook"></i>Войти через Facebook</button>
+            <button class="btn btn-form-signup"><i class="sprite sprite-google"></i>Войти через Google+</button>
+        </div>
+
+
+    </div>
+    <span class="copyright span-mod-11">© 2019 Edward - решения для бизнеса
+      </span>
+</div>
+
+<div class="dark-back">&nbsp;</div>
+</div>
+</body>
+{#<script src="js/modal.js"></script>#}
+</html>
