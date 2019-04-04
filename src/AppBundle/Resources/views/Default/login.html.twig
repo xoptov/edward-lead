@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <div class="form__wrapper">
+        <header class="header">
+            <div class="header__content">
+                <div class="header__logo"><img src="{{ asset('bundles/app/img/logo_dark.png') }}"></div>
+                {% block signup %}{% endblock %}
+            </div>
+        </header>
+        {% block content %}
+            <div class="form_sign-in form">
+                {{ form_start(form, {'attr': {'novalidate': true}}) }}
+                <p class="form__header">Вход в Edward</p>
+                <p class="form__text">Введите свои данные чтобы войти под своей учётной записью на платформу.</p>
+                <div class="form__input--box">
+                    <div class="form__input--item">
+                        {{ form_row(form.email, {'label_attr': {'class': 'form__label'}, 'attr': {'class': 'form__input'}}) }}
+                    </div>
+                    <div class="form__input--item">
+                        {{ form_row(form.password, {'label': 'Пароль', 'label_attr': {'class': 'form__label'}, 'attr': {'class': 'form__input'}}) }}
+                    </div>
+                </div>
+                {% if error is not empty %}
+                    <div style="color:#ff0000">Не удалось выполнить вход с указанными email и паролем.</div>
+                {% endif %}
+                {{ form_widget(form.submit, {'label': 'Войти в личный кабинет', 'attr': {'class': 'btn btn--green btn--form'}}) }}
+                {{ form_end(form) }}
+                <div class="form__reg-question">
+                    <a href="{{ path('app_registration') }}" class="btn btn--blue">Зарегистрироваться</a>
+                    <a href="{{ path('app_reset') }}" class="btn btn--blue">Востановить пароль</a>
+                </div>
+            </div>
+        {% endblock %}
+        <span class="copyright span-mod-11">© 2019 Edward - решения для бизнеса</span>
+    </div>
+</div>
+</body>
+</html>

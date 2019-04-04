@@ -1,0 +1,33 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': true}}) }}
+    <div style="margin-bottom:10px;">
+        <div style="display:inline-block;vertical-align:top;">
+            {{ form_row(form.inn, {'label': 'ИНН'}) }}
+            {{ form_row(form.shortName, {'label': 'Краткое название организации'}) }}
+            {{ form_row(form.largeName, {'label': 'Полное название организации'}) }}
+            {{ form_row(form.kpp, {'label': 'КПП'}) }}
+            {{ form_row(form.ogrn, {'label': 'ОГРН'}) }}
+            {{ form_row(form.phone, {'label': 'Телефон'}) }}
+            {{ form_row(form.email, {'label': 'Электронная почта'}) }}
+            {{ form_row(form.address, {'label': 'Юридический адрес'}) }}
+            {{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}
+            {{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}
+            {{ form_row(form.bik, {'label': 'БИК'}) }}
+            {{ form_row(form.publicationAgree) }}
+            {{ form_row(form.storeAgree) }}
+        </div>
+        <div style="display:inline-block;vertical-align:top;">
+            {{ form_row(form.officeName, {'label': 'Название офиса'}) }}
+            {{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}
+            {{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}
+            {{ form_row(form.regions, {'label': 'Регионы работы'}) }}
+        </div>
+    </div>
+    <div>
+        {{ form_widget(form.submit) }}
+        {{ form_widget(form.reset) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

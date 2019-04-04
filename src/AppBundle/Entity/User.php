@@ -4,8 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="user")
@@ -17,6 +17,8 @@ class User implements AdvancedUserInterface
 {
     use TimeTrackableTrait;
 
+    const ROLE_DEFAULT = 'ROLE_USER';
+
     /**
      * @var int
      *
@@ -25,13 +27,6 @@ class User implements AdvancedUserInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-
-    /**
-     * @var Webmaster|null
-     *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Webmaster", mappedBy="user")
-     */
-    private $webmaster;
 
     /**
      * @var Company|null
@@ -64,6 +59,38 @@ class User implements AdvancedUserInterface
      * @ORM\Column(name="email", type="string", length=30, unique=true)
      */
     private $email;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(max=30)
+     * @ORM\Column(name="skype", type="string", length=30, nullable=true, unique=true)
+     */
+    private $skype;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(max=50)
+     * @ORM\Column(name="vkontakte", type="string", length=50, nullable=true, unique=true)
+     */
+    private $vkontakte;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(max=50)
+     * @ORM\Column(name="facebook", type="string", length=50, nullable=true, unique=true)
+     */
+    private $facebook;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(min=2, max="30")
+     * @ORM\Column(name="telegram", type="string", length=30, nullable=true, unique=true)
+     */
+    private $telegram;
 
     /**
      * @var string
@@ -108,6 +135,13 @@ class User implements AdvancedUserInterface
     private $resetToken;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="type_selected", type="boolean")
+     */
+    private $typeSelected = false;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -133,26 +167,6 @@ class User implements AdvancedUserInterface
     public function getCompany(): ?Company
     {
         return $this->company;
-    }
-
-    /**
-     * @param Webmaster|null $webmaster
-     *
-     * @return User
-     */
-    public function setWebmaster(?Webmaster $webmaster): self
-    {
-        $this->webmaster = $webmaster;
-
-        return $this;
-    }
-
-    /**
-     * @return Webmaster|null
-     */
-    public function getWebmaster(): ?Webmaster
-    {
-        return $this->webmaster;
     }
 
     /**
@@ -213,6 +227,86 @@ class User implements AdvancedUserInterface
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * @param string|null $skype
+     *
+     * @return User
+     */
+    public function setSkype(?string $skype): self
+    {
+        $this->skype = $skype;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSkype(): ?string
+    {
+        return $this->skype;
+    }
+
+    /**
+     * @param string|null $vkontakte
+     *
+     * @return User
+     */
+    public function setVkontakte(?string $vkontakte): self
+    {
+        $this->vkontakte = $vkontakte;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getVkontakte(): ?string
+    {
+        return $this->vkontakte;
+    }
+
+    /**
+     * @param string|null $facebook
+     *
+     * @return User
+     */
+    public function setFacebook(?string $facebook)
+    {
+        $this->facebook = $facebook;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFacebook(): ?string
+    {
+        return $this->facebook;
+    }
+
+    /**
+     * @param null|string $telegram
+     *
+     * @return User
+     */
+    public function setTelegram(?string $telegram): self
+    {
+        $this->telegram = $telegram;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTelegram(): ?string
+    {
+        return $this->telegram;
     }
 
     /**
@@ -285,7 +379,39 @@ class User implements AdvancedUserInterface
      */
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        $roles[] = static::ROLE_DEFAULT;
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param string $role
+     *
+     * @return User
+     */
+    public function addRole(string $role): self
+    {
+        $roles = $this->roles;
+        $roles[] = $role;
+        $this->roles = array_unique($roles);
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     *
+     * @return User
+     */
+    public function removeRole(string $role): self
+    {
+        if (in_array($role, $this->roles)) {
+            $key = array_search($role, $this->roles);
+            unset($this->roles[$key]);
+        }
+
+        return $this;
     }
 
     /**
@@ -378,6 +504,34 @@ class User implements AdvancedUserInterface
     public function isCredentialsNonExpired()
     {
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCompany(): bool
+    {
+        return $this->company instanceof Company;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeSelected(): bool
+    {
+        return $this->typeSelected;
+    }
+
+    /**
+     * @return User
+     */
+    public function makeTypeSelected(): self
+    {
+        if (!$this->typeSelected) {
+            $this->typeSelected = true;
+        }
+
+        return $this;
     }
 }
 

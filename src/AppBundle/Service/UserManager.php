@@ -48,12 +48,4 @@ class UserManager
             $this->entityManager->flush();
         }
     }
-
-    /**
-     * @return string
-     */
-    public function generateConfirmToken()
-    {
-        return sha1(time());
-    }
 }

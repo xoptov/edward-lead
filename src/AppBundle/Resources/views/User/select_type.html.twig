@@ -1,0 +1,10 @@
+{% extends '@App/Default/login.html.twig' %}
+
+{% block content %}
+    <div class="form_sign-in form">
+        <p class="form__header">Выбирите тип пользователя.</p>
+        <p class="form__text">Выбирите один из двух типов пользователя.</p>
+        <div><a href="{{ path('app_creating_company') }}">Компания</a></div>
+        <div><a href="{{ path('app_stay_webmaster') }}">Вебмастер</a></div>
+    </div>
+{% endblock %}
