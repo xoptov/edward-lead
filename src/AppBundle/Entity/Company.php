@@ -2,8 +2,9 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="company")
@@ -32,7 +33,7 @@ class Company
     private $user;
 
     /**
-     * @var Image
+     * @var Image|null
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Image")
      * @ORM\JoinColumn(name="logotype_id", referencedColumnName="id", onDelete="SET NULL")
@@ -40,71 +41,101 @@ class Company
     private $logotype;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(max=30)
+     * @Assert\NotBlank(message="Необходимо указать короткое название компании")
      * @ORM\Column(name="short_name", type="string", length=30)
      */
     private $shortName;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(max=60)
+     * @Assert\NotBlank(message="Необходимо указать полное название компании")
      * @ORM\Column(name="large_name", type="string", length=60)
      */
     private $largeName;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(min=11, max=18)
+     * @Assert\NotBlank(message="Необходимо указать номер телефона")
      * @ORM\Column(name="phone", type="string", length=12)
      */
     private $phone;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="inn", type="string", length=12, unique=true)
+     * @Assert\Length(max=30)
+     * @Assert\Email(message="Невалидное значение поля")
+     * @Assert\NotBlank(message="Необходимо указать email")
+     * @ORM\Column(name="email", type="string", length=30)
+     */
+    private $email;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(min=10, max=12)
+     * @Assert\NotBlank(message="Необходимо указать ИНН")
+     * @ORM\Column(name="inn", type="string", length=12)
      */
     private $inn;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="ogrn", type="string", length=13, unique=true)
+     * @Assert\Length(min=13, max=13)
+     * @Assert\NotBlank(message="Необходимо указать ОГРН")
+     * @ORM\Column(name="ogrn", type="string", length=13)
      */
     private $ogrn;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(min=9, max=9)
+     * @Assert\NotBlank(message="Необходимо указать КПП")
      * @ORM\Column(name="kpp", type="string", length=9)
      */
     private $kpp;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(min=9, max=9)
+     * @Assert\NotBlank(message="Необходимо указать БИК")
      * @ORM\Column(name="bik", type="string", length=9)
      */
     private $bik;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="account_number", type="string", length=25, unique=true)
+     * @Assert\Length(min=20, max=25)
+     * @Assert\NotBlank(message="Необходимо указать расчётный счёт")
+     * @ORM\Column(name="account_number", type="string", length=25)
      */
     private $accountNumber;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(max=150)
+     * @Assert\NotBlank(message="Необходимо указать адрес")
      * @ORM\Column(name="address", type="string", length=150)
      */
     private $address;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\Length(min=6, max=6)
+     * @Assert\NotBlank(message="Необходимо указать почтовый индекс")
      * @ORM\Column(name="zipcode", type="string", length=6)
      */
     private $zipcode;
@@ -116,6 +147,33 @@ class Company
      * @ORM\JoinTable(name="companies_regions")
      */
     private $regions;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(max=30)
+     * @Assert\NotBlank(message="Необходимо указать название офиса")
+     * @ORM\Column(name="office_name", type="string", length=30)
+     */
+    private $officeName;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(min=11, max=18)
+     * @Assert\NotBlank(message="Необходимо указать контактный телефон офиса")
+     * @ORM\Column(name="office_phone", type="string", length=12)
+     */
+    private $officePhone;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(max=150)
+     * @Assert\NotBlank(message="Необходимо указать адрес офиса")
+     * @ORM\Column(name="office_address", type="string", length=150)
+     */
+    private $officeAddress;
 
     public function __construct()
     {
@@ -163,9 +221,9 @@ class Company
     }
 
     /**
-     * @return Image
+     * @return Image|null
      */
-    public function getLogotype(): Image
+    public function getLogotype(): ?Image
     {
         return $this->logotype;
     }
@@ -183,9 +241,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getShortName(): string
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
@@ -203,9 +261,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getLargeName(): string
+    public function getLargeName(): ?string
     {
         return $this->largeName;
     }
@@ -223,11 +281,31 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return Company
+     */
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
     }
 
     /**
@@ -243,9 +321,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getInn(): string
+    public function getInn(): ?string
     {
         return $this->inn;
     }
@@ -263,9 +341,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getOgrn(): string
+    public function getOgrn(): ?string
     {
         return $this->ogrn;
     }
@@ -283,9 +361,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getKpp(): string
+    public function getKpp(): ?string
     {
         return $this->kpp;
     }
@@ -303,9 +381,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getBik(): string
+    public function getBik(): ?string
     {
         return $this->bik;
     }
@@ -323,9 +401,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAccountNumber(): string
+    public function getAccountNumber(): ?string
     {
         return $this->accountNumber;
     }
@@ -343,9 +421,9 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAddress(): string
+    public function getAddress(): ?string
     {
         return $this->address;
     }
@@ -363,10 +441,90 @@ class Company
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getZipcode(): string
+    public function getZipcode(): ?string
     {
         return $this->zipcode;
+    }
+
+    /**
+     * @param ArrayCollection $regions
+     *
+     * @return Company
+     */
+    public function setRegions(ArrayCollection $regions): self
+    {
+        $this->regions = $regions;
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRegions(): ArrayCollection
+    {
+        return $this->regions;
+    }
+
+    /**
+     * @param string $officeName
+     *
+     * @return Company
+     */
+    public function setOfficeName(string $officeName): self
+    {
+        $this->officeName = $officeName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOfficeName(): ?string
+    {
+        return $this->officeName;
+    }
+
+    /**
+     * @param string $officePhone
+     *
+     * @return Company
+     */
+    public function setOfficePhone(string $officePhone): self
+    {
+        $this->officePhone = $officePhone;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOfficePhone(): ?string
+    {
+        return $this->officePhone;
+    }
+
+    /**
+     * @param string $officeAddress
+     *
+     * @return Company
+     */
+    public function setOfficeAddress(string $officeAddress): self
+    {
+        $this->officeAddress = $officeAddress;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOfficeAddress(): ?string
+    {
+        return $this->officeAddress;
     }
 }

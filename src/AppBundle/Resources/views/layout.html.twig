@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
+    <title></title>
+</head>
+<body>
+    <div class="header-bg">
+        <header class="header header__lead-exchange-page">
+            <div class="header__content">
+                <div class="header__logo"><img src="{{ asset('bundles/app/img/logo.png') }}"></div>
+                <div class="header__text text-white text-notify">
+                    Уведомления &nbsp<div class="rate position-center" id="notify"><span class="rate__span">10</span></div>
+                    <div class="notifications">
+                        <button class="dropdown header__dropdown"><span class="span-flow-down"></span></button>
+                        <div class="notifications__list">
+                            <div class="notifications__item attention">
+                                <div class="notifications__column">
+                                    <span class="span-attention">ВАЖНОЕ</span><span class="span-date">10 февраля</span>
+                                    <div class="notifications__text-box">
+                                        <span class="notifications__text">На Вашем аккаунте в Edward Lead закончились деньги. Не забудьте пополнить баланс</span>
+                                        <div class="notifications__img"><span class="icon-checkmark"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifications__item">
+                                <div class="notifications__column">
+                                    <span class="span-attention span-mod-20">НОВОСТИ</span>
+                                    <span class="span-date">10 февраля</span>
+                                    <div class="notifications__text-box">
+                                        <span class="notifications__text">На Вашем аккаунте в Edward Lead закончились деньги. Не забудьте пополнить баланс</span>
+                                        <div class="notifications__img"><span class="icon-circle"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifications__item">
+                                <div class="notifications__column">
+                                    <span class="span-attention span-mod-20">НОВОСТИ</span><span class="span-date">10
+                                  февраля</span>
+                                    <div class="notifications__text-box">
+                                  <span class="notifications__text">На Вашем аккаунте в Edward Lead закончились деньги. Не
+                                     забудьте пополнить баланс</span>
+                                        <div class="notifications__img"><span class="icon-circle"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notifications__item">
+                                <div class="notifications__column">
+                                    <span class="span-attention span-mod-20">НОВОСТИ</span><span class="span-date">10 февраля</span>
+                                    <div class="notifications__text-box">
+                                        <span class="notifications__text">На Вашем аккаунте в Edward Lead закончились деньги. Не забудьте пополнить баланс</span>
+                                        <div class="notifications__img"><span class="icon-circle"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="header__balance-box">
+                    <span class="header__text text-white" id="balance">Баланс: 5680 руб.</span>
+                </div>
+                <div class="logo">
+                    {% spaceless %}
+                    <span class="icon-logo-top">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span>
+                        <span class="path5"></span>
+                    </span>
+                    {% endspaceless %}
+                    <div class="profile">
+                        <a href="#" class="profile__link">Кабинет компании</a>
+                        <a href="#" class="profile__link">Мой профиль</a>
+                        <a href="#" class="profile__link">Оплата</a>
+                        <a href="{{ path('app_logout') }}" class="profile__link">Выход</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+    <div class="container arbitration--mod">
+        <main class="main-block">
+            <div class="sidebar">
+                <ul class="sidebar__list accordion-menu">
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico1"></i><a href="#" class="sidebar__link">Биржа лидов</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico2"></i><a href="#" class="sidebar__link">Мои лиды</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico3"></i><a href="#" class="sidebar__link">Арбитраж / поддержка</a>
+                            <div class="rate position-center" id="s">
+                                <span class="rate__span">10</span>
+                            </div>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico4"></i><a href="#" class="sidebar__link">Биллинг</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Состояние счёта</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">История операций</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Счета</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Акты</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico5"></i><a href="#" class="sidebar__link">Реферальная программа</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico6"></i><a href="#" class="sidebar__link">Интеграции</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico7"></i><a href="#" class="sidebar__link">Телефония</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="sidebar__item dropdownlink">
+                            <i class="sprite-3 sprite-ico8"></i><a href="#" class="sidebar__link">Кабинет компании</a>
+                        </div>
+                        <ul class="sidebar__sub-item-box submenuItems">
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
+                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <div class="block-copyright">© 2019 Edward - решения для бизнеса</div>
+</body>
+</html>

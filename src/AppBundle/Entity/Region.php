@@ -24,6 +24,14 @@ class Region
     private $id;
 
     /**
+     * @var Region|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Region", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $parent;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=30, unique=true)
@@ -40,12 +48,20 @@ class Region
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Region", mappedBy="parent")
+     */
+    private $children;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Company", mappedBy="regions")
      */
     private $companies;
 
     public function __construct()
     {
+        $this->children = new ArrayCollection();
         $this->companies = new ArrayCollection();
     }
 

@@ -1,0 +1,20 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': true}}) }}
+    <div style="margin-bottom:10px;">
+        <div>
+            {{ form_row(form.name, {'label': 'Ваше имя'}) }}
+            {{ form_row(form.phone, {'label': 'Телефон'}) }}
+            {{ form_row(form.skype, {'label': 'Skype'}) }}
+            {{ form_row(form.vkontakte, {'label': 'ВКонтакте'}) }}
+            {{ form_row(form.facebook, {'label': 'Facebook'}) }}
+            {{ form_row(form.telegram, {'label': 'Telegram'}) }}
+        </div>
+    </div>
+    <div>
+        {{ form_widget(form.submit) }}
+        {{ form_widget(form.reset) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

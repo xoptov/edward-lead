@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Event\UserEvent;
+use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class DefaultController extends Controller
 {
@@ -47,9 +49,19 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/", name="app_index", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function indexAction(): Response
+    {
+        return $this->render('@App/Default/index.html.twig');
+    }
+
+    /**
      * @Route("/registration", name="app_registration", methods={"POST", "GET"})
      *
-     * @param Request
+     * @param Request $request
      * @return Response
      *
      * @throws OptimisticLockException
@@ -72,17 +84,11 @@ class DefaultController extends Controller
                 $user = $form->getData();
 
                 $this->entityManager->persist($user);
+                $this->userManager->updateUser($user, false);
 
-                //todo: убрать генерацию и назначение токена в более подходящее место.
-                $confirmToken = $this->userManager->generateConfirmToken();
-                $user->setConfirmToken($confirmToken);
-
-                $this->userManager->updateUser($user);
-
-                // todo: а на листнере мы будем перехватывать и посылать письмо на email.
                 $this->eventDispatcher->dispatch(UserEvent::NEW_USER_REGISTERED, new UserEvent($user));
 
-                return new Response('Регистрационные данные приняты! На указанный Вами ящих будет отправлена ссылка с подтверждением регистрации.');
+                return $this->render('@App/Default/registered.html.twig');
             }
         }
 
@@ -93,6 +99,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/registration/confirm/{token}", name="app_registration_confirm", methods={"GET"}, requirements={"token"="\w+"})
+     *
      * @param $token
      * @return Response
      */
@@ -112,5 +119,33 @@ class DefaultController extends Controller
         $this->entityManager->flush();
 
         return new Response('Регистрация подтверждена!');
+    }
+
+    /**
+     * @Route("/login", name="app_login", methods={"GET"})
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
+     */
+    public function loginAction(AuthenticationUtils $authenticationUtils): Response
+    {
+        $form = $this->createForm(LoginType::class, null, [
+            'action' => $this->generateUrl('app_login_check')
+        ]);
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        return $this->render('@App/Default/login.html.twig', [
+            'form' => $form->createView(),
+            'error' => $error
+        ]);
+    }
+
+    /**
+     * @Route("/reset", name="app_reset", methods={"GET"})
+     * @return Response
+     */
+    public function resetAction(): Response
+    {
+        return $this->render('@App/Default/reset.html.twig');
     }
 }

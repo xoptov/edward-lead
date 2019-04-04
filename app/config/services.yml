@@ -33,3 +33,6 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    AppBundle\EventListener\UserSubscriber:
+        tags: ['kernel.event_subscriber']
