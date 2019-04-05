@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\HistoryAction;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
 use AppBundle\Form\Type\CompanyType;
@@ -132,6 +133,21 @@ class UserController extends Controller
 
         return $this->render('@App/User/profile.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/history/login", name="app_history_login", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function historyAction(): Response
+    {
+        $historyLogins = $this->entityManager->getRepository('AppBundle:HistoryAction')
+            ->getByUserAndActionInDescOrder($this->getUser(), HistoryAction::ACTION_LOGIN);
+
+        return $this->render('@App/User/history_logins.html.twig', [
+            'historyLogins' => $historyLogins
         ]);
     }
 }

@@ -1,0 +1,14 @@
+{% extends '@App/blank_layout.html.twig' %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>Дата</th>
+        </tr>
+        {% for historyLogin in historyLogins %}
+            <tr>
+                <td>{{ historyLogin.happenedAt|date('d.m.Y H:i:s') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
