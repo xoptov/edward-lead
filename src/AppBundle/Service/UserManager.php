@@ -48,4 +48,18 @@ class UserManager
             $this->entityManager->flush();
         }
     }
+
+    public function updateResetToken(User $user): void
+    {
+        $token = $this->generateToken();
+        $user->setResetToken($token);
+    }
+
+    /**
+     * @return string
+     */
+    private function generateToken(): string
+    {
+        return sha1(time());
+    }
 }

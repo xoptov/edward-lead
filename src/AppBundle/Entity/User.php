@@ -87,7 +87,7 @@ class User implements AdvancedUserInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(min=2, max="30")
+     * @Assert\Length(min=2, max=30)
      * @ORM\Column(name="telegram", type="string", length=30, nullable=true, unique=true)
      */
     private $telegram;
@@ -102,6 +102,7 @@ class User implements AdvancedUserInterface
     /**
      * @var string|null
      *
+     * @Assert\Length(min=6, max=16)
      * @Assert\NotBlank(groups={"Registration"}, message="Пароль должен быть указан")
      */
     private $plainPassword;
