@@ -1,0 +1,22 @@
+{% extends '@App/blank_layout.html.twig' %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>Описание</th>
+            <th>Ссылка</th>
+        </tr>
+    {% if confirmToken is defined %}
+        <tr>
+            <td>Подтвержение регистрации</td>
+            <td><a href="{{ url('app_registration_confirm', {'token': confirmToken}) }}">{{ url('app_registration_confirm', {'token': confirmToken}) }}</td>
+        </tr>
+    {% endif %}
+        {% if resetToken is defined %}
+            <tr>
+                <td>Подтвержение регистрации</td>
+                <td><a href="{{ url('app_password_reset_confirm', {'token': resetToken}) }}">{{ url('app_password_reset_confirm', {'token': resetToken}) }}</td>
+            </tr>
+        {% endif %}
+    </table>
+{% endblock %}
