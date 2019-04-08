@@ -1,14 +1,19 @@
-{% extends '@App/blank_layout.html.twig' %}
+{% extends '@App/layout.html.twig' %}
 
-{% block body %}
-    <table>
-        <tr>
-            <th>Дата</th>
-        </tr>
-        {% for historyLogin in historyLogins %}
-            <tr>
-                <td>{{ historyLogin.happenedAt|date('d.m.Y H:i:s') }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+{% block content %}
+    <div class="office-settings u-w-100">
+        <div class="ref_programs">
+            <h2 class="profile__head">Мой профиль</h2>
+            <table>
+                <tr>
+                    <th>Дата</th>
+                </tr>
+                {% for historyLogin in historyLogins %}
+                    <tr>
+                        <td>{{ historyLogin.happenedAt|date('d.m.Y H:i:s') }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock %}
