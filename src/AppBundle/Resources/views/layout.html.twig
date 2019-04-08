@@ -75,7 +75,7 @@
                     {% endspaceless %}
                     <div class="profile">
                         <a href="#" class="profile__link">Кабинет компании</a>
-                        <a href="#" class="profile__link">Мой профиль</a>
+                        <a href="{{ path('app_profile') }}" class="profile__link">Мой профиль</a>
                         <a href="#" class="profile__link">Оплата</a>
                         <a href="{{ path('app_logout') }}" class="profile__link">Выход</a>
                     </div>
@@ -177,5 +177,10 @@
         </main>
     </div>
     <div class="block-copyright">© 2019 Edward - решения для бизнеса</div>
+    {% block javascripts %}
+        <script src="{{ asset('bundles/app/js/jquery-3.3.1.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/main.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/app.js') }}"></script>
+    {% endblock %}
 </body>
 </html>

@@ -2,12 +2,15 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\HistoryAction;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
+use AppBundle\Service\UserManager;
+use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
 use AppBundle\Form\Type\ProfileType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use AppBundle\Form\Type\PasswordUpdateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,11 +24,18 @@ class UserController extends Controller
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var UserManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    private $userManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param UserManager            $userManager
+     */
+    public function __construct(EntityManagerInterface $entityManager, UserManager $userManager)
     {
         $this->entityManager = $entityManager;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -121,18 +131,25 @@ class UserController extends Controller
      */
     public function profileAction(Request $request): Response
     {
-        $form = $this->createForm(ProfileType::class, $this->getUser());
+        $profileForm = $this->createForm(ProfileType::class, $this->getUser());
 
         if ($request->isMethod(Request::METHOD_POST)) {
-            $form->handleRequest($request);
+            $profileForm->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($profileForm->isValid()) {
                 $this->entityManager->flush();
+
+                $this->addFlash('success', 'Данные профиля успешно обновлены');
             }
         }
 
+        $passwordForm = $this->createForm(PasswordUpdateType::class, null, [
+            'action' => $this->generateUrl('app_profile_update_password')
+        ]);
+
         return $this->render('@App/User/profile.html.twig', [
-            'form' => $form->createView()
+            'profileForm' => $profileForm->createView(),
+            'passwordForm' => $passwordForm->createView()
         ]);
     }
 
@@ -148,6 +165,40 @@ class UserController extends Controller
 
         return $this->render('@App/User/history_logins.html.twig', [
             'historyLogins' => $historyLogins
+        ]);
+    }
+
+    /**
+     * @Route("/profile/password/update", name="app_profile_update_password", methods={"POST"})
+     *
+     * @param Request $request
+     * @return Response
+     *
+     * @throws OptimisticLockException
+     */
+    public function updatePasswordAction(Request $request): Response
+    {
+        $passwordForm = $this->createForm(PasswordUpdateType::class);
+        $passwordForm->handleRequest($request);
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($passwordForm->isValid()) {
+            $data = $passwordForm->getData();
+            $user->setPlainPassword($data['password']);
+            $this->userManager->updateUser($user);
+
+            $this->addFlash('success', 'Новый пароль успешно установлен');
+        }
+
+        $profileForm = $this->createForm(ProfileType::class, $user, [
+            'action' => $this->generateUrl('app_profile')
+        ]);
+
+        return $this->render('@App/User/profile.html.twig', [
+            'profileForm' => $profileForm->createView(),
+            'passwordForm' => $passwordForm->createView()
         ]);
     }
 }

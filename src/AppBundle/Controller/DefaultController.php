@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Event\UserEvent;
 use AppBundle\Form\Type\LoginType;
+use AppBundle\Form\Type\PasswordUpdateType;
 use AppBundle\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;

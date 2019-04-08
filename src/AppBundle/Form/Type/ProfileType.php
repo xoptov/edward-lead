@@ -25,8 +25,7 @@ class ProfileType extends AbstractType
             ->add('vkontakte', TextType::class)
             ->add('facebook', TextType::class)
             ->add('telegram', TextType::class)
-            ->add('submit', SubmitType::class)
-            ->add('reset', ResetType::class);
+            ->add('submit', SubmitType::class);
     }
 
     /**

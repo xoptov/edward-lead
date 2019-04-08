@@ -36,7 +36,7 @@ class User implements AdvancedUserInterface
     private $company;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Assert\NotBlank(message="Имя должно быть указано.")
      * @ORM\Column(name="name", type="string", length=30)
@@ -44,7 +44,7 @@ class User implements AdvancedUserInterface
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Assert\NotBlank(message="Телефон должен быть указан.")
      * @ORM\Column(name="phone", type="string", length=12)
@@ -171,11 +171,11 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      *
      * @return User
      */
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -191,11 +191,11 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * @param string $phone
+     * @param string|null $phone
      *
      * @return User
      */
-    public function setPhone(string $phone): self
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
 
