@@ -83,10 +83,7 @@ class UserController extends Controller
                 $company->setUser($user);
                 $this->entityManager->persist($company);
 
-                $user
-                    ->removeRole('ROLE_WEBMASTER')
-                    ->addRole('ROLE_COMPANY')
-                    ->makeTypeSelected();
+                $user->switchToCompany()->makeTypeSelected();
 
                 $this->entityManager->flush();
 
@@ -113,10 +110,7 @@ class UserController extends Controller
             return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
         }
 
-        $user
-            ->removeRole('ROLE_COMPANY')
-            ->addRole('ROLE_WEBMASTER')
-            ->makeTypeSelected();
+        $user->switchToWebmaster()->makeTypeSelected();
 
         $this->entityManager->flush();
 

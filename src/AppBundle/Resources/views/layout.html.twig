@@ -74,6 +74,9 @@
                     </span>
                     {% endspaceless %}
                     <div class="profile">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('sonata_admin_dashboard') }}" class="profile__link">Админ панель</a>
+                        {% endif %}
                         <a href="#" class="profile__link">Кабинет компании</a>
                         <a href="{{ path('app_profile') }}" class="profile__link">Мой профиль</a>
                         <a href="#" class="profile__link">Оплата</a>

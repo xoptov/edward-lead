@@ -17,7 +17,12 @@ class User implements AdvancedUserInterface
 {
     use TimeTrackableTrait;
 
-    const ROLE_DEFAULT = 'ROLE_USER';
+    const ROLE_USER        = 'ROLE_USER';
+    const ROLE_COMPANY     = 'ROLE_COMPANY';
+    const ROLE_WEBMASTER   = 'ROLE_WEBMASTER';
+    const ROLE_ADMIN       = 'ROLE_ADMIN';
+    const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
+    const DEFAULT_ROLE     = self::ROLE_USER;
 
     /**
      * @var int
@@ -148,6 +153,20 @@ class User implements AdvancedUserInterface
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPossibleRoles(): array
+    {
+        return [
+            self::ROLE_COMPANY,
+            self::ROLE_ADMIN,
+            self::ROLE_SUPER_ADMIN,
+            self::ROLE_WEBMASTER,
+            self::ROLE_COMPANY
+        ];
     }
 
     /**
@@ -381,7 +400,7 @@ class User implements AdvancedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = static::ROLE_DEFAULT;
+        $roles[] = static::DEFAULT_ROLE;
 
         return array_unique($roles);
     }
@@ -531,6 +550,30 @@ class User implements AdvancedUserInterface
         if (!$this->typeSelected) {
             $this->typeSelected = true;
         }
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function switchToWebmaster(): self
+    {
+        $this
+            ->removeRole(self::ROLE_COMPANY)
+            ->addRole(self::ROLE_WEBMASTER);
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function switchToCompany(): self
+    {
+        $this
+            ->removeRole(self::ROLE_WEBMASTER)
+            ->addRole(self::ROLE_COMPANY);
 
         return $this;
     }
