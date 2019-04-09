@@ -2,48 +2,17 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Service\UserManager;
+use AppBundle\Entity\Region;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Doctrine\ORM\OptimisticLockException;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-class UserAdmin extends AbstractAdmin
+class RegionAdmin extends AbstractAdmin
 {
-    /**
-     * @var UserManager
-     */
-    private $userManager;
-
-    /**
-     * @param UserManager $userManager
-     */
-    public function setUserManager(UserManager $userManager): void
-    {
-        $this->userManager = $userManager;
-    }
-
-    /**
-     * @param $object
-     * @throws OptimisticLockException
-     */
-    public function prePersist($object)
-    {
-        $this->userManager->updateUser($object, false);
-    }
-
-    /**
-     * @param $object
-     * @throws OptimisticLockException
-     */
-    public function preUpdate($object)
-    {
-        $this->userManager->updateUser($object, false);
-    }
-
     /**
      * @inheritdoc
      */
@@ -51,12 +20,9 @@ class UserAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('id')
+            ->add('parent.name', null, ['label' => 'Parent'])
             ->add('name')
-            ->add('phone')
-            ->add('email')
-            ->add('roles')
             ->add('enabled')
-            ->add('typeSelected')
             ->add('createdAt')
             ->add('updatedAt')
         ;
@@ -70,19 +36,15 @@ class UserAdmin extends AbstractAdmin
         $listMapper
             ->add('id')
             ->add('name')
-            ->add('phone')
-            ->add('email')
-            ->add('skype')
-            ->add('telegram')
-            ->add('roles')
+            ->add('parent.name', null, ['label' => 'Parent'])
             ->add('enabled')
-            ->add('typeSelected')
             ->add('createdAt')
             ->add('updatedAt')
             ->add('_action', null, [
                 'actions' => [
+                    'edit' => [],
                     'show' => [],
-                    'edit' => []
+                    'delete' => [],
                 ],
             ])
         ;
@@ -94,14 +56,13 @@ class UserAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
+            ->add('parent', EntityType::class, [
+                'label' => 'Parent',
+                'class' => Region::class,
+                'choice_label' => 'name',
+                'required' => false
+            ])
             ->add('name')
-            ->add('plainPassword', 'password', ['label' => 'Password'])
-            ->add('phone')
-            ->add('email')
-            ->add('skype')
-            ->add('vkontakte')
-            ->add('facebook')
-            ->add('telegram')
             ->add('enabled')
         ;
     }
@@ -113,16 +74,9 @@ class UserAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
+            ->add('parent.name', null, ['label' => 'Parent'])
             ->add('name')
-            ->add('phone')
-            ->add('email')
-            ->add('skype')
-            ->add('vkontakte')
-            ->add('facebook')
-            ->add('telegram')
-            ->add('roles')
             ->add('enabled')
-            ->add('typeSelected')
             ->add('createdAt')
             ->add('updatedAt')
         ;
@@ -137,7 +91,8 @@ class UserAdmin extends AbstractAdmin
             'create',
             'edit',
             'list',
-            'show'
+            'show',
+            'delete'
         ]);
     }
 }

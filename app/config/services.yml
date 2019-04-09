@@ -42,9 +42,16 @@ services:
 
     app.admin.user:
         class: AppBundle\Admin\UserAdmin
-        arguments: [~, AppBundle\Entity\User, AppBundle:UserAdmin]
+        arguments: [~, AppBundle\Entity\User, Sonata\AdminBundle\Controller\CRUDController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: User }
         public: true
         calls:
             - [setUserManager, ['@AppBundle\Service\UserManager']]
+
+    app.admin.region:
+        class: AppBundle\Admin\RegionAdmin
+        arguments: [~, AppBundle\Entity\Region, Sonata\AdminBundle\Controller\CRUDController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Region }
+        public: true
