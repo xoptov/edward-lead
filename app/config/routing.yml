@@ -9,3 +9,12 @@ app_login_check:
 app_logout:
     path: /logout
     methods: GET
+
+admin_area:
+    resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
+    prefix: /admin
+
+_sonata_admin:
+    resource: .
+    type: sonata_admin
+    prefix: /admin

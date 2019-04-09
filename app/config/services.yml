@@ -39,3 +39,12 @@ services:
 
     AppBundle\EventListener\SecuritySubscriber:
         tags: ['kernel.event_subscriber']
+
+    app.admin.user:
+        class: AppBundle\Admin\UserAdmin
+        arguments: [~, AppBundle\Entity\User, AppBundle:UserAdmin]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: User }
+        public: true
+        calls:
+            - [setUserManager, ['@AppBundle\Service\UserManager']]
