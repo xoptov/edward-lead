@@ -32,7 +32,7 @@ class Region
     private $parent;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=30, unique=true)
      */
@@ -74,6 +74,25 @@ class Region
     }
 
     /**
+     * @param Region $parent
+     * @return Region
+     */
+    public function setParent(Region $parent): self
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Region|null
+     */
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    /**
      * @param string|null $name
      *
      * @return Region
@@ -86,9 +105,9 @@ class Region
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
