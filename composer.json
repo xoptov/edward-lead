@@ -30,6 +30,7 @@
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
+        "deployer/deployer": "^4.3",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
