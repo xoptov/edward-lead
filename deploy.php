@@ -14,9 +14,9 @@ set('repository', 'git@bitbucket.org:phoenix-soft/edward-webapp.git');
 set('bin_dir', 'bin');
 set('var_dir', 'var');
 
-set('shared_dirs', ['var/logs']);
+set('shared_dirs', ['var/logs', 'var/sessions']);
 add('shared_files', []);
-set('writable_dirs', ['var/cache', 'var/logs']);
+set('writable_dirs', ['var/cache', 'var/logs', 'var/sessions']);
 
 // Servers
 
