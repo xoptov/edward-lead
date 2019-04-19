@@ -7,6 +7,18 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="operation")
  * @ORM\Entity
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="type", type="string", length=15)
+ * @ORM\DiscriminatorMap({
+ *     "operation" = "Operation",
+ *     "invoice" = "Invoice",
+ *     "withdraw" = "Withdraw",
+ *     "fee" = "Fee",
+ *     "referrer_reward" = "ReferrerReward",
+ *     "phone_call" = "PhoneCall",
+ *     "trade" = "Trade"
+ * })
+ * @ORM\HasLifecycleCallbacks
  */
 class Operation
 {
@@ -17,89 +29,70 @@ class Operation
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
      */
-    private $id;
+    protected $id;
 
     /**
-     * @var SystemAccount|ClientAccount
+     * @var string|null
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\SystemAccount")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\Column(name="description", type="string", length=150, nullable=true)
      */
-    private $account;
-
-    /**
-     * @var Reason
-     *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Reason")
-     * @ORM\JoinColumn(name="reason_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $reason;
+    private $description;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="amount", type="integer")
+     * @ORM\Column(name="amount", type="integer", options={"unsigned": true})
      */
     private $amount;
 
     /**
+     * @var MonetaryHold
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\MonetaryHold", mappedBy="operation")
+     */
+    private $hold;
+
+    /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
-
     /**
-     * Get id
-     *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * @param ClientAccount|SystemAccount $account
+     * @param null|string $description
      *
-     * @return Operation
+     * @return self
      */
-    public function setAccount(SystemAccount $account): self
+    public function setDescription(?string $description): self
     {
-        $this->account = $account;
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * @return ClientAccount|SystemAccount
+     * @return null|string
      */
-    public function getAccount()
+    public function getDescription(): ?string
     {
-        return $this->account;
+        return $this->description;
     }
 
     /**
-     * @param Reason $reason
+     * @param int $amount
      *
-     * @return Operation
+     * @return self
      */
-    public function setReason(Reason $reason): self
-    {
-        $this->reason = $reason;
-
-        return $this;
-    }
-
-    /**
-     * Set amount
-     *
-     * @param integer $amount
-     *
-     * @return Operation
-     */
-    public function setAmount($amount)
+    public function setAmount(int $amount): self
     {
         $this->amount = $amount;
 
@@ -107,37 +100,54 @@ class Operation
     }
 
     /**
-     * Get amount
-     *
      * @return int
      */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
+     * @param MonetaryHold|null $hold
      *
      * @return Operation
      */
-    public function setCreatedAt($createdAt)
+    public function setHold(?MonetaryHold $hold): self
     {
-        $this->createdAt = $createdAt;
+        $this->hold = $hold;
 
         return $this;
     }
 
     /**
-     * Get createdAt
-     *
+     * @return MonetaryHold|null
+     */
+    public function getHold(): ?MonetaryHold
+    {
+        return $this->hold;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasHold(): bool
+    {
+        return !empty($this->hold);
+    }
+
+    /**
      * @return \DateTime
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
     }
-}
 
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist(): void
+    {
+        $this->createdAt = new \DateTime();
+    }
+}

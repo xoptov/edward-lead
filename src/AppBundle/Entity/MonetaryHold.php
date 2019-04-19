@@ -5,11 +5,11 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="hold")
+ * @ORM\Table(name="monetary_hold")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Hold
+class MonetaryHold
 {
     /**
      * @var int
@@ -29,12 +29,12 @@ class Hold
     private $account;
 
     /**
-     * @var Reason
+     * @var Operation
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Reason")
-     * @ORM\JoinColumn(name="reason_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Operation", inversedBy="hold")
+     * @ORM\JoinColumn(name="operation_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $reason;
+    private $operation;
 
     /**
      * @var int
@@ -61,7 +61,7 @@ class Hold
     /**
      * @param ClientAccount $account
      *
-     * @return Hold
+     * @return MonetaryHold
      */
     public function setAccount(ClientAccount $account): self
     {
@@ -79,28 +79,29 @@ class Hold
     }
 
     /**
-     * @param Reason $reason
-     * @return Hold
+     * @param Operation $operation
+     *
+     * @return MonetaryHold
      */
-    public function setReason(Reason $reason): self
+    public function setOperation(Operation $operation): self
     {
-        $this->reason = $reason;
+        $this->operation = $operation;
 
         return $this;
     }
 
     /**
-     * @return Reason
+     * @return Operation
      */
-    public function getReason(): Reason
+    public function getOperation(): Operation
     {
-        return $this->reason;
+        return $this->operation;
     }
 
     /**
      * @param int $amount
      *
-     * @return Hold
+     * @return MonetaryHold
      */
     public function setAmount(int $amount): self
     {
@@ -118,22 +119,18 @@ class Hold
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
-     * @return Hold
-     */
-    public function setCreatedAt(\DateTime $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime();
     }
 }

@@ -8,8 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="trade")
  * @ORM\Entity
  */
-class Trade extends Reason
+class Trade extends Operation
 {
+    const STATUS_NEW = 0;
+    const STATUS_ACCEPTED = 1;
+    const STATUS_REJECTED = 2;
+    const STATUS_CANCELED = 3;
+    const STATUS_DONE = 4;
+
     /**
      * @var User
      *
@@ -29,7 +35,7 @@ class Trade extends Reason
     /**
      * @var Lead
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Lead", inversedBy="trade")
      * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $lead;
@@ -39,7 +45,7 @@ class Trade extends Reason
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
      */
-    private $status;
+    private $status = self::STATUS_NEW;
 
     /**
      * @param User $buyer
@@ -62,6 +68,14 @@ class Trade extends Reason
     }
 
     /**
+     * @return ClientAccount|null
+     */
+    public function getBuyerAccount(): ?ClientAccount
+    {
+        return $this->buyer->getAccount();
+    }
+
+    /**
      * @param User $seller
      *
      * @return Trade
@@ -79,6 +93,14 @@ class Trade extends Reason
     public function getSeller(): User
     {
         return $this->seller;
+    }
+
+    /**
+     * @return ClientAccount|null
+     */
+    public function getSellerAccount(): ?ClientAccount
+    {
+        return $this->seller->getAccount();
     }
 
     /**
@@ -119,5 +141,21 @@ class Trade extends Reason
     public function getStatus(): int
     {
         return $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProcessed(): bool
+    {
+        return in_array($this->status, [self::STATUS_REJECTED, self::STATUS_CANCELED, self::STATUS_DONE]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccepted(): bool
+    {
+        return self::STATUS_ACCEPTED === $this->status;
     }
 }

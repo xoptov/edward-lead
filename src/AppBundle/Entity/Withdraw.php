@@ -8,8 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="withdraw")
  * @ORM\Entity
  */
-class Withdraw extends Reason
+class Withdraw extends Operation
 {
+    const STATUS_NEW = 0;
+    const STATUS_DONE = 1;
+    const STATUS_REJECTED = 2;
+    const STATUS_CANCELED = 3;
+
     /**
      * @var User
      *
@@ -19,11 +24,18 @@ class Withdraw extends Reason
     private $user;
 
     /**
+     * @var WithdrawConfirm
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\WithdrawConfirm", mappedBy="withdraw")
+     */
+    private $confirm;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint")
      */
-    private $status;
+    private $status = self::STATUS_NEW;
 
     /**
      * @var \DateTime|null
@@ -53,6 +65,42 @@ class Withdraw extends Reason
     }
 
     /**
+     * @return ClientAccount|null
+     */
+    public function getAccount(): ?ClientAccount
+    {
+        return $this->user->getAccount();
+    }
+
+    /**
+     * @param WithdrawConfirm $confirm
+     *
+     * @return Withdraw
+     */
+    public function setConfirm(WithdrawConfirm $confirm): self
+    {
+        $this->confirm = $confirm;
+
+        return $this;
+    }
+
+    /**
+     * @return WithdrawConfirm
+     */
+    public function getConfirm(): WithdrawConfirm
+    {
+        return $this->confirm;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool
+    {
+        return !empty($this->confirm);
+    }
+
+    /**
      * @param int $status
      *
      * @return Withdraw
@@ -78,5 +126,13 @@ class Withdraw extends Reason
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProcessed(): bool
+    {
+        return self::STATUS_NEW !== $this->status;
     }
 }

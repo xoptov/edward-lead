@@ -2,10 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\User;
 use AppBundle\Event\UserEvent;
 use AppBundle\Form\Type\LoginType;
-use AppBundle\Form\Type\PasswordUpdateType;
 use AppBundle\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;
@@ -87,6 +87,10 @@ class DefaultController extends Controller
 
                 $this->entityManager->persist($user);
                 $this->userManager->updateUser($user, false);
+
+                $account = new ClientAccount();
+                $account->setUser($user);
+                $this->entityManager->persist($account);
 
                 $this->eventDispatcher->dispatch(UserEvent::NEW_USER_REGISTERED, new UserEvent($user));
 

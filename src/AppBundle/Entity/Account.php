@@ -8,11 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="account")
  * @ORM\Entity
  * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="type", type="string", length=6)
- * @ORM\DiscriminatorMap({"system" = "SystemAccount", "client" = "ClientAccount"})
+ * @ORM\DiscriminatorColumn(name="type", type="string", length=8)
+ * @ORM\DiscriminatorMap({
+ *     "system" = "Account",
+ *     "income" = "IncomeAccount",
+ *     "outgoing" = "OutgoingAccount",
+ *     "client" = "ClientAccount"
+ * })
  * @ORM\HasLifecycleCallbacks
  */
-class SystemAccount
+class Account
 {
     /**
      * @var int
@@ -28,7 +33,7 @@ class SystemAccount
      *
      * @ORM\Column(name="balance", type="bigint")
      */
-    private $balance;
+    private $balance = 0;
 
     /**
      * @var \DateTime
@@ -49,7 +54,7 @@ class SystemAccount
     /**
      * @param integer $balance
      *
-     * @return SystemAccount
+     * @return Account
      */
     public function setBalance($balance)
     {
@@ -80,6 +85,14 @@ class SystemAccount
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @param int $amount
+     */
+    public function changeBalance(int $amount): void
+    {
+        $this->balance += $amount;
     }
 }
 
