@@ -41,6 +41,13 @@ class User implements AdvancedUserInterface
     private $company;
 
     /**
+     * @var ClientAccount|null
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\ClientAccount", mappedBy="user")
+     */
+    private $account;
+
+    /**
      * @var string|null
      *
      * @Assert\NotBlank(message="Имя должно быть указано.")
@@ -187,6 +194,34 @@ class User implements AdvancedUserInterface
     public function getCompany(): ?Company
     {
         return $this->company;
+    }
+
+    /**
+     * @param ClientAccount $account
+     *
+     * @return User
+     */
+    public function setAccount(ClientAccount $account): self
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return ClientAccount|null
+     */
+    public function getAccount(): ?ClientAccount
+    {
+        return $this->account;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAccount(): bool
+    {
+        return !empty($this->account);
     }
 
     /**

@@ -7,11 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class ClientAccount extends SystemAccount
+class ClientAccount extends Account
 {
     /**
      * @var User
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User")
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", inversedBy="account")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", unique=true, nullable=false)
      */
     private $user;

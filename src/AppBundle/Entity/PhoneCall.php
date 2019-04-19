@@ -5,10 +5,10 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="call")
+ * @ORM\Table(name="phone_call")
  * @ORM\Entity
  */
-class Call extends Reason
+class PhoneCall extends Operation
 {
     /**
      * @var User
@@ -36,7 +36,7 @@ class Call extends Reason
     /**
      * @param User $caller
      *
-     * @return Call
+     * @return PhoneCall
      */
     public function setCaller(User $caller): self
     {
@@ -56,7 +56,7 @@ class Call extends Reason
     /**
      * @param Lead $lead
      *
-     * @return Call
+     * @return PhoneCall
      */
     public function setLead(Lead $lead): self
     {
@@ -76,7 +76,7 @@ class Call extends Reason
     /**
      * @param int $durationInSecs
      *
-     * @return Call
+     * @return PhoneCall
      */
     public function setDurationInSecs(int $durationInSecs): self
     {

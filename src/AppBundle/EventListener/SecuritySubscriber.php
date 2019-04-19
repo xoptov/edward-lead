@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,6 +47,12 @@ class SecuritySubscriber implements EventSubscriberInterface
             $historyAction = new HistoryAction();
             $historyAction->setUser($user);
             $this->entityManager->persist($historyAction);
+
+            if (!$user->getAccount()) {
+                $account = new ClientAccount();
+                $account->setUser($user);
+                $this->entityManager->persist($account);
+            }
 
             $this->entityManager->flush();
         }

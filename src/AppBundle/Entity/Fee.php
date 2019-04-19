@@ -8,33 +8,69 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="fee")
  * @ORM\Entity
  */
-class Fee extends Reason
+class Fee extends Operation
 {
     /**
-     * @var Reason
+     * @var Operation
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Reason")
-     * @ORM\JoinColumn(name="reason_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Operation")
+     * @ORM\JoinColumn(name="operation_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $reason;
+    private $operation;
 
     /**
-     * @param Reason $reason
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(name="payer_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    private $payer;
+
+    /**
+     * @param Operation $operation
      *
      * @return Fee
      */
-    public function setReason(Reason $reason): self
+    public function setOperation(Operation $operation): self
     {
-        $this->reason = $reason;
+        $this->operation = $operation;
 
         return $this;
     }
 
     /**
-     * @return Reason
+     * @return Operation
      */
-    public function getReason(): Reason
+    public function getOperation(): Operation
     {
-        return $this->reason;
+        return $this->operation;
+    }
+
+    /**
+     * @param User $payer
+     *
+     * @return Fee
+     */
+    public function setPayer(User $payer): self
+    {
+        $this->payer = $payer;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getPayer(): User
+    {
+        return $this->payer;
+    }
+
+    /**
+     * @return ClientAccount
+     */
+    public function getPayerAccount(): ClientAccount
+    {
+        return $this->payer->getAccount();
     }
 }

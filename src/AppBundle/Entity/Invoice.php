@@ -8,8 +8,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="invoice")
  * @ORM\Entity
  */
-class Invoice extends Reason
+class Invoice extends Operation
 {
+    const STATUS_NEW = 0;
+    const STATUS_DONE = 1;
+    const STATUS_CANCELED = 2;
+
     /**
      * @var User
      *
@@ -23,7 +27,7 @@ class Invoice extends Reason
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
      */
-    private $status;
+    private $status = self::STATUS_NEW;
 
     /**
      * @var \DateTime|null
@@ -53,6 +57,14 @@ class Invoice extends Reason
     }
 
     /**
+     * @return ClientAccount|null
+     */
+    public function getAccount(): ?ClientAccount
+    {
+        return $this->user->getAccount();
+    }
+
+    /**
      * @param int $status
      *
      * @return Invoice
@@ -78,5 +90,13 @@ class Invoice extends Reason
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProcessed(): bool
+    {
+        return in_array($this->status, [self::STATUS_CANCELED, self::STATUS_DONE]);
     }
 }

@@ -9,33 +9,61 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="referrer_reward")
  * @ORM\Entity
  */
-class ReferrerReward extends Reason
+class ReferrerReward extends Operation
 {
     /**
-     * @var Reason
+     * @var Operation
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Reason")
-     * @ORM\JoinColumn(name="reason_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Operation")
+     * @ORM\JoinColumn(name="operation_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $reason;
+    private $operation;
 
     /**
-     * @param Reason $reason
+     * @var User
      *
-     * @return Fee
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(name="referrer_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    public function setReason(Reason $reason): self
+    private $referrer;
+
+    /**
+     * @param Operation $operation
+     *
+     * @return ReferrerReward
+     */
+    public function setOperation(Operation $operation): self
     {
-        $this->reason = $reason;
+        $this->operation = $operation;
 
         return $this;
     }
 
     /**
-     * @return Reason
+     * @return Operation
      */
-    public function getReason(): Reason
+    public function getOperation(): Operation
     {
-        return $this->reason;
+        return $this->operation;
+    }
+
+    /**
+     * @param User $referrer
+     *
+     * @return ReferrerReward
+     */
+    public function setReferrer(User $referrer): self
+    {
+        $this->referrer = $referrer;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getReferrer(): User
+    {
+        return $this->referrer;
     }
 }
