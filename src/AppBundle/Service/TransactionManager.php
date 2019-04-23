@@ -4,6 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Operation;
+use AppBundle\Exception\AccountException;
+use AppBundle\Exception\FinancialException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Exception\TransactionException;
@@ -30,9 +32,19 @@ class TransactionManager
      * @param bool|null $flush
      *
      * @return array
+     *
+     * @throws AccountException
      */
     public function create(Account $source, Account $destination, Operation $operation, ?bool $flush = true): array
     {
+        if (!$source->isEnabled()) {
+            throw new AccountException($source, 'Счёт источник заблокирован и не может участвовать в транзакциях');
+        }
+
+        if (!$destination->isEnabled()) {
+            throw new AccountException($destination, 'Счёт назначения заблокирован и не может участвовать в транзакциях');
+        }
+
         $outgoing = $this->createOutgoing($source, $operation);
         $this->entityManager->persist($outgoing);
 

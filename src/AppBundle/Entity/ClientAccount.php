@@ -13,7 +13,7 @@ class ClientAccount extends Account
      * @var User
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\User", inversedBy="account")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", unique=true, nullable=false)
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", unique=true, nullable=true, onDelete="CASCADE")
      */
     private $user;
 

@@ -1,0 +1,7 @@
+{% if object.enabled() %}
+    {% set toggle_label = 'Отключить' %}
+{% else %}
+    {% set toggle_label = 'Включить' %}
+{% endif %}
+
+<a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('toggle', object) }}">{{ toggle_label }}</a>
