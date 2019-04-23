@@ -29,6 +29,18 @@ class Account
     protected $id;
 
     /**
+     * @var string|null
+     */
+    protected $type;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="description", type="string", nullable=true)
+     */
+    private $description;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="balance", type="bigint")
@@ -42,6 +54,12 @@ class Account
      */
     private $updatedAt;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="enabled", type="boolean")
+     */
+    private $enabled = true;
 
     /**
      * @return int
@@ -49,6 +67,46 @@ class Account
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return Account
+     */
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return Account
+     */
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     /**
@@ -94,5 +152,24 @@ class Account
     {
         $this->balance += $amount;
     }
-}
 
+    /**
+     * @param bool $value
+     *
+     * @return Account
+     */
+    public function setEnabled(bool $value): self
+    {
+        $this->enabled = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+}

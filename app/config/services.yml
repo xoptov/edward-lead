@@ -42,7 +42,7 @@ services:
 
     app.admin.user:
         class: AppBundle\Admin\UserAdmin
-        arguments: [~, AppBundle\Entity\User, Sonata\AdminBundle\Controller\CRUDController]
+        arguments: [~, AppBundle\Entity\User, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: User }
         public: true
@@ -51,7 +51,35 @@ services:
 
     app.admin.region:
         class: AppBundle\Admin\RegionAdmin
-        arguments: [~, AppBundle\Entity\Region, Sonata\AdminBundle\Controller\CRUDController]
+        arguments: [~, AppBundle\Entity\Region, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: Region }
+        public: true
+
+    app.admin.account:
+        class: AppBundle\Admin\AccountAdmin
+        arguments: [~, AppBundle\Entity\Account, AppBundle\Controller\Admin\AccountAdminController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: Accounts }
+        public: true
+
+    app.admin.income_account:
+        class: AppBundle\Admin\AccountAdmin
+        arguments: [~, AppBundle\Entity\IncomeAccount, AppBundle\Controller\Admin\AccountAdminController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: 'Income Accounts' }
+        public: true
+
+    app.admin.outgoing_account:
+        class: AppBundle\Admin\AccountAdmin
+        arguments: [~, AppBundle\Entity\OutgoingAccount, AppBundle\Controller\Admin\AccountAdminController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: 'Outgoing Accounts' }
+        public: true
+
+    app.admin.client_account:
+        class: AppBundle\Admin\ClientAccountAdmin
+        arguments: [~, AppBundle\Entity\ClientAccount, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: 'Client Accounts' }
         public: true
