@@ -49,9 +49,9 @@ class Invoice extends Operation
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
@@ -77,6 +77,14 @@ class Invoice extends Operation
     }
 
     /**
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    /**
      * @return \DateTime|null
      */
     public function getUpdatedAt(): ?\DateTime
@@ -98,5 +106,13 @@ class Invoice extends Operation
     public function isProcessed(): bool
     {
         return in_array($this->status, [self::STATUS_CANCELED, self::STATUS_DONE]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotProcessed(): bool
+    {
+        return self::STATUS_NEW === $this->status;
     }
 }

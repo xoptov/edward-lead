@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\IncomeAccount;
+use AppBundle\Exception\AccountException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\OperationException;
 
@@ -61,6 +62,7 @@ class InvoiceManager
      * @param IncomeAccount $account
      *
      * @throws OperationException
+     * @throws AccountException
      */
     public function process(Invoice $invoice, IncomeAccount $account): void
     {

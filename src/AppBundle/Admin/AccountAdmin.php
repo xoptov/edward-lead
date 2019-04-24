@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\ClientAccount;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -36,7 +37,7 @@ class AccountAdmin extends AbstractAdmin
         $typeField->setName('type');
 
         $list
-            ->add('id')
+            ->addIdentifier('id', 'number')
             ->add($typeField, null, ['virtual_field' => true])
             ->add('description')
             ->add($balanceField, 'number')

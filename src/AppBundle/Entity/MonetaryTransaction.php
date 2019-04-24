@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="monetary_transaction")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class MonetaryTransaction
 {
@@ -30,7 +31,7 @@ class MonetaryTransaction
     /**
      * @var Operation
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Operation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Operation")
      * @ORM\JoinColumn(name="operation_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $operation;
@@ -138,22 +139,18 @@ class MonetaryTransaction
     }
 
     /**
-     * @param \DateTime $createdAt
-     *
-     * @return MonetaryTransaction
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime();
     }
 }

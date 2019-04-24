@@ -4,3 +4,5 @@ flash_enable_success: Успешно включен
 flash_enable_error: Ошибка включения
 flash_disable_success: Успешно выключен
 flash_disable_error: Ошибка выключения
+flash_process_success: Успешно обработана
+flase_process_error: Ошибка побработка
