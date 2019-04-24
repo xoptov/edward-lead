@@ -1,0 +1,23 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+    {%- spaceless -%}
+        {% if value is constant('AppBundle\\Entity\\Invoice::STATUS_NEW') %}
+            {% set class = 'label-primary' %}
+        {% elseif value is constant('AppBundle\\Entity\\Invoice::STATUS_DONE') %}
+            {% set class = 'label-success' %}
+        {% elseif value is constant('AppBundle\\Entity\\Invoice::STATUS_CANCELED') %}
+            {% set class = 'label-warning' %}
+        {% else %}
+            {% set class = 'label-default' %}
+        {% endif %}
+    {%- endspaceless -%}
+
+    {% if field_description.options.choices is defined %}
+        {% if value in field_description.options.choices|keys %}
+            {% set value = field_description.options.choices[value]|trans %}
+        {% endif %}
+    {% endif %}
+
+    <span class="label {{ class }}">{{ value }}</span>
+{% endblock %}

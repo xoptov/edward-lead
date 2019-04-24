@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20190423081651 extends AbstractMigration
+class Version20190424141253 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -21,6 +21,7 @@ class Version20190423081651 extends AbstractMigration
         $this->addSql('ALTER TABLE account DROP FOREIGN KEY FK_7D3656A4A76ED395');
         $this->addSql('ALTER TABLE account ADD description VARCHAR(255) DEFAULT NULL, ADD enabled TINYINT(1) NOT NULL, CHANGE user_id user_id INT UNSIGNED DEFAULT NULL');
         $this->addSql('ALTER TABLE account ADD CONSTRAINT FK_7D3656A4A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE monetary_transaction DROP INDEX UNIQ_569311C544AC3583, ADD INDEX IDX_569311C544AC3583 (operation_id)');
     }
 
     /**
@@ -34,5 +35,6 @@ class Version20190423081651 extends AbstractMigration
         $this->addSql('ALTER TABLE account DROP FOREIGN KEY FK_7D3656A4A76ED395');
         $this->addSql('ALTER TABLE account DROP description, DROP enabled, CHANGE user_id user_id INT UNSIGNED NOT NULL');
         $this->addSql('ALTER TABLE account ADD CONSTRAINT FK_7D3656A4A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
+        $this->addSql('ALTER TABLE monetary_transaction DROP INDEX IDX_569311C544AC3583, ADD UNIQUE INDEX UNIQ_569311C544AC3583 (operation_id)');
     }
 }

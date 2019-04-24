@@ -44,7 +44,7 @@ services:
         class: AppBundle\Admin\UserAdmin
         arguments: [~, AppBundle\Entity\User, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: main, label: User }
+            - { name: sonata.admin, manager_type: orm, group: main, label: Users }
         public: true
         calls:
             - [setUserManager, ['@AppBundle\Service\UserManager']]
@@ -53,26 +53,26 @@ services:
         class: AppBundle\Admin\RegionAdmin
         arguments: [~, AppBundle\Entity\Region, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: main, label: Region }
+            - { name: sonata.admin, manager_type: orm, group: main, label: Regions }
         public: true
 
     app.admin.account:
         class: AppBundle\Admin\AccountAdmin
-        arguments: [~, AppBundle\Entity\Account, AppBundle\Controller\Admin\AccountAdminController]
+        arguments: [~, AppBundle\Entity\Account, AppBundle\Controller\Admin\AccountController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: financial, label: Accounts }
         public: true
 
     app.admin.income_account:
         class: AppBundle\Admin\AccountAdmin
-        arguments: [~, AppBundle\Entity\IncomeAccount, AppBundle\Controller\Admin\AccountAdminController]
+        arguments: [~, AppBundle\Entity\IncomeAccount, AppBundle\Controller\Admin\AccountController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: financial, label: 'Income Accounts' }
         public: true
 
     app.admin.outgoing_account:
         class: AppBundle\Admin\AccountAdmin
-        arguments: [~, AppBundle\Entity\OutgoingAccount, AppBundle\Controller\Admin\AccountAdminController]
+        arguments: [~, AppBundle\Entity\OutgoingAccount, AppBundle\Controller\Admin\AccountController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: financial, label: 'Outgoing Accounts' }
         public: true
@@ -83,3 +83,12 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: financial, label: 'Client Accounts' }
         public: true
+
+    app.admin.invoice:
+        class: AppBundle\Admin\InvoiceAdmin
+        arguments: [~, AppBundle\Entity\Invoice, AppBundle\Controller\Admin\InvoiceController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: Invoices }
+        public: true
+
+    Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'

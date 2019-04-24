@@ -1,7 +1,11 @@
 {% if object.enabled() %}
     {% set toggle_label = 'Отключить' %}
+    {% set class = 'fa-ban' %}
 {% else %}
     {% set toggle_label = 'Включить' %}
+    {% set class = 'fa-plug' %}
 {% endif %}
 
-<a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('toggle', object) }}">{{ toggle_label }}</a>
+<a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('toggle', object) }}">
+    <i class="fa {{ class }}"></i> {{ toggle_label }}
+</a>

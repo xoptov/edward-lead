@@ -8,16 +8,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class AccountAdminController extends CRUDController
+class AccountController extends CRUDController
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      *
      * @return RedirectResponse
      */
-    public function toggleAction($id)
+    public function toggleAction(int $id)
     {
         $object = $this->admin->getSubject();
 

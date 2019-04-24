@@ -1,4 +1,4 @@
-Id: Id
+Id: Номер
 Name: Имя
 Phone: Телефон
 Email: Email
@@ -23,13 +23,28 @@ Parent: Родитель
 Description: Описание
 Balance: Баланс
 Removed: Удалён
-Account List: Список счетов
+Account List: Список аккаунтов
 Account: Счёт
 Type: Тип
-Accounts: Счета
-Client Accounts: Клиентские счета
+Accounts: Аккаунты
+Client Accounts: Клиентские аккаунты
 User Name: Имя пользователя
-Client Account List: Список клиентских счетов
-Income Accounts: Входящие счета
-Outgoing Accounts: Исходящие счета
-Outgoing Account List: Список исходящих счетов
+Client Account List: Список клиентских аккаунтов
+Income Accounts: Входящие аккаунты
+Outgoing Accounts: Исходящие аккаунты
+Outgoing Account List: Список исходящих аккаунтов
+Amount: Количество
+Invoice List: Список счета-фактур
+Users: Пользователи
+Regions: Регионы
+Invoices: Счета-фактуры
+Status: Статус
+new: новая
+done: Завершено
+canceled: Отменено
+User Email: Email пользователя
+User Phone: Телефон пользователя
+title_process_invoice: Обработка счёт-фактуры
+message_process_invoice: Для обработки счёт-фактуры укажите аккаунт поступления средств
+Income account: Входящий аккаунт
+Submit: Отправить
