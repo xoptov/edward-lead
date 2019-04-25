@@ -91,4 +91,11 @@ services:
             - { name: sonata.admin, manager_type: orm, group: financial, label: Invoices }
         public: true
 
+    app.admin.monetary_transaction:
+        class: AppBundle\Admin\MonetaryTransactionAdmin
+        arguments: [~, AppBundle\Entity\MonetaryTransaction, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: 'Transactions' }
+        public: true
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'

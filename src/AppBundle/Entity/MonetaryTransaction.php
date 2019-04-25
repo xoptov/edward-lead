@@ -99,6 +99,14 @@ class MonetaryTransaction
     }
 
     /**
+     * @return Operation
+     */
+    public function getOperation(): Operation
+    {
+        return $this->operation;
+    }
+
+    /**
      * @param integer $amount
      *
      * @return MonetaryTransaction
