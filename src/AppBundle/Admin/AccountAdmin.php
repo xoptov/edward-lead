@@ -2,7 +2,6 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Entity\ClientAccount;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -18,10 +17,13 @@ class AccountAdmin extends AbstractAdmin
      */
     protected function configureDatagridFilters(DatagridMapper $filter)
     {
+        $balanceField = new MoneyFieldDescription();
+        $balanceField->setName('balance');
+
         $filter
             ->add('id')
             ->add('description')
-            ->add('balance')
+            ->add($balanceField)
             ->add('enabled');
     }
 

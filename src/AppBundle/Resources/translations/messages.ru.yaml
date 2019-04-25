@@ -48,3 +48,8 @@ title_process_invoice: Обработка счёт-фактуры
 message_process_invoice: Для обработки счёт-фактуры укажите аккаунт поступления средств
 Income account: Входящий аккаунт
 Submit: Отправить
+Account Id: Номер аккаунта
+Processed: Обработан
+Monetary Transaction List: Список денежных операций
+Transactions: Транзакции
+Operation Description: Описание операции
