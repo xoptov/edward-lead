@@ -103,16 +103,16 @@ class Invoice extends Operation
     /**
      * @return bool
      */
-    public function isProcessed(): bool
+    public function isNotProcessed(): bool
     {
-        return in_array($this->status, [self::STATUS_CANCELED, self::STATUS_DONE]);
+        return self::STATUS_NEW === $this->status;
     }
 
     /**
      * @return bool
      */
-    public function isNotProcessed(): bool
+    public function isProcessed(): bool
     {
-        return self::STATUS_NEW === $this->status;
+        return !$this->isNotProcessed();
     }
 }

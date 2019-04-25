@@ -73,6 +73,8 @@ class InvoiceAdmin extends AbstractAdmin
                 'catalogue' => 'messages',
                 'template' => '@App/CRUD/list_status.html.twig'
             ])
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
+            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -97,7 +99,9 @@ class InvoiceAdmin extends AbstractAdmin
             ->add('status', 'choice', [
                 'choices' => $this->statuses,
                 'catalogue' => 'messages'
-            ]);
+            ])
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
+            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:s']);
     }
 
     /**

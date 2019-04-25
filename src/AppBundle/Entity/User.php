@@ -612,5 +612,17 @@ class User implements AdvancedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getBalance(): int
+    {
+        if (!$this->account) {
+            return 0;
+        }
+
+        return $this->account->getBalance();
+    }
 }
 

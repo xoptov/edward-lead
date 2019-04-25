@@ -41,7 +41,7 @@ class MonetaryTransactionAdmin extends AbstractAdmin
             ->add('operation.description')
             ->add($amountField)
             ->add('processed')
-            ->add('createdAt');
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s']);
     }
 
     /**
@@ -58,7 +58,7 @@ class MonetaryTransactionAdmin extends AbstractAdmin
             ->add('operation.description')
             ->add($amountField)
             ->add('processed')
-            ->add('createdAt');
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s']);
     }
 
     /**

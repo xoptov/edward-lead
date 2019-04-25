@@ -2,19 +2,19 @@
 
 namespace AppBundle\Form\Type;
 
-use AppBundle\Entity\Invoice;
-use AppBundle\Entity\IncomeAccount;
+use AppBundle\Entity\Withdraw;
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\OutgoingAccount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Sonata\DoctrineORMAdminBundle\Model\ModelManager;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Sonata\AdminBundle\Form\DataTransformer\ModelToIdTransformer;
 
-class InvoiceProcessType extends AbstractType
+class WithdrawProcessType extends AbstractType
 {
     /**
      * @var ModelManager
@@ -41,7 +41,7 @@ class InvoiceProcessType extends AbstractType
                 ]
             ])
             ->add('account', EntityType::class, [
-                'class' => IncomeAccount::class,
+                'class' => OutgoingAccount::class,
                 'query_builder' => function(EntityRepository $er) {
                     return $er->createQueryBuilder('a')
                         ->where('a.enabled = :enabled')
@@ -55,6 +55,6 @@ class InvoiceProcessType extends AbstractType
             ->add('submit', SubmitType::class);
 
         $builder->get('invoice')
-            ->addViewTransformer(new ModelToIdTransformer($this->modelManager, Invoice::class));
+            ->addViewTransformer(new ModelToIdTransformer($this->modelManager, Withdraw::class));
     }
 }

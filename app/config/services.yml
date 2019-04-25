@@ -98,4 +98,13 @@ services:
             - { name: sonata.admin, manager_type: orm, group: financial, label: 'Transactions' }
         public: true
 
+    app.admin.withdraw:
+        class: AppBundle\Admin\WithdrawAdmin
+        arguments: [~, AppBundle\Entity\Withdraw, AppBundle\Controller\Admin\WithdrawController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: financial, label: Withdrawal }
+        public: true
+        calls:
+            - [setHoldManager, ['@AppBundle\Service\HoldManager']]
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'

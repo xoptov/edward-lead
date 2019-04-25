@@ -33,7 +33,7 @@ Client Account List: Список клиентских аккаунтов
 Income Accounts: Входящие аккаунты
 Outgoing Accounts: Исходящие аккаунты
 Outgoing Account List: Список исходящих аккаунтов
-Amount: Количество
+Amount: Сумма
 Invoice List: Список счета-фактур
 Users: Пользователи
 Regions: Регионы
@@ -53,3 +53,4 @@ Processed: Обработан
 Monetary Transaction List: Список денежных операций
 Transactions: Транзакции
 Operation Description: Описание операции
+Withdrawal: Выводы

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\Invoice;
-use AppBundle\Service\InvoiceManager;
-use AppBundle\Form\Type\InvoiceProcessType;
+use AppBundle\Entity\Withdraw;
+use AppBundle\Service\WithdrawManager;
+use AppBundle\Form\Type\WithdrawProcessType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -12,19 +12,19 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class InvoiceController extends CRUDController
+class WithdrawController extends CRUDController
 {
     /**
-     * @var InvoiceManager
+     * @var WithdrawManager
      */
-    private $invoiceManager;
+    private $withdrawManager;
 
     /**
-     * @param InvoiceManager $invoiceManager
+     * @param WithdrawManager $withdrawManager
      */
-    public function __construct(InvoiceManager $invoiceManager)
+    public function __construct(WithdrawManager $withdrawManager)
     {
-        $this->invoiceManager = $invoiceManager;
+        $this->withdrawManager = $withdrawManager;
     }
 
     /**
@@ -43,18 +43,18 @@ class InvoiceController extends CRUDController
             throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
         }
 
-        if (!$object instanceof Invoice) {
+        if (!$object instanceof Withdraw) {
             throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
         }
 
         if ($object->isProcessed()) {
-            throw new \Exception('Инвойс уже обработан');
+            throw new \Exception('Операция вывода уже обработана');
         }
 
         $objectName = $this->admin->toString($object);
 
         try {
-            $this->invoiceManager->cancel($object);
+            $this->withdrawManager->cancel($object);
             $this->admin->update($object);
 
             $this->addFlash(
@@ -96,15 +96,15 @@ class InvoiceController extends CRUDController
             throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
         }
 
-        if (!$object instanceof Invoice) {
+        if (!$object instanceof Withdraw) {
             throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
         }
 
         if ($object->isProcessed()) {
-            throw new \Exception('Инвойс уже обработан');
+            throw new \Exception('Операция вывода уже обработана');
         }
 
-        $form = $this->createForm(InvoiceProcessType::class, ['invoice' => $object]);
+        $form = $this->createForm(WithdrawProcessType::class, ['invoice' => $object]);
         $objectName = $this->admin->toString($object);
 
         if (Request::METHOD_POST === $this->getRestMethod()) {
@@ -114,7 +114,9 @@ class InvoiceController extends CRUDController
                 $data = $form->getData();
 
                 try {
-                    $this->invoiceManager->process($data['invoice'], $data['account']);
+                    $user = $this->getUser();
+                    $this->withdrawManager->confirm($object, $user);
+                    $this->withdrawManager->process($data['invoice'], $data['account']);
 
                     $this->addFlash(
                         'sonata_flash_success',
