@@ -22,8 +22,9 @@ class OperationConfirm
      *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var User

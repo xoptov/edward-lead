@@ -90,6 +90,6 @@ class InvoiceManager
      */
     public function cancel(Invoice $invoice): void
     {
-        //todo: Необходимо реализовать смену статуса.
+        $invoice->setStatus(Invoice::STATUS_CANCELED);
     }
 }

@@ -2,9 +2,11 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Entity\OutgoingAccount;
+use AppBundle\Entity\WithdrawConfirm;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\FinancialException;
 use AppBundle\Exception\InsufficientFundsException;
@@ -74,6 +76,8 @@ class WithdrawManager
 
         $this->entityManager->persist($withdraw);
 
+        $this->addHold($user->getAccount(), $withdraw, $amount);
+
         $hold = $this->holdManager->create($user->getAccount(), $withdraw, $amount, false);
         $withdraw->setHold($hold);
 
@@ -116,11 +120,7 @@ class WithdrawManager
 
             $this->transactionManager->process($transactions);
 
-            if ($withdraw->hasHold()) {
-                $hold = $withdraw->getHold();
-                $withdraw->setHold(null);
-                $em->remove($hold);
-            }
+            $this->removeHold($withdraw);
 
             $withdraw->setStatus(Withdraw::STATUS_DONE);
 
@@ -133,6 +133,47 @@ class WithdrawManager
      */
     public function cancel(Withdraw $withdraw): void
     {
-        //todo: необходимо реализовать смену статуса и снятие блокировка со счёта.
+        $withdraw->setStatus(Withdraw::STATUS_CANCELED);
+        $this->removeHold($withdraw);
+    }
+
+    /**
+     * @param Withdraw $withdraw
+     * @param User     $user
+     */
+    public function confirm(Withdraw $withdraw, User $user): void
+    {
+        $confirm = new WithdrawConfirm();
+        $confirm->setAuthor($user);
+        $confirm->setWithdraw($withdraw);
+
+        $this->entityManager->persist($confirm);
+
+        $withdraw->setConfirm($confirm);
+    }
+
+    /**
+     * @param Withdraw $withdraw
+     */
+    private function removeHold(Withdraw $withdraw): void
+    {
+        if ($withdraw->hasHold()) {
+            $hold = $withdraw->getHold();
+            $withdraw->setHold(null);
+            $this->entityManager->remove($hold);
+        }
+    }
+
+    /**
+     * @param ClientAccount $account
+     * @param Withdraw      $withdraw
+     * @param int           $amount
+     */
+    private function addHold(ClientAccount $account, Withdraw $withdraw, int $amount): void
+    {
+        $hold = $this->holdManager
+            ->create($account, $withdraw, $amount, false);
+
+        $withdraw->setHold($hold);
     }
 }

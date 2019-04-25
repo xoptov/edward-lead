@@ -57,11 +57,19 @@ class Withdraw extends Operation
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
+    }
+
+    /**
+     * @return ClientAccount
+     */
+    public function getUserAccount(): ClientAccount
+    {
+        return $this->user->getAccount();
     }
 
     /**
@@ -113,6 +121,14 @@ class Withdraw extends Operation
     }
 
     /**
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    /**
      * @return \DateTime|null
      */
     public function getUpdatedAt(): ?\DateTime
@@ -131,8 +147,16 @@ class Withdraw extends Operation
     /**
      * @return bool
      */
+    public function isNotProcessed(): bool
+    {
+        return self::STATUS_NEW === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
     public function isProcessed(): bool
     {
-        return self::STATUS_NEW !== $this->status;
+        return !$this->isNotProcessed();
     }
 }

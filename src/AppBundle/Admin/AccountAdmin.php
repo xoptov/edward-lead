@@ -44,6 +44,7 @@ class AccountAdmin extends AbstractAdmin
             ->add('description')
             ->add($balanceField, 'number')
             ->add('enabled')
+            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:m'])
             ->add('_action', null, [
                 'actions' => [
                     'edit' => [],
