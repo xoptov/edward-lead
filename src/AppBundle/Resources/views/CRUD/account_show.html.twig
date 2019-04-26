@@ -1,0 +1,78 @@
+{% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
+
+{% block show_groups %}
+    {{ parent() }}
+    {% if holds|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-warning">
+                    <div class="box-header">
+                        <h4 class="box-title">Блокировки</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table">
+                            <thead>
+                            <th>{{ 'Id'|trans }}</th>
+                            <th>{{ 'Operation Description'|trans }}</th>
+                            <th>{{ 'Amount'|trans }}</th>
+                            <th>{{ 'Created At'|trans }}</th>
+                            </thead>
+                            <tbody>
+                            {% for hold in holds %}
+                                <tr class="sonata-ba-view-container">
+                                    <td>{{ hold.id }}</td>
+                                    <td>{{ hold.operation.description }}</td>
+                                    <td>{{ hold.humanAmount() }}</td>
+                                    <td>{{ hold.createdAt|date('d.m.Y H:i:s') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if transactions|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-success">
+                    <div class="box-header">
+                        <h4 class="box-title">Операции по аккаунту</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table">
+                            <thead>
+                                <th>{{ 'Id'|trans }}</th>
+                                <th>{{ 'Description'|trans }}</th>
+                                <th>{{ 'Amount'|trans }}</th>
+                                <th>{{ 'Processed'|trans }}</th>
+                                <th>{{ 'Created At'|trans }}</th>
+                            </thead>
+                            <tbody>
+                            {% for transaction in transactions %}
+                                <tr class="sonata-ba-view-container">
+                                    <td>{{ transaction.id }}</td>
+                                    <td>{{ transaction.operation.description }}</td>
+                                    <td>{{ transaction.humanAmount() }}</td>
+                                    <td>
+                                        {% if transaction.processed %}
+                                            {% set processed_label = 'да' %}
+                                            {% set processed_class = 'success' %}
+                                        {% else %}
+                                            {% set processed_label = 'нет' %}
+                                            {% set processed_class = 'warning' %}
+                                        {% endif %}
+                                        <span class="label label-{{ processed_class }}">{{ processed_label }}</span>
+                                    </td>
+                                    <td>{{ transaction.createdAt|date('d.m.Y H:i:s') }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

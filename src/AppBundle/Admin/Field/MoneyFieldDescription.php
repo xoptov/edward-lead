@@ -3,6 +3,7 @@
 namespace AppBundle\Admin\Field;
 
 use Sonata\AdminBundle\Exception\NoValueException;
+use AppBundle\Form\Type\DataTransformer\MoneyTransformer;
 use Sonata\DoctrineORMAdminBundle\Admin\FieldDescription;
 
 class MoneyFieldDescription extends FieldDescription
@@ -22,6 +23,8 @@ class MoneyFieldDescription extends FieldDescription
         $value = (int)parent::getFieldValue($object, $fieldName);
         $divisor = (int)$this->getOption('divisor');
 
-        return $value / $divisor;
+        $transformer = new MoneyTransformer($divisor);
+
+        return $transformer->transform($value);
     }
 }
