@@ -127,6 +127,16 @@ class MonetaryTransaction
     }
 
     /**
+     * @param int|null $divisor
+     *
+     * @return float
+     */
+    public function getHumanAmount(?int $divisor = 100): float
+    {
+        return $this->amount / $divisor;
+    }
+
+    /**
      * @param bool $processed
      *
      * @return MonetaryTransaction

@@ -119,6 +119,16 @@ class MonetaryHold
     }
 
     /**
+     * @param int $divisor
+     *
+     * @return float
+     */
+    public function getHumanAmount(?int $divisor = 100): float
+    {
+        return $this->amount / $divisor;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
