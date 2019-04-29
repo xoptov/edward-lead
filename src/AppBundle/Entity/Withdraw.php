@@ -65,14 +65,6 @@ class Withdraw extends Operation
     }
 
     /**
-     * @return ClientAccount
-     */
-    public function getUserAccount(): ClientAccount
-    {
-        return $this->user->getAccount();
-    }
-
-    /**
      * @return ClientAccount|null
      */
     public function getAccount(): ?ClientAccount

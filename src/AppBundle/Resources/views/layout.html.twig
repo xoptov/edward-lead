@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="header__balance-box">
-                    <span class="header__text text-white" id="balance">Баланс: 5680 руб.</span>
+                    <span class="header__text text-white" id="balance">Баланс: {{ app.user.humanbalance() }} руб.</span>
                 </div>
                 <div class="logo">
                     {% spaceless %}
@@ -128,7 +128,9 @@
                             <i class="sprite-3 sprite-ico4"></i><a href="#" class="sidebar__link">Биллинг</a>
                         </div>
                         <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Состояние счёта</a></li>
+                            <li class="sidebar__sub-item">
+                                <a href="{{ path('app_billing') }}" class="sidebar__link">Состояние счёта</a>
+                            </li>
                             <li class="sidebar__sub-item"><a href="#" class="sidebar__link">История операций</a></li>
                             <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Счета</a></li>
                             <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Акты</a></li>
@@ -179,7 +181,6 @@
             {% block content %}{% endblock %}
         </main>
     </div>
-    <div class="block-copyright">© 2019 Edward - решения для бизнеса</div>
     {% block javascripts %}
         <script src="{{ asset('bundles/app/js/jquery-3.3.1.min.js') }}"></script>
         <script src="{{ asset('bundles/app/js/main.js') }}"></script>

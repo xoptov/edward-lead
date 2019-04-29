@@ -46,7 +46,7 @@ class WithdrawAdmin extends AbstractAdmin
     public function prePersist($object)
     {
         $hold = $this->holdManager->create(
-            $object->getUserAccount(),
+            $object->getAccount(),
             $object,
             $object->getAmount(),
             false
