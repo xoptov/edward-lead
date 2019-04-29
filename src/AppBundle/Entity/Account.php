@@ -19,6 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Account
 {
+    const DIVISOR = 100;
+
     /**
      * @var int
      *

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\OutgoingAccount;
 use AppBundle\Entity\WithdrawConfirm;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,9 +78,6 @@ class WithdrawManager
 
         $this->addHold($user->getAccount(), $withdraw, $amount);
 
-        $hold = $this->holdManager->create($user->getAccount(), $withdraw, $amount, false);
-        $withdraw->setHold($hold);
-
         if ($flush) {
             $this->entityManager->flush();
         }
@@ -104,9 +101,17 @@ class WithdrawManager
             throw new \RuntimeException('Операция не одобрена');
         }
 
-        $availableBalance = $this->accountManager->getAvailableBalance($withdraw->getAccount());
 
-        if ($availableBalance < $withdraw->getAmount()) {
+        if ($withdraw->hasHold()) {
+            $hold = $withdraw->getHold();
+            if ($hold->getAmount() < $withdraw->getAmount()) {
+                throw new InsufficientFundsException(
+                    $withdraw->getAccount(),
+                    $withdraw->getAmount(),
+                    'Замороженно недостаточно средств для выполнения операции'
+                );
+            }
+        } elseif ($this->accountManager->getAvailableBalance($withdraw->getAccount()) < $withdraw->getAmount()) {
             throw new InsufficientFundsException(
                 $withdraw->getAccount(),
                 $withdraw->getAmount(),

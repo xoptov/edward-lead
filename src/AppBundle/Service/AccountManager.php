@@ -61,11 +61,12 @@ class AccountManager
     }
 
     /**
-     * @param Account $account
+     * @param Account  $account
+     * @param int|null $divisor
      *
-     * @return int
+     * @return float
      */
-    public function getAvailableBalance(Account $account): int
+    public function getAvailableBalance(Account $account, ?int $divisor = null): float
     {
         $balance = $account->getBalance();
 
@@ -78,15 +79,20 @@ class AccountManager
             $balance -= $hold->getAmount();
         }
 
+        if ($divisor) {
+            return $balance / $divisor;
+        }
+
         return $balance;
     }
 
     /**
-     * @param Account $account
+     * @param Account  $account
+     * @param int|null $divisor
      *
-     * @return int
+     * @return float
      */
-    public function getHoldAmount(Account $account): int
+    public function getHoldAmount(Account $account, ?int $divisor = null): float
     {
         $holds = $this->entityManager
             ->getRepository('AppBundle:MonetaryHold')
@@ -96,6 +102,10 @@ class AccountManager
 
         foreach ($holds as $hold) {
             $totalHold += $hold->getAmount();
+        }
+
+        if ($divisor) {
+            return $totalHold / $divisor;
         }
 
         return $totalHold;

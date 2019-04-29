@@ -1,0 +1,22 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    <div class="office-settings">
+        <h3 class="office-settings__title">Вывод средств</h3>
+        {% for message in app.flashes('error') %}
+            <div class="label label-danger">{{ message }}</div>
+        {% endfor %}
+        <div class="form">
+            {{ form_start(form, {'attr': {'class': 'form'}}) }}
+                <div class="form__input--item">
+                    {{ form_label(form.amount, null, {'label_attr': {'class': 'form__label'}}) }}
+                    <div class="form__input--widget">
+                        {{ form_errors(form.amount) }}
+                        {{ form_widget(form.amount, {'attr': {'class': 'form__input', 'placeholder': 'Укажите сумму' }}) }}
+                    </div>
+                </div>
+                {{ form_row(form.submit) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

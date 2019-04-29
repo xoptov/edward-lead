@@ -624,5 +624,13 @@ class User implements AdvancedUserInterface
 
         return $this->account->getBalance();
     }
+
+    /**
+     * @return float
+     */
+    public function getHumanBalance(): float
+    {
+        return $this->getBalance() / Account::DIVISOR;
+    }
 }
 
