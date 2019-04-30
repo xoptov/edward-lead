@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="invoice")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\InvoiceRepository")
  */
 class Invoice extends Operation
 {
