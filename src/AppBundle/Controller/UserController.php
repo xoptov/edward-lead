@@ -3,27 +3,18 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Company;
-use AppBundle\Event\WithdrawEvent;
-use AppBundle\Service\AccountManager;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
 use AppBundle\Form\Type\ProfileType;
-use AppBundle\Service\WithdrawManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
-use AppBundle\Exception\FinancialException;
 use AppBundle\Form\Type\PasswordUpdateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Validator\Constraints\LessThanOrEqual;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UserController extends Controller
 {
@@ -33,44 +24,20 @@ class UserController extends Controller
     private $entityManager;
 
     /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-
-    /**
      * @var UserManager
      */
     private $userManager;
 
     /**
-     * @var AccountManager
-     */
-    private $accountManager;
-
-    /**
-     * @var WithdrawManager
-     */
-    private $withdrawManager;
-
-    /**
      * @param EntityManagerInterface   $entityManager
-     * @param EventDispatcherInterface $eventDispatcher
      * @param UserManager              $userManager
-     * @param AccountManager           $accountManager
-     * @param WithdrawManager          $withdrawManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        EventDispatcherInterface $eventDispatcher,
-        UserManager $userManager,
-        AccountManager $accountManager,
-        WithdrawManager $withdrawManager
+        UserManager $userManager
     ) {
         $this->entityManager = $entityManager;
-        $this->eventDispatcher = $eventDispatcher;
         $this->userManager = $userManager;
-        $this->accountManager = $accountManager;
-        $this->withdrawManager = $withdrawManager;
     }
 
     /**
@@ -228,89 +195,6 @@ class UserController extends Controller
         return $this->render('@App/User/profile.html.twig', [
             'profileForm' => $profileForm->createView(),
             'passwordForm' => $passwordForm->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/billing", name="app_billing", methods={"GET"})
-     *
-     * @return Response
-     */
-    public function billingAction(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $availableBalance = $this->accountManager->getAvailableBalance($user->getAccount(), Account::DIVISOR);
-        $holdBalance = $this->accountManager->getHoldAmount($user->getAccount(), Account::DIVISOR);
-
-        return $this->render('@App/User/billing.html.twig', [
-            'availableBalance' => $availableBalance,
-            'holdBalance' => $holdBalance
-        ]);
-    }
-
-    /**
-     * @Route("/withdraw", name="app_withdraw", methods={"GET", "POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function withdrawAction(Request $request): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $freeBalance = $this->accountManager->getAvailableBalance($user->getAccount());
-
-        $builder = $this->createFormBuilder();
-        $builder
-            ->add('amount', MoneyType::class, [
-                'divisor' => Account::DIVISOR,
-                'currency' => 'RUB',
-                'constraints' => [
-                    new LessThanOrEqual([
-                        'value' => $freeBalance,
-                        'message' => 'Недостаточно средств для вывода'
-                    ])
-                ]
-            ])
-            ->add('submit', SubmitType::class);
-
-        $form = $builder->getForm();
-
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $data = $form->getData();
-
-                try {
-                    $withdraw = $this->withdrawManager->create($user, $data['amount'], false);
-                } catch (FinancialException $e) {
-                    $this->addFlash('error', $e->getMessage());
-
-                    return $this->render('@App/User/withdraw.html.twig', [
-                        'form' => $form->createView()
-                    ]);
-                }
-
-                $this->eventDispatcher->dispatch(
-                    WithdrawEvent::CREATED,
-                    new WithdrawEvent($withdraw)
-                );
-
-                $this->entityManager->flush();
-
-                $this->addFlash('success', 'Зявка на вывод принята');
-
-                return $this->redirectToRoute('app_billing');
-            }
-        }
-
-        return $this->render('@App/User/withdraw.html.twig', [
-            'form' => $form->createView()
         ]);
     }
 }

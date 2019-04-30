@@ -34,13 +34,14 @@ class InvoiceManager
     }
 
     /**
-     * @param User      $user
-     * @param int       $amount
-     * @param bool|null $flush
+     * @param User        $user
+     * @param int         $amount
+     * @param string|null $phone
+     * @param bool|null   $flush
      *
      * @return Invoice
      */
-    public function create(User $user, int $amount, ?bool $flush = true): Invoice
+    public function create(User $user, int $amount, ?string $phone = null, ?bool $flush = true): Invoice
     {
         $invoice = new Invoice();
         $invoice

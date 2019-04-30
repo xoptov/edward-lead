@@ -1,0 +1,165 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block form_row %}
+    <div class="personal__input--item">
+        {{- form_label(form) -}}
+        {{- form_errors(form) -}}
+        {{- form_widget(form) -}}
+    </div>
+{% endblock %}
+
+{% form_theme form _self %}
+
+{% block content %}
+    <div class="office-settings u-w-100 page_pay">
+        <h3 class="office-settings__title">Пополнить счёт</h3>
+        {% for message in app.flashes('success') %}
+            <div class="label label-danger">{{ message }}</div>
+        {% endfor %}
+        {{ form_start(form, {'attr': {'class': 'office-settings__office-form office'}}) }}
+            <div class="personal__input--box personal">
+                {{ form_row(form.amount, {
+                    'label_attr': {
+                        'class': 'personal__label'
+                    },
+                    'attr': {
+                        'class': 'form__input office__input',
+                        'placeholder': 'пример: 30000'
+                    }
+                }) }}
+
+                {{ form_row(form.phone, {
+                    'label_attr': {
+                        'class': 'personal_label'
+                    },
+                    'attr': {
+                        'class': 'form__input office__input',
+                        'placeholder': '+7(900)000-00-00'
+                    }
+                }) }}
+
+                {{ form_widget(form.submit, {'label': 'Пополнить', 'attr': {'class': 'btn form_btn'}}) }}
+            </div>
+        {{ form_end(form) }}
+
+        {#<form action="#" class="office-settings__office-form office">#}
+            {#<div class="personal__input--box personal">#}
+                {#<div class="personal__input--item">#}
+                   {#<label for="personal-account" class="personal__label">Выберите объект пополнения:</label>#}
+                   {#<select class="form__input office__input select-field" name="personal-account" required>#}
+                      {#<option value="" class='select-placeholder' selected disabled>Лицевой счёт</option>#}
+                      {#<option value="1">1</option>#}
+                      {#<option value="2">2</option>#}
+                      {#<option value="3">3</option>#}
+                      {#<option value="4">4</option>#}
+                   {#</select>#}
+                {#</div>#}
+                {#<div class="personal__input--item">#}
+                    {#<label for="personal-sum" class="personal__label">Сумма пополнения:</label>#}
+                    {#<input type="text" name="personal-sum" id="personal-sum" class="form__input office__input" placeholder="пример: 30000" required>#}
+                {#</div>#}
+                {#<div class="personal__input--item ">#}
+                    {#<label for="personal-tel" class="personal__label">Телефон:</label>#}
+                    {#<input type="text" name="personal-tel" id="personal-tel" class="form__input office__input" placeholder="+7 917 200 10 20" required>#}
+                {#</div>#}
+                {#<div class="personal__input--item">#}
+                    {#<input type="checkbox" class="checkbox" name="agree-platform" id="agree-platform">#}
+                    {#<label for="agree-platform" class="form__label-personal">#}
+                        {#Включить автоматическое пополнение баланса<br>при достижении порога в 1000 рублей.#}
+                    {#</label>#}
+                {#</div>#}
+            {#</div>#}
+        {#</form>#}
+
+        {#<div class="hr-line">&nbsp;</div>#}
+        {#<div class="personal-choose-box">#}
+            {#<span class="personal-choose__heading">Выберите плательщика</span>#}
+            {#<div class="personal-choose__input-box">#}
+                {#<input type="radio" class="personal-choose__input" name="radio1" id="individual" value="individual">#}
+                {#<label for="individual">Физическое лицо</label>#}
+            {#</div>#}
+            {#<div class="personal-choose__input-box">#}
+                {#<input type="radio" class="personal-choose__input" name="radio1" value="entity" id="entity" checked>#}
+                {#<label for="entity">Юридическое лицо</label>#}
+            {#</div>#}
+        {#</div>#}
+        {#<div class="hr-line">&nbsp;</div>#}
+        {#<div class="personal-choose__radio-box">#}
+            {#<span class="personal-choose__heading span-mod-13">Выберите вариант оплаты</span>#}
+            {#<div class="personal-choose__radio-list">#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="visa"><i class="sprite2 sprite-visa-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="paypal"><i class="sprite2 sprite-paypal-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="besnal"><i class="sprite2 sprite-besnal-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="yandex"><i class="sprite2 sprite-yandex-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="webmoney"><i class="sprite2 sprite-webmoney-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="qiwi"><i class="sprite2 sprite-qiwi-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#sberbank"> <i class="sprite2 sprite-sberbank-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#bank"><i class="sprite2 sprite-bank-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#terms"><i class="sprite2 sprite-terms-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#interkassa"><i class="sprite2 sprite-interkassa"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#wallet"><i class="sprite2 sprite-wallet-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+                {#<div class="personal-choose__radio-item">#}
+                    {#<label>#}
+                        {#<input type="radio" class="personal-choose__radio" name="radio2" value="#}
+                        {#promocode"><i class="sprite2 sprite-promocode-img"></i>#}
+                    {#</label>#}
+                {#</div>#}
+            {#</div>#}
+            {#<div class="personal-total">#}
+                {#<span class="personal-total__text">Сумма к зачислению на счёт:</span>#}
+                {#<span class="personal-total__number">20000 руб.</span>#}
+                {#<a href="#" class="btn btn-green btn-pressed btn-mod-1">Перейти на страницу оплаты</a>#}
+            {#</div>#}
+        {#</div>#}
+        <div class="block-copyright">© 2019 Edward - решения для бизнеса</div>
+    </div>
+{% endblock %}

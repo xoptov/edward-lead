@@ -23,6 +23,13 @@ class Invoice extends Operation
     private $user;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="phone", type="string", length=12, nullable=true)
+     */
+    private $phone;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
@@ -62,6 +69,26 @@ class Invoice extends Operation
     public function getAccount(): ?ClientAccount
     {
         return $this->user->getAccount();
+    }
+
+    /**
+     * @param null|string $phone
+     *
+     * @return Invoice
+     */
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
     }
 
     /**

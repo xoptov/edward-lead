@@ -8,10 +8,15 @@ $(".current-line__input").click(function(e){
 $(".header__dropdown").click(function(e){
    $(".header__dropdown").next(".notifications__list").toggleClass("show");
 })
+$(".icon-logo-top").hover(function(e){
+   $(".icon-logo-top").next(".profile").toggleClass("show");
+})
+$(".logo").hover(function(e){
+   $(".icon-logo-top").next(".profile").toggleClass("show");
+})
 $(".icon-logo-top").click(function(e){
    $(".icon-logo-top").next(".profile").toggleClass("show");
 })
-
 $(document).mouseup(function (e) {
    var profile = $(".profile");
    var notificationsList = $(".notifications__list");
@@ -87,4 +92,44 @@ $('.tabs-nav li').click(function (e) {
    }
 
    e.preventDefault();
+});
+ $(document).ready(function () {
+
+   /* 1. Visualizing things on Hover - See next part for action on click */
+   $('#stars .star-box__item').on('mouseover', function () {
+         var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+
+         // Now highlight all the stars that's not after the current hovered star
+         $(this).parent().children('div.star-box__item').each(function (e) {
+            if (e < onStar) {
+               $(this).addClass('hover');
+            }
+            else {
+               $(this).removeClass('hover');
+            }
+         });
+
+   }).on('mouseout', function () {
+         $(this).parent().children('div.star-box__item').each(function (e) {
+            $(this).removeClass('hover');
+         });
+   });
+
+
+   /* 2. Action to perform on click */
+   $('#stars .star-box__item').on('click', function () {
+         var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+         var stars = $(this).parent().children('div.star-box__item');
+
+         for (i = 0; i < stars.length; i++) {
+            $(stars[i]).removeClass('selected');
+         }
+
+         for (i = 0; i < onStar; i++) {
+            $(stars[i]).addClass('selected');
+         }
+
+   });
+
+
 });
