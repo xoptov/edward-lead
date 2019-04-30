@@ -1,0 +1,47 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    <div class="table_leads">
+        <div class="table_leads_layout exposed_leads">
+            <div class="exposed_leads_title">
+                <h2>Счета и акты</h2>
+            </div>
+            {% if invoices is not empty %}
+                <div class="table_leads_block">
+                    <table class="stock_leads">
+                        <tr>
+                            <th>№ счета</th>
+                            <th>Дата</th>
+                            <th>Сумма</th>
+                            <th>Способ оплаты</th>
+                            <th>Статус</th>
+                            <th>Акт</th>
+                        </tr>
+                        {% for invoice in invoices %}
+                            <tr>
+                                <td>{{ invoice.id }}</td>
+                                <td>{{ invoice.createdAt|date('d-m-Y H:i:s') }}</td>
+                                <td>{{ invoice.getamount(100) }}</td>
+                                <td>Банковский перевод</td>
+                                {% if invoice.notProcessed %}
+                                    {% set status_class = 'exchange' %}
+                                    {% set status_label = 'Ожидание' %}
+                                {% elseif invoice.status ==  constant('STATUS_DONE', invoice) %}
+                                    {% set status_class = 'readily' %}
+                                    {% set status_label = 'Оплачен' %}
+                                {% elseif invoice.status == constant('STATUS_CANCELED', invoice) %}
+                                    {% set status_class = 'arbitration' %}
+                                    {% set status_label = 'Отменен' %}
+                                {% endif %}
+                                <td><span class="lead_{{ status_class }}">{{ status_label }}</span></td>
+                                <td>нет</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% else %}
+                <p>У Вас пока ещё нет счетов</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

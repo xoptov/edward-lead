@@ -100,10 +100,16 @@ class Operation
     }
 
     /**
+     * @param int|null $divisor
+     *
      * @return int|null
      */
-    public function getAmount(): ?int
+    public function getAmount(?int $divisor = null): ?int
     {
+        if ($divisor) {
+            return $this->amount / $divisor;
+        }
+
         return $this->amount;
     }
 

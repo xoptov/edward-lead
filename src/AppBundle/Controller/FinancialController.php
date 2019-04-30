@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Account;
+use AppBundle\Entity\Invoice;
 use AppBundle\Entity\User;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Event\WithdrawEvent;
@@ -198,6 +199,24 @@ class FinancialController extends Controller
 
         return $this->render('@App/Financial/withdraw.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/invoice/list", name="app_invoice_list", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function invoiceListAction(): Response
+    {
+        $user = $this->getUser();
+
+        $invoices = $this->entityManager
+            ->getRepository(Invoice::class)
+            ->getAllByUser($user);
+
+        return $this->render('@App/Financial/invoice_list.html.twig', [
+            'invoices' => $invoices
         ]);
     }
 }

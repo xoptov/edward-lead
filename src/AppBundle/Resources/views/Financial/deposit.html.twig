@@ -16,7 +16,7 @@
         {% for message in app.flashes('success') %}
             <div class="label label-danger">{{ message }}</div>
         {% endfor %}
-        {{ form_start(form, {'attr': {'class': 'office-settings__office-form office'}}) }}
+        {{ form_start(form, {'attr': {'novalidate': true, 'class': 'office-settings__office-form office'}}) }}
             <div class="personal__input--box personal">
                 {{ form_row(form.amount, {
                     'label_attr': {
