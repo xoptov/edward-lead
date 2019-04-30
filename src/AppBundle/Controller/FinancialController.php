@@ -233,7 +233,7 @@ class FinancialController extends Controller
 
         $transactions = $this->getDoctrine()
             ->getRepository(MonetaryTransaction::class)
-            ->findBy(['account' => $user->getAccount()]);
+            ->findBy(['account' => $user->getAccount()], ["createdAt" => "DESC"]);
 
         return $this->render('@App/Financial/transactions_history.html.twig', [
             'transactions' => $transactions
