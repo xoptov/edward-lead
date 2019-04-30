@@ -32,20 +32,20 @@
                             {% for transaction in transactions %}
                                 <tr>
                                     <td>
-                                        {% if operation.amount < 0 %}
+                                        {% if transaction.amount < 0 %}
                                             {{ "operations_history.consumption"|trans }}
                                         {% else %}
                                             {{ "operations_history.coming"|trans }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ operation.createdAt|date("d.m.Y") }}</td>
-                                    <td>{{ operation.operation.description }}</td>
+                                    <td>{{ transaction.createdAt|date("d.m.Y") }}</td>
+                                    <td>{{ transaction.operation.description }}</td>
                                     <td>
                                         <a class="id_lids" href="#" target="_blank">---</a>{#What this do I do not undestend#}
                                     </td>
                                     <td>
-                                        <span class="{% if operation.amount < 0 %}lead_amount_red{% else %}lead_amount{% endif %}">
-                                            {{ helper.money_format(operation.amount) }}
+                                        <span class="{% if transaction.amount < 0 %}lead_amount_red{% else %}lead_amount{% endif %}">
+                                            {{ helper.money_format(transaction.amount) }}
                                         </span>
                                     </td>
                                 </tr>
