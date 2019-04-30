@@ -316,6 +316,8 @@ body {
   display: -ms-flexbox;
   display: flex;
   margin-bottom: 28px;
+  position: relative;
+  left: -14px;
 }
 
 .profile-tabs__control, .profile-tabs__exit {
@@ -413,10 +415,23 @@ body {
 
 .form__about {
   max-width: 422px;
+  padding: 0;
 }
 
-.form__about .form__group:first-child {
-  margin-bottom: 44px;
+.form__about .form__group:nth-child(1),
+.form__about .form__group:nth-child(2),
+.form__about .form__group:nth-child(3) {
+  /* margin-bottom: 44px; */
+  margin-bottom: 10px;
+}
+.form__about .form__group:nth-child(1) input,
+.form__about .form__group:nth-child(2) input,
+.form__about .form__group:nth-child(3) input{
+  font-size: 16px;
+  color: rgb(58, 58, 58);
+  line-height: 1.2;
+  text-align: left;
+  font-style: normal;  
 }
 
 .form__about .form__input:disabled {
