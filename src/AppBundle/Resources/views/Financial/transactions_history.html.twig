@@ -1,0 +1,61 @@
+{% extends '@App/layout.html.twig' %}
+
+{% trans_default_domain "billing" %}
+
+{% macro money_format(amount) %}
+    {% if amount < 0 %}{% set amount = amount / (-1) %}{% endif %}
+    {{ amount // 100 }} руб.{% if amount % 100 > 0 %} {{ amount % 100 }} коп.{% endif %}
+{% endmacro %}
+
+{% import _self as helper  %}
+
+{% block content %}
+    <div class="table_leads">
+        <div class="table_leads_layout exposed_leads">
+            <div class="exposed_leads_title">
+                <h2>Истоия операций</h2>
+                {#<div class="download_excel">
+                    <a href="#" download="">Скачать в Excel</a>
+                </div>#}
+            </div>
+            {% if transactions is not empty %}
+                <div class="table_leads_block">
+                    <table class="transaction_history">
+                        <tbody>
+                            <tr>
+                                <th>{{ "operations_history.type_transaction"|trans }}</th>
+                                <th>{{ "operations_history.date"|trans }}</th>
+                                <th>{{ "operations_history.operation"|trans }}</th>
+                                <th>{{ "operations_history.id_lead"|trans }}</th>
+                                <th>{{ "operations_history.summ"|trans }}</th>
+                            </tr>
+                            {% for transaction in transactions %}
+                                <tr>
+                                    <td>
+                                        {% if operation.amount < 0 %}
+                                            {{ "operations_history.consumption"|trans }}
+                                        {% else %}
+                                            {{ "operations_history.coming"|trans }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ operation.createdAt|date("d.m.Y") }}</td>
+                                    <td>{{ operation.operation.description }}</td>
+                                    <td>
+                                        <a class="id_lids" href="#" target="_blank">---</a>{#What this do I do not undestend#}
+                                    </td>
+                                    <td>
+                                        <span class="{% if operation.amount < 0 %}lead_amount_red{% else %}lead_amount{% endif %}">
+                                            {{ helper.money_format(operation.amount) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>У Вас пока ещё не было операций со счётом</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

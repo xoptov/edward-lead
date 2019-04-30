@@ -1,0 +1,8 @@
+operations_history:
+    type_transaction: "Тип транзакции"
+    date: "Дата"
+    operation: "Операция"
+    id_lead: "ID лида"
+    summ: "Сумма"
+    coming: "Приход"
+    consumption: "Расход"
