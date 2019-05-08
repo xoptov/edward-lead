@@ -155,6 +155,27 @@ class User implements AdvancedUserInterface
     private $typeSelected = false;
 
     /**
+     * @var int|null
+     *
+     * @ORM\Column(name="purchase_fee_fixed", type="integer", nullable=true)
+     */
+    private $purchaseFeeFixed;
+
+    /**
+     * @var float|null
+     *
+     * @ORM\Column(name="purchase_fee_percent", type="float", nullable=true)
+     */
+    private $purchaseFeePercent;
+
+    /**
+     * @var int|null
+     *
+     * @ORM\Column(name="sale_lead_limit", type="integer", nullable=true)
+     */
+    private $saleLeadLimit;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -585,6 +606,18 @@ class User implements AdvancedUserInterface
         if (!$this->typeSelected) {
             $this->typeSelected = true;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param int|null $purchaseFeeFixed
+     *
+     * @return User
+     */
+    public function setPurchaseFeeFixed(?int $purchaseFeeFixed): self
+    {
+        $this->purchaseFeeFixed = $purchaseFeeFixed;
 
         return $this;
     }

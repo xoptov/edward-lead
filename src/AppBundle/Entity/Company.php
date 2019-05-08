@@ -143,10 +143,10 @@ class Company
     /**
      * @var ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Region", inversedBy="companies")
-     * @ORM\JoinTable(name="companies_regions")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\City")
+     * @ORM\JoinTable(name="companies_cities")
      */
-    private $regions;
+    private $cities;
 
     /**
      * @var string|null
@@ -177,7 +177,7 @@ class Company
 
     public function __construct()
     {
-        $this->regions = new ArrayCollection();
+        $this->cities = new ArrayCollection();
     }
 
     /**
@@ -449,13 +449,13 @@ class Company
     }
 
     /**
-     * @param ArrayCollection $regions
+     * @param ArrayCollection $cities
      *
      * @return Company
      */
-    public function setRegions(ArrayCollection $regions): self
+    public function setCities(ArrayCollection $cities): self
     {
-        $this->regions = $regions;
+        $this->cities = $cities;
 
         return $this;
     }
@@ -463,9 +463,9 @@ class Company
     /**
      * @return ArrayCollection
      */
-    public function getRegions(): ArrayCollection
+    public function getCities(): ArrayCollection
     {
-        return $this->regions;
+        return $this->cities;
     }
 
     /**

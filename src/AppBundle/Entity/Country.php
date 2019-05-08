@@ -5,11 +5,11 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="region")
+ * @ORM\Table(name="country")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Region
+class Country
 {
     use TimeTrackableTrait;
 
@@ -17,21 +17,13 @@ class Region
      * @var int
      *
      * @ORM\Id
-     * @ORM\Column(name="id", type="smallint", options={"unsigned"="true"})
+     * @ORM\Column(name="id", type="smallint", options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @var Country
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Country")
-     * @ORM\JoinColumn(name="country_id", referencedColumnName="id")
-     */
-    private $country;
-
-    /**
-     * @var string|null
+     * @var string
      *
      * @ORM\Column(name="name", type="string", length=30, unique=true)
      */
@@ -47,35 +39,15 @@ class Region
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @param Country $country
+     * @param string $name
      *
-     * @return Region
-     */
-    public function setCountry(Country $country): self
-    {
-        $this->country = $country;
-
-        return $this;
-    }
-
-    /**
      * @return Country
-     */
-    public function getCountry(): Country
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param string|null $name
-     *
-     * @return Region
      */
     public function setName(string $name): self
     {
@@ -85,17 +57,17 @@ class Region
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param boolean $enabled
+     * @param bool $enabled
      *
-     * @return Region
+     * @return Country
      */
     public function setEnabled(bool $enabled): self
     {
@@ -112,3 +84,4 @@ class Region
         return $this->enabled;
     }
 }
+
