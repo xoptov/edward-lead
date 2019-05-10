@@ -40,6 +40,11 @@ services:
     AppBundle\EventListener\SecuritySubscriber:
         tags: ['kernel.event_subscriber']
 
+    AppBundle\EventListener\SelectTypeSubscriber:
+        arguments:
+            $firewallMap: '@security.firewall.map'
+        tags: ['kernel.event_subscriber']
+
     app.admin.user:
         class: AppBundle\Admin\UserAdmin
         arguments: [~, AppBundle\Entity\User, ~]

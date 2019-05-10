@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 
 class SecurityController extends Controller
 {
@@ -86,13 +86,23 @@ class SecurityController extends Controller
 
                 $this->eventDispatcher->dispatch(UserEvent::NEW_USER_REGISTERED, new UserEvent($user));
 
-                return $this->render('@App/Security/registered.html.twig');
+                return $this->redirectToRoute('app_registered');
             }
         }
 
         return $this->render('@App/Security/registration.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/registered", name="app_registered", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function registeredAction(): Response
+    {
+        return $this->render('@App/Security/registered.html.twig');
     }
 
     /**
