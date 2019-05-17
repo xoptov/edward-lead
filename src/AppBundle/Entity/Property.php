@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Property
 {
-    const ADVERTISING_CHANNEL = 'advertising_channel';
+    const CHANNEL = 'channel';
 
     /**
      * @var int

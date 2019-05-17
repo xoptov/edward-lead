@@ -2613,7 +2613,7 @@ textarea:-ms-input-placeholder {
    -webkit-align-items: center;
    -ms-flex-align: center;
    align-items: center;
-   margin-bottom: 30;
+   margin-bottom: 30px;
 }
 
 .info-block__row-box {
@@ -3648,7 +3648,16 @@ input.personal-choose__radio + i.sprite2 {
    align-items: flex-start;
 }
 
-input.is-tel-correct:invalid + img {
+
+input.validate {
+   display: inline-block;
+}
+
+input.validate:invalid + img {
+   display: inline-block;
+}
+
+input.validate:invalid ~ .error-note {
    display: inline-block;
 }
 
@@ -3656,9 +3665,6 @@ input.is-tel-correct:invalid + img {
    display: none;
 }
 
-input.is-tel-correct:invalid ~ .error-note {
-   display: inline-block;
-}
 
 .input-mod-1 {
    width: 220px;
@@ -3689,10 +3695,6 @@ input.is-tel-correct:invalid ~ .error-note {
    position: absolute;
    top: 55px;
    left: -10px;
-}
-
-.is-tel-correct {
-   position: relative;
 }
 
 .block-mod-10 {
@@ -5157,6 +5159,7 @@ span.id_lids:hover {
 .page_pay  .personal__input--item:last-child {
    margin-left: auto;
 }
+
 .question_lids {
    position: absolute;
    display: none;
@@ -5173,9 +5176,11 @@ span.id_lids:hover {
    text-align: left;
    cursor: pointer;
 }
+
 span.lead_exchange:hover + div.error453_block{
    display: block;
 }
+
 .question_lids::after {
    content: '';
    position: relative;
@@ -5186,10 +5191,12 @@ span.lead_exchange:hover + div.error453_block{
    left: 130px;
    top: -17px;
 }
+
 .modal-after-buy__text-style {
    text-align: center;
    margin-bottom: 30px;
 }
+
 .modal-after-buy__text-style span {
    margin: 0 4px;
    font-size: 14px;
@@ -5197,6 +5204,7 @@ span.lead_exchange:hover + div.error453_block{
    text-align: center;
    color: #757575;
 }
+
 /* .profile::before {
    content: "";
     width: 160px;
@@ -5206,3 +5214,7 @@ span.lead_exchange:hover + div.error453_block{
     position: relative;
     top: -23px;
 } */
+
+.hidden {
+   display: none;
+}
