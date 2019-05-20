@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Country;
 use AppBundle\Entity\Region;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
@@ -20,7 +21,7 @@ class RegionAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('id')
-            ->add('parent.name', null, ['label' => 'Parent'])
+            ->add('country.name', null, ['label' => 'Country'])
             ->add('name')
             ->add('enabled')
             ->add('createdAt')
@@ -36,7 +37,7 @@ class RegionAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('id', 'number')
             ->add('name')
-            ->add('parent.name', null, ['label' => 'Parent'])
+            ->add('country.name', null, ['label' => 'Country'])
             ->add('enabled')
             ->add('createdAt')
             ->add('updatedAt')
@@ -56,11 +57,10 @@ class RegionAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('parent', EntityType::class, [
-                'label' => 'Parent',
-                'class' => Region::class,
-                'choice_label' => 'name',
-                'required' => false
+            ->add('country', EntityType::class, [
+                'label' => 'Country',
+                'class' => Country::class,
+                'choice_label' => 'name'
             ])
             ->add('name')
             ->add('enabled')
@@ -74,7 +74,7 @@ class RegionAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
-            ->add('parent.name', null, ['label' => 'Parent'])
+            ->add('country.name', null, ['label' => 'Country'])
             ->add('name')
             ->add('enabled')
             ->add('createdAt')
@@ -94,5 +94,14 @@ class RegionAdmin extends AbstractAdmin
             'show',
             'delete'
         ]);
+    }
+
+    /**
+     * @param Region $object
+     * @return string
+     */
+    public function toString($object): string
+    {
+        return $object->getName() ?? "новый регион";
     }
 }

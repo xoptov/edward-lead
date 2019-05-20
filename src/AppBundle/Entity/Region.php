@@ -23,7 +23,7 @@ class Region
     private $id;
 
     /**
-     * @var Country
+     * @var Country|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Country")
      * @ORM\JoinColumn(name="country_id", referencedColumnName="id")
@@ -65,9 +65,9 @@ class Region
     }
 
     /**
-     * @return Country
+     * @return Country|null
      */
-    public function getCountry(): Country
+    public function getCountry(): ?Country
     {
         return $this->country;
     }
