@@ -7,14 +7,14 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Table(name="lead")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Lead
 {
     use TimeTrackableTrait;
 
-    const STATUS_NEW = 'new';
+    const STATUS_ACTIVE = 'active';
 
     /**
      * @var int
@@ -24,6 +24,14 @@ class Lead
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
 
     /**
      * @var string
@@ -121,7 +129,7 @@ class Lead
      *
      * @ORM\Column(name="status", type="string")
      */
-    private $status = self::STATUS_NEW;
+    private $status = self::STATUS_ACTIVE;
 
     /**
      * @var int
@@ -139,6 +147,26 @@ class Lead
     }
 
     /**
+     * @param User $user
+     *
+     * @return Lead
+     */
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
      * @param string $phone
      *
      * @return Lead
@@ -151,9 +179,9 @@ class Lead
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
@@ -219,9 +247,9 @@ class Lead
     }
 
     /**
-     * @return City
+     * @return City|null
      */
-    public function getCity(): City
+    public function getCity(): ?City
     {
         return $this->city;
     }

@@ -28,6 +28,13 @@
 {% block content %}
     <div class="office-settings u-w-100">
         <h3 class="office-settings__title">Заполните карточку лида</h3>
+        {%- if app.session.flashBag.has('error') -%}
+            <div>
+                {%- for message in app.session.flashBag.get('error') -%}
+                    <div class="text-red">{{ message }}</div>
+                {%- endfor -%}
+            </div>
+        {%- endif -%}
         <div class="pos-sb">
             <div class="plain__text text-mod-5">Чем подробнее будет заполнена карточка, тем выше будет стоимость лида
             </div>
@@ -46,19 +53,20 @@
                                         'class': 'form__label text-mod-10'
                                     },
                                     'attr': {
-                                        'class': 'form__input validate',
+                                        'class': 'form__input',
                                         'placeholder': 'Например: Василий',
                                         'pattern': '[а-яА-Я\\s]+',
-                                        'data-required': 'Необходимо указать имя лида',
-                                        'data-invalid': 'Невалидное имя лида'
+                                        'autocomplete': 'off'
                                     }
                                 }) }}
                                 {{ form_row(form.phone, {
                                     'label': 'Телефон',
                                     'label_attr': {'class': 'form__label text-mod-10'},
                                     'attr': {
-                                        'class': 'form__input input-mod-1 is-tel-correct',
-                                        'placeholder': 'Например: +7(900)200-30-20'
+                                        'class': 'form__input input-mod-1',
+                                        'placeholder': 'Например: +7(900)200-30-20',
+                                        'pattern': '[\\+0-9\\(\\)\\-\\s]+',
+                                        'autocomplete': 'off'
                                     }
                                 }) }}
                                 <div class="info-block__row-item block-mod-2">
@@ -95,7 +103,8 @@
                                     'attr': {
                                         'class': 'form__input date-field',
                                         'placeholder': 'дд.мм.гггг',
-                                        'pattern': '[0-3][0-9]\\\.[0,1][0-9]\\\.20[1,2][0-9]'
+                                        'pattern': '[0-3][0-9]\\\.[0,1][0-9]\\\.20[1,2][0-9]',
+                                        'autocomplete': 'off'
                                     }
                                 }) }}
                             </div>
@@ -203,7 +212,8 @@
                                             'class': 'arbitrate-form__textarea autoExpand textarea-mod-1',
                                             'rows': '3',
                                             'data-min-rows': '3',
-                                            'placeholder': 'Напишите здесь в свободной форме'
+                                            'placeholder': 'Напишите здесь в свободной форме',
+                                            'autocomplete': 'off'
                                         }}) }}
                                     </div>
                                 </div>
@@ -222,7 +232,11 @@
                                     <div class="info-block__column-right text-mod-2">
                                         <div class="binded__item">
                                             {{ form_widget(form.uploadedAudioRecord, {
-                                                'attr': {'class': 'hidden js-uploader'}
+                                                'attr': {
+                                                    'class': 'js-uploader',
+                                                    'style': 'display: none',
+                                                    'accept': 'audio/*'
+                                                }
                                             }) }}
                                             <button class="binded__button"><span class="icon-clip"></span></button>
                                             <span class="binded__file">Прикрепить запись</span>
@@ -242,11 +256,12 @@
                                     <div class="info-block__line-left text-mod-12">Рейтинг лида
                                         <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
                                     </div>
-                                    <div class="info-block__line-right">
-                                        <span class="icon-star-new text-yellow span-mod-16"></span>
-                                        <span class="icon-star-new text-yellow span-mod-16"></span>
-                                        <span class="icon-star-new text-yellow span-mod-16"></span>
-                                        <span class="icon-star-new text-yellow span-mod-16"></span>
+                                    <div class="js-points info-block__line-right">
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
                                         <span class="icon-star-new text-gray span-mod-16"></span>
                                     </div>
                                 </div>
@@ -255,7 +270,7 @@
                                         <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
                                     </div>
                                     <div class="info-block__line-right text-mod-11">
-                                        190 руб.
+                                        <span class="js-cost">0</span> руб.
                                     </div>
                                 </div>
                                 <div class="info-block__line"></div>
@@ -295,8 +310,10 @@
     <script>
         class StepView {
             constructor(options) {
-                this.el = options.el;
+                this.$form = options.$form;
+                this.el = this.$form.find(options.selector);
                 this.nextBlock = options.nextBlock || null;
+                this.alwaysFilled = options.alwaysFilled || false;
 
                 const iconSelector = options.iconSelector || '.icon-star-new';
                 this.starIcon = this.el.find(iconSelector).first();
@@ -310,39 +327,53 @@
                 $inputs.on('keyup', null, this, StepView.onChange);
                 $inputs.filter('input[type=text],input[type=tel]').on('focusout', StepView.validate);
 
-                if (!showOnInit) {
+                if (!showOnInit && !this.isFilled()) {
                     this.el.hide(250);
                     this.showed = false;
                 } else {
                     this.showed = true;
                 }
 
+                if (this.isFilled()) {
+                    this.colorStarYellow();
+                    this.nextBlock && this.nextBlock.showElement();
+                }
+
                 options.initializer && options.initializer(this);
             }
 
             static onChange(e) {
+                const t = e.target;
                 const view = e.data;
-                if (view.isFilled()) {
-                    view.starIcon && view.starIcon.removeClass('text-gray').addClass('text-yellow');
-                    view.nextBlock && view.nextBlock.showElement();
-                } else {
-                    view.starIcon && view.starIcon.removeClass('text-yellow').addClass('text-gray');
+                if (t.checkValidity()) {
+                    $(t).removeClass('invalid');
+                    if (view.isFilled() || view.alwaysFilled) {
+                        view.colorStarYellow();
+                        view.nextBlock && view.nextBlock.showElement();
+                        if (view.changeTimerId) {
+                            clearTimeout(view.changeTimerId);
+                        }
+                        view.changeTimerId = setTimeout(view.requestCost, 1500, view);
+                    } else {
+                        view.colorStarGray();
+                    }
                 }
             }
 
-            static validate(e) {
+            static onFocusOut(e) {
                 const t = e.target;
-                if (t.checkValidity() === false) {
-                    if (t.required && t.value === '') {
-                        t.setCustomValidity(t.dataset['required']);
-                    } else {
-                        t.setCustomValidity(t.dataset['invalid']);
-                    }
-                    t.reportValidity();
+                const view = e.data;
+                if (t.checkValidity()) {
+                    $(t).removeClass('invalid');
+                } else {
+                    $(t).addClass('invalid');
                 }
             }
 
             isFilled() {
+                if (this.alwaysFilled) {
+                    return true;
+                }
                 for (let i = 0; i < this.fields.length; i++) {
                     let $field = $(this.fields[i]);
                     if ($field.val() === '') {
@@ -358,13 +389,50 @@
                     this.el.show(500);
                 }
             }
+
+            requestCost(view) {
+                const formData = new FormData(view.$form[0]);
+                $.ajax({
+                    url: '/exchange/calculate-lead-cost',
+                    method: 'POST',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function(resp) {
+                        view.updateStarsAndCost(resp);
+                    }
+                });
+            }
+
+            updateStarsAndCost(data) {
+                const $pointStars = this.$form.find('.js-points .icon-star-new');
+                const $costLabel = this.$form.find('.js-cost');
+                $costLabel.text(data.cost);
+                $pointStars.each(function(i,o) {
+                    if (i + 1 <= data.stars) {
+                        $(o).removeClass('text-gray').addClass('text-yellow');
+                    } else {
+                        $(o).removeClass('text-yellow').addClass('text-gray');
+                    }
+                });
+            }
+
+            colorStarYellow() {
+                this.starIcon && this.starIcon.removeClass('text-gray').addClass('text-yellow');
+            }
+
+            colorStarGray() {
+                this.starIcon && this.starIcon.removeClass('text-yellow').addClass('text-gray');
+            }
         }
 
         $(function(){
-            const $formEl = $('form');
+            const $form = $('form');
 
             const $formStep6 = new StepView({
-                el: $formEl.find('#block-step-6'),
+                $form: $form,
+                selector: '#block-step-6',
                 iconSelector: '.gold-label',
                 initializer: function(block) {
                     const $uploader = $('input.js-uploader');
@@ -392,27 +460,33 @@
             });
 
             const $formStep5 = new StepView({
-                el: $formEl.find('#block-step-5'),
+                $form: $form,
+                selector: '#block-step-5',
                 nextBlock: $formStep6
             });
 
             const $formStep4 = new StepView({
-                el: $formEl.find('#block-step-4'),
+                $form: $form,
+                selector: '#block-step-4',
                 nextBlock: $formStep5
             });
 
             const $formStep3 = new StepView({
-                el: $formEl.find('#block-step-3'),
-                nextBlock: $formStep4
+                $form: $form,
+                selector: '#block-step-3',
+                nextBlock: $formStep4,
+                alwaysFilled: true
             });
 
             const $formStep2 = new StepView({
-                el: $formEl.find('#block-step-2'),
+                $form: $form,
+                selector: '#block-step-2',
                 nextBlock: $formStep3
             });
 
             const $formStep1 = new StepView({
-                el: $formEl.find('#block-step-1'),
+                $form: $form,
+                selector: '#block-step-1',
                 showOnInit: true,
                 nextBlock: $formStep2
             });

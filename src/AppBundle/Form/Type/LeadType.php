@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class LeadType extends AbstractType
@@ -39,6 +40,7 @@ class LeadType extends AbstractType
             ->add('channel', EntityType::class, [
                 'class' => Property::class,
                 'choice_label' => 'name',
+                'required' => false,
                 'query_builder' => function(EntityRepository $er) {
                     $qb = $er->createQueryBuilder('ch')
                         ->where('ch.type = :type')
@@ -49,10 +51,12 @@ class LeadType extends AbstractType
             ])
             ->add('orderDate', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'dd.MM.yyyy'
+                'format' => 'dd.MM.yyyy',
+                'required' => false
             ])
             ->add('decisionMaker', ChoiceType::class, [
                 'expanded' => true,
+                'required' => false,
                 'choices' => [
                     'Да' => true,
                     'Нет' => false
@@ -60,6 +64,7 @@ class LeadType extends AbstractType
             ])
             ->add('madeMeasurement', ChoiceType::class, [
                 'expanded' => true,
+                'required' => false,
                 'choices' => [
                     'Да' => true,
                     'Нет' => false
@@ -70,7 +75,21 @@ class LeadType extends AbstractType
                 'required' => false
             ])
             ->add('uploadedAudioRecord', FileType::class, [
-                'required' => false
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'mimeTypes' => [
+                            'audio/webm',
+                            'audio/ogg',
+                            'audio/mpeg',
+                            'audio/mp3',
+                            'audio/wave',
+                            'audio/wav',
+                            'audio/flac'
+                        ],
+                        'maxSize' => '8M'
+                    ])
+                ]
             ])
             ->add('publicationRule', CheckboxType::class, [
                 'mapped' => false,

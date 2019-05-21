@@ -606,13 +606,12 @@ select {
    background-color: #ffffff;
 }
 
-select:invalid {
-   color: #909090;
-   font-family: "Helvetica Neue Cyr - Roman";
-   font-size: 14px;
-   font-weight: 400;
-   font-style: italic;
-   background-color: #ffffff;
+input:-moz-ui-invalid {
+   box-shadow: none;
+}
+
+input.invalid {
+   background-color: #e4b9b9;
 }
 
 .position-center {
@@ -3648,19 +3647,6 @@ input.personal-choose__radio + i.sprite2 {
    align-items: flex-start;
 }
 
-
-input.validate {
-   display: inline-block;
-}
-
-input.validate:invalid + img {
-   display: inline-block;
-}
-
-input.validate:invalid ~ .error-note {
-   display: inline-block;
-}
-
 .error-note {
    display: none;
 }
@@ -5214,7 +5200,3 @@ span.lead_exchange:hover + div.error453_block{
     position: relative;
     top: -23px;
 } */
-
-.hidden {
-   display: none;
-}

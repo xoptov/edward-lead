@@ -665,5 +665,13 @@ class User implements AdvancedUserInterface
     {
         return $this->getBalance() / Account::DIVISOR;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getSaleLeadLimit(): ?int
+    {
+        return $this->saleLeadLimit;
+    }
 }
 

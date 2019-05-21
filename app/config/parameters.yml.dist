@@ -17,3 +17,11 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    star_cost: 1000
+    lead_cost: 10000
+
+    lead_per_user: 5
+    lead_expiration_period: 7
+
+    upload_base_path: '%kernel.project_dir%/web/uploads'
