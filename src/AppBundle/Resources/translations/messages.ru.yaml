@@ -18,6 +18,7 @@ User Create: Создать пользователя
 Password: Пароль
 Region: Регион
 Region List: Список регионов
+Region Create: Добавить регион
 batch: Пакет
 Parent: Родитель
 Description: Описание
@@ -54,6 +55,7 @@ Monetary Transaction List: Список денежных операций
 Transactions: Транзакции
 Operation Description: Описание операции
 Withdrawal: Выводы
+Country: Страна
 Countries: Страны
 Country List: Список стран
 Country Create: Добавить страну
