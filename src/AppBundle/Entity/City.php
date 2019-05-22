@@ -56,7 +56,7 @@ class City
      *
      * @ORM\Column(name="enabled", type="boolean")
      */
-    private $enabled;
+    private $enabled = false;
 
     /**
      * @return int
@@ -81,7 +81,7 @@ class City
     /**
      * @return Region
      */
-    public function getRegion(): Region
+    public function getRegion(): ?Region
     {
         return $this->region;
     }
@@ -101,7 +101,7 @@ class City
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
