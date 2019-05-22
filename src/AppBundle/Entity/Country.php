@@ -23,7 +23,7 @@ class Country
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=30, unique=true)
      */
@@ -57,9 +57,9 @@ class Country
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }

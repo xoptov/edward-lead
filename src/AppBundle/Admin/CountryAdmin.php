@@ -2,17 +2,16 @@
 
 namespace AppBundle\Admin;
 
+
 use AppBundle\Entity\Country;
-use AppBundle\Entity\Region;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\AdminBundle\Admin\AbstractAdmin;
-use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class RegionAdmin extends AbstractAdmin
+class CountryAdmin extends AbstractAdmin
 {
     /**
      * @inheritdoc
@@ -21,7 +20,6 @@ class RegionAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('id')
-            ->add('country.name', null, ['label' => 'Country'])
             ->add('name')
             ->add('enabled')
             ->add('createdAt')
@@ -37,7 +35,6 @@ class RegionAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('id', 'number')
             ->add('name')
-            ->add('country.name', null, ['label' => 'Country'])
             ->add('enabled')
             ->add('createdAt')
             ->add('updatedAt')
@@ -57,13 +54,8 @@ class RegionAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('country', EntityType::class, [
-                'label' => 'Country',
-                'class' => Country::class,
-                'choice_label' => 'name'
-            ])
-            ->add('name')
-            ->add('enabled')
+            ->add("name")
+            ->add("enabled")
         ;
     }
 
@@ -74,7 +66,6 @@ class RegionAdmin extends AbstractAdmin
     {
         $showMapper
             ->add('id')
-            ->add('country.name', null, ['label' => 'Country'])
             ->add('name')
             ->add('enabled')
             ->add('createdAt')
@@ -83,25 +74,11 @@ class RegionAdmin extends AbstractAdmin
     }
 
     /**
-     * @inheritdoc
-     */
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        $collection->clearExcept([
-            'create',
-            'edit',
-            'list',
-            'show',
-            'delete'
-        ]);
-    }
-
-    /**
-     * @param Region $object
+     * @param Country $object
      * @return string
      */
     public function toString($object): string
     {
-        return $object->getName() ?? "новый регион";
+        return $object->getName() ?? "новая страна";
     }
 }

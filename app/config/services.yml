@@ -53,6 +53,13 @@ services:
         public: true
         calls:
             - [setUserManager, ['@AppBundle\Service\UserManager']]
+    
+    app.admin.country:
+        class: AppBundle\Admin\CountryAdmin
+        arguments: [~, AppBundle\Entity\Country, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Countries }
+        public: true
 
     app.admin.region:
         class: AppBundle\Admin\RegionAdmin
