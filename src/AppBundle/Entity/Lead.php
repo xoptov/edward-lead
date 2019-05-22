@@ -3,17 +3,18 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Table(name="lead")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Lead
 {
     use TimeTrackableTrait;
 
-    const STATUS_NEW = 'new';
+    const STATUS_ACTIVE = 'active';
 
     /**
      * @var int
@@ -23,6 +24,14 @@ class Lead
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
 
     /**
      * @var string
@@ -57,9 +66,9 @@ class Lead
      * @var Property|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Property")
-     * @ORM\JoinColumn(name="advertising_channel_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="channel_id", referencedColumnName="id")
      */
-    private $advertisingChannel;
+    private $channel;
 
     /**
      * @var \DateTime|null
@@ -97,6 +106,18 @@ class Lead
     private $description;
 
     /**
+     * @var UploadedFile|null
+     */
+    private $uploadedAudioRecord;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="audio_record", type="string", nullable=true)
+     */
+    private $audioRecord;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="expiration_date", type="datetime")
@@ -108,7 +129,7 @@ class Lead
      *
      * @ORM\Column(name="status", type="string")
      */
-    private $status = self::STATUS_NEW;
+    private $status = self::STATUS_ACTIVE;
 
     /**
      * @var int
@@ -126,6 +147,26 @@ class Lead
     }
 
     /**
+     * @param User $user
+     *
+     * @return Lead
+     */
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
      * @param string $phone
      *
      * @return Lead
@@ -138,9 +179,9 @@ class Lead
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
@@ -206,21 +247,21 @@ class Lead
     }
 
     /**
-     * @return City
+     * @return City|null
      */
-    public function getCity(): City
+    public function getCity(): ?City
     {
         return $this->city;
     }
 
     /**
-     * @param Property|null $advertisingChannel
+     * @param Property|null $channel
      *
      * @return Lead
      */
-    public function setAdvertisingChannel(?Property $advertisingChannel): self
+    public function setChannel(?Property $channel): self
     {
-        $this->advertisingChannel = $advertisingChannel;
+        $this->channel = $channel;
 
         return $this;
     }
@@ -228,9 +269,9 @@ class Lead
     /**
      * @return Property|null
      */
-    public function getAdvertisingChannel(): ?Property
+    public function getChannel(): ?Property
     {
-        return $this->advertisingChannel;
+        return $this->channel;
     }
 
     /**
@@ -331,6 +372,46 @@ class Lead
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    /**
+     * @param UploadedFile $uploadedAudioRecord
+     *
+     * @return Lead
+     */
+    public function setUploadedAudioRecord(UploadedFile $uploadedAudioRecord): self
+    {
+        $this->uploadedAudioRecord = $uploadedAudioRecord;
+
+        return $this;
+    }
+
+    /**
+     * @return UploadedFile|null
+     */
+    public function getUploadedAudioRecord(): ?UploadedFile
+    {
+        return $this->uploadedAudioRecord;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAudioRecord(): ?string
+    {
+        return $this->audioRecord;
+    }
+
+    /**
+     * @param string $audioRecord
+     *
+     * @return Lead
+     */
+    public function setAudioRecord(string $audioRecord): self
+    {
+        $this->audioRecord = $audioRecord;
+
+        return $this;
     }
 
     /**

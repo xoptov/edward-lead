@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=1200">
-    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
+    {% endblock %}
     <title></title>
 </head>
 <body>
@@ -89,98 +91,7 @@
     <div class="container arbitration--mod">
         <main class="main-block">
             <div class="sidebar">
-                <ul class="sidebar__list accordion-menu">
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico1"></i><a href="#" class="sidebar__link">Биржа лидов</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico2"></i><a href="#" class="sidebar__link">Мои лиды</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico3"></i><a href="#" class="sidebar__link">Арбитраж / поддержка</a>
-                            <div class="rate position-center" id="s">
-                                <span class="rate__span">10</span>
-                            </div>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico4"></i><a href="#" class="sidebar__link">Биллинг</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item">
-                                <a href="{{ path('app_billing') }}" class="sidebar__link">Состояние счёта</a>
-                            </li>
-                            <li class="sidebar__sub-item">
-                                <a href="{{ path("app_billing_transactions_history") }}" class="sidebar__link">История операций</a>
-                            </li>
-                            <li class="sidebar__sub-item">
-                                <a href="{{ path('app_invoice_list') }}" class="sidebar__link">Счета</a>
-                            </li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Акты</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico5"></i><a href="#" class="sidebar__link">Реферальная программа</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico6"></i><a href="#" class="sidebar__link">Интеграции</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico7"></i><a href="#" class="sidebar__link">Телефония</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="sidebar__item dropdownlink">
-                            <i class="sprite-3 sprite-ico8"></i><a href="#" class="sidebar__link">Кабинет компании</a>
-                        </div>
-                        <ul class="sidebar__sub-item-box submenuItems">
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-                            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                {% include '@App/menu.html.twig' %}
             </div>
             {% block content %}{% endblock %}
         </main>

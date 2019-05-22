@@ -127,3 +127,13 @@ services:
             - [setHoldManager, ['@AppBundle\Service\HoldManager']]
 
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
+
+    AppBundle\Service\LeadManager:
+        arguments:
+            $leadCost: '%lead_cost%'
+            $starCost: '%star_cost%'
+            $leadExpirationPeriod: '%lead_expiration_period%'
+
+    AppBundle\Service\Uploader:
+        arguments:
+            $basePath: '%upload_base_path%'
