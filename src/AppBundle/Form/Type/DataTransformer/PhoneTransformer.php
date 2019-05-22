@@ -23,6 +23,6 @@ class PhoneTransformer implements DataTransformerInterface
             return null;
         }
 
-        return preg_replace('/\(|\)|\-|\s/', '', $value);
+        return preg_replace(['/\(|\)|\-|\s/', '/^8/'], ['', '+7'], $value);
     }
 }

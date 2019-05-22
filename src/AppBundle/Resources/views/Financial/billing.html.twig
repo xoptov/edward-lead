@@ -1,110 +1,110 @@
 {% extends '@App/layout.html.twig' %}
 
 {% block content %}
-    <div class="office-settings u-w-100">
-        <h3 class="office-settings__title">Биллинг</h3>
-        {% for message in app.flashes('success') %}
-            <div class="label label-danger">{{ message }}</div>
-        {% endfor %}
-        <div class="billing__header">
-            <div class="billing__side-left">
-                <div class="plain__text text-mod-2">Баланс личного счёта: {{ availableBalance }} руб.</div>
-                <div class="plain__text text-mod-2">Блокированно по операциям: {{ holdBalance }} руб.</div>
-            </div>
-            <div class="billing__side-right">
-                <a class="btn btn-green btn-billig--mod" href="{{ path('app_deposit') }}">Пополнить баланс ЛС</a>
-                <a href="{{ path('app_withdraw') }}" class="billing__link link-mod-1">Создать заявку на вывод средств</a>
-            </div>
+<div class="office-settings u-w-100">
+    <h3 class="office-settings__title">Биллинг</h3>
+    {% for message in app.flashes('success') %}
+        <div class="label label-danger">{{ message }}</div>
+    {% endfor %}
+    <div class="billing__header">
+        <div class="billing__side-left">
+            <div class="plain__text text-mod-2">Баланс личного счёта: {{ availableBalance }} руб.</div>
+            <div class="plain__text text-mod-2">Блокированно по операциям: {{ holdBalance }} руб.</div>
         </div>
-
-        <div class="billing__card-list">
-            <div class="billing__card-box">
-                <!-- <div class="billing__image-box">
-                   <img src="img/billing.png" alt="" class="billing__image">
-                   <div class="billing__span-block">
-                      <span class="billing__price">5640 ₽</span>
-                      <span class="billing__object">Офис на Чапаева</span>
-                   </div>
-
-                </div> -->
-                <div class="billing__info-block">
-                    <span class="billing__text text-mod-8">Статистика за месяц:</span>
-                    <div class="billing__list">
-                        <div class="billing__item"><span>Куплено лидов</span><span>146</span>
-                        </div>
-                        <div class="billing__item"><span>Проданно лидов</span><span>21</span>
-                        </div>
-                        <div class="billing__item"><span>Звонков</span><span>140</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="billing__card-box">
-                <!-- <div class="billing__image-box">
-                   <img src="img/billing.png" alt="" class="billing__image">
-                   <div class="billing__span-block">
-                      <span class="billing__price">5640 ₽</span>
-                      <span class="billing__object">Офис на Чапаева</span>
-                   </div>
-
-                </div> -->
-                <div class="billing__info-block">
-                    <span class="billing__text text-mod-8">Статистика за месяц:</span>
-                    <div class="billing__list">
-                        <div class="billing__item"><span>Куплено лидов</span><span>146</span>
-                        </div>
-                        <div class="billing__item"><span>Проданно лидов</span><span>21</span>
-                        </div>
-                        <div class="billing__item"><span>Звонков</span><span>140</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="billing__card-box">
-                <!-- <div class="billing__image-box">
-                   <img src="img/billing.png" alt="" class="billing__image">
-                   <div class="billing__span-block">
-                      <span class="billing__price">5640 &#8381;</span>
-                      <span class="billing__object">Офис на Чапаева</span>
-                   </div>
-
-                </div> -->
-                <div class="billing__info-block">
-                    <span class="billing__text text-mod-8">Статистика за месяц:</span>
-                    <div class="billing__list">
-                        <div class="billing__item"><span>Куплено лидов</span><span>146</span>
-                        </div>
-                        <div class="billing__item"><span>Проданно лидов</span><span>21</span>
-                        </div>
-                        <div class="billing__item"><span>Звонков</span><span>140</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        {#<div class="billing__column-box">#}
-            {#<div class="billing__column">#}
-                {#<div class="billing__column__header">Автоматические платежи</div>#}
-                {#<div class="billing__column__text">Включите автоматическое пополнение,#}
-                    {#<br>чтобы не допустить отрицательного#}
-                    {#<br>баланса на счете.</div>#}
-                {#<div class="billing__button-block">#}
-                    {#<button class="btn btn-green btn-mod-5">Подключить</button>#}
-                {#</div>#}
-                {#<div class=" small-text">Пока автоматические платежи не подключены, мы будем уведомлять вас по электронной почте за несколько дней до истечения средств.</div>#}
-            {#</div>#}
-            {#<div class="billing__column">#}
-                {#<div class="billing__column__header">Есть бонусный промо-код</div>#}
-                {#<div class="billing__column__text">Активируйте его и пользуйтесь привелегиями на платформе Edward</div>#}
-                {#<input type="text" name="promo-code" id="promo-code" class="form__input office__input input-mod-3" placeholder="Введите промо-код" required>#}
-                {#<div class="billing__button-block">#}
-                    {#<button class="btn btn-green btn-mod-5">Подключить</button>#}
-                {#</div>#}
-            {#</div>#}
-        {#</div>#}
-        <div class="block-copyright">
-            © 2019 Edward - решения для бизнеса
+        <div class="billing__side-right">
+            <a class="btn btn-green btn-billig--mod" href="{{ path('app_deposit') }}">Пополнить баланс ЛС</a>
+            <a href="{{ path('app_withdraw') }}" class="billing__link link-mod-1">Создать заявку на вывод средств</a>
         </div>
     </div>
+
+    <div class="billing__card-list">
+        <div class="billing__card-box">
+            <!-- <div class="billing__image-box">
+               <img src="img/billing.png" alt="" class="billing__image">
+               <div class="billing__span-block">
+                  <span class="billing__price">5640 ₽</span>
+                  <span class="billing__object">Офис на Чапаева</span>
+               </div>
+
+            </div> -->
+            <div class="billing__info-block">
+                <span class="billing__text text-mod-8">Статистика за месяц:</span>
+                <div class="billing__list">
+                    <div class="billing__item"><span>Куплено лидов</span><span>146</span>
+                    </div>
+                    <div class="billing__item"><span>Проданно лидов</span><span>21</span>
+                    </div>
+                    <div class="billing__item"><span>Звонков</span><span>140</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="billing__card-box">
+            <!-- <div class="billing__image-box">
+               <img src="img/billing.png" alt="" class="billing__image">
+               <div class="billing__span-block">
+                  <span class="billing__price">5640 ₽</span>
+                  <span class="billing__object">Офис на Чапаева</span>
+               </div>
+
+            </div> -->
+            <div class="billing__info-block">
+                <span class="billing__text text-mod-8">Статистика за месяц:</span>
+                <div class="billing__list">
+                    <div class="billing__item"><span>Куплено лидов</span><span>146</span>
+                    </div>
+                    <div class="billing__item"><span>Проданно лидов</span><span>21</span>
+                    </div>
+                    <div class="billing__item"><span>Звонков</span><span>140</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="billing__card-box">
+            <!-- <div class="billing__image-box">
+               <img src="img/billing.png" alt="" class="billing__image">
+               <div class="billing__span-block">
+                  <span class="billing__price">5640 &#8381;</span>
+                  <span class="billing__object">Офис на Чапаева</span>
+               </div>
+
+            </div> -->
+            <div class="billing__info-block">
+                <span class="billing__text text-mod-8">Статистика за месяц:</span>
+                <div class="billing__list">
+                    <div class="billing__item"><span>Куплено лидов</span><span>146</span>
+                    </div>
+                    <div class="billing__item"><span>Проданно лидов</span><span>21</span>
+                    </div>
+                    <div class="billing__item"><span>Звонков</span><span>140</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {#<div class="billing__column-box">#}
+        {#<div class="billing__column">#}
+            {#<div class="billing__column__header">Автоматические платежи</div>#}
+            {#<div class="billing__column__text">Включите автоматическое пополнение,#}
+                {#<br>чтобы не допустить отрицательного#}
+                {#<br>баланса на счете.</div>#}
+            {#<div class="billing__button-block">#}
+                {#<button class="btn btn-green btn-mod-5">Подключить</button>#}
+            {#</div>#}
+            {#<div class=" small-text">Пока автоматические платежи не подключены, мы будем уведомлять вас по электронной почте за несколько дней до истечения средств.</div>#}
+        {#</div>#}
+        {#<div class="billing__column">#}
+            {#<div class="billing__column__header">Есть бонусный промо-код</div>#}
+            {#<div class="billing__column__text">Активируйте его и пользуйтесь привелегиями на платформе Edward</div>#}
+            {#<input type="text" name="promo-code" id="promo-code" class="form__input office__input input-mod-3" placeholder="Введите промо-код" required>#}
+            {#<div class="billing__button-block">#}
+                {#<button class="btn btn-green btn-mod-5">Подключить</button>#}
+            {#</div>#}
+        {#</div>#}
+    {#</div>#}
+    <div class="block-copyright">
+        © 2019 Edward - решения для бизнеса
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,311 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+{% endblock %}
+
+{% form_theme form _self %}
+
+{%- block form_row -%}
+    <div class="{{ row_class|default('info-block__row-item block-mod-2') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock -%}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            <div class="info-block__radio-box">
+                {{- form_widget(child, {'attr': {'class': 'info-block__radio checkbox'}}) -}}
+                {{- form_label(child, null, {translation_domain: choice_translation_domain}) -}}
+            </div>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{% block content %}
+    <div class="office-settings u-w-100">
+        <h3 class="office-settings__title">Заполните карточку лида</h3>
+        {%- if app.session.flashBag.has('error') -%}
+            <div>
+                {%- for message in app.session.flashBag.get('error') -%}
+                    <div class="text-red">{{ message }}</div>
+                {%- endfor -%}
+            </div>
+        {%- endif -%}
+        <div class="pos-sb">
+            <div class="plain__text text-mod-5">Чем подробнее будет заполнена карточка, тем выше будет стоимость лида
+            </div>
+            <a href="#" class="label__link link-mod-6">Подробнее о заполнении карточки лида</a>
+        </div>
+        <div class="office-settings__office-form office">
+            {{ form_start(form) }}
+                <div class="info-block">
+                    <div class="info-block__list">
+                        <div id="block-step-1" class="info-block__item">
+                            <span class="icon-star-new span-mod-3 text-gray"></span>
+                            <div class="info-block__row-box block-mod-3">
+                                {{ form_row(form.name, {
+                                    'label': 'Имя Лида',
+                                    'label_attr': {
+                                        'class': 'form__label text-mod-10'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input',
+                                        'placeholder': 'Например: Василий',
+                                        'pattern': '[а-яА-Я\\s]+',
+                                        'autocomplete': 'off'
+                                    }
+                                }) }}
+                                {{ form_row(form.phone, {
+                                    'label': 'Телефон',
+                                    'label_attr': {'class': 'form__label text-mod-10'},
+                                    'attr': {
+                                        'class': 'form__input input-mod-1',
+                                        'placeholder': 'Например: +7(900)200-30-20',
+                                        'pattern': '[\\+0-9\\(\\)\\-\\s]+',
+                                        'autocomplete': 'off'
+                                    }
+                                }) }}
+                                <div class="info-block__row-item block-mod-2">
+                                    {{ form_row(form.city, {
+                                        'label': 'Город',
+                                        'label_attr': {'class': 'form__label text-mod-10'},
+                                        'placeholder': 'Выбирите из списка',
+                                        'attr': {
+                                            'class': 'form__input select-field'
+                                        }
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-line">&nbsp;</div>
+                <div class="info-block__list">
+                    <div id="block-step-2">
+                        <div class="info-block__item">
+                            <span class="icon-star-new span-mod-3 text-gray"></span>
+                            <div class="info-block__row-box block-mod-3">
+                                {{ form_row(form.channel, {
+                                    'label': 'Рекламный канал',
+                                    'label_attr': {'class': 'form__label text-mod-10'},
+                                    'placeholder': 'Выбирите из списка',
+                                    'attr': {
+                                        'class': 'form__input select-field'
+                                    }
+                                }) }}
+                                {{ form_row(form.orderDate, {
+                                    'label': 'Дата поступления заявки',
+                                    'label_attr': {'class': 'form__label text-mod-16'},
+                                    'attr': {
+                                        'class': 'form__input date-field',
+                                        'placeholder': 'дд.мм.гггг',
+                                        'pattern': '[0-3][0-9]\\\.[0,1][0-9]\\\.20[1,2][0-9]',
+                                        'autocomplete': 'off'
+                                    }
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="hr-line">&nbsp;</div>
+                    </div>
+                    <div id="block-step-3">
+                        <div class="info-block__item">
+                            <div class="info-block__img"><span class="icon-star-new span-mod-3 text-gray"></span></div>
+                            <div class="info-block__row-box block-mod-7">
+                                <div class="info-block__row-item block-mod-7">
+                                    <div class="info-block__column-left">Лицо принемающее решение</div>
+                                    <div class="info-block__column-right">
+                                        {{ form_widget(form.decisionMaker, {'attr': {'class': 'info-block__radio-list'}}) }}
+                                    </div>
+                                </div>
+                                <div class="info-block__row-item block-mod-7">
+                                    <div class="info-block__column-left ">Делали замер на адресе</div>
+                                    <div class="info-block__column-right">
+                                        {{ form_widget(form.madeMeasurement, {'attr': {'class': 'info-block__radio-list'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line">&nbsp;</div>
+                    </div>
+                    <div id="block-step-4">
+                        <div class="info-block__item">
+                            <div class="info-block__img">
+                                <span class="icon-star-new span-mod-3 text-gray"></span>
+                            </div>
+                            <div class="info-block__row-box">
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right block-mod-1">
+                                        Оценка заинтересованость в покупке по 10 бальной шкале:
+                                    </div>
+                                </div>
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right rating-stars">
+                                        <div class="star-box__list" id="stars">
+                                            <div class="star-box__item" data-value="1">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">1</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="2">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">2</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="3">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">3</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="4">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">4</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="5">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">5</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="6">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">6</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="7">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">7</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="8">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">8</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="9">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">9</span>
+                                            </div>
+                                            <div class="star-box__item" data-value="10">
+                                                <span class="icon-star-new text-gray span-mod-7"></span>
+                                                <span class="span-mod-5">10</span>
+                                            </div>
+                                            {{ form_widget(form.interestAssessment) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line">&nbsp;</div>
+                    </div>
+                    <div id="block-step-5">
+                        <div class="info-block__item">
+                            <div class="info-block__img"><span class="icon-star-new span-mod-3 text-gray"></span>
+                            </div>
+                            <div class="info-block__row-box block-mod-8">
+                                <div class="info-block__row-item">
+                                    <div></div>
+                                    <div class="info-block__column-right block-mod-1">
+                                        <br>Расскажите подробнее про лида <br>
+                                        <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
+                                    </div>
+                                </div>
+                                <div class="info-block__row-item">
+                                    <div></div>
+                                    <div class="info-block__column-right">
+                                        {{ form_widget(form.description, {'attr': {
+                                            'class': 'arbitrate-form__textarea autoExpand textarea-mod-1',
+                                            'rows': '3',
+                                            'data-min-rows': '3',
+                                            'placeholder': 'Напишите здесь в свободной форме',
+                                            'autocomplete': 'off'
+                                        }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line">&nbsp;</div>
+                    </div>
+                    <div id="block-step-6">
+                        <div class="info-block__item">
+                            <div class="info-block__img"><span class="plain-text gold-label text-gray span-mod-6">gold</span></div>
+                            <div class="info-block__row-box">
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right block-mod-1">Запись разговора</div>
+                                </div>
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right text-mod-2">
+                                        <div class="binded__item">
+                                            {{ form_widget(form.uploadedAudioRecord, {
+                                                'attr': {
+                                                    'class': 'js-uploader',
+                                                    'style': 'display: none',
+                                                    'accept': 'audio/*'
+                                                }
+                                            }) }}
+                                            <button class="binded__button"><span class="icon-clip"></span></button>
+                                            <span class="binded__file">Прикрепить запись</span>
+                                            <button class="button-close">×</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-block__item">
+                    <div class="info-block__row-box block-mod-5">
+                        <div class="info-block__row-item block-mod-4">
+                            <div class="info-block__content-list">
+                                <div class="info-block__line">
+                                    <div class="info-block__line-left text-mod-12">Рейтинг лида
+                                        <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                    </div>
+                                    <div class="js-points info-block__line-right">
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                        <span class="icon-star-new text-gray span-mod-16"></span>
+                                    </div>
+                                </div>
+                                <div class="info-block__line block-mode-5">
+                                    <div class="info-block__line-left text-mod-12">Стоимость лида
+                                        <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                    </div>
+                                    <div class="info-block__line-right text-mod-11">
+                                        <span class="js-cost">0</span> руб.
+                                    </div>
+                                </div>
+                                <div class="info-block__line"></div>
+                            </div>
+                        </div>
+                        <div class="info-block__row-item block-mod-4">
+                            <div class="row">
+                                {{ form_widget(form.publicationRule, {'attr': {'class': 'checkbox'}}) }}
+                                <label for="lead_publicationRule" class="form__label-reg ">
+                                    Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead
+                                </label>
+                                {{ form_widget(form.hasAgreement, {'attr': {'class': 'checkbox'}}) }}
+                                <label for="lead_hasAgreement" class="form__label-reg ">
+                                    Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам
+                                </label>
+                            </div>
+                            {{ form_widget(form.submit, {
+                                'label': 'Выставить лида на биржу', 'attr': {'class': 'btn btn-buy-lead btn-green btn-pressed btn-mod-6'}
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+
+        {# Todo: короче этот ебаный блок копирайта повторяется на всех страницах, нужно чтобы был только на одной #}
+        <div class="info-block__list">
+            <div class="block-copyright">
+                © 2019 Edward - решения для бизнеса
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/create-lead.js') }}"></script>
+{% endblock %}
