@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -89,9 +90,9 @@ class Company
     /**
      * @var string|null
      *
-     * @Assert\Length(min=13, max=13)
+     * @Assert\Length(min=13, max=15)
      * @Assert\NotBlank(message="Необходимо указать ОГРН")
-     * @ORM\Column(name="ogrn", type="string", length=13)
+     * @ORM\Column(name="ogrn", type="string", length=15)
      */
     private $ogrn;
 
@@ -99,8 +100,7 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=9, max=9)
-     * @Assert\NotBlank(message="Необходимо указать КПП")
-     * @ORM\Column(name="kpp", type="string", length=9)
+     * @ORM\Column(name="kpp", type="string", length=9, nullable=true)
      */
     private $kpp;
 
@@ -141,7 +141,7 @@ class Company
     private $zipcode;
 
     /**
-     * @var ArrayCollection
+     * @var Collection
      *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinTable(name="companies_cities")
@@ -449,11 +449,11 @@ class Company
     }
 
     /**
-     * @param ArrayCollection $cities
+     * @param Collection $cities
      *
      * @return Company
      */
-    public function setCities(ArrayCollection $cities): self
+    public function setCities(Collection $cities): self
     {
         $this->cities = $cities;
 
@@ -461,9 +461,9 @@ class Company
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getCities(): ArrayCollection
+    public function getCities(): Collection
     {
         return $this->cities;
     }

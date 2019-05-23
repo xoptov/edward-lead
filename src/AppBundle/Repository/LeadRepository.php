@@ -32,4 +32,42 @@ class LeadRepository extends EntityRepository
 
         return $query->getSingleScalarResult();
     }
+
+    /**
+     * @param array $cities
+     *
+     * @return Lead[]
+     */
+    public function getByActiveAndCities(array $cities): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->where('l.city IN (:cities)')
+                ->setParameter('cities', $cities)
+            ->andWhere('l.status = :status')
+                ->setParameter('status', Lead::STATUS_ACTIVE)
+            ->orderBy('l.updatedAt', 'DESC')
+            ->addOrderBy('l.createdAt', 'DESC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @return Lead[]
+     */
+    public function getByActive(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->where('l.status = :status')
+                ->setParameter('status', Lead::STATUS_ACTIVE)
+            ->orderBy('l.updatedAt', 'DESC')
+            ->addOrderBy('l.createdAt', 'DESC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }

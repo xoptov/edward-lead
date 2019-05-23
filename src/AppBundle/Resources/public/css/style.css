@@ -1,7 +1,7 @@
 @font-face {
    font-family: "HelveticaNeueCyr-Light";
    src: url("../fonts/HelveticaNeueCyr-Light.eot");
-   src: url("../fonts/HelveticaNeueCyr-Light.woff2") format("woff2"), url("../fonts/HelveticaNeueCyr-Light.woff") format("woff"), url("../fonts/HelveticaNeueCyr-Light.ttf") format("truetype"), url("../fon.block-mod-3ts/HelveticaNeueCyr-Light.svg#HelveticaNeueCyr-Light") format("svg"), url("../fonts/HelveticaNeueCyr-Light.eot?#iefix") format("embedded-opentype");
+   src: url("../fonts/HelveticaNeueCyr-Light.woff2") format("woff2"), url("../fonts/HelveticaNeueCyr-Light.woff") format("woff"), url("../fonts/HelveticaNeueCyr-Light.ttf") format("truetype"), url("../fonts/HelveticaNeueCyr-Light.svg#HelveticaNeueCyr-Light") format("svg"), url("../fonts/HelveticaNeueCyr-Light.eot?#iefix") format("embedded-opentype");
    font-weight: normal;
    font-style: normal;
 }
@@ -365,8 +365,6 @@
 .icon-star-full:before {
    content: "\e9d9";
 }
-
-/*-----------------------sprites-----------------------------*/
 
 .sprite2 {
    background-image: url(../img/spritesheet.png);
@@ -1329,7 +1327,7 @@ textarea {
    color: #4a4a4a;
    font-family: "Helvetica Neue Cyr - Roman";
    font-size: 22px;
-   font-weight: 4 00;
+   font-weight: 400;
 }
 
 .lead__table {}
@@ -1410,7 +1408,7 @@ td.table__cell {}
    border-collapse: collapse;
 }
 
-.table tr:odd {
+.table tr:nth-child(odd) {
    background-color: red;
 }
 
@@ -1504,8 +1502,6 @@ td.table__cell {}
 .info a:hover {
    color: #ad8c02;
 }
-
------------------------------------------------------*/
 
 .tabs {
    /* width: 100%; */
@@ -2123,7 +2119,7 @@ textarea:-ms-input-placeholder {
 } */
 
 .btn-middle-gray {
-   color: #3f3f3ff;
+   color: #3f3f3f;
    font-family: "Helvetica Neue Cyr - Roman";
    font-size: 14px;
    font-weight: 400;
@@ -2506,7 +2502,7 @@ textarea:-ms-input-placeholder {
    color: #00a368;
    text-align: center;
    max-width: 132px;
-   word-wrap: wrap;
+   word-wrap: break-spaces;
    margin-left: auto;
    margin-right: auto;
    margin-top: 10px;
@@ -5200,3 +5196,48 @@ span.lead_exchange:hover + div.error453_block{
     position: relative;
     top: -23px;
 } */
+
+.backgrid {
+   border-top: 1px solid #dedede;
+   border-collapse: collapse;
+}
+
+.backgrid th, .backgrid td {
+   font-size: 14px;
+   padding: 12px 0;
+   text-align: center;
+}
+
+.backgrid th {
+   background-color: #ffffff;
+}
+
+.backgrid tr:nth-child(even) td {
+   background-color: #ffffff;
+}
+
+.backgrid td:not(:last-of-type) {
+   border-right: 1px solid #dedede;
+}
+
+.backgrid td.price {
+   color: #00a368;
+}
+
+.backgrid td.button-cell a {
+   color: #ffffff;
+   font-family: "Helvetica Neue Cyr - Roman";
+   font-size: 14px;
+   font-weight: 400;
+   padding: 6px 10px;
+   background-color: #00a368;
+   -webkit-transition: all 0.3s;
+   -o-transition: all 0.3s;
+   transition: all 0.3s;
+   cursor: pointer;
+   text-decoration: none;
+   border: none;
+   outline: none;
+   border-radius: 2px;
+   -webkit-appearance: none;
+}

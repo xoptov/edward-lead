@@ -97,7 +97,11 @@
         </main>
     </div>
     {% block javascripts %}
-        <script src="{{ asset('bundles/app/js/jquery-3.3.1.min.js') }}"></script>
+        {%- if app.environment == 'prod' -%}
+            <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.min.js') }}"></script>
+        {%- else -%}
+            <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.js') }}"></script>
+        {%- endif -%}
         <script src="{{ asset('bundles/app/js/main.js') }}"></script>
         <script src="{{ asset('bundles/app/js/app.js') }}"></script>
     {% endblock %}

@@ -1,3 +1,31 @@
 {% extends '@App/layout.html.twig' %}
 
-{% block content %}Список с лидами выставленными на продажу{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="lead">
+        <div class="lead__header">
+            <h2 class="lead__title">Биржа лидов</h2>
+            <a class="lead__button" href="{{ path("app_exchange_create_lead") }}">Продать лида</a>
+        </div>
+        <div id="lead-grid"></div>
+        <div class="block-copyright">
+            © 2019 Edward - решения для бизнеса
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/underscore-min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone-min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/underscore.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/js/lib/backgrid.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/exchange.js') }}"></script>
+{% endblock %}
