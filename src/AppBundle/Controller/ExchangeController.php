@@ -53,7 +53,7 @@ class ExchangeController extends Controller
     }
 
     /**
-     * @Route("/exchange/create-lead", name="app_exchange_create_lead", methods={"GET", "POST"})
+     * @Route("/exchange/lead/create", name="app_exchange_create_lead", methods={"GET", "POST"})
      *
      * @param Request                  $request
      * @param Uploader                 $uploader
@@ -146,9 +146,9 @@ class ExchangeController extends Controller
      * @param Request     $request
      * @param LeadManager $leadManager
      *
-     * @return Response|JsonResponse
+     * @return JsonResponse
      */
-    public function calculateLeadCostAction(Request $request, LeadManager $leadManager): Response
+    public function calculateLeadCostAction(Request $request, LeadManager $leadManager): JsonResponse
     {
         $form = $this->createForm(LeadType::class);
         $form->handleRequest($request);
@@ -168,5 +168,50 @@ class ExchangeController extends Controller
         }
 
         return new JsonResponse(['error' => $errors], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Route("/exchange/leads", name="app_exchange_leads", methods={"GET"}, defaults={"_format"="json"})
+     *
+     * @param LeadManager $leadManager
+     *
+     * @return JsonResponse
+     */
+    public function getOffersAction(LeadManager $leadManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $company = $user->getCompany();
+
+        if ($company) {
+            $cities = $company->getCities();
+
+            $leads = $this->entityManager->getRepository(Lead::class)
+                ->getByActiveAndCities($cities->toArray());
+        } else {
+            $leads = $this->entityManager->getRepository(Lead::class)
+                ->getByActive();
+        }
+
+        if (empty($leads)) {
+            return new JsonResponse(['message' => 'Для Ваших городов нет выставленных лидов на продажу']);
+        }
+
+        $result = [];
+
+        foreach ($leads as $lead) {
+            $result[] = [
+                'id' => $lead->getId(),
+                'created_at' => $lead->getCreatedAt()->getTimestamp() * 1000,
+                'stars' => $leadManager->calculateStars($lead),
+                'city' => $lead->getCity()->getName(),
+                'cpa' => false,
+                'audio_record' => $lead->hasAudioRecord(),
+                'channel' => $lead->getChannelName(),
+                'price' => $lead->getPrice() / Account::DIVISOR
+            ];
+        }
+
+        return new JsonResponse($result);
     }
 }

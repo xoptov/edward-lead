@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\City;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Company;
 use Symfony\Component\Form\AbstractType;
@@ -30,7 +31,9 @@ class CompanyType extends AbstractType
             ->add('email', EmailType::class)
             ->add('inn', TextType::class)
             ->add('ogrn', TextType::class)
-            ->add('kpp', TextType::class)
+            ->add('kpp', TextType::class, [
+                'required' => false
+            ])
             ->add('bik', TextType::class)
             ->add('accountNumber', TextType::class)
             ->add('address', TextType::class)
@@ -38,8 +41,8 @@ class CompanyType extends AbstractType
             ->add('officeName', TextType::class)
             ->add('officeAddress', TextType::class)
             ->add('officePhone', TelType::class)
-            ->add('regions', EntityType::class, [
-                'class' => Region::class,
+            ->add('cities', EntityType::class, [
+                'class' => City::class,
                 'choice_label' => 'name',
                 'expanded' => true,
                 'multiple' => true

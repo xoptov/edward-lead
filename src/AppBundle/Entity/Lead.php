@@ -275,6 +275,18 @@ class Lead
     }
 
     /**
+     * @return null|string
+     */
+    public function getChannelName(): ?string
+    {
+        if ($this->channel) {
+            return $this->channel->getName();
+        }
+
+        return null;
+    }
+
+    /**
      * @param \DateTime|null $orderDate
      *
      * @return Lead
@@ -412,6 +424,14 @@ class Lead
         $this->audioRecord = $audioRecord;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAudioRecord(): bool
+    {
+        return !empty($this->audioRecord);
     }
 
     /**
