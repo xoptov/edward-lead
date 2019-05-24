@@ -217,6 +217,23 @@ class ExchangeController extends Controller
     }
 
     /**
+     * @Route("/exchange/lead/{id}", name="app_exchange_show_lead", methods={"GET"}, requirements={"id"="\d+"})
+     *
+     * @param Lead $lead
+     *
+     * @return Response
+     */
+    public function showLeadAction(Lead $lead)
+    {
+        if ($lead->getUser() === $this->getUser()) {
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        } else {
+            // ToDo сделать другую вьюху задача FNn0dBwD
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        }
+    }
+
+    /**
      * @Route("/exchange/lead/{id}/buy", name="app_exchange_buy_lead", methods={"GET"})
      *
      * @param Lead         $lead
@@ -238,22 +255,5 @@ class ExchangeController extends Controller
         }
 
         return new Response('Trade success');
-    }
-
-    /**
-     * @Route("/exchange/lead/{id}", name="app_exchange_show_lead", methods={"GET"}, requirements={"id"="\d+"})
-     *
-     * @param Lead $lead
-     *
-     * @return Response
-     */
-    public function showLeadAction(Lead $lead)
-    {
-        if ($lead->getUser() === $this->getUser()) {
-            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
-        } else {
-            // ToDo сделать другую вьюху задача FNn0dBwD
-            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
-        }
     }
 }
