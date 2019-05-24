@@ -231,12 +231,29 @@ class ExchangeController extends Controller
 
         try {
             $trade = $tradeManager->create($buyer, $seller, $lead, $lead->getPrice());
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
 
             return new Response('Trade error');
         }
 
         return new Response('Trade success');
+    }
+
+    /**
+     * @Route("/exchange/lead/{id}", name="app_exchange_show_lead", methods={"GET"}, requirements={"id"="\d+"})
+     *
+     * @param Lead $lead
+     *
+     * @return Response
+     */
+    public function showLeadAction(Lead $lead)
+    {
+        if ($lead->getUser() === $this->getUser()) {
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        } else {
+            // ToDo сделать другую вьюху задача FNn0dBwD
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        }
     }
 }
