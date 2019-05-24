@@ -15,6 +15,8 @@ class Lead
     use TimeTrackableTrait;
 
     const STATUS_ACTIVE = 'active';
+    const STATUS_RESERVED = 'reserved';
+    const STATUS_SOLD = 'sold';
 
     /**
      * @var int

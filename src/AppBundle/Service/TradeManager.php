@@ -74,15 +74,19 @@ class TradeManager
      */
     public function create(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
     {
-        if ($lead->hasTrade()) {
+        if (in_array($lead->getStatus(), [Lead::STATUS_RESERVED, Lead::STATUS_SOLD])) {
             throw new TradeException($lead, $buyer, $seller, 'Лид не может быть продан повторно');
         }
 
-        $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
-        $buyerFee = $this->feesManager->calculateTradeFee($amount, FeesManager::TRADE_BUYER_FEE);
+        if ($lead->getUser() === $buyer) {
+            throw new TradeException($lead, $buyer, $seller, 'Пользователь не может купить лида сам у себя');
+        }
 
-        if ($buyerBalance < $amount + $buyerFee) {
-            throw new InsufficientFundsException($buyer->getAccount(), $amount + $buyerFee, 'Недостаточно средств у покапателя');
+        $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
+        $fee = $this->feesManager->calculateTradeFee($amount, FeesManager::TRADE_BUYER_FEE);
+
+        if ($buyerBalance < $amount + $fee) {
+            throw new InsufficientFundsException($buyer->getAccount(), $amount + $fee, 'Недостаточно средств у покупателя');
         }
 
         $trade = new Trade();
@@ -93,8 +97,8 @@ class TradeManager
             ->setAmount($amount);
 
         $this->entityManager->persist($trade);
-        $monetaryHold = $this->holdManager->create($buyer->getAccount(), $trade, $amount, false);
-        $trade->setHold($monetaryHold);
+        $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amount + $fee, false);
+        $trade->setHold($hold);
 
         if ($flush) {
             $this->entityManager->flush();
