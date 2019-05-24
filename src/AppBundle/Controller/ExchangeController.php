@@ -214,4 +214,23 @@ class ExchangeController extends Controller
 
         return new JsonResponse($result);
     }
+
+    /**
+     * @Route("/exchange/lead/{id}", name="app_exchange_show_lead", methods={"GET"}, requirements={"id"="\d+"})
+     *
+     * @param Lead $lead
+     *
+     * @return Response
+     */
+    public function showLeadAction(Lead $lead)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($lead->getUser()->getId() == $user->getId()) {
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        } else {
+            // ToDo сделать другую вьюху задача FNn0dBwD
+            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+        }
+    }
 }
