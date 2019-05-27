@@ -6,8 +6,21 @@
 
 {% block content %}
     <div class="office-settings u-w-100">
+        {%- if app.session.flashBag.has('success') -%}
+            {% set flash_type = 'success' %}
+            {% set flash_class = 'green' %}
+        {%- elseif app.session.flashBag.has('error') -%}
+            {% set flash_type = 'error' %}
+            {% set flash_class = 'red' %}
+        {%- endif -%}
+        {%- if flash_type is defined -%}
+            <div class="label-{{ flash_type }}">
+                {%- for message in app.session.flashBag.get(flash_type) -%}
+                    <div class="text-{{ flash_class }}">{{ message }}</div>
+                {%- endfor -%}
+            </div>
+        {%- endif -%}
         <h3 class="office-settings__title">Лид #{{ lead.id }}</h3>
-    {#{{ dump(lead) }}#}
         <div class="plain__text text-mod-5">Просмотрите карточку лида, если Вам он показался интересный, Вы можете его купить и получить его контактные данные. Мы продаём лида только одной организации.</div>
         <div class="info-block">
             <div class="info-block__list">

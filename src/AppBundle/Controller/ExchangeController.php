@@ -7,6 +7,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
+use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
@@ -266,35 +267,54 @@ class ExchangeController extends Controller
      *
      * @return Response
      */
-    public function successBuyLeadAction(Lead $lead, LeadManager $leadManager): Response
+    public function successBuyLeadAction(Lead $lead, LeadManager $leadManager, EventDispatcherInterface $eventDispatcher): Response
     {
+        $trade = $lead->getTrade();
+
+        if (!$this->isGranted(TradeVoter::SUCCESS, $trade)) {
+            $this->addFlash('error', 'У Вас нет прав для подтверждения качества лида');
+
+            return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+        }
+
         try {
-            $leadManager->successBuy($lead, $this->getUser());
+            $leadManager->successBuy($lead);
+            $eventDispatcher->dispatch(LeadEvent::LEAD_SOLD, new LeadEvent($lead));
+            $this->addFlash('success', 'Покупка лида завершена');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
-
-        $this->addFlash('success', 'Покупка лида завершена');
 
         return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
     }
 
     /**
-     * @Route("/exchange/lead/{id}/")
+     * @Route("/exchange/lead/{id}/reject", name="app_exchange_lead_reject", methods={"GET"})
      *
-     * @param Lead         $lead
-     * @param TradeManager $tradeManager
+     * @param Lead                     $lead
+     * @param LeadManager              $leadManager
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function errorBuyLEadAction(Lead $lead, TradeManager $tradeManager): Response
+    public function rejectBuyLeadAction(Lead $lead, LeadManager $leadManager, EventDispatcherInterface $eventDispatcher): Response
     {
-        if (!$lead->isReserved()) {
-            $this->addFlash('error', 'Нельзя завершить покупку незарезервированного лида');
+        $trade = $lead->getTrade();
+
+        if (!$this->isGranted(TradeVoter::REJECT, $trade)) {
+            $this->addFlash('error', 'У Вас нет прав для отказа от указанной сделки');
 
             return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
         }
 
-        return new Response('ok!');
+        try {
+            $leadManager->rejectBuy($lead);
+            $eventDispatcher->dispatch(LeadEvent::LEAD_BLOCK_BY_REJECT, new LeadEvent($lead));
+            $this->addFlash('success', 'Покупка успешно отменена');
+        } catch(\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
     }
 }

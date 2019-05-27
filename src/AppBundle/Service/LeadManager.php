@@ -136,23 +136,20 @@ class LeadManager
 
     /**
      * @param Lead $lead
-     * @param User $buyer
      *
      * @throws \Exception
      */
-    public function successBuy(Lead $lead, User $buyer): void
+    public function successBuy(Lead $lead): void
     {
-        if (!$lead->getTrade() instanceof Trade) {
+        if (!$lead->hasTrade()) {
             throw new \RuntimeException('Для подтверждения сделки необходимо её создать');
         }
 
         if (!$lead->isReserved()) {
-            throw new TradeException($lead, $buyer, $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
+            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
         }
 
-        if (!$lead->isBuyer($buyer)) {
-            throw new TradeException($lead, $buyer, $lead->getUser(), 'Одобрить купленного лида может только покупатель');
-        }
+        $lead->setStatus(Lead::STATUS_SOLD);
 
         $trade = $lead->getTrade();
 
@@ -160,5 +157,27 @@ class LeadManager
             ->getFeesAccount();
 
         $this->tradeManager->handleSuccess($trade, $feeAccount);
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $buyer
+     *
+     * @throws \Exception
+     */
+    public function rejectBuy(Lead $lead): void
+    {
+        if (!$lead->hasTrade()) {
+            throw new \RuntimeException('Для отмены сделки необходимо её создать');
+        }
+
+        if (!$lead->isReserved()) {
+            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
+        }
+
+        $lead->setStatus(Lead::STATUS_BLOCKED);
+
+        $trade = $lead->getTrade();
+        $this->tradeManager->handleReject($trade);
     }
 }

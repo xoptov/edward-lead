@@ -171,7 +171,6 @@ class TradeManager
             }
 
             $trade->setStatus(Trade::STATUS_ACCEPTED);
-            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
 
             $em->flush();
         });
@@ -179,17 +178,23 @@ class TradeManager
 
     /**
      * @param Trade $trade
+     *
+     * @throws OperationException
      */
     public function handleReject(Trade $trade): void
     {
-        //todo Необходимо реализовать отклонение сделки.
-    }
+        if ($trade->isProcessed()) {
+            throw new OperationException($trade, 'Торговая операция уже обработана');
+        }
 
-    /**
-     * @param Trade $trade
-     */
-    public function handleCancel(Trade $trade): void
-    {
-        //todo Необходимо реализовать отмену сделки.
+        if ($trade->hasHold()) {
+            $hold = $trade->getHold();
+            $trade->setHold(null);
+            $this->entityManager->remove($hold);
+        }
+
+        $trade->setStatus(Trade::STATUS_REJECTED);
+
+        $this->entityManager->flush();
     }
 }
