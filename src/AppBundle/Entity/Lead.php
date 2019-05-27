@@ -14,6 +14,7 @@ class Lead
 {
     use TimeTrackableTrait;
 
+    const STATUS_BLOCKED = 'blocked';
     const STATUS_ACTIVE = 'active';
     const STATUS_RESERVED = 'reserved';
     const STATUS_SOLD = 'sold';
@@ -217,13 +218,11 @@ class Lead
     }
 
     /**
-     * @param User $user
-     *
-     * @return bool
+     * @return null|User
      */
-    public function isBuyer(User $user): bool
+    public function getBuyer(): ?User
     {
-        return $this->trade->getBuyer() === $user;
+        return $this->trade->getBuyer();
     }
 
     /**
