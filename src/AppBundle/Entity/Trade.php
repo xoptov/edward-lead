@@ -14,7 +14,6 @@ class Trade extends Operation
     const STATUS_ACCEPTED = 1;
     const STATUS_REJECTED = 2;
     const STATUS_CANCELED = 3;
-    const STATUS_DONE = 4;
 
     /**
      * @var User
@@ -148,14 +147,6 @@ class Trade extends Operation
      */
     public function isProcessed(): bool
     {
-        return in_array($this->status, [self::STATUS_REJECTED, self::STATUS_CANCELED, self::STATUS_DONE]);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAccepted(): bool
-    {
-        return self::STATUS_ACCEPTED === $this->status;
+        return in_array($this->status, [self::STATUS_ACCEPTED, self::STATUS_REJECTED, self::STATUS_CANCELED]);
     }
 }

@@ -115,18 +115,13 @@ class TradeManager
      * @throws FinancialException
      * @throws OperationException
      */
-    public function process(Trade $trade, Account $feesAccount): void
+    public function handleSuccess(Trade $trade, Account $feesAccount): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        if (!$trade->isAccepted()) {
-            throw new OperationException($trade, 'Торговая операция ещё не одобрена');
-        }
-
         $buyerAccount = $trade->getBuyerAccount();
-
         $buyerFee = $this->feesManager->calculateTradeFee($trade->getAmount(), FeesManager::TRADE_BUYER_FEE);
 
         if ($buyerAccount->getBalance() < $trade->getAmount() + $buyerFee) {
@@ -138,7 +133,6 @@ class TradeManager
         }
 
         $sellerAccount = $trade->getSellerAccount();
-
         $sellerFee = $this->feesManager->calculateTradeFee($trade->getAmount(), FeesManager::TRADE_SELLER_FEE);
 
         if ($sellerAccount->getBalance() < $sellerFee) {
@@ -176,7 +170,8 @@ class TradeManager
                 $em->remove($hold);
             }
 
-            $trade->setStatus(Trade::STATUS_DONE);
+            $trade->setStatus(Trade::STATUS_ACCEPTED);
+            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
 
             $em->flush();
         });
@@ -185,7 +180,7 @@ class TradeManager
     /**
      * @param Trade $trade
      */
-    public function reject(Trade $trade): void
+    public function handleReject(Trade $trade): void
     {
         //todo Необходимо реализовать отклонение сделки.
     }
@@ -193,7 +188,7 @@ class TradeManager
     /**
      * @param Trade $trade
      */
-    public function cancel(Trade $trade): void
+    public function handleCancel(Trade $trade): void
     {
         //todo Необходимо реализовать отмену сделки.
     }

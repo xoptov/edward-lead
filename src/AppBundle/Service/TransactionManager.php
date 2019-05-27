@@ -4,9 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Operation;
-use AppBundle\Exception\AccountException;
-use AppBundle\Exception\FinancialException;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Exception\AccountException;
 use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Exception\TransactionException;
 
