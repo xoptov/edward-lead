@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Event\LeadEvent;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
+use AppBundle\Service\TradeManager;
 use AppBundle\Service\Uploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -224,13 +225,35 @@ class ExchangeController extends Controller
      */
     public function showLeadAction(Lead $lead)
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($lead->getUser()->getId() == $user->getId()) {
+        if ($lead->getUser() === $this->getUser()) {
             return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
         } else {
             // ToDo сделать другую вьюху задача FNn0dBwD
             return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
         }
+    }
+
+    /**
+     * @Route("/exchange/lead/{id}/buy", name="app_exchange_buy_lead", methods={"GET"})
+     *
+     * @param Lead         $lead
+     * @param TradeManager $tradeManager
+     *
+     * @return Response
+     */
+    public function buyLeadAction(Lead $lead, TradeManager $tradeManager): Response
+    {
+        $buyer = $this->getUser();
+        $seller = $lead->getUser();
+
+        try {
+            $trade = $tradeManager->create($buyer, $seller, $lead, $lead->getPrice());
+            $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->render('@App/Exchange/index.html.twig');
+        }
+
+        return $this->render('@App/Exchange/index.html.twig');
     }
 }
