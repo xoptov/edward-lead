@@ -248,12 +248,12 @@ class ExchangeController extends Controller
 
         try {
             $trade = $tradeManager->create($buyer, $seller, $lead, $lead->getPrice());
+            $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
-
-            return new Response('Trade error');
+            return $this->render('@App/Exchange/index.html.twig');
         }
 
-        return new Response('Trade success');
+        return $this->render('@App/Exchange/index.html.twig');
     }
 }

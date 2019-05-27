@@ -99,6 +99,7 @@ class TradeManager
         $this->entityManager->persist($trade);
         $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amount + $fee, false);
         $trade->setHold($hold);
+        $lead->setStatus(Lead::STATUS_RESERVED);
 
         if ($flush) {
             $this->entityManager->flush();
