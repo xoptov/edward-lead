@@ -2,21 +2,22 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
+use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
+use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
-use AppBundle\Service\Uploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ExchangeController extends Controller
 {
@@ -251,9 +252,49 @@ class ExchangeController extends Controller
             $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
-            return $this->render('@App/Exchange/index.html.twig');
+            return $this->redirectToRoute('app_exchange');
         }
 
-        return $this->render('@App/Exchange/index.html.twig');
+        return $this->redirectToRoute('app_exchange');
+    }
+
+    /**
+     * @Route("/exchange/lead/{id}/success", name="app_exchange_lead_success", methods={"GET"})
+     *
+     * @param Lead         $lead
+     * @param LeadManager  $leadManager
+     *
+     * @return Response
+     */
+    public function successBuyLeadAction(Lead $lead, LeadManager $leadManager): Response
+    {
+        try {
+            $leadManager->successBuy($lead, $this->getUser());
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        $this->addFlash('success', 'Покупка лида завершена');
+
+        return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+    }
+
+    /**
+     * @Route("/exchange/lead/{id}/")
+     *
+     * @param Lead         $lead
+     * @param TradeManager $tradeManager
+     *
+     * @return Response
+     */
+    public function errorBuyLEadAction(Lead $lead, TradeManager $tradeManager): Response
+    {
+        if (!$lead->isReserved()) {
+            $this->addFlash('error', 'Нельзя завершить покупку незарезервированного лида');
+
+            return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+        }
+
+        return new Response('ok!');
     }
 }

@@ -217,6 +217,16 @@ class Lead
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isBuyer(User $user): bool
+    {
+        return $this->trade->getBuyer() === $user;
+    }
+
+    /**
      * @param null|string $name
      *
      * @return Lead
@@ -494,5 +504,29 @@ class Lead
     public function getPrice(): int
     {
         return $this->price;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return self::STATUS_ACTIVE === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReserved(): bool
+    {
+        return self::STATUS_RESERVED === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSold(): bool
+    {
+        return self::STATUS_SOLD === $this->status;
     }
 }
