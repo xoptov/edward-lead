@@ -7,6 +7,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
+use AppBundle\Security\Voter\LeadVoter;
 use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\LeadType;
@@ -227,10 +228,17 @@ class ExchangeController extends Controller
      */
     public function showLeadAction(Lead $lead)
     {
+        if (!$this->isGranted(LeadVoter::VIEW, $lead)) {
+            $this->addFlash('error', 'У Вас нет прав на просмотр лида');
+            return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+        }
+
         if ($lead->getUser() === $this->getUser()) {
-            return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
+            return $this->render('@App/Exchange/show_lead_before.html.twig', ['lead' => $lead]);
+        } elseif ($lead->getBuyer() === $this->getUser()) {
+            return $this->render('@App/Exchange/show_lead_after.html.twig', ['lead' => $lead]);
         } else {
-            // ToDo сделать другую вьюху задача FNn0dBwD
+            //todo: тут нужно показывать
             return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
         }
     }

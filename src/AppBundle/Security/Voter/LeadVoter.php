@@ -2,15 +2,14 @@
 
 namespace AppBundle\Security\Voter;
 
-use AppBundle\Entity\Trade;
+use AppBundle\Entity\Lead;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
-class TradeVoter extends Voter
+class LeadVoter extends Voter
 {
-    const SUCCESS = 'success';
-    const REJECT = 'reject';
+    const VIEW = 'view';
 
     /**
      * @var AccessDecisionManagerInterface
@@ -26,15 +25,18 @@ class TradeVoter extends Voter
     }
 
     /**
-     * @inheritdoc
+     * @param string $attribute
+     * @param mixed  $subject
+     *
+     * @return bool
      */
     protected function supports($attribute, $subject)
     {
-        if (!$subject instanceof Trade) {
+        if (!$subject instanceof Lead) {
             return false;
         }
 
-        if (!in_array($attribute, [self::SUCCESS, self::REJECT])) {
+        if (!in_array($attribute, [self::VIEW])) {
             return false;
         }
 
@@ -43,18 +45,26 @@ class TradeVoter extends Voter
 
     /**
      * @param string         $attribute
-     * @param Trade          $subject
+     * @param Lead           $subject
      * @param TokenInterface $token
      *
      * @return bool
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+        if ($subject->isActive() && self::VIEW === $attribute) {
             return true;
         }
 
-        if ($subject->getBuyer() === $token->getUser()) {
+        if ($this->decisionManager->decide($token, [self::VIEW])) {
+            return true;
+        }
+
+        if ($subject->getUser() === $token->getUser()) {
+            return true;
+        }
+
+        if ($subject->getBuyer() === $token->getUser() && self::VIEW === $attribute) {
             return true;
         }
 
