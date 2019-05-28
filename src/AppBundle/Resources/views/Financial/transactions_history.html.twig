@@ -4,7 +4,7 @@
 
 {% macro money_format(amount) %}
     {% if amount < 0 %}{% set amount = amount / (-1) %}{% endif %}
-    {{ amount // 100 }} руб.{% if amount % 100 > 0 %} {{ amount % 100 }} коп.{% endif %}
+    {{ amount|money_format }}
 {% endmacro %}
 
 {% import _self as helper  %}
