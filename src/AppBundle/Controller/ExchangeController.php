@@ -122,8 +122,8 @@ class ExchangeController extends Controller
             }
 
             if ($data->getUploadedAudioRecord()) {
-                $fileStorePath = $uploader->store($data->getUploadedAudioRecord(), Uploader::DIRECTORY_AUDIO);
-                $data->setAudioRecord($fileStorePath);
+                $filePath = $uploader->store($data->getUploadedAudioRecord(), Uploader::DIRECTORY_AUDIO);
+                $data->setAudioRecord($filePath);
             }
 
             $leadManager->setExpirationDate($data);

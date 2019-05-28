@@ -136,8 +136,13 @@
                         <div></div>
                         <div class="info-block__column-right text-mod-2">
                             <div class="binded__item">
-                                <button class="binded__button"><span class="icon-clip"></span></button>
-                                <span class="binded__file span-mod-19">{% if lead.audioRecord is empty %}Запись отсутствует{% else %}Прослушать запись разговора{% endif %}</span>
+                                {% if lead.audioRecord is empty %}
+                                    Запись отсутствует
+                                {% else %}
+                                    <audio controls src="{{ asset('uploads/' ~ lead.audioRecord) }}">
+                                        Ваш браузер не позволяет прослушивавать аудио записи.
+                                    </audio>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

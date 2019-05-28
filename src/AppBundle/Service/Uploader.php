@@ -11,14 +11,14 @@ class Uploader
     /**
      * @var string
      */
-    private $basePath;
+    private $storePath;
 
     /**
-     * @param string $basePath
+     * @param string $storePath
      */
-    public function __construct(string $basePath)
+    public function __construct(string $storePath)
     {
-        $this->basePath = $basePath;
+        $this->storePath = $storePath;
     }
 
     /**
@@ -30,10 +30,10 @@ class Uploader
     public function store(UploadedFile $uploadedFile, string $directory): string
     {
         $fileName = md5($uploadedFile->getFilename() . $uploadedFile->getSize(), false) . '.' . $uploadedFile->guessExtension();
-        $storePath = $this->basePath . DIRECTORY_SEPARATOR . $directory;
+        $storePath = $this->storePath . DIRECTORY_SEPARATOR . $directory;
 
         $uploadedFile->move($storePath, $fileName);
 
-        return $storePath . DIRECTORY_SEPARATOR . $fileName;
+        return $directory . DIRECTORY_SEPARATOR . $fileName;
     }
 }
