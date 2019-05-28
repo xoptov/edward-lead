@@ -24,4 +24,4 @@ parameters:
     lead_per_user: 5
     lead_expiration_period: 7
 
-    upload_base_path: '%kernel.project_dir%/web/uploads'
+    upload_store_path: '%kernel.project_dir%/web/uploads'

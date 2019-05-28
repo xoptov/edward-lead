@@ -139,7 +139,7 @@ services:
 
     AppBundle\Service\Uploader:
         arguments:
-            $basePath: '%upload_base_path%'
+            $storePath: '%upload_store_path%'
 
     AppBundle\Twig\TemplateExtension:
         public: false
