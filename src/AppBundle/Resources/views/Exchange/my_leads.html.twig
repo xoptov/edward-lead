@@ -26,52 +26,58 @@
                             <th>Статус</th>
                             <th></th>
                         </tr>
-                        {% for trade in trades %}
-                            {% set lead = trade.lead %}
-                            <tr>
-                                <td>{{ trade.createdAt|date('d.m.Y') }}</td>
-                                <td>{{ lead.name }}</td>
-                                <td>
-                                    {% set show_number = false %}
-                                    {% set current_call = null %}
-                                    {% for call in calls %}
-                                        {% if call.lead.id == lead.id and lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
-                                            {% set show_number = true %}
-                                            {% set current_call = call %}
-                                        {% elseif call.lead.id == lead.id %}
-                                            {% set current_call = call %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if show_number %}
-                                        {{ lead.phone }}
-                                    {% else %}
-                                        номер скрыт
-                                    {% endif %}
-                                </td>
-                                <td>{{ lead.city.name }}</td>
-                                <td>{{ trade.amount|money_format }}</td>
-                                <td>
-                                {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
-                                    <span class="lead_arbitration">Арбитраж</span>
-                                {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_RESERVED') %}
-                                    <span class="lead_exchange">Проверка</span>
-                                {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
-                                    <span class="lead_sale">Успешно</span>
-                                {% endif %}
-                                </td>
-                                <td>
-                                    <div class="table_link">
-                                        {# Тут я не знаю как сделать! #}
-                                        {% if current_call is null %}
-                                            <span class="phone_link"></span>
+                        {% if trades|length %}
+                            {% for trade in trades %}
+                                {% set lead = trade.lead %}
+                                <tr>
+                                    <td>{{ trade.createdAt|date('d.m.Y') }}</td>
+                                    <td>{{ lead.name }}</td>
+                                    <td>
+                                        {% set show_number = false %}
+                                        {% set current_call = null %}
+                                        {% for call in calls %}
+                                            {% if call.lead.id == lead.id and lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
+                                                {% set show_number = true %}
+                                                {% set current_call = call %}
+                                            {% elseif call.lead.id == lead.id %}
+                                                {% set current_call = call %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if show_number %}
+                                            {{ lead.phone }}
                                         {% else %}
-                                            <span class="speaker"></span>
+                                            номер скрыт
                                         {% endif %}
-                                        <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
-                                    </div>
-                                </td>
+                                    </td>
+                                    <td>{{ lead.city.name }}</td>
+                                    <td>{{ trade.amount|money_format }}</td>
+                                    <td>
+                                        {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
+                                            <span class="lead_arbitration">Арбитраж</span>
+                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_RESERVED') %}
+                                            <span class="lead_exchange">Проверка</span>
+                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
+                                            <span class="lead_sale">Успешно</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="table_link">
+                                            {# Тут я не знаю как сделать! #}
+                                            {% if current_call is null %}
+                                                <span class="phone_link"></span>
+                                            {% else %}
+                                                <span class="speaker"></span>
+                                            {% endif %}
+                                            <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">Ещё нет купленых лидов</td>
                             </tr>
-                        {% endfor %}
+                        {% endif %}
                     {% endif %}
                     </tbody>
                 </table>

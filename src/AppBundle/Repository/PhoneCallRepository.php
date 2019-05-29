@@ -11,10 +11,14 @@ class PhoneCallRepository extends EntityRepository
     /**
      * @param User $user
      * @param $trades
-     * @return array
+     * @return array|null
      */
-    public function getCallsWithTrades(User $user, $trades): array
+    public function getCallsWithTrades(User $user, $trades): ?array
     {
+        if ( ! is_array($trades)) {
+            return null;
+        }
+
         if ( ! sizeof($trades)) {
             return null;
         }
@@ -34,7 +38,7 @@ class PhoneCallRepository extends EntityRepository
         }
 
         if (sizeof($leadsId) == 0) {
-            return [];
+            return null;
         }
 
         $queryBuilder = $this->createQueryBuilder('pc');
