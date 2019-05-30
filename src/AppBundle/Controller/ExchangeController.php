@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
@@ -52,7 +53,18 @@ class ExchangeController extends Controller
      */
     public function myLeadsAction(): Response
     {
-        return $this->render('@App/Exchange/my_leads.html.twig');
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $trades = $this->getDoctrine()
+            ->getRepository(Trade::class)
+            ->findBy(["buyer" => $user], ["id" => "DESC"]);
+
+        $phoneCalls = $this->getDoctrine()
+            ->getRepository(PhoneCall::class)
+            ->getCallsWithTrades($user, $trades);
+
+        return $this->render('@App/Exchange/my_leads.html.twig', ["trades" => $trades, "calls" => $phoneCalls]);
     }
 
     /**

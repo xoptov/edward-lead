@@ -30,6 +30,7 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter("hidden_phone", [$this, "hiddenPhone"]),
             new \Twig_SimpleFilter("date_format", [$this, "dateFormat"]),
+            new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"]),
             new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone'])
         ];
     }
@@ -48,7 +49,7 @@ class TemplateExtension extends \Twig_Extension
      * @param $phone
      * @return string
      */
-    public function hiddenPhone($phone)
+    public function hiddenPhone($phone): string
     {
         if (substr($phone, 0, 1) == "+") {
             return sprintf(
@@ -70,7 +71,7 @@ class TemplateExtension extends \Twig_Extension
      * @param \DateTime $dateTime
      * @return string
      */
-    public function dateFormat(\DateTime $dateTime)
+    public function dateFormat(\DateTime $dateTime): string
     {
         $day = date_format($dateTime, 'j');
         $month = date_format($dateTime, 'n');
@@ -154,5 +155,21 @@ class TemplateExtension extends \Twig_Extension
         );
 
         return $formattedPhone;
+    }
+
+    /**
+     * @param int $money
+     *
+     * @return string
+     */
+    public function moneyFormat(int $money): string
+    {
+        $result = intdiv($money, 100) . ' руб.';
+
+        if ($end = $money % 100) {
+            $result .= ' ' . $money % 100 . ' коп.';
+        }
+
+        return $result;
     }
 }
