@@ -129,6 +129,13 @@ services:
         calls:
             - [setHoldManager, ['@AppBundle\Service\HoldManager']]
 
+    app.admin.trade:
+        class: AppBundle\Admin\TradeAdmin
+        arguments: [~, AppBundle\Entity\Trade, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: exchange, label: Trades }
+        public: true
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
     AppBundle\Service\LeadManager:
