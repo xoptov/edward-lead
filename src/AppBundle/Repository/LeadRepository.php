@@ -70,4 +70,28 @@ class LeadRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * @param User $user
+     *
+     * @return Lead|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getByUserAndReserved(User $user): ?Lead
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->innerJoin('l.trade', 't')
+            ->where('t.buyer = :buyer')
+                ->setParameter('buyer', $user)
+            ->andWhere('l.status = :reserved')
+                ->setParameter('reserved', Lead::STATUS_RESERVED)
+            ->orderBy('l.updatedAt', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
 }

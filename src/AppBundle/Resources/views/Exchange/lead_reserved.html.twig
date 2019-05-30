@@ -1,0 +1,46 @@
+<div class="blocked-modal">
+    <div class="content-area">
+        <h2>Помогите нам улучшить сервис</h2>
+        <h3 style="margin:25px;">Дайте нам обратную связь, чтобы наш робот на основании данных формировал рейтинг продавца</h3>
+        <p class="text-gray">Имя лида: {{ lead.name }} Телефон: {{ lead.phone|human_phone }}</p>
+        <div class="result-choices">
+            <div class="result-case">
+                <div>
+                    <img src="{{ asset('bundles/app/img/pen-ruller.svg') }}" width="72" height="72">
+                </div>
+                <div>
+                    <p>Целевой лид, записали на замер</p>
+                    <a class="btn btn-green" href="{{ path('app_exchange_lead_success', {'id': lead.id}) }}">Выбрать вариант</a>
+                </div>
+            </div>
+            <div class="result-case">
+                <div>
+                    <img src="{{ asset('bundles/app/img/calc.svg') }}" width="72" height="72">
+                </div>
+                <dev>
+                    <p>Целевой лид, взяли на просчёт</p>
+                    <a class="btn btn-green" href="{{ path('app_exchange_lead_success', {'id': lead.id}) }}">Выбрать вариант</a>
+                </dev>
+            </div>
+            <div class="result-case">
+                <div>
+                    <img src="{{ asset('bundles/app/img/pers-think.svg') }}" width="72" height="72">
+                </div>
+                <dev>
+                    <p>Целевой лид, но не смогли договориться</p>
+                    <a class="btn btn-green" href="{{ path('app_exchange_lead_success', {'id': lead.id}) }}">Выбрать вариант</a>
+                </dev>
+            </div>
+            <div class="result-case">
+                <div>
+                    <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Отправить в арбитраж</span>
+                    <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/smile-sad.svg') }}" width="72" height="72">
+                </div>
+                <div>
+                    <p>Не целевой лид, окна ему не нужны</p>
+                    <a class="btn btn-green" href="{{ path('app_exchange_lead_reject', {'id': lead.id}) }}">Выбрать вариант</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
