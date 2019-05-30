@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="phone_call")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PhoneCallRepository")
  */
 class PhoneCall extends Operation
 {
