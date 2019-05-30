@@ -5,15 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
-use AppBundle\Security\Voter\LeadVoter;
-use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
+use AppBundle\Security\Voter\LeadVoter;
+use AppBundle\Security\Voter\TradeVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -210,7 +209,7 @@ class ExchangeController extends Controller
         }
 
         if (empty($leads)) {
-            return new JsonResponse(['message' => 'Для Ваших городов нет выставленных лидов на продажу']);
+            return new JsonResponse();
         }
 
         $result = [];
@@ -336,5 +335,24 @@ class ExchangeController extends Controller
         }
 
         return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+    }
+
+    /**
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function unsetLeadReserveModal(): Response
+    {
+        $user = $this->getUser();
+
+        $lead = $this->entityManager->getRepository('AppBundle:Lead')
+            ->getByUserAndReserved($user);
+
+        if ($lead) {
+            return $this->render('@App/Exchange/lead_reserved.html.twig', ['lead' => $lead]);
+        }
+
+        return new Response();
     }
 }

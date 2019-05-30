@@ -222,7 +222,11 @@ class Lead
      */
     public function getBuyer(): ?User
     {
-        return $this->trade->getBuyer();
+        if ($this->trade) {
+            return $this->trade->getBuyer();
+        }
+
+        return null;
     }
 
     /**

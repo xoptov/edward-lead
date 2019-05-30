@@ -110,11 +110,29 @@ $(function(){
         collection: leads
     });
 
-    $('#lead-grid').append(leadGrid.render().el);
+    let isGridRendered = false;
+    let isMessageShown = false;
+    const $leadGridArea = $('#lead-grid');
+
+    leads.on('sync', function(e, collection, resp) {
+        setTimeout(function() {
+            leads.fetch({reset:true});
+        }, 10000);
+        if (collection.length > 0 && !isGridRendered) {
+            $leadGridArea.empty().append(leadGrid.render().el);
+            isGridRendered = true;
+            isMessageShown = false;
+        } else if (!collection.length) {
+            if (isGridRendered) {
+                $leadGridArea.empty();
+                isGridRendered = false;
+            }
+            if (!isMessageShown) {
+                $leadGridArea.text('Нет предложений по лидам в вашей локации');
+                isMessageShown = true;
+            }
+        }
+    });
 
     leads.fetch({reset:true});
-
-    setInterval(function() {
-        leads.fetch({reset:true});
-    }, 10000);
 });

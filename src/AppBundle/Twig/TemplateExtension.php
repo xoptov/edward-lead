@@ -3,17 +3,45 @@
 namespace AppBundle\Twig;
 
 
+use AppBundle\Entity\Lead;
+use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+
 class TemplateExtension extends \Twig_Extension
 {
     /**
-     * @return array
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getFilters()
     {
         return [
             new \Twig_SimpleFilter("hidden_phone", [$this, "hiddenPhone"]),
             new \Twig_SimpleFilter("date_format", [$this, "dateFormat"]),
-            new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"])
+            new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"]),
+            new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone'])
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead'])
         ];
     }
 
@@ -91,15 +119,57 @@ class TemplateExtension extends \Twig_Extension
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function hasReservedLead(User $user)
+    {
+        try {
+            $lead = $this->entityManager->getRepository('AppBundle:Lead')
+                ->getByUserAndReserved($user);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return $lead instanceof Lead;
+    }
+
+    /**
+     * @param null|string $phone
+     *
+     * @return string
+     */
+    public function humanPhone(?string $phone): string
+    {
+        if (!$phone) {
+            return '';
+        }
+
+        $formattedPhone = sprintf('%s(%s)%s-%s-%s',
+            substr($phone, 0, 2),
+            substr($phone, 2, 3),
+            substr($phone, 5, 3),
+            substr($phone, 8, 2),
+            substr($phone, 10, 2)
+        );
+
+        return $formattedPhone;
+    }
+
+    /**
      * @param int $money
+     *
      * @return string
      */
     public function moneyFormat(int $money): string
     {
         $result = intdiv($money, 100) . ' руб.';
+
         if ($end = $money % 100) {
             $result .= ' ' . $money % 100 . ' коп.';
         }
+
         return $result;
     }
 }
