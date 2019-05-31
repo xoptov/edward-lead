@@ -156,7 +156,9 @@
         <div class="card-lead__offer">
             <div class="plain__text text-mod-6">Стоимость лида на бирже:</div>
             <div class="text-green">{{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</div>
-            <button class="btn btn-green btn-buy-lead">Купить лида за {{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</button>
+            {% if app.user != lead.user %}
+                <a class="btn btn-green btn-buy-lead" href="{{ path('app_exchange_buy_lead', {'id': lead.id}) }}">Купить лида за {{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</a>
+            {% endif %}
         </div>
         <div class="block-copyright">
             © 2019 Edward - решения для бизнеса
