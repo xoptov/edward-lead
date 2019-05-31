@@ -131,7 +131,7 @@ services:
 
     app.admin.trade:
         class: AppBundle\Admin\TradeAdmin
-        arguments: [~, AppBundle\Entity\Trade, ~]
+        arguments: [~, AppBundle\Entity\Trade, AppBundle\Controller\Admin\TradeController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: exchange, label: Trades }
         public: true
