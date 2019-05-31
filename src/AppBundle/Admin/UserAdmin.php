@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\User;
 use AppBundle\Service\UserManager;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
@@ -55,6 +56,7 @@ class UserAdmin extends AbstractAdmin
             ->add('phone')
             ->add('email')
             ->add('roles')
+            ->add("saleLeadLimit")
             ->add('enabled')
             ->add('typeSelected')
             ->add('createdAt')
@@ -75,6 +77,7 @@ class UserAdmin extends AbstractAdmin
             ->add('skype')
             ->add('telegram')
             ->add('roles')
+            ->add("saleLeadLimit")
             ->add('enabled')
             ->add('typeSelected')
             ->add('createdAt')
@@ -102,6 +105,7 @@ class UserAdmin extends AbstractAdmin
             ->add('vkontakte')
             ->add('facebook')
             ->add('telegram')
+            ->add("saleLeadLimit")
             ->add('enabled')
         ;
     }
@@ -121,6 +125,7 @@ class UserAdmin extends AbstractAdmin
             ->add('facebook')
             ->add('telegram')
             ->add('roles')
+            ->add("saleLeadLimit")
             ->add('enabled')
             ->add('typeSelected')
             ->add('createdAt')
@@ -139,5 +144,14 @@ class UserAdmin extends AbstractAdmin
             'list',
             'show'
         ]);
+    }
+
+    /**
+     * @param User $object
+     * @return string
+     */
+    public function toString($object)
+    {
+        return $object->getName() ?? "новый пользователь";
     }
 }
