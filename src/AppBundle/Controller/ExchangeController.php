@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
