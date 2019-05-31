@@ -37,10 +37,11 @@ security:
             logout: ~
 
     access_control:
-        - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/confirm/links, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/registration$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/password$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/confirm/links$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/upload/image$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER}
