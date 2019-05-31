@@ -25,6 +25,11 @@ class TradeAdmin extends AbstractAdmin
                     2 => 'Rejected'
                 ],
                 'catalogue' => 'messages'
+            ])
+            ->add('_action', null, [
+                'actions' => [
+                    'reject' => ['template' => '@App/CRUD/list__action_reject.html.twig']
+                ]
             ]);
     }
 
@@ -33,6 +38,7 @@ class TradeAdmin extends AbstractAdmin
      */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept(['list']);
+        $collection->clearExcept(['list'])
+            ->add('reject', $this->getRouterIdParameter().'/reject');
     }
 }
