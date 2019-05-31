@@ -41,12 +41,16 @@
                             <div class="info-block__column-left">Город:</div>
                             <div class="info-block__column-right">{{ lead.city.name }}</div>
                         </div>
-                        <div class="info-block__row-item block-mod-6">
-                            <div class="info-block__column-left">&nbsp;</div>
+                        <div class="info-block__row-item">
+                            <div class="info-block__column-left">Продавец:</div>
                             <div class="info-block__column-right">
-                                <div class="info-block__first-call-box">
-                                    <button class="btn btn-small btn-green">Сделать первый звонок</button>
-                                    <span class="info-block__attention">Отображение номера будет доступно после Вашего первого звонка &nbsp; <a href="#" class="info-block__link">Правила платформы Edward</a></span>
+                                <div class="info-block__seller-info">
+                                    <div>
+                                        {{ lead.user.name }}
+                                        <br>
+                                        <span class="text-green">рейтинг: 98/100</span>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -148,6 +152,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="card-lead__offer">
+            <div class="plain__text text-mod-6">Стоимость лида на бирже:</div>
+            <div class="text-green">{{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</div>
+            <button class="btn btn-green btn-buy-lead">Купить лида за {{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</button>
         </div>
         <div class="block-copyright">
             © 2019 Edward - решения для бизнеса
