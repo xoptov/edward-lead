@@ -23,6 +23,8 @@
             {{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}
             {{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}
             {{ form_row(form.cities, {'label': 'Укажите города работы'}) }}
+            {{ form_row(form.logotypePath) }}
+            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/jpeg,image/png'}}) }}
         </div>
     </div>
     <div>

@@ -80,3 +80,20 @@ sonata_block:
         # enable the SonataAdminBundle block
         sonata.admin.block.admin_list:
             contexts: [main, financial, exchange]
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path: ~
+    loaders:
+        default:
+            filesystem:
+                data_root: '%upload_store_path%'
+    filter_sets:
+        cache: ~
+        logotype_200x200:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [200,200]
+                    mode: outbound

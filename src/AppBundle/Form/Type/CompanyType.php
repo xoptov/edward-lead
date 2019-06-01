@@ -6,6 +6,8 @@ use AppBundle\Entity\City;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Company;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -47,6 +49,8 @@ class CompanyType extends AbstractType
                 'expanded' => true,
                 'multiple' => true
             ])
+            ->add('logotypePath', HiddenType::class)
+            ->add('uploader', FileType::class)
             ->add('submit', SubmitType::class)
             ->add('reset', ResetType::class);
 

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -40,6 +40,11 @@ class Company
      * @ORM\JoinColumn(name="logotype_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $logotype;
+
+    /**
+     * @var string
+     */
+    private $logotypePath;
 
     /**
      * @var string|null
@@ -226,6 +231,26 @@ class Company
     public function getLogotype(): ?Image
     {
         return $this->logotype;
+    }
+
+    /**
+     * @param string|null $logotypePath
+     *
+     * @return Company
+     */
+    public function setLogotypePath(?string $logotypePath): self
+    {
+        $this->logotypePath = $logotypePath;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogotypePath(): ?string
+    {
+        return $this->logotypePath;
     }
 
     /**
