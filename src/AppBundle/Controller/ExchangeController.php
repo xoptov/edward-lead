@@ -203,6 +203,10 @@ class ExchangeController extends Controller
         if ($company) {
             $cities = $company->getCities();
 
+            if ($cities->isEmpty()) {
+                return new JsonResponse();
+            }
+
             $leads = $this->entityManager->getRepository(Lead::class)
                 ->getByActiveAndCities($cities->toArray());
         } else {
@@ -210,22 +214,67 @@ class ExchangeController extends Controller
                 ->getByActive();
         }
 
-        if (empty($leads)) {
-            return new JsonResponse();
-        }
-
         $result = [];
 
         foreach ($leads as $lead) {
             $result[] = [
                 'id' => $lead->getId(),
-                'created_at' => $lead->getCreatedAt()->getTimestamp() * 1000,
+                'created_at' => $lead->getCreatedAtTimestamp(),
                 'stars' => $leadManager->calculateStars($lead),
-                'city' => $lead->getCity()->getName(),
+                'city' => $lead->getCityName(),
                 'cpa' => false,
                 'audio_record' => $lead->hasAudioRecord(),
                 'channel' => $lead->getChannelName(),
-                'price' => $lead->getPrice() / Account::DIVISOR
+                'price' => $lead->getPrice(Account::DIVISOR)
+            ];
+        }
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/exchange/trades", name="app_exchange_trades", methods={"GET"}, defaults={"_format"="json"})
+     *
+     * @param LeadManager $leadManager
+     *
+     * @return JsonResponse
+     */
+    public function getTradesAction(LeadManager $leadManager): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $company = $user->getCompany();
+
+        if ($company) {
+            $cities = $company->getCities();
+
+            if ($cities->isEmpty()) {
+                return new JsonResponse();
+            }
+
+            $trades = $this->entityManager->getRepository(Trade::class)
+                ->getByCitiesAndStatus($cities->toArray(), Trade::STATUS_ACCEPTED);
+        } else {
+            $trades = $this->entityManager->getRepository(Trade::class)
+                ->findBy(['status' => Trade::STATUS_ACCEPTED]);
+        }
+
+        $result = [];
+
+        /** @var Trade $trade */
+        foreach ($trades as $trade) {
+            $lead = $trade->getLead();
+            $result[] = [
+                'id' => $trade->getId(),
+                'created_at' => $trade->getCreatedAtTimestamp(),
+                'lead' => $lead->getId(),
+                'buyer' => $trade->getBuyerId(),
+                'seller' => $trade->getSellerId(),
+                'stars' => $leadManager->calculateStars($lead),
+                'audio_record' => $lead->hasAudioRecord(),
+                'city' => $lead->getCityName(),
+                'cpa' => false,
+                'price' => $trade->getAmount(Account::DIVISOR)
             ];
         }
 
