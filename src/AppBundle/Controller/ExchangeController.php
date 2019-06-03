@@ -214,10 +214,6 @@ class ExchangeController extends Controller
                 ->getByActive();
         }
 
-        if (empty($leads)) {
-            return new JsonResponse();
-        }
-
         $result = [];
 
         foreach ($leads as $lead) {
