@@ -22,7 +22,9 @@
         {%- endif -%}
         <div class="lead__header mb-30">
             <h2 class="lead__title">Биржа лидов</h2>
-            <a class="lead__button" href="{{ path("app_exchange_create_lead") }}">Продать лида</a>
+            {%- if is_granted('ROLE_WEBMASTER') -%}
+                <a class="lead__button" href="{{ path("app_exchange_create_lead") }}">Продать лида</a>
+            {%- endif -%}
         </div>
         <h3 class="mb-10">Предложения</h3>
         <div id="lead-offers-grid" class="mb-30"></div>
