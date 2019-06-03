@@ -270,6 +270,18 @@ class Lead
     }
 
     /**
+     * @return null|string
+     */
+    public function getCityName(): ?string
+    {
+        if ($this->city) {
+            return $this->city->getName();
+        }
+
+        return null;
+    }
+
+    /**
      * @param Property|null $channel
      *
      * @return Lead
@@ -502,10 +514,16 @@ class Lead
     }
 
     /**
-     * @return int
+     * @param int|null $divisor
+     *
+     * @return int|null
      */
-    public function getPrice(): int
+    public function getPrice(?int $divisor = null): ?int
     {
+        if ($divisor) {
+            return $this->price / $divisor;
+        }
+
         return $this->price;
     }
 

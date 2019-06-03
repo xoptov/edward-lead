@@ -150,6 +150,16 @@ class Operation
     }
 
     /**
+     * @param int $multiple
+     *
+     * @return int
+     */
+    public function getCreatedAtTimestamp(int $multiple = 1000): int
+    {
+        return $this->createdAt->getTimestamp() * $multiple;
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function prePersist(): void

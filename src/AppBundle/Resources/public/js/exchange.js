@@ -1,12 +1,4 @@
 $(function(){
-    const Lead = Backbone.Model.extend({});
-
-    const Leads = Backbone.Collection.extend({
-        model: Lead,
-        url: '/exchange/leads'
-    });
-    const leads = new Leads();
-
     Backgrid.QualityCell = Backgrid.StringCell.extend({
         className: 'quality-cell',
         render: function() {
@@ -38,27 +30,41 @@ $(function(){
             this.$el.empty();
             const rawValue = this.model.get(this.column.get("name"));
             const formattedValue = this.formatter.fromRaw(rawValue, this.model);
-            this.$el.append($("<a>", {
-                tabIndex: -1,
-                href: '/exchange/lead/' + this.model.get('id'),
-                title: this.title || formattedValue,
-                target: this.target
-            }).text('Подробнее'));
-            this.delegateEvents();
+            if (this.model.has('id')) {
+                this.$el.append($("<a>", {
+                    tabIndex: -1,
+                    href: '/exchange/lead/' + this.model.get('id'),
+                    title: this.title || formattedValue,
+                    target: this.target
+                }).text('Подробнее'));
+                this.delegateEvents();
+            }
             return this;
         }
     });
 
-    const columns = [
+    const Lead = Backbone.Model.extend({});
+    const Leads = Backbone.Collection.extend({
+        model: Lead,
+        url: '/exchange/leads'
+    });
+    const leads = new Leads();
+    const leadColumns = [
+        {
+            name: 'id',
+            label: 'Номер',
+            cell: 'integer',
+            editable: false,
+            sortable: false
+        },
         {
             name: 'created_at',
-            label: 'Дата публикации',
+            label: 'Дата',
             cell: Backgrid.DatetimeCell.extend({
                 includeTime: false
             }),
             editable: false,
-            sortable: false,
-            includeTime: false
+            sortable: false
         },
         {
             name: 'stars',
@@ -105,34 +111,113 @@ $(function(){
         }
     ];
 
-    const leadGrid = new Backgrid.Grid({
-        columns: columns,
-        collection: leads
+    const Trade = Backbone.Model.extend({});
+    const Trades = Backbone.Collection.extend({
+        model: Trade,
+        url: '/exchange/trades'
     });
 
-    let isGridRendered = false;
-    let isMessageShown = false;
-    const $leadGridArea = $('#lead-grid');
+    const trades = new Trades();
+    const tradeColumns = [
+        {
+            name: 'id',
+            label: 'Номер',
+            cell: 'integer',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'created_at',
+            label: 'Дата',
+            cell: Backgrid.DatetimeCell.extend({
+                includeTime: false
+            }),
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'lead',
+            label: 'Лид',
+            cell: 'integer',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'buyer',
+            label: 'Покупатель',
+            cell: 'integer',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'seller',
+            label: 'Продавец',
+            cell: 'integer',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'stars',
+            label: 'Качество лида',
+            cell: 'quality',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'city',
+            label: 'Город',
+            cell: 'string',
+            editable: false,
+            sortable: false
+        },
+        {
+            name: 'price',
+            label: 'Стоимость',
+            cell: 'integer',
+            editable: false,
+            sortable: false,
+            formatter: _.extend({}, Backgrid.CellFormatter.prototype, {
+                fromRaw: function(number, model) {
+                    let formattedValue = Backgrid.NumberFormatter.prototype.fromRaw(number, model);
+                    if (formattedValue !== '') {
+                        return formattedValue + ' руб.';
+                    }
+                    return formattedValue;
+                }
+            })
+        }
+    ];
 
-    leads.on('sync', function(e, collection, resp) {
-        setTimeout(function() {
-            leads.fetch({reset:true});
-        }, 10000);
-        if (collection.length > 0 && !isGridRendered) {
-            $leadGridArea.empty().append(leadGrid.render().el);
-            isGridRendered = true;
-            isMessageShown = false;
-        } else if (!collection.length) {
-            if (isGridRendered) {
-                $leadGridArea.empty();
-                isGridRendered = false;
-            }
-            if (!isMessageShown) {
-                $leadGridArea.text('Нет предложений по лидам в вашей локации');
-                isMessageShown = true;
-            }
+    const leadOffersGrid = new Backgrid.Grid({
+        columns: leadColumns,
+        collection: leads,
+        emptyText: 'Для вашей локации нет предложений по лидам.'
+    });
+
+    const tradeHistoryGrid = new Backgrid.Grid({
+        columns: tradeColumns,
+        collection: trades,
+        emptyText:  'В вашей локации нет истории сделок.'
+    });
+
+    const $leadsGridArea = $('#lead-offers-grid');
+    const $tradesGridArea = $('#trade-history-grid');
+
+    leads.fetch({
+        success: function (resp) {
+            $leadsGridArea.append(leadOffersGrid.render().el);
+            setInterval(function(){
+                leads.fetch({reset: true});
+            }, 5000);
         }
     });
 
-    leads.fetch({reset:true});
+    trades.fetch({
+        success: function (resp) {
+            $tradesGridArea.append(tradeHistoryGrid.render().el);
+            setInterval(function () {
+                trades.fetch({reset: true});
+            }, 10000)
+        }
+    });
 });
