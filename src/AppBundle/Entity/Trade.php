@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="trade")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TradeRepository")
  */
 class Trade extends Operation
 {
@@ -66,6 +66,18 @@ class Trade extends Operation
     }
 
     /**
+     * @return int|null
+     */
+    public function getBuyerId(): ?int
+    {
+        if ($this->buyer) {
+            return $this->buyer->getId();
+        }
+
+        return null;
+    }
+
+    /**
      * @return ClientAccount|null
      */
     public function getBuyerAccount(): ?ClientAccount
@@ -91,6 +103,18 @@ class Trade extends Operation
     public function getSeller(): User
     {
         return $this->seller;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getSellerId(): ?int
+    {
+        if ($this->seller) {
+            return $this->seller->getId();
+        }
+
+        return null;
     }
 
     /**

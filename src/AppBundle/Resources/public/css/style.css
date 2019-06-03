@@ -366,6 +366,18 @@
     content: "\e9d9";
 }
 
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.mb-30 {
+    margin-bottom: 30px;
+}
+
 .sprite2 {
     background-image: url(../img/spritesheet.png);
     background-repeat: no-repeat;
@@ -1251,6 +1263,12 @@ textarea {
 .lead {
     width: calc(100% - 270px);
     background-color: #f2f2f2;
+    padding: 15px;
+}
+
+.lead h3 {
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .main-block {
@@ -1342,7 +1360,6 @@ td.table__cell {}
     -ms-flex-align: center;
     align-items: center;
     background-color: #f2f2f2;
-    padding: 17px;
 }
 
 .lead__button {
@@ -4070,7 +4087,7 @@ input.is-tel-correct:invalid ~ .error-note {
 }
 
 .table_leads_block, table {
-    width: 892px;
+    width: 100%;
     table-layout:fixed;
 }
 
@@ -4828,7 +4845,7 @@ span.lead_exchange:hover + div.error453_block{
 }
 
 .backgrid th, .backgrid td {
-    font-size: 14px;
+    font-size: 13px;
     padding: 12px 0;
     text-align: center;
 }
