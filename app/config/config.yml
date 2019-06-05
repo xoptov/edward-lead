@@ -89,6 +89,7 @@ liip_imagine:
         default:
             filesystem:
                 data_root: '%upload_store_path%'
+    driver: imagick
     filter_sets:
         cache: ~
         logotype_200x200:
