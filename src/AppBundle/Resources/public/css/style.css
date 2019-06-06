@@ -4922,3 +4922,8 @@ span.lead_exchange:hover + div.error453_block{
     display: block;
     max-width: none;
 }
+
+/** Added 06.06.2019 */
+.form-error {
+    padding: 10px 0;
+}
