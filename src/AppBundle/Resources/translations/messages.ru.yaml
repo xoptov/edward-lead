@@ -76,3 +76,9 @@ Accepted: Принята
 Rejected: Отклонена
 Sale Lead Limit: Лимит продаваемых лидов
 Lead Audio Record: Запись разговора
+
+ROLE_USER: Пользователь
+ROLE_COMPANY: Компания
+ROLE_WEBMASTER: Вебмастер
+ROLE_ADMIN: Администратор
+ROLE_SUPER_ADMIN: Суперадминистратор
