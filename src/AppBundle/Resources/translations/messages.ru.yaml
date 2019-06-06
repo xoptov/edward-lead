@@ -76,3 +76,14 @@ Accepted: Принята
 Rejected: Отклонена
 Sale Lead Limit: Лимит продаваемых лидов
 Lead Audio Record: Запись разговора
+Properties: Свойства
+Value: Значение
+Channel: Канал
+Property List: Список свойств
+Property Create: Добавить свойство
+
+ROLE_USER: Пользователь
+ROLE_COMPANY: Компания
+ROLE_WEBMASTER: Вебмастер
+ROLE_ADMIN: Администратор
+ROLE_SUPER_ADMIN: Суперадминистратор

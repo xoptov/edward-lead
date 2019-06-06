@@ -31,9 +31,9 @@ class Property
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=100)
+     * @ORM\Column(name="value", type="string", length=100)
      */
-    private $name;
+    private $value;
 
 
     /**
@@ -45,13 +45,13 @@ class Property
     }
 
     /**
-     * @param string $name
+     * @param string $value
      *
      * @return Property
      */
-    public function setName(string $name): self
+    public function setValue(string $value): self
     {
-        $this->name = $name;
+        $this->value = $value;
 
         return $this;
     }
@@ -59,9 +59,9 @@ class Property
     /**
      * @return string
      */
-    public function getName()
+    public function getValue()
     {
-        return $this->name;
+        return $this->value;
     }
 
     /**
