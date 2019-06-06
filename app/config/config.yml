@@ -92,9 +92,24 @@ liip_imagine:
     driver: imagick
     filter_sets:
         cache: ~
-        logotype_200x200:
+        logotype_202x202:
             quality: 75
             filters:
                 thumbnail:
-                    size: [200,200]
+                    size: [202, 202]
                     mode: outbound
+                ellipse_mask_filter: ~
+        logotype_34x34:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [34, 34]
+                    mode: outbound
+                ellipse_mask_filter: ~
+        logotype_26x26:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [26, 26]
+                    mode: outbound
+                ellipse_mask_filter: ~

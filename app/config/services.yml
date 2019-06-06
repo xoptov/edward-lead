@@ -151,3 +151,7 @@ services:
     AppBundle\Twig\TemplateExtension:
         public: false
         tags: ['twig.extension']
+
+    AppBundle\Imagine\Filter\Loader\EllipseMaskFilter:
+        tags:
+            - { name: 'liip_imagine.filter.loader', loader: ellipse_mask_filter }

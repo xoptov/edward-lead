@@ -2,6 +2,7 @@
 
 namespace AppBundle\Imagine\Filter\Loader;
 
+use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Imagine\Imagick\Imagine;
 use Imagine\Image\Palette\RGB;
@@ -28,12 +29,14 @@ class EllipseMaskFilter implements LoaderInterface
         $palette = new RGB();
         $box = $image->getSize();
 
+        $ellipseSize = new Box($box->getWidth() - 2, $box->getHeight() - 2);
+
         $maskImage = $this->imagine->create($box, $palette->color('#fff'));
         $maskImage
             ->draw()
             ->ellipse(
-                new Point($box->getWidth() / 2, $box->getHeight() / 2),
-                $box,
+                new Point($box->getWidth() / 2 - 1, $box->getHeight() / 2 - 1),
+                $ellipseSize,
                 $palette->color('#000'),
                 true
             );

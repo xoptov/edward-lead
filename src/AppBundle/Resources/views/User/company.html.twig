@@ -15,21 +15,20 @@
             {{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}
             {{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}
             {{ form_row(form.bik, {'label': 'БИК'}) }}
-            {{ form_row(form.publicationAgree) }}
-            {{ form_row(form.storeAgree) }}
+            {{ form_row(form.logotypePath) }}
+            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}
+            {#{{ form_row(form.publicationAgree) }}#}
+            {#{{ form_row(form.storeAgree) }}#}
         </div>
         <div style="display:inline-block;vertical-align:top;">
-            {{ form_row(form.officeName, {'label': 'Название офиса'}) }}
-            {{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}
-            {{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}
-            {{ form_row(form.cities, {'label': 'Укажите города работы'}) }}
-            {{ form_row(form.logotypePath) }}
-            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/jpeg,image/png'}}) }}
+            {#{{ form_row(form.officeName, {'label': 'Название офиса'}) }}#}
+            {#{{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}#}
+            {#{{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}#}
+            {#{{ form_row(form.cities, {'label': 'Укажите города работы'}) }}#}
         </div>
     </div>
     <div>
         {{ form_widget(form.submit) }}
-        {{ form_widget(form.reset) }}
     </div>
     {{ form_end(form) }}
 {% endblock %}

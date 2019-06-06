@@ -62,7 +62,9 @@ class UserController extends Controller
 
     /**
      * @Route("/creating/company", name="app_creating_company", methods={"GET", "POST"})
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function creatingCompanyAction(Request $request): Response
@@ -71,10 +73,16 @@ class UserController extends Controller
         $user = $this->getUser();
 
         if ($user->isTypeSelected()) {
-            return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
+            $this->addFlash('error', 'Тип пользователя уже указан');
+            return $this->redirectToRoute('app_profile');
         }
 
-        $form = $this->createForm(CompanyType::class, null, ['creating' => true]);
+        if ($user->getCompany()) {
+            $this->addFlash('error', 'Компания для пользователя уже создана');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $form = $this->createForm(CompanyType::class, null, ['mode' => CompanyType::MODE_COMPANY]);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
@@ -85,7 +93,8 @@ class UserController extends Controller
                 $company->setUser($user);
                 $this->entityManager->persist($company);
 
-                $user->switchToCompany()->makeTypeSelected();
+                $user->switchToCompany()
+                    ->makeTypeSelected();
 
                 $this->entityManager->flush();
 
