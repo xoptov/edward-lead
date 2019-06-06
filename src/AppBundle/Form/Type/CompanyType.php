@@ -13,8 +13,10 @@ use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class CompanyType extends AbstractType
 {
@@ -39,11 +41,16 @@ class CompanyType extends AbstractType
                 ])
                 ->add('bik', TextType::class)
                 ->add('accountNumber', TextType::class)
-                ->add('address', TextType::class)
+                ->add('address', TextareaType::class)
                 ->add('zipcode', TextType::class)
                 ->add('logotypePath', HiddenType::class)
-                ->add('uploader', FileType::class)
+                ->add('uploader', FileType::class, [
+                    'mapped' => false
+                ])
                 ->addEventSubscriber(new CompanyTypeSubscriber());
+
+            $builder->get('phone')
+                ->addViewTransformer(new PhoneTransformer());
         } else {
             $builder
                 ->add('officeName', TextType::class)
@@ -55,25 +62,12 @@ class CompanyType extends AbstractType
                     'expanded' => true,
                     'multiple' => true
                 ]);
+
+            $builder->get('officePhone')
+                ->addViewTransformer(new PhoneTransformer());
         }
 
         $builder->add('submit', SubmitType::class);
-
-//        if ($options['creating']) {
-//            $builder
-//                ->add('publicationAgree', CheckboxType::class, [
-//                    'mapped' => false,
-//                    'constraints' => [
-//                        new IsTrue(['message' => 'Вы должны дать согласие на публикацию'])
-//                    ]
-//                ])
-//                ->add('storeAgree', CheckboxType::class, [
-//                    'mapped' => false,
-//                    'constraints' => [
-//                        new IsTrue(['message' => 'Вы должны дать согласие на хранение'])
-//                    ]
-//                ]);
-//        }
     }
 
     /**

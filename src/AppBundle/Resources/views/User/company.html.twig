@@ -1,34 +1,225 @@
 {% extends '@App/layout.html.twig' %}
 
+{%- block form_row -%}
+    <div class="{{ row_class|default('office__input--item') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock -%}
+
+{% form_theme form _self %}
+
 {% block content %}
-    {{ form_start(form, {'attr': {'novalidate': true}}) }}
-    <div style="margin-bottom:10px;">
-        <div style="display:inline-block;vertical-align:top;">
-            {{ form_row(form.inn, {'label': 'ИНН'}) }}
-            {{ form_row(form.shortName, {'label': 'Краткое название организации'}) }}
-            {{ form_row(form.largeName, {'label': 'Полное название организации'}) }}
-            {{ form_row(form.kpp, {'label': 'КПП'}) }}
-            {{ form_row(form.ogrn, {'label': 'ОГРН'}) }}
-            {{ form_row(form.phone, {'label': 'Телефон'}) }}
-            {{ form_row(form.email, {'label': 'Электронная почта'}) }}
-            {{ form_row(form.address, {'label': 'Юридический адрес'}) }}
-            {{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}
-            {{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}
-            {{ form_row(form.bik, {'label': 'БИК'}) }}
-            {{ form_row(form.logotypePath) }}
-            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}
-            {#{{ form_row(form.publicationAgree) }}#}
-            {#{{ form_row(form.storeAgree) }}#}
+    <div class="table_leads">
+        <div class="table_leads_layout exposed_leads">
+            <div class="exposed_leads_title">
+                <h2>Настройки компании</h2>
+            </div>
+            <div class="company_setup">
+                <div class="setup_step">
+                    <span class="coverage"></span>
+                    <span class="coverage_silver"></span>
+                </div>
+                <p>Заполните карточку организации</p>
+                {{ form_start(form, {'attr': {'class': 'office-settings__office-form office'}}) }}
+                    <div class="office-settings__left-side">
+                        <div class="office__input--box company">
+                            <div class="office__input--item">
+                                {{ form_row(form.inn, {
+                                    'label': 'ИНН',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: 233605110231'
+                                    }
+                                }) }}
+                                {#<label for="company-id" class="office__label">ИНН:</label>#}
+                                {#<input type="text" name="company-id" id="company-id" class="form__input office__input" placeholder="company-name" required>#}
+                            </div>
+                            <div class="office__input--item">
+                                {{ form_row(form.shortName, {
+                                    'label': 'Краткое название организации',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: АН Холдинг Групп'
+                                    }
+                                }) }}
+                                {#<label for="company-name-short" class="office__label">Краткое название организации:</label>#}
+                                {#<input type="text" name="company-name-short" id="company-name-short" class="form__input office__input" placeholder="company-name" required>#}
+                            </div>
+                            <div class="office__input--item">
+                                {{ form_row(form.largeName, {
+                                    'label': 'Полное название организации',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: ООО АН Холдинг Групп'
+                                    }
+                                }) }}
+                                {#<label for="company-name-full" class="office__label">Полное название организации:</label>#}
+                                {#<input type="text" name="company-name-full" id="company-name-full" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="office__input--item">
+                                {{ form_row(form.kpp, {
+                                    'label': 'КПП',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: 645301001'
+                                    }
+                                }) }}
+                                {#<label for="company-kpp-code" class="office__label">КПП:</label>#}
+                                {#<input type="text" name="company-kpp-code" id="company-kpp-code" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="office__input--item">
+                                {{ form_row(form.ogrn, {
+                                    'label': 'ОГРН',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: 307235211300011'
+                                    }
+                                }) }}
+                                {#<label for="company-ogrn-code" class="office__label">ОГРН:</label>#}
+                                {#<input type="text" name="company-ogrn-code" id="company-ogrn-code" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="office__input--item ">
+                                {{ form_row(form.phone, {
+                                    'label': 'Телефон для входящих звонков',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: 8 800 000 00 00'
+                                    }
+                                }) }}
+                                {#<label for="company-tel" class="office__label">Телефон для входящих звонков:</label>#}
+                                {#<input type="text" name="company-tel" id="company-tel" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="office__input--item">
+                                {{ form_row(form.email, {
+                                    'label': 'Эл. почта',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: example@edward-lead.ru'
+                                    }
+                                }) }}
+                                {#<label for="company-email" class="office__label">Эл. почта:</label>#}
+                                {#<input type="text" name="company-email" id="company-email" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="office__input--item block-mod-14">
+                                {{ form_row(form.address, {
+                                    'label': 'Юридический адрес',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'company-main-addr-textarea autoExpand',
+                                        'rows': 3,
+                                        'data-min-rows': 3
+                                    }
+                                }) }}
+                                {#<label for="company-main-addr" class="office__label">Юридический адрес:</label>#}
+                                {#<textarea name="company-main-addr" id="company-main-addr" class="company-main-addr-textarea  autoExpand" ows='3' data-min-rows='3' placeholder="пример: 6453202134"></textarea>#}
+                            </div>
+                            <div class="office__input--item ">
+                                {{ form_row(form.zipcode, {
+                                    'label': 'Почтовый индекс',
+                                    'label_attr': {
+                                        'class': 'office__label'
+                                    },
+                                    'attr': {
+                                        'class': 'form__input office__input',
+                                        'placeholder': 'Например: 353445'
+                                    }
+                                }) }}
+                                {#<label for="company-post-index" class="office__label">Почтовый индекс:</label>#}
+                                {#<input type="text" name="company-post-index" id="company-post-index" class="form__input office__input" placeholder="пример: 6453202134" required>#}
+                            </div>
+                            <div class="row block-mod-15">
+                                <input type="checkbox" class="checkbox" name="agree-person-info" id="agree-person-info">
+                                <label for="agree-person-info" class="form__label-reg ">Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead</label>
+                                <input type="checkbox" class="checkbox" name="agree-info-to-distribute" id="agree-info-to-distribute">
+                                <label for="agree-info-to-distribute" class="form__label-reg ">Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="office-settings__right-side">
+                        <div class="company__logo-choose logo-choose">
+                            <div class="logo-choose__img"><span class="icon-hat"></span>
+                            </div>
+                            <span class="plain__text">Логотип Вашей компании:</span>
+                            <div class="binded__item binded__item--mod1">
+                                <button class="binded__button"><span class="icon-clip"></span>
+                                </button>
+                                <span class="binded__file">Без-названия.jpg</span>
+                                <button class="button-close">&times;</button>
+                            </div>
+                            <button class="btn-middle-green btn-middle-wide">Загрузить логотип</button>
+                        </div>
+                        <div class="office__input--box company pos-mod-1">
+                            <div class="office__input--item">
+                                <label for="company-count" class="office__label">Расчётный счёт:</label>
+                                <input type="text" name="company-count" id="company-count" class="form__input office__input" placeholder="пример: 6453202134" required>
+                            </div>
+                            <div class="office__input--item">
+                                <label for="company-bik-code" class="office__label">БИК:</label>
+                                <input type="text" name="company-bik-code" id="company-bik-code" class="form__input office__input" placeholder="пример: 6453202134" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn-middle-green btn-middle-wide btn-pressed u-m-auto" type="submit">Сохранить</button>
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
         </div>
-        <div style="display:inline-block;vertical-align:top;">
+        {% include '@App/block_copyright.html.twig' %}
+    </div>
+    {#{{ form_start(form, {'attr': {'novalidate': true}}) }}#}
+    {#<div style="margin-bottom:10px;">#}
+        {#<div style="display:inline-block;vertical-align:top;">#}
+            {#{{ form_row(form.inn, {'label': 'ИНН'}) }}#}
+            {#{{ form_row(form.shortName, {'label': 'Краткое название организации'}) }}#}
+            {#{{ form_row(form.largeName, {'label': 'Полное название организации'}) }}#}
+            {#{{ form_row(form.kpp, {'label': 'КПП'}) }}#}
+            {#{{ form_row(form.ogrn, {'label': 'ОГРН'}) }}#}
+            {#{{ form_row(form.phone, {'label': 'Телефон'}) }}#}
+            {#{{ form_row(form.email, {'label': 'Электронная почта'}) }}#}
+            {#{{ form_row(form.address, {'label': 'Юридический адрес'}) }}#}
+            {#{{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}#}
+            {#{{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}#}
+            {#{{ form_row(form.bik, {'label': 'БИК'}) }}#}
+            {#{{ form_row(form.logotypePath) }}#}
+            {#{{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}#}
+            {#{{ form_row(form.publicationAgree, {'label': ''}) }}#}
+            {#{{ form_row(form.storeAgree) }}#}
+        {#</div>#}
+        {#<div style="display:inline-block;vertical-align:top;">#}
             {#{{ form_row(form.officeName, {'label': 'Название офиса'}) }}#}
             {#{{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}#}
             {#{{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}#}
             {#{{ form_row(form.cities, {'label': 'Укажите города работы'}) }}#}
-        </div>
-    </div>
-    <div>
-        {{ form_widget(form.submit) }}
-    </div>
-    {{ form_end(form) }}
+        {#</div>#}
+    {#</div>#}
+    {#<div>#}
+        {#{{ form_widget(form.submit) }}#}
+    {#</div>#}
+    {#{{ form_end(form) }}#}
 {% endblock %}
