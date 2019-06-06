@@ -39,7 +39,7 @@ class LeadType extends AbstractType
             ->add('phone', TelType::class)
             ->add('channel', EntityType::class, [
                 'class' => Property::class,
-                'choice_label' => 'name',
+                'choice_label' => 'value',
                 'required' => false,
                 'query_builder' => function(EntityRepository $er) {
                     $qb = $er->createQueryBuilder('ch')

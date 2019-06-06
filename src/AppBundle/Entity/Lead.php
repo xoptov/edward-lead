@@ -307,7 +307,7 @@ class Lead
     public function getChannelName(): ?string
     {
         if ($this->channel) {
-            return $this->channel->getName();
+            return $this->channel->getValue();
         }
 
         return null;
