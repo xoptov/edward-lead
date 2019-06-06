@@ -76,7 +76,7 @@ class UserAdmin extends AbstractAdmin
             ->add('email')
             ->add('skype')
             ->add('telegram')
-            ->add('roles')
+            ->add('roles', "array", ['template' => '@App/CRUD/list_array.html.twig'])
             ->add("saleLeadLimit")
             ->add('enabled')
             ->add('typeSelected')

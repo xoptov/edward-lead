@@ -81,3 +81,9 @@ Value: Значение
 Channel: Канал
 Property List: Список свойств
 Property Create: Добавить свойство
+
+ROLE_USER: Пользователь
+ROLE_COMPANY: Компания
+ROLE_WEBMASTER: Вебмастер
+ROLE_ADMIN: Администратор
+ROLE_SUPER_ADMIN: Суперадминистратор

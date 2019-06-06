@@ -23,7 +23,7 @@ class CityAdmin extends AbstractAdmin
             ->add('region.name', null, ['label' => 'Region'])
             ->add("leadPrice")
             ->add("starPrice")
-            ->add('name')
+            ->add('name', null, ['label' => 'City'])
             ->add('enabled')
             ->add('createdAt')
             ->add('updatedAt')
@@ -37,7 +37,7 @@ class CityAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('id', 'number')
-            ->add('name')
+            ->add('name', null, ['label' => 'City'])
             ->add('region.name', null, ['label' => 'Region'])
             ->add("leadPrice")
             ->add("starPrice")
@@ -65,7 +65,7 @@ class CityAdmin extends AbstractAdmin
                 'class' => Region::class,
                 'choice_label' => 'name'
             ])
-            ->add("name")
+            ->add("name", null, ['label' => 'City'])
             ->add("leadPrice")
             ->add("starPrice")
             ->add("enabled")
@@ -80,7 +80,7 @@ class CityAdmin extends AbstractAdmin
         $showMapper
             ->add('id')
             ->add('region.name', null, ['label' => 'Region'])
-            ->add('name')
+            ->add('name', null, ['label' => 'City'])
             ->add("leadPrice")
             ->add("starPrice")
             ->add('enabled')
