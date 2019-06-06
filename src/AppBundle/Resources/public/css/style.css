@@ -4753,7 +4753,7 @@ span.id_lids:hover {
 
 .form__reg .btn--form-reg {
     position: relative;
-    top: -76px;
+    margin-bottom: 20px;
 }
 
 .form__reg .form__label {
