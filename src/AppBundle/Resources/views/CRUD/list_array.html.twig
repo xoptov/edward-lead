@@ -1,0 +1,22 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% macro render_array(value, inline) %}
+    {% from _self import render_array %}
+    {% for key, val in value %}
+        {% if val is iterable %}
+            [{{ render_array(val, inline) }}]
+        {%  else %}
+            {{ val|trans }}{% if not loop.last %}<span> | </span>{% endif %}
+        {%  endif %}
+
+        {% if not loop.last and not inline %}
+            <br>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% import _self as list %}
+
+{% block field %}
+    {{ list.render_array(value, field_description.options.inline is not defined or field_description.options.inline) }}
+{% endblock %}
