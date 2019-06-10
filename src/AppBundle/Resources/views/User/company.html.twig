@@ -3,9 +3,22 @@
 {%- block form_row -%}
     <div class="{{ row_class|default('office__input--item') }}">
         {{- form_label(form) -}}
-        {{- form_widget(form) -}}
+        {%- if errors|length > 0 -%}
+            {%- set class = 'form-input-area violation' -%}
+        {%- else -%}
+            {%- set class = 'form-input-area' -%}
+        {%- endif -%}
+        <div class="{{ class }}">
+            {{- form_widget(form) -}}
+        </div>
         {{- form_errors(form) -}}
     </div>
+{%- endblock -%}
+
+{%- block checkbox_row -%}
+    {{- form_errors(form) -}}
+    {{- form_widget(form) -}}
+    {{- form_label(form) -}}
 {%- endblock -%}
 
 {% form_theme form _self %}
@@ -22,169 +35,159 @@
                     <span class="coverage_silver"></span>
                 </div>
                 <p>Заполните карточку организации</p>
-                {{ form_start(form, {'attr': {'class': 'office-settings__office-form office'}}) }}
+                {{ form_start(form, {'attr': {'class': 'office-settings__office-form office', 'novalidate': true}}) }}
                     <div class="office-settings__left-side">
                         <div class="office__input--box company">
-                            <div class="office__input--item">
-                                {{ form_row(form.inn, {
-                                    'label': 'ИНН',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: 233605110231'
-                                    }
+                            {{ form_row(form.inn, {
+                                'label': 'ИНН',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 233605110231'
+                                }
+                            }) }}
+                            {{ form_row(form.shortName, {
+                                'label': 'Краткое название организации',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: АН Холдинг Групп'
+                                }
+                            }) }}
+                            {{ form_row(form.largeName, {
+                                'label': 'Полное название организации',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: ООО АН Холдинг Групп'
+                                }
+                            }) }}
+                            {{ form_row(form.kpp, {
+                                'label': 'КПП',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 645301001'
+                                }
+                            }) }}
+                            {{ form_row(form.ogrn, {
+                                'label': 'ОГРН',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 307235211300011'
+                                }
+                            }) }}
+                            {{ form_row(form.phone, {
+                                'label': 'Телефон для входящих звонков',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 8 800 000 00 00'
+                                }
+                            }) }}
+                            {{ form_row(form.email, {
+                                'label': 'Эл. почта',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: example@edward-lead.ru'
+                                }
+                            }) }}
+                            {{ form_row(form.address, {
+                                'label': 'Юридический адрес',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'company-main-addr-textarea autoExpand',
+                                    'rows': 3,
+                                    'data-min-rows': 3
+                                }
+                            }) }}
+                            {{ form_row(form.zipcode, {
+                                'label': 'Почтовый индекс',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 353445'
+                                }
+                            }) }}
+                            <div class="office__input--item row block-mod-15">
+                                {{ form_row(form.publicationAgree, {
+                                    'label': 'Я прочитал(а) и согласен с правилами публикации лида на платформу Edward Lead',
+                                    'label_attr': {'class': 'form__label-reg'},
+                                    'attr': {'class': 'checkbox'}
                                 }) }}
-                                {#<label for="company-id" class="office__label">ИНН:</label>#}
-                                {#<input type="text" name="company-id" id="company-id" class="form__input office__input" placeholder="company-name" required>#}
-                            </div>
-                            <div class="office__input--item">
-                                {{ form_row(form.shortName, {
-                                    'label': 'Краткое название организации',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: АН Холдинг Групп'
-                                    }
+                                <a href="#publication-rules" class="text-blue" style="font-size: 12px;margin-left: 26px;">Посмотреть правила публикации</a>
+                                {{ form_row(form.storeAgree, {
+                                    'label': 'Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам',
+                                    'label_attr': {'class': 'form__label-reg'},
+                                    'attr': {'class': 'checkbox'}
                                 }) }}
-                                {#<label for="company-name-short" class="office__label">Краткое название организации:</label>#}
-                                {#<input type="text" name="company-name-short" id="company-name-short" class="form__input office__input" placeholder="company-name" required>#}
-                            </div>
-                            <div class="office__input--item">
-                                {{ form_row(form.largeName, {
-                                    'label': 'Полное название организации',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: ООО АН Холдинг Групп'
-                                    }
-                                }) }}
-                                {#<label for="company-name-full" class="office__label">Полное название организации:</label>#}
-                                {#<input type="text" name="company-name-full" id="company-name-full" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="office__input--item">
-                                {{ form_row(form.kpp, {
-                                    'label': 'КПП',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: 645301001'
-                                    }
-                                }) }}
-                                {#<label for="company-kpp-code" class="office__label">КПП:</label>#}
-                                {#<input type="text" name="company-kpp-code" id="company-kpp-code" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="office__input--item">
-                                {{ form_row(form.ogrn, {
-                                    'label': 'ОГРН',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: 307235211300011'
-                                    }
-                                }) }}
-                                {#<label for="company-ogrn-code" class="office__label">ОГРН:</label>#}
-                                {#<input type="text" name="company-ogrn-code" id="company-ogrn-code" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="office__input--item ">
-                                {{ form_row(form.phone, {
-                                    'label': 'Телефон для входящих звонков',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: 8 800 000 00 00'
-                                    }
-                                }) }}
-                                {#<label for="company-tel" class="office__label">Телефон для входящих звонков:</label>#}
-                                {#<input type="text" name="company-tel" id="company-tel" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="office__input--item">
-                                {{ form_row(form.email, {
-                                    'label': 'Эл. почта',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: example@edward-lead.ru'
-                                    }
-                                }) }}
-                                {#<label for="company-email" class="office__label">Эл. почта:</label>#}
-                                {#<input type="text" name="company-email" id="company-email" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="office__input--item block-mod-14">
-                                {{ form_row(form.address, {
-                                    'label': 'Юридический адрес',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'company-main-addr-textarea autoExpand',
-                                        'rows': 3,
-                                        'data-min-rows': 3
-                                    }
-                                }) }}
-                                {#<label for="company-main-addr" class="office__label">Юридический адрес:</label>#}
-                                {#<textarea name="company-main-addr" id="company-main-addr" class="company-main-addr-textarea  autoExpand" ows='3' data-min-rows='3' placeholder="пример: 6453202134"></textarea>#}
-                            </div>
-                            <div class="office__input--item ">
-                                {{ form_row(form.zipcode, {
-                                    'label': 'Почтовый индекс',
-                                    'label_attr': {
-                                        'class': 'office__label'
-                                    },
-                                    'attr': {
-                                        'class': 'form__input office__input',
-                                        'placeholder': 'Например: 353445'
-                                    }
-                                }) }}
-                                {#<label for="company-post-index" class="office__label">Почтовый индекс:</label>#}
-                                {#<input type="text" name="company-post-index" id="company-post-index" class="form__input office__input" placeholder="пример: 6453202134" required>#}
-                            </div>
-                            <div class="row block-mod-15">
-                                <input type="checkbox" class="checkbox" name="agree-person-info" id="agree-person-info">
-                                <label for="agree-person-info" class="form__label-reg ">Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead</label>
-                                <input type="checkbox" class="checkbox" name="agree-info-to-distribute" id="agree-info-to-distribute">
-                                <label for="agree-info-to-distribute" class="form__label-reg ">Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам</label>
                             </div>
                         </div>
                     </div>
                     <div class="office-settings__right-side">
                         <div class="company__logo-choose logo-choose">
-                            <div class="logo-choose__img"><span class="icon-hat"></span>
+                            <div class="logo-choose__img">
+                                <span class="icon-hat"></span>
                             </div>
                             <span class="plain__text">Логотип Вашей компании:</span>
                             <div class="binded__item binded__item--mod1">
-                                <button class="binded__button"><span class="icon-clip"></span>
-                                </button>
+                                <button class="binded__button"><span class="icon-clip"></span></button>
                                 <span class="binded__file">Без-названия.jpg</span>
                                 <button class="button-close">&times;</button>
                             </div>
                             <button class="btn-middle-green btn-middle-wide">Загрузить логотип</button>
+                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;'}}) }}
+                            {{ form_widget(form.logotypePath) }}
                         </div>
                         <div class="office__input--box company pos-mod-1">
-                            <div class="office__input--item">
-                                <label for="company-count" class="office__label">Расчётный счёт:</label>
-                                <input type="text" name="company-count" id="company-count" class="form__input office__input" placeholder="пример: 6453202134" required>
-                            </div>
-                            <div class="office__input--item">
-                                <label for="company-bik-code" class="office__label">БИК:</label>
-                                <input type="text" name="company-bik-code" id="company-bik-code" class="form__input office__input" placeholder="пример: 6453202134" required>
-                            </div>
+                            {{ form_row(form.accountNumber, {
+                                'label': 'Расчётный счет',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 40702810510000155962'
+                                }
+                            }) }}
+                            {{ form_row(form.bik, {
+                                'label': 'БИК',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 044525974'
+                                }
+                            }) }}
                         </div>
                         <div class="row">
-                            <button class="btn-middle-green btn-middle-wide btn-pressed u-m-auto" type="submit">Сохранить</button>
+                            {{ form_widget(form.submit, {
+                                'label': 'Сохранить',
+                                'attr': {
+                                    'class': 'btn-middle-green btn-middle-wide btn-pressed u-m-auto'
+                                }
+                            }) }}
                         </div>
                     </div>
                 {{ form_end(form) }}
@@ -192,34 +195,4 @@
         </div>
         {% include '@App/block_copyright.html.twig' %}
     </div>
-    {#{{ form_start(form, {'attr': {'novalidate': true}}) }}#}
-    {#<div style="margin-bottom:10px;">#}
-        {#<div style="display:inline-block;vertical-align:top;">#}
-            {#{{ form_row(form.inn, {'label': 'ИНН'}) }}#}
-            {#{{ form_row(form.shortName, {'label': 'Краткое название организации'}) }}#}
-            {#{{ form_row(form.largeName, {'label': 'Полное название организации'}) }}#}
-            {#{{ form_row(form.kpp, {'label': 'КПП'}) }}#}
-            {#{{ form_row(form.ogrn, {'label': 'ОГРН'}) }}#}
-            {#{{ form_row(form.phone, {'label': 'Телефон'}) }}#}
-            {#{{ form_row(form.email, {'label': 'Электронная почта'}) }}#}
-            {#{{ form_row(form.address, {'label': 'Юридический адрес'}) }}#}
-            {#{{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}#}
-            {#{{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}#}
-            {#{{ form_row(form.bik, {'label': 'БИК'}) }}#}
-            {#{{ form_row(form.logotypePath) }}#}
-            {#{{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}#}
-            {#{{ form_row(form.publicationAgree, {'label': ''}) }}#}
-            {#{{ form_row(form.storeAgree) }}#}
-        {#</div>#}
-        {#<div style="display:inline-block;vertical-align:top;">#}
-            {#{{ form_row(form.officeName, {'label': 'Название офиса'}) }}#}
-            {#{{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}#}
-            {#{{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}#}
-            {#{{ form_row(form.cities, {'label': 'Укажите города работы'}) }}#}
-        {#</div>#}
-    {#</div>#}
-    {#<div>#}
-        {#{{ form_widget(form.submit) }}#}
-    {#</div>#}
-    {#{{ form_end(form) }}#}
 {% endblock %}

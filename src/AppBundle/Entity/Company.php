@@ -50,7 +50,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(max=30)
-     * @Assert\NotBlank(message="Необходимо указать короткое название компании")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать короткое название компании",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="short_name", type="string", length=30)
      */
     private $shortName;
@@ -59,7 +62,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(max=60)
-     * @Assert\NotBlank(message="Необходимо указать полное название компании")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать полное название компании",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="large_name", type="string", length=60)
      */
     private $largeName;
@@ -68,7 +74,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=11, max=18)
-     * @Assert\NotBlank(message="Необходимо указать номер телефона")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать номер телефона",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="phone", type="string", length=12)
      */
     private $phone;
@@ -78,7 +87,10 @@ class Company
      *
      * @Assert\Length(max=30)
      * @Assert\Email(message="Невалидное значение поля")
-     * @Assert\NotBlank(message="Необходимо указать email")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать email",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="email", type="string", length=30)
      */
     private $email;
@@ -87,7 +99,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=10, max=12)
-     * @Assert\NotBlank(message="Необходимо указать ИНН")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать ИНН",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="inn", type="string", length=12)
      */
     private $inn;
@@ -96,7 +111,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=13, max=15)
-     * @Assert\NotBlank(message="Необходимо указать ОГРН")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать ОГРН",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="ogrn", type="string", length=15)
      */
     private $ogrn;
@@ -113,7 +131,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=9, max=9)
-     * @Assert\NotBlank(message="Необходимо указать БИК")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать БИК",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="bik", type="string", length=9)
      */
     private $bik;
@@ -122,7 +143,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=20, max=25)
-     * @Assert\NotBlank(message="Необходимо указать расчётный счёт")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать расчётный счёт",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="account_number", type="string", length=25)
      */
     private $accountNumber;
@@ -131,7 +155,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(max=150)
-     * @Assert\NotBlank(message="Необходимо указать адрес")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать адрес",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="address", type="string", length=150)
      */
     private $address;
@@ -140,7 +167,10 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=6, max=6)
-     * @Assert\NotBlank(message="Необходимо указать почтовый индекс")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать почтовый индекс",
+     *     groups={"Company"}
+     * )
      * @ORM\Column(name="zipcode", type="string", length=6)
      */
     private $zipcode;
@@ -157,8 +187,11 @@ class Company
      * @var string|null
      *
      * @Assert\Length(max=30)
-     * @Assert\NotBlank(message="Необходимо указать название офиса")
-     * @ORM\Column(name="office_name", type="string", length=30)
+     * @Assert\NotBlank(
+     *     message="Необходимо указать название офиса",
+     *     groups={"Office"}
+     * )
+     * @ORM\Column(name="office_name", type="string", length=30, nullable=true)
      */
     private $officeName;
 
@@ -166,8 +199,11 @@ class Company
      * @var string|null
      *
      * @Assert\Length(min=11, max=18)
-     * @Assert\NotBlank(message="Необходимо указать контактный телефон офиса")
-     * @ORM\Column(name="office_phone", type="string", length=12)
+     * @Assert\NotBlank(
+     *     message="Необходимо указать контактный телефон офиса",
+     *     groups={"Office"}
+     * )
+     * @ORM\Column(name="office_phone", type="string", length=12, nullable=true)
      */
     private $officePhone;
 
@@ -175,8 +211,11 @@ class Company
      * @var string|null
      *
      * @Assert\Length(max=150)
-     * @Assert\NotBlank(message="Необходимо указать адрес офиса")
-     * @ORM\Column(name="office_address", type="string", length=150)
+     * @Assert\NotBlank(
+     *     message="Необходимо указать адрес офиса",
+     *     groups={"Office"}
+     * )
+     * @ORM\Column(name="office_address", type="string", length=150, nullable=true)
      */
     private $officeAddress;
 

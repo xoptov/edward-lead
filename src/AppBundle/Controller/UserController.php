@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
+use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
@@ -61,7 +62,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/creating/company", name="app_creating_company", methods={"GET", "POST"})
+     * @Route("/company/create", name="app_creating_company", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -82,7 +83,10 @@ class UserController extends Controller
             return $this->redirectToRoute('app_profile');
         }
 
-        $form = $this->createForm(CompanyType::class, null, ['mode' => CompanyType::MODE_COMPANY]);
+        $form = $this->createForm(CompanyType::class, null, [
+            'mode' => CompanyType::MODE_COMPANY,
+            'validation_groups' => ['Default', 'Company']
+        ]);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
@@ -98,11 +102,89 @@ class UserController extends Controller
 
                 $this->entityManager->flush();
 
-                return $this->redirectToRoute('app_profile');
+                $this->addFlash('success', 'Компания создана');
+
+                return $this->redirectToRoute('app_updating_office', [
+                    'id' => $company->getId()
+                ]);
             }
         }
 
         return $this->render('@App/User/company.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/company/update/{id}", name="app_updating_company", methods={"GET", "PUT"})
+     *
+     * @param Request $request
+     * @param Company $company
+     *
+     * @return Response
+     */
+    public function updateCompanyAction(Request $request, Company $company): Response
+    {
+        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
+            return new Response('Редактирование чужой компании запрещено');
+        }
+
+        $form = $this->createForm(CompanyType::MODE_COMPANY, $company, [
+            'method' => Request::METHOD_PUT,
+            'mode' => CompanyType::MODE_COMPANY,
+            'validation_groups' => ['Default', 'Company']
+        ]);
+
+        if ($request->isMethod(Request::METHOD_PUT)) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+
+                $this->addFlash('success', 'Информация о компании обновлена');
+
+                return $this->redirectToRoute('app_updating_office', ['id' => $company->getId()]);
+            }
+        }
+
+        return $this->render('@App/User/company.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/office/update/{id}", name="app_updating_office", methods={"GET", "PUT"})
+     *
+     * @param Request $request
+     * @param Company $company
+     *
+     * @return Response
+     */
+    public function updateOfficeAction(Request $request, Company $company): Response
+    {
+        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
+            return new Response('Редактирование чужого офиса запрещено');
+        }
+
+        $form = $this->createForm(CompanyType::class, $company, [
+            'method' => Request::METHOD_PUT,
+            'mode' => CompanyType::MODE_OFFICE,
+            'validation_groups' => ['Default', 'Office']
+        ]);
+
+        if ($request->isMethod(Request::METHOD_PUT)) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+
+                $this->addFlash('success', 'Информация о офисе сохранена');
+
+                return $this->redirectToRoute('app_profile');
+            }
+        }
+
+        return $this->render('@App/User/office.html.twig', [
             'form' => $form->createView()
         ]);
     }

@@ -48,6 +48,9 @@ services:
     AppBundle\Security\Voter\TradeVoter:
         tags: ['security.voter']
 
+    AppBundle\Security\Voter\CompanyVoter:
+        tags: ['security.voter']
+
     app.admin.user:
         class: AppBundle\Admin\UserAdmin
         arguments: [~, AppBundle\Entity\User, ~]

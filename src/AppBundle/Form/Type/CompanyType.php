@@ -36,16 +36,17 @@ class CompanyType extends AbstractType
                 ->add('email', EmailType::class)
                 ->add('inn', TextType::class)
                 ->add('ogrn', TextType::class)
-                ->add('kpp', TextType::class, [
-                    'required' => false
-                ])
+                ->add('kpp', TextType::class)
                 ->add('bik', TextType::class)
                 ->add('accountNumber', TextType::class)
                 ->add('address', TextareaType::class)
                 ->add('zipcode', TextType::class)
-                ->add('logotypePath', HiddenType::class)
+                ->add('logotypePath', HiddenType::class, [
+                    'required' => false
+                ])
                 ->add('uploader', FileType::class, [
-                    'mapped' => false
+                    'mapped' => false,
+                    'required' => false
                 ])
                 ->addEventSubscriber(new CompanyTypeSubscriber());
 
