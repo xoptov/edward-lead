@@ -129,7 +129,7 @@ class UserController extends Controller
             return new Response('Редактирование чужой компании запрещено');
         }
 
-        $form = $this->createForm(CompanyType::MODE_COMPANY, $company, [
+        $form = $this->createForm(CompanyType::class, $company, [
             'method' => Request::METHOD_PUT,
             'mode' => CompanyType::MODE_COMPANY,
             'validation_groups' => ['Default', 'Company']

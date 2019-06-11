@@ -3059,11 +3059,11 @@ input.personal-choose__radio + i.sprite2 {
     text-decoration: underline;
 }
 
-.form-columl-left {
+.form-column-left {
     min-width: 408px;
 }
 
-.form-columl-right {
+.form-column-right {
     -webkit-box-flex: 1;
     -webkit-flex: 1 0 408px;
     -ms-flex: 1 0 408px;
@@ -4572,7 +4572,7 @@ span.id_lids:hover {
     margin-bottom: 34px;
 }
 
-.office-set .form-columl-right {
+.office-set .form-column-right {
     margin-left: 73px;
     margin-top: 0;
 }
@@ -4588,7 +4588,7 @@ span.id_lids:hover {
     margin: 8px 0 8px 17px;
 }
 
-.office-set .form-columl-right .btn {
+.office-set .form-column-right .btn {
     width: 135px;
     height: 31px;
     background-color: #00a368;
@@ -4926,4 +4926,18 @@ span.lead_exchange:hover + div.error453_block{
 /** Added 06.06.2019 */
 .form-error {
     padding: 10px 0;
+}
+
+.current-line_item {
+    margin-bottom: 10px;
+}
+
+.current-line_item input[type=checkbox] {
+    cursor: pointer;
+}
+
+.current-line_item label {
+    margin-left: 10px;
+    font-size: 14px;
+    cursor: pointer;
 }
