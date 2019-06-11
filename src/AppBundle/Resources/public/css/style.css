@@ -4927,3 +4927,7 @@ span.lead_exchange:hover + div.error453_block{
 .form-error {
     padding: 10px 0;
 }
+
+.ui-datepicker.ui-widget.ui-widget-content.ui-helper-clearfix.ui-corner-all {
+    font-size: 14px;
+}
