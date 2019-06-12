@@ -4,6 +4,7 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\Trade;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
@@ -55,6 +56,32 @@ class TradeAdmin extends AbstractAdmin
                 'catalogue' => 'messages'
             ])
             ->add('lead.audioRecord', null, ['template' => '@App/CRUD/show_audio_field.html.twig'])
+        ;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function configureDatagridFilters(DatagridMapper $datagridMapper)
+    {
+        $datagridMapper
+            ->add('id')
+            ->add('buyer.name')
+            ->add('seller.name')
+            ->add('lead.name')
+            ->add('status',
+                'doctrine_orm_string',
+                [],
+                'choice',
+                [
+                    'choices' => [
+                        'New' => 0,
+                        'Accepted' => 1,
+                        'Rejected' => 2
+                    ],
+                    'choice_translation_domain' => 'messages'
+                ]
+            )
         ;
     }
 
