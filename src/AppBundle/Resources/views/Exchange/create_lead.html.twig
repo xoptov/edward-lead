@@ -308,9 +308,7 @@
 
         {# Todo: короче этот ебаный блок копирайта повторяется на всех страницах, нужно чтобы был только на одной #}
         <div class="info-block__list">
-            <div class="block-copyright">
-                © 2019 Edward - решения для бизнеса
-            </div>
+            {% include '@App/block_copyright.html.twig' %}
         </div>
     </div>
 {% endblock %}

@@ -80,3 +80,36 @@ sonata_block:
         # enable the SonataAdminBundle block
         sonata.admin.block.admin_list:
             contexts: [main, financial, exchange]
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path: ~
+    loaders:
+        default:
+            filesystem:
+                data_root: '%upload_store_path%'
+    driver: imagick
+    filter_sets:
+        cache: ~
+        logotype_202x202:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [202, 202]
+                    mode: outbound
+                ellipse_mask_filter: ~
+        logotype_34x34:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [34, 34]
+                    mode: outbound
+                ellipse_mask_filter: ~
+        logotype_26x26:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [26, 26]
+                    mode: outbound
+                ellipse_mask_filter: ~

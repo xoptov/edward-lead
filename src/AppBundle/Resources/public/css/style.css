@@ -1959,6 +1959,18 @@ textarea:-ms-input-placeholder {
     flex-wrap: wrap;
 }
 
+.office__input--item ul {
+    display: flex;
+    width: 100%;
+    justify-content: right;
+    margin-top: 10px;
+}
+
+.office__input--item ul li {
+    font-size: 12px;
+    color: #bc0b28;
+}
+
 .office__label {
     max-width: 130px;
     color: #3a3a3a;
@@ -2090,6 +2102,11 @@ textarea:-ms-input-placeholder {
     width: 408px;
 }
 
+.office-settings__right-side {
+    width: 408px;
+    margin-left: 69px;
+}
+
 .logo-choose__img {
     width: 202px;
     height: 202px;
@@ -2126,16 +2143,9 @@ textarea:-ms-input-placeholder {
     text-align: center;
 }
 
-.office-settings__right-side {
-    min-width: 407px;
-    margin-left: auto;
-}
-
-.company {}
-
 .pos-mod-1 {
-    margin-top: 163px;
-    margin-bottom: 58px;
+    margin-top: 150px;
+    margin-bottom: 100px;
 }
 
 .u-m-auto {
@@ -2716,11 +2726,9 @@ input.personal-choose__radio + i.sprite2 {
     font-weight: 300;
     text-align: left;
     background-color: #e9e9e9;
-    margin-left: 2px;
     padding-left: 14px;
-    margin-top: 52px;
+    margin-top: 20px;
     line-height: 2;
-    position: absolute;
     left: 0;
     bottom: 0;
     width: 100vw;
@@ -3051,11 +3059,11 @@ input.personal-choose__radio + i.sprite2 {
     text-decoration: underline;
 }
 
-.form-columl-left {
+.form-column-left {
     min-width: 408px;
 }
 
-.form-columl-right {
+.form-column-right {
     -webkit-box-flex: 1;
     -webkit-flex: 1 0 408px;
     -ms-flex: 1 0 408px;
@@ -4447,16 +4455,8 @@ span.id_lids:hover {
     font-weight: 400;
 }
 
-.company_setup .form__input {
-    box-shadow: 1px 2px 6px 0px rgba(0,0,0,0.38)inset;
-}
-
 .company_setup .checkbox {
     display: none;
-}
-
-.company_setup .company-main-addr-textarea {
-    box-shadow: 1px 2px 6px 0px rgba(0,0,0,0.38)inset;
 }
 
 .office-settings .coverage_silver {
@@ -4572,7 +4572,7 @@ span.id_lids:hover {
     margin-bottom: 34px;
 }
 
-.office-set .form-columl-right {
+.office-set .form-column-right {
     margin-left: 73px;
     margin-top: 0;
 }
@@ -4588,7 +4588,7 @@ span.id_lids:hover {
     margin: 8px 0 8px 17px;
 }
 
-.office-set .form-columl-right .btn {
+.office-set .form-column-right .btn {
     width: 135px;
     height: 31px;
     background-color: #00a368;
@@ -4926,6 +4926,26 @@ span.lead_exchange:hover + div.error453_block{
 /** Added 06.06.2019 */
 .form-error {
     padding: 10px 0;
+}
+
+.current-line_item {
+    margin-bottom: 10px;
+}
+
+.current-line_item input[type=checkbox] {
+    cursor: pointer;
+}
+
+.current-line_item label {
+    margin-left: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.logo-choose .errors li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #bc0b28;
 }
 
 .ui-datepicker.ui-widget.ui-widget-content.ui-helper-clearfix.ui-corner-all {

@@ -1,33 +1,299 @@
 {% extends '@App/layout.html.twig' %}
 
+{%- block form_row -%}
+    <div class="{{ row_class|default('office__input--item') }}">
+        {{- form_label(form) -}}
+        {%- if errors|length > 0 -%}
+            {%- set class = 'form-input-area violation' -%}
+        {%- else -%}
+            {%- set class = 'form-input-area' -%}
+        {%- endif -%}
+        <div class="{{ class }}">
+            {{- form_widget(form) -}}
+        </div>
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock -%}
+
+{%- block checkbox_row -%}
+    {{- form_errors(form) -}}
+    {{- form_widget(form) -}}
+    {{- form_label(form) -}}
+{%- endblock -%}
+
+{% form_theme form _self %}
+
 {% block content %}
-    {{ form_start(form, {'attr': {'novalidate': true}}) }}
-    <div style="margin-bottom:10px;">
-        <div style="display:inline-block;vertical-align:top;">
-            {{ form_row(form.inn, {'label': 'ИНН'}) }}
-            {{ form_row(form.shortName, {'label': 'Краткое название организации'}) }}
-            {{ form_row(form.largeName, {'label': 'Полное название организации'}) }}
-            {{ form_row(form.kpp, {'label': 'КПП'}) }}
-            {{ form_row(form.ogrn, {'label': 'ОГРН'}) }}
-            {{ form_row(form.phone, {'label': 'Телефон'}) }}
-            {{ form_row(form.email, {'label': 'Электронная почта'}) }}
-            {{ form_row(form.address, {'label': 'Юридический адрес'}) }}
-            {{ form_row(form.zipcode, {'label': 'Почтовый индекс'}) }}
-            {{ form_row(form.accountNumber, {'label': 'Расчётный счёт'}) }}
-            {{ form_row(form.bik, {'label': 'БИК'}) }}
-            {{ form_row(form.publicationAgree) }}
-            {{ form_row(form.storeAgree) }}
+    <div class="table_leads">
+        <div class="table_leads_layout exposed_leads">
+            <div class="exposed_leads_title">
+                <h2>Настройки компании</h2>
+            </div>
+            <div class="company_setup">
+                <div class="setup_step">
+                    <span class="coverage"></span>
+                    <span class="coverage_silver"></span>
+                </div>
+                <p>Заполните карточку организации</p>
+                {{ form_start(form, {'attr': {'class': 'office-settings__office-form office', 'novalidate': true}}) }}
+                    <div class="office-settings__left-side">
+                        <div class="office__input--box company">
+                            {{ form_row(form.inn, {
+                                'label': 'ИНН',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 233605110231'
+                                }
+                            }) }}
+                            {{ form_row(form.shortName, {
+                                'label': 'Краткое название организации',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: АН Холдинг Групп'
+                                }
+                            }) }}
+                            {{ form_row(form.largeName, {
+                                'label': 'Полное название организации',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: ООО АН Холдинг Групп'
+                                }
+                            }) }}
+                            {{ form_row(form.kpp, {
+                                'label': 'КПП',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 645301001'
+                                }
+                            }) }}
+                            {{ form_row(form.ogrn, {
+                                'label': 'ОГРН',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 307235211300011'
+                                }
+                            }) }}
+                            {{ form_row(form.phone, {
+                                'label': 'Телефон для входящих звонков',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 8 800 000 00 00'
+                                }
+                            }) }}
+                            {{ form_row(form.email, {
+                                'label': 'Эл. почта',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: example@edward-lead.ru'
+                                }
+                            }) }}
+                            {{ form_row(form.address, {
+                                'label': 'Юридический адрес',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'company-main-addr-textarea autoExpand',
+                                    'rows': 3,
+                                    'data-min-rows': 3
+                                }
+                            }) }}
+                            {{ form_row(form.zipcode, {
+                                'label': 'Почтовый индекс',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 353445'
+                                }
+                            }) }}
+                            {% if form.publicationAgree is defined or form.storeAgree is defined %}
+                                <div class="office__input--item row block-mod-15">
+                                    {% if form.publicationAgree is defined %}
+                                        {{ form_row(form.publicationAgree, {
+                                            'label': 'Я прочитал(а) и согласен с правилами публикации лида на платформу Edward Lead',
+                                            'label_attr': {'class': 'form__label-reg'},
+                                            'attr': {'class': 'checkbox'}
+                                        }) }}
+                                        <a href="#publication-rules" class="text-blue" style="font-size: 12px;margin-left: 26px;">Посмотреть правила публикации</a>
+                                    {% endif %}
+                                    {% if form.storeAgree is defined %}
+                                        {{ form_row(form.storeAgree, {
+                                            'label': 'Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам',
+                                            'label_attr': {'class': 'form__label-reg'},
+                                            'attr': {'class': 'checkbox'}
+                                        }) }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="office-settings__right-side">
+                        <div class="company__logo-choose logo-choose">
+                            {% if company is defined and company.logotype is not empty %}
+                                <img class="logo-choose__img" src="{{ company.logotype.path|imagine_filter('logotype_202x202') }}">
+                            {% else %}
+                                <div class="logo-choose__img">
+                                    <span class="icon-hat"></span>
+                                </div>
+                            {% endif %}
+                            <ul class="errors mb-20">
+                                {#<li>Поддерживаются только PNG изображения</li>#}
+                                {#<li>Максимальный размер загружаемого изображения должен быть 1MB</li>#}
+                            </ul>
+                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}
+                            <button class="btn-middle-green btn-middle-wide js-choice-logotype" type="button">Сменить логотип</button>
+                            {{ form_widget(form.logotypePath) }}
+                        </div>
+                        <div class="office__input--box company pos-mod-1">
+                            {{ form_row(form.accountNumber, {
+                                'label': 'Расчётный счет',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 40702810510000155962'
+                                }
+                            }) }}
+                            {{ form_row(form.bik, {
+                                'label': 'БИК',
+                                'label_attr': {
+                                    'class': 'office__label'
+                                },
+                                'attr': {
+                                    'class': 'form__input office__input',
+                                    'placeholder': 'Например: 044525974'
+                                }
+                            }) }}
+                        </div>
+                        <div class="row">
+                            {{ form_widget(form.submit, {
+                                'label': 'Сохранить',
+                                'attr': {
+                                    'class': 'btn-middle-green btn-middle-wide btn-pressed u-m-auto'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
         </div>
-        <div style="display:inline-block;vertical-align:top;">
-            {{ form_row(form.officeName, {'label': 'Название офиса'}) }}
-            {{ form_row(form.officeAddress, {'label': 'Адрес офиса'}) }}
-            {{ form_row(form.officePhone, {'label': 'Телефон для входящих звонков'}) }}
-            {{ form_row(form.cities, {'label': 'Укажите города работы'}) }}
-        </div>
+        {% include '@App/block_copyright.html.twig' %}
     </div>
-    <div>
-        {{ form_widget(form.submit) }}
-        {{ form_widget(form.reset) }}
-    </div>
-    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/underscore-min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone-min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/underscore.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone.js') }}"></script>
+    {% endif %}
+    <script>
+        const UploadButton = Backbone.View.extend({
+            events: {
+                'click': 'onButtonClick'
+            },
+            onButtonClick: function(e) {
+                e.preventDefault();
+                this.trigger('click', e);
+            },
+            isDisabled: function() {
+                return this.el.disabled;
+            },
+            disable: function() {
+                this.$el.attr('disabled', true);
+            },
+            enable: function() {
+                this.$el.attr('disabled', false);
+            }
+        });
+
+        const ErrorView = Backbone.View.extend({
+            tagName: 'li',
+        });
+
+        const LogotypeUploader = Backbone.View.extend({
+            initialize: function(options) {
+                this.logotypeImage = this.$el.find(options.logotypeImage);
+                this.logotypeField = this.$el.find(options.logotypeField);
+                this.errorsArea = this.$el.find(options.errorsArea);
+                this.uploader = this.$el.find(options.uploader);
+                this.uploader.on('change', null, {view: this}, this.onUploaderChange);
+                this.button = new UploadButton({el: options.button});
+                this.listenTo(this.button, 'click', this.onButtonClick);
+            },
+            onButtonClick: function(e) {
+                e.preventDefault();
+                this.uploader.click();
+            },
+            onUploaderChange: function(e) {
+                e.preventDefault();
+                const target = e.target;
+                const view = e.data.view;
+                if (!target.files.length) {
+                    return false;
+                }
+                const formData = new FormData();
+                formData.append('logotype', target.files[0]);
+                view.button.disable();
+                $.ajax({
+                    url: '/upload/logotype/logotype_202x202',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(resp) {
+                        if (view.logotypeImage[0] instanceof HTMLDivElement) {
+                            const $newLogotypeImage = $('<img>').addClass('logo-choose__img');
+                            view.logotypeImage.replaceWith($newLogotypeImage);
+                            view.logotypeImage = $newLogotypeImage;
+                        }
+                        view.logotypeImage.attr('src', resp['logotype']['uri']);
+                        view.logotypeField.val(resp['logotype']['path']);
+                    },
+                    error: function(xhr) {
+                        debugger;
+                        //todo: тут короче нужно рэндерить ошибки загрузки логотипа.
+                    },
+                    complete: function() {
+                        view.button.enable();
+                    }
+                });
+            }
+        });
+        new LogotypeUploader({
+            el: '.company__logo-choose',
+            logotypeImage: '.logo-choose__img',
+            logotypeField: 'input#company_logotypePath',
+            errorsArea: '.errors',
+            uploader: 'input#company_uploader',
+            button: '.js-choice-logotype'
+        });
+    </script>
 {% endblock %}

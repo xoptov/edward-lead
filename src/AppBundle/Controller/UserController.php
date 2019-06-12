@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
+use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
@@ -61,8 +63,10 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/creating/company", name="app_creating_company", methods={"GET", "POST"})
+     * @Route("/company/create", name="app_creating_company", methods={"GET", "POST"})
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function creatingCompanyAction(Request $request): Response
@@ -71,10 +75,19 @@ class UserController extends Controller
         $user = $this->getUser();
 
         if ($user->isTypeSelected()) {
-            return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
+            $this->addFlash('error', 'Тип пользователя уже указан');
+            return $this->redirectToRoute('app_profile');
         }
 
-        $form = $this->createForm(CompanyType::class, null, ['creating' => true]);
+        if ($user->getCompany()) {
+            $this->addFlash('error', 'Компания для пользователя уже создана');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $form = $this->createForm(CompanyType::class, null, [
+            'mode' => CompanyType::MODE_COMPANY,
+            'validation_groups' => ['Default', 'Company']
+        ]);
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
@@ -85,15 +98,131 @@ class UserController extends Controller
                 $company->setUser($user);
                 $this->entityManager->persist($company);
 
-                $user->switchToCompany()->makeTypeSelected();
+                $user->switchToCompany()
+                    ->makeTypeSelected();
+
+                $logotypePath = $company->getLogotypePath();
+
+                $pathParts = pathinfo($logotypePath);
+                $image = $this->entityManager->getRepository(Image::class)
+                    ->findOneBy(['filename' => $pathParts['basename']]);
+
+                if ($image) {
+                    $company->setLogotype($image);
+                } else {
+                    $image = new Image();
+                    $image
+                        ->setFilename($pathParts['basename'])
+                        ->setPath($logotypePath);
+
+                    $this->entityManager->persist($image);
+                    $company->setLogotype($image);
+                }
 
                 $this->entityManager->flush();
+
+                $this->addFlash('success', 'Компания создана');
+
+                return $this->redirectToRoute('app_updating_office', [
+                    'id' => $company->getId()
+                ]);
+            }
+        }
+
+        return $this->render('@App/User/company.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/company/update/{id}", name="app_updating_company", methods={"GET", "PUT"})
+     *
+     * @param Request $request
+     * @param Company $company
+     *
+     * @return Response
+     */
+    public function updateCompanyAction(Request $request, Company $company): Response
+    {
+        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
+            return new Response('Редактирование чужой компании запрещено');
+        }
+
+        $form = $this->createForm(CompanyType::class, $company, [
+            'method' => Request::METHOD_PUT,
+            'mode' => CompanyType::MODE_COMPANY,
+            'validation_groups' => ['Default', 'Company']
+        ]);
+
+        if ($request->isMethod(Request::METHOD_PUT)) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $logotypePath = $company->getLogotypePath();
+                $pathParts = pathinfo($logotypePath);
+
+                $image = $this->entityManager->getRepository(Image::class)
+                    ->findOneBy(['filename' => $pathParts['basename']]);
+
+                if ($image) {
+                    $company->setLogotype($image);
+                } else {
+                    $image = new Image();
+                    $image
+                        ->setPath($logotypePath)
+                        ->setFilename($pathParts['basename']);
+
+                    $this->entityManager->persist($image);
+                    $company->setLogotype($image);
+                }
+
+                $this->entityManager->flush();
+
+                $this->addFlash('success', 'Информация о компании обновлена');
+
+                return $this->redirectToRoute('app_updating_office', ['id' => $company->getId()]);
+            }
+        }
+
+        return $this->render('@App/User/company.html.twig', [
+            'form' => $form->createView(),
+            'company' => $company
+        ]);
+    }
+
+    /**
+     * @Route("/office/update/{id}", name="app_updating_office", methods={"GET", "PUT"})
+     *
+     * @param Request $request
+     * @param Company $company
+     *
+     * @return Response
+     */
+    public function updateOfficeAction(Request $request, Company $company): Response
+    {
+        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
+            return new Response('Редактирование чужого офиса запрещено');
+        }
+
+        $form = $this->createForm(CompanyType::class, $company, [
+            'method' => Request::METHOD_PUT,
+            'mode' => CompanyType::MODE_OFFICE,
+            'validation_groups' => ['Default', 'Office']
+        ]);
+
+        if ($request->isMethod(Request::METHOD_PUT)) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $this->entityManager->flush();
+
+                $this->addFlash('success', 'Информация о офисе сохранена');
 
                 return $this->redirectToRoute('app_profile');
             }
         }
 
-        return $this->render('@App/User/company.html.twig', [
+        return $this->render('@App/User/office.html.twig', [
             'form' => $form->createView()
         ]);
     }

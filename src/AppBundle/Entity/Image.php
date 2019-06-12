@@ -29,7 +29,7 @@ class Image
     /**
      * @var string
      *
-     * @ORM\Column(name="filename", type="string", length=30, unique=true)
+     * @ORM\Column(name="filename", type="string", length=40, unique=true)
      */
     private $filename;
 
