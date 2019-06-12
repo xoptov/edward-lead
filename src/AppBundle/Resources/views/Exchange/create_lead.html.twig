@@ -2,6 +2,13 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    {% if app.environment == 'dev' %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.min.css') }}">
+    {% endif %}
 {% endblock %}
 
 {% form_theme form _self %}
@@ -101,7 +108,7 @@
                                     'label': 'Дата поступления заявки',
                                     'label_attr': {'class': 'form__label text-mod-16'},
                                     'attr': {
-                                        'class': 'form__input date-field',
+                                        'class': 'form__input date-field js-calendar',
                                         'placeholder': 'дд.мм.гггг',
                                         'pattern': '[0-3][0-9]\\\.[0,1][0-9]\\\.20[1,2][0-9]',
                                         'autocomplete': 'off'
@@ -308,5 +315,11 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {% if app.environment == 'dev' %}
+        <script src="{{ asset('bundles/app/js/lib/jquery-ui.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/jquery-ui.min.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/js/lib/datepicker-ru.js') }}"></script>
     <script src="{{ asset('bundles/app/js/create-lead.js') }}"></script>
 {% endblock %}

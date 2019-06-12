@@ -4947,3 +4947,7 @@ span.lead_exchange:hover + div.error453_block{
     font-size: 14px;
     color: #bc0b28;
 }
+
+.ui-datepicker.ui-widget.ui-widget-content.ui-helper-clearfix.ui-corner-all {
+    font-size: 14px;
+}
