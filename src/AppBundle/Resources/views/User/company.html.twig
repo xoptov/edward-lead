@@ -152,17 +152,19 @@
                     </div>
                     <div class="office-settings__right-side">
                         <div class="company__logo-choose logo-choose">
-                            <div class="logo-choose__img">
-                                <span class="icon-hat"></span>
-                            </div>
-                            <span class="plain__text">Логотип Вашей компании:</span>
-                            <div class="binded__item binded__item--mod1">
-                                <button class="binded__button"><span class="icon-clip"></span></button>
-                                <span class="binded__file">Без-названия.jpg</span>
-                                <button class="button-close">&times;</button>
-                            </div>
-                            <button class="btn-middle-green btn-middle-wide">Загрузить логотип</button>
-                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;'}}) }}
+                            {% if company is defined and company.logotype is not empty %}
+                                <img class="logo-choose__img" src="{{ company.logotype.path|imagine_filter('logotype_202x202') }}">
+                            {% else %}
+                                <div class="logo-choose__img">
+                                    <span class="icon-hat"></span>
+                                </div>
+                            {% endif %}
+                            <ul class="errors mb-20">
+                                {#<li>Поддерживаются только PNG изображения</li>#}
+                                {#<li>Максимальный размер загружаемого изображения должен быть 1MB</li>#}
+                            </ul>
+                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}
+                            <button class="btn-middle-green btn-middle-wide js-choice-logotype" type="button">Сменить логотип</button>
                             {{ form_widget(form.logotypePath) }}
                         </div>
                         <div class="office__input--box company pos-mod-1">
@@ -201,4 +203,97 @@
         </div>
         {% include '@App/block_copyright.html.twig' %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/underscore-min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone-min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/underscore.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/backbone.js') }}"></script>
+    {% endif %}
+    <script>
+        const UploadButton = Backbone.View.extend({
+            events: {
+                'click': 'onButtonClick'
+            },
+            onButtonClick: function(e) {
+                e.preventDefault();
+                this.trigger('click', e);
+            },
+            isDisabled: function() {
+                return this.el.disabled;
+            },
+            disable: function() {
+                this.$el.attr('disabled', true);
+            },
+            enable: function() {
+                this.$el.attr('disabled', false);
+            }
+        });
+
+        const ErrorView = Backbone.View.extend({
+            tagName: 'li',
+        });
+
+        const LogotypeUploader = Backbone.View.extend({
+            initialize: function(options) {
+                this.logotypeImage = this.$el.find(options.logotypeImage);
+                this.logotypeField = this.$el.find(options.logotypeField);
+                this.errorsArea = this.$el.find(options.errorsArea);
+                this.uploader = this.$el.find(options.uploader);
+                this.uploader.on('change', null, {view: this}, this.onUploaderChange);
+                this.button = new UploadButton({el: options.button});
+                this.listenTo(this.button, 'click', this.onButtonClick);
+            },
+            onButtonClick: function(e) {
+                e.preventDefault();
+                this.uploader.click();
+            },
+            onUploaderChange: function(e) {
+                e.preventDefault();
+                const target = e.target;
+                const view = e.data.view;
+                if (!target.files.length) {
+                    return false;
+                }
+                const formData = new FormData();
+                formData.append('logotype', target.files[0]);
+                view.button.disable();
+                $.ajax({
+                    url: '/upload/logotype/logotype_202x202',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(resp) {
+                        if (view.logotypeImage[0] instanceof HTMLDivElement) {
+                            const $newLogotypeImage = $('<img>').addClass('logo-choose__img');
+                            view.logotypeImage.replaceWith($newLogotypeImage);
+                            view.logotypeImage = $newLogotypeImage;
+                        }
+                        view.logotypeImage.attr('src', resp['logotype']['uri']);
+                        view.logotypeField.val(resp['logotype']['path']);
+                    },
+                    error: function(xhr) {
+                        debugger;
+                        //todo: тут короче нужно рэндерить ошибки загрузки логотипа.
+                    },
+                    complete: function() {
+                        view.button.enable();
+                    }
+                });
+            }
+        });
+        new LogotypeUploader({
+            el: '.company__logo-choose',
+            logotypeImage: '.logo-choose__img',
+            logotypeField: 'input#company_logotypePath',
+            errorsArea: '.errors',
+            uploader: 'input#company_uploader',
+            button: '.js-choice-logotype'
+        });
+    </script>
 {% endblock %}

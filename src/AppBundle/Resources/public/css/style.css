@@ -4941,3 +4941,9 @@ span.lead_exchange:hover + div.error453_block{
     font-size: 14px;
     cursor: pointer;
 }
+
+.logo-choose .errors li {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #bc0b28;
+}

@@ -1,22 +1,19 @@
-
-
-$(".current-line__input").click(function(e){
-   $(e.target).parent(".current-line").nextAll(".country-block").toggleClass("show-children-of-item");
-})
-
-
 $(".header__dropdown").click(function(e){
    $(".header__dropdown").next(".notifications__list").toggleClass("show");
-})
+});
+
 $(".icon-logo-top").hover(function(e){
    $(".icon-logo-top").next(".profile").toggleClass("show");
-})
+});
+
 $(".logo").hover(function(e){
    $(".icon-logo-top").next(".profile").toggleClass("show");
-})
+});
+
 $(".icon-logo-top").click(function(e){
    $(".icon-logo-top").next(".profile").toggleClass("show");
-})
+});
+
 $(document).mouseup(function (e) {
    var profile = $(".profile");
    var notificationsList = $(".notifications__list");
@@ -44,7 +41,6 @@ $(document)
    this.rows = minRows + rows;
 });
 
-
 $(function() {
    var Accordion = function(el, multiple) {
       this.el = el || {};
@@ -70,12 +66,10 @@ $(function() {
          //show only one menu at the same time
          $el.find('.submenuItems').not($next).slideUp().parent().removeClass('open');
       }
-   }
+   };
 
    var accordion = new Accordion($('.accordion-menu'), false);
-})
-                   
- 
+});
 
 $('.tabs-nav li').click(function (e) {
    var a = $(this),
@@ -93,14 +87,14 @@ $('.tabs-nav li').click(function (e) {
 
    e.preventDefault();
 });
- $(document).ready(function () {
 
-   /* 1. Visualizing things on Hover - See next part for action on click */
-   $('#stars .star-box__item').on('mouseover', function () {
-         var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+$(document).ready(function () {
+    /* 1. Visualizing things on Hover - See next part for action on click */
+    $('#stars .star-box__item').on('mouseover', function () {
+        var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
 
-         // Now highlight all the stars that's not after the current hovered star
-         $(this).parent().children('div.star-box__item').each(function (e) {
+        // Now highlight all the stars that's not after the current hovered star
+        $(this).parent().children('div.star-box__item').each(function (e) {
             if (e < onStar) {
                $(this).addClass('hover');
             }
@@ -115,7 +109,6 @@ $('.tabs-nav li').click(function (e) {
          });
    });
 
-
    /* 2. Action to perform on click */
    $('#stars .star-box__item').on('click', function () {
          var onStar = parseInt($(this).data('value'), 10); // The star currently selected
@@ -128,8 +121,5 @@ $('.tabs-nav li').click(function (e) {
          for (i = 0; i < onStar; i++) {
             $(stars[i]).addClass('selected');
          }
-
    });
-
-
 });

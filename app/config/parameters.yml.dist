@@ -25,3 +25,4 @@ parameters:
     lead_expiration_period: 7
 
     upload_store_path: '%kernel.project_dir%/web/uploads'
+    upload_max_size: 1048576

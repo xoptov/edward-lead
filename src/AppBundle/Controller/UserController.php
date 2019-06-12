@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
 use AppBundle\Security\Voter\CompanyVoter;
@@ -100,6 +101,24 @@ class UserController extends Controller
                 $user->switchToCompany()
                     ->makeTypeSelected();
 
+                $logotypePath = $company->getLogotypePath();
+
+                $pathParts = pathinfo($logotypePath);
+                $image = $this->entityManager->getRepository(Image::class)
+                    ->findOneBy(['filename' => $pathParts['basename']]);
+
+                if ($image) {
+                    $company->setLogotype($image);
+                } else {
+                    $image = new Image();
+                    $image
+                        ->setFilename($pathParts['basename'])
+                        ->setPath($logotypePath);
+
+                    $this->entityManager->persist($image);
+                    $company->setLogotype($image);
+                }
+
                 $this->entityManager->flush();
 
                 $this->addFlash('success', 'Компания создана');
@@ -139,6 +158,24 @@ class UserController extends Controller
             $form->handleRequest($request);
 
             if ($form->isValid()) {
+                $logotypePath = $company->getLogotypePath();
+                $pathParts = pathinfo($logotypePath);
+
+                $image = $this->entityManager->getRepository(Image::class)
+                    ->findOneBy(['filename' => $pathParts['basename']]);
+
+                if ($image) {
+                    $company->setLogotype($image);
+                } else {
+                    $image = new Image();
+                    $image
+                        ->setPath($logotypePath)
+                        ->setFilename($pathParts['basename']);
+
+                    $this->entityManager->persist($image);
+                    $company->setLogotype($image);
+                }
+
                 $this->entityManager->flush();
 
                 $this->addFlash('success', 'Информация о компании обновлена');
@@ -148,7 +185,8 @@ class UserController extends Controller
         }
 
         return $this->render('@App/User/company.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'company' => $company
         ]);
     }
 
