@@ -188,4 +188,9 @@ $(function(){
         $starsField.val(value);
         $starsField.trigger('change');
     });
+
+    const $calendar = $('.js-calendar');
+
+    $calendar.datepicker($.datepicker.regional["ru"]);
+    $calendar.datepicker('option', 'dateFormat', 'dd.mm.yy');
 });
