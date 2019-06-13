@@ -11,7 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 class PhoneCall extends Operation
 {
     /**
-     * @var User
+     * @var string|null
+     */
+    private $externalId;
+
+    /**
+     * @var User|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
      * @ORM\JoinColumn(name="caller_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -19,7 +24,7 @@ class PhoneCall extends Operation
     private $caller;
 
     /**
-     * @var Lead
+     * @var Lead|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
      * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -27,11 +32,61 @@ class PhoneCall extends Operation
     private $lead;
 
     /**
-     * @var int
+     * @var int|null
      *
      * @ORM\Column(name="duration_in_secs", type="integer", options={"unsigned": true})
      */
     private $durationInSecs;
+
+    /**
+     * @var \DateTime
+     */
+    private $startedAt;
+
+    /**
+     * @var \DateTime
+     */
+    private $answerAt;
+
+    /**
+     * @var \DateTime
+     */
+    private $completedAt;
+
+    /**
+     * @var string
+     */
+    private $status;
+
+    /**
+     * @var int|null
+     */
+    private $billSecs;
+
+    /**
+     * @var string|null
+     */
+    private $record;
+
+    /**
+     * @param string $externalId
+     *
+     * @return PhoneCall
+     */
+    public function setExternalId(string $externalId): self
+    {
+        $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
 
     /**
      * @param User $caller
@@ -46,9 +101,9 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getCaller(): User
+    public function getCaller(): ?User
     {
         return $this->caller;
     }
@@ -66,9 +121,9 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return Lead
+     * @return Lead|null
      */
-    public function getLead(): Lead
+    public function getLead(): ?Lead
     {
         return $this->lead;
     }
@@ -86,10 +141,110 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getDurationInSecs(): int
+    public function getDurationInSecs(): ?int
     {
         return $this->durationInSecs;
+    }
+
+    /**
+     * @param \DateTime $startedAt
+     */
+    public function setStartedAt(\DateTime $startedAt): void
+    {
+        $this->startedAt = $startedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getStartedAt(): \DateTime
+    {
+        return $this->startedAt;
+    }
+
+    /**
+     * @param \DateTime $answerAt
+     */
+    public function setAnswerAt(\DateTime $answerAt): void
+    {
+        $this->answerAt = $answerAt;
+    }
+
+    /**
+     * @param \DateTime $completedAt
+     */
+    public function setCompletedAt(\DateTime $completedAt): void
+    {
+        $this->completedAt = $completedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCompletedAt(): \DateTime
+    {
+        return $this->completedAt;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return PhoneCall
+     */
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param int $billSecs
+     *
+     * @return PhoneCall
+     */
+    public function setBillSecs(int $billSecs): self
+    {
+        $this->billSecs = $billSecs;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBillSecs(): ?int
+    {
+        return $this->billSecs;
+    }
+
+    /**
+     * @param string $record
+     *
+     * @return PhoneCall
+     */
+    public function setRecord(string $record): self
+    {
+        $this->record = $record;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRecord(): ?string
+    {
+        return $this->record;
     }
 }
