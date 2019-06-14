@@ -113,3 +113,8 @@ liip_imagine:
                     size: [26, 26]
                     mode: outbound
                 ellipse_mask_filter: ~
+
+fos_message:
+    db_driver: orm
+    thread_class: AppBundle\Entity\Thread
+    message_class: AppBundle\Entity\Message
