@@ -21,3 +21,7 @@ _sonata_admin:
 
 _liip_imagine:
     resource: '@LiipImagineBundle/Resources/config/routing.yaml'
+
+fos_message:
+    resource: "@FOSMessageBundle/Resources/config/routing.xml"
+    prefix: /message
