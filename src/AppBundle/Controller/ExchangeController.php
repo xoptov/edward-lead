@@ -56,17 +56,34 @@ class ExchangeController extends Controller
     public function myLeadsAction(): Response
     {
         /** @var User $user */
-        $user = $this->getUser();
+        $user   = $this->getUser();
+        $roles  = $user->getRoles();
 
-        $trades = $this->getDoctrine()
-            ->getRepository(Trade::class)
-            ->findBy(["buyer" => $user], ["id" => "DESC"]);
+        if (in_array('ROLE_WEBMASTER', $roles)) {
+            $leads = $this->getDoctrine()
+                ->getRepository(LEAD::class)
+                ->findBy(["user" => $user], ["id" => "DESC"]);
+            $data = array(
+                'leads' => $leads
+            );
+        }
 
-        $phoneCalls = $this->getDoctrine()
-            ->getRepository(PhoneCall::class)
-            ->getCallsWithTrades($user, $trades);
+        if (in_array('ROLE_COMPANY', $roles )) {
+            $trades = $this->getDoctrine()
+                ->getRepository(Trade::class)
+                ->findBy(["buyer" => $user], ["id" => "DESC"]);
 
-        return $this->render('@App/Exchange/my_leads.html.twig', ["trades" => $trades, "calls" => $phoneCalls]);
+            $phoneCalls = $this->getDoctrine()
+                ->getRepository(PhoneCall::class)
+                ->getCallsWithTrades($user, $trades);
+
+            $data = array(
+                'trades'    => $trades,
+                'calls'     => $phoneCalls
+            );
+        }
+
+        return $this->render('@App/Exchange/my_leads.html.twig', $data );
     }
 
     /**

@@ -4186,7 +4186,8 @@ input.is-tel-correct:invalid ~ .error-note {
 .lead_exchange,
 .lead_sale,
 .lead_arbitration,
-.lead_nottar {
+.lead_nottar,
+.lead_active {
     width: 96px;
     height: 23px;
     background-color: #00a368;
@@ -4220,6 +4221,11 @@ input.is-tel-correct:invalid ~ .error-note {
     font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
+}
+
+.lead_active {
+    background-color: #8bf811;
+    color: #000;
 }
 
 .table_link {

@@ -11,12 +11,56 @@
     <div class="table_leads">
         <div class="table_leads_layout exposed_leads">
             <div class="exposed_leads_title">
-                <h2>Мои купленные лиды</h2>
+                <h2>Мои лиды</h2>
             </div>
             <div class="table_leads_block">
                 <table>
                     <tbody>
-                    {% if trades is iterable %}
+                    <!-- Лиды для веб-мастера -->
+                    {% if leads is defined %}
+                        <tr>
+                            <th>Дата создания</th>
+                            <th>Имя</th>
+                            <th>Телефон</th>
+                            <th>Город</th>
+                            <th>Стоимость</th>
+                            <th>Статус</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        {% if leads|length %}
+                            {% for lead in leads %}
+                                <tr>
+                                    <td>{{ lead.orderDate|date('d.m.Y') }}</td>
+                                    <td>{{ lead.name }}</td>
+                                    <td>{{ lead.phone }}</td>
+                                    <td>{{ lead.city.name }}</td>
+                                    <td>{{ lead.price }}</td>
+                                    <td>
+                                        {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
+                                            <span class="lead_arbitration">Арбитраж</span>
+                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_RESERVED') %}
+                                            <span class="lead_exchange">Проверка</span>
+                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
+                                            <span class="lead_sale">Успешно</span>
+                                        {% else %}
+                                            <span class="lead_active">Активен</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="table_link">
+                                            <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">Еще нет созданных лидов.</td>
+                            </tr>
+                        {% endif %}
+
+                    <!-- Лиды для -->
+                    {% elseif trades is defined %}
                         <tr>
                             <th>Дата создания</th>
                             <th>Имя</th>
