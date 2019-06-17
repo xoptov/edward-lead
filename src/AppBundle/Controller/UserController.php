@@ -103,20 +103,22 @@ class UserController extends Controller
 
                 $logotypePath = $company->getLogotypePath();
 
-                $pathParts = pathinfo($logotypePath);
-                $image = $this->entityManager->getRepository(Image::class)
-                    ->findOneBy(['filename' => $pathParts['basename']]);
+                if ($logotypePath) {
+                    $pathParts = pathinfo($logotypePath);
+                    $image = $this->entityManager->getRepository(Image::class)
+                        ->findOneBy(['filename' => $pathParts['basename']]);
 
-                if ($image) {
-                    $company->setLogotype($image);
-                } else {
-                    $image = new Image();
-                    $image
-                        ->setFilename($pathParts['basename'])
-                        ->setPath($logotypePath);
+                    if ($image) {
+                        $company->setLogotype($image);
+                    } else {
+                        $image = new Image();
+                        $image
+                            ->setFilename($pathParts['basename'])
+                            ->setPath($logotypePath);
 
-                    $this->entityManager->persist($image);
-                    $company->setLogotype($image);
+                        $this->entityManager->persist($image);
+                        $company->setLogotype($image);
+                    }
                 }
 
                 $this->entityManager->flush();
@@ -159,21 +161,24 @@ class UserController extends Controller
 
             if ($form->isValid()) {
                 $logotypePath = $company->getLogotypePath();
-                $pathParts = pathinfo($logotypePath);
 
-                $image = $this->entityManager->getRepository(Image::class)
-                    ->findOneBy(['filename' => $pathParts['basename']]);
+                if ($logotypePath) {
+                    $pathParts = pathinfo($logotypePath);
 
-                if ($image) {
-                    $company->setLogotype($image);
-                } else {
-                    $image = new Image();
-                    $image
-                        ->setPath($logotypePath)
-                        ->setFilename($pathParts['basename']);
+                    $image = $this->entityManager->getRepository(Image::class)
+                        ->findOneBy(['filename' => $pathParts['basename']]);
 
-                    $this->entityManager->persist($image);
-                    $company->setLogotype($image);
+                    if ($image) {
+                        $company->setLogotype($image);
+                    } else {
+                        $image = new Image();
+                        $image
+                            ->setPath($logotypePath)
+                            ->setFilename($pathParts['basename']);
+
+                        $this->entityManager->persist($image);
+                        $company->setLogotype($image);
+                    }
                 }
 
                 $this->entityManager->flush();

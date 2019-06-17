@@ -87,3 +87,7 @@ ROLE_COMPANY: Компания
 ROLE_WEBMASTER: Вебмастер
 ROLE_ADMIN: Администратор
 ROLE_SUPER_ADMIN: Суперадминистратор
+
+status_answer: 'Ответил'
+status_busy: 'Занят'
+status_no_answer: 'Не отвечает'

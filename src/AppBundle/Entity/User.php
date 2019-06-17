@@ -60,7 +60,7 @@ class User implements AdvancedUserInterface, ParticipantInterface
      * @var string|null
      *
      * @Assert\NotBlank(message="Телефон должен быть указан.")
-     * @ORM\Column(name="phone", type="string", length=12)
+     * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
 
