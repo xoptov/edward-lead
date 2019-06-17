@@ -57,9 +57,8 @@ class ExchangeController extends Controller
     {
         /** @var User $user */
         $user   = $this->getUser();
-        $roles  = $user->getRoles();
 
-        if (in_array('ROLE_WEBMASTER', $roles)) {
+        if ($this->isGranted('ROLE_WEBMASTER')) {
             $leads = $this->getDoctrine()
                 ->getRepository(LEAD::class)
                 ->findBy(["user" => $user], ["id" => "DESC"]);
@@ -68,7 +67,7 @@ class ExchangeController extends Controller
             );
         }
 
-        if (in_array('ROLE_COMPANY', $roles )) {
+        if ($this->isGranted('ROLE_COMPANY')) {
             $trades = $this->getDoctrine()
                 ->getRepository(Trade::class)
                 ->findBy(["buyer" => $user], ["id" => "DESC"]);
