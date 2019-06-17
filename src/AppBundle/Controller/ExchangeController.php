@@ -60,7 +60,7 @@ class ExchangeController extends Controller
 
         if ($this->isGranted('ROLE_WEBMASTER')) {
             $leads = $this->getDoctrine()
-                ->getRepository(LEAD::class)
+                ->getRepository(Lead::class)
                 ->findBy(["user" => $user], ["id" => "DESC"]);
             $data = array(
                 'leads' => $leads
