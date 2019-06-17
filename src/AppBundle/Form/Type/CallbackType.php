@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class CallbackType extends AbstractType
@@ -38,15 +39,27 @@ class CallbackType extends AbstractType
                 'property_path' => 'durationInSecs'
             ])
             ->add('started_at', DateTimeType::class, [
-                'property_path' => 'startedAt'
+                'property_path' => 'startedAt',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd HH:mm:ss'
             ])
             ->add('answer_at', DateTimeType::class, [
-                'property_path' => 'answerAt'
+                'property_path' => 'answerAt',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd HH:mm:ss'
             ])
             ->add('completed_at', DateTimeType::class, [
-                'property_path' => 'completedAt'
+                'property_path' => 'completedAt',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd HH:mm:ss'
             ])
-            ->add('status', TextType::class)
+            ->add('status', ChoiceType::class, [
+                'choices' => [
+                    'status_answer' => PhoneCall::STATUS_ANSWER,
+                    'status_busy' => PhoneCall::STATUS_BUSY,
+                    'status_no_answer' => PhoneCall::STATUS_NO_ANSWER
+                ]
+            ])
             ->add('billsec', NumberType::class, [
                 'property_path' => 'billSecs'
             ])

@@ -39,7 +39,7 @@ class Lead
     /**
      * @var string
      *
-     * @ORM\Column(name="phone", type="string", length=12)
+     * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
 

@@ -10,8 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PhoneCall extends Operation
 {
+    const STATUS_ANSWER = 'answer';
+    const STATUS_BUSY = 'busy';
+    const STATUS_NO_ANSWER = 'no_answer';
+
     /**
      * @var string|null
+     *
+     * @ORM\Column(name="external_id", type="string", length=16)
      */
     private $externalId;
 
@@ -19,7 +25,7 @@ class PhoneCall extends Operation
      * @var User|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id")
      */
     private $caller;
 
@@ -27,44 +33,56 @@ class PhoneCall extends Operation
      * @var Lead|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
-     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id")
      */
     private $lead;
 
     /**
      * @var int|null
      *
-     * @ORM\Column(name="duration_in_secs", type="integer", options={"unsigned": true})
+     * @ORM\Column(name="duration_in_secs", type="integer", nullable=true, options={"unsigned": true})
      */
     private $durationInSecs;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="started_at", type="datetime", nullable=true)
      */
     private $startedAt;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="answer_at", type="datetime", nullable=true)
      */
     private $answerAt;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="completed_at", type="datetime", nullable=true)
      */
     private $completedAt;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=9, nullable=true)
      */
     private $status;
 
     /**
      * @var int|null
+     *
+     * @ORM\Column(name="bill_secs", type="integer", nullable=true)
      */
     private $billSecs;
 
     /**
      * @var string|null
+     *
+     * @ORM\Column(name="record", type="string", nullable=true)
      */
     private $record;
 
@@ -157,33 +175,49 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getStartedAt(): \DateTime
+    public function getStartedAt(): ?\DateTime
     {
         return $this->startedAt;
     }
 
     /**
      * @param \DateTime $answerAt
+     *
+     * @return PhoneCall
      */
-    public function setAnswerAt(\DateTime $answerAt): void
+    public function setAnswerAt(\DateTime $answerAt): self
     {
         $this->answerAt = $answerAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getAnswerAt(): ?\DateTime
+    {
+        return $this->answerAt;
     }
 
     /**
      * @param \DateTime $completedAt
+     *
+     * @return PhoneCall
      */
-    public function setCompletedAt(\DateTime $completedAt): void
+    public function setCompletedAt(\DateTime $completedAt): self
     {
         $this->completedAt = $completedAt;
+
+        return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getCompletedAt(): \DateTime
+    public function getCompletedAt(): ?\DateTime
     {
         return $this->completedAt;
     }

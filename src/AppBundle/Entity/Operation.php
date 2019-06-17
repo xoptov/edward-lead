@@ -41,7 +41,7 @@ class Operation
     /**
      * @var int
      *
-     * @ORM\Column(name="amount", type="integer", options={"unsigned": true})
+     * @ORM\Column(name="amount", type="integer", nullable=true, options={"unsigned": true})
      */
     private $amount;
 

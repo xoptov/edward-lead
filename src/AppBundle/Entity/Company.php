@@ -73,12 +73,12 @@ class Company
     /**
      * @var string|null
      *
-     * @Assert\Length(min=11, max=18)
+     * @Assert\Length(min=11, max=32)
      * @Assert\NotBlank(
      *     message="Необходимо указать номер телефона",
      *     groups={"Company"}
      * )
-     * @ORM\Column(name="phone", type="string", length=12)
+     * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
 
@@ -198,12 +198,12 @@ class Company
     /**
      * @var string|null
      *
-     * @Assert\Length(min=11, max=18)
+     * @Assert\Length(min=11, max=32)
      * @Assert\NotBlank(
      *     message="Необходимо указать контактный телефон офиса",
      *     groups={"Office"}
      * )
-     * @ORM\Column(name="office_phone", type="string", length=12, nullable=true)
+     * @ORM\Column(name="office_phone", type="string", length=32, nullable=true)
      */
     private $officePhone;
 
