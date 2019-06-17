@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
 use Psr\Log\LoggerInterface;
+use GuzzleHttp\ClientInterface;
 use AppBundle\Form\Type\CallbackType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +17,12 @@ class TelephonyController extends Controller
     /**
      * @Route("/telephony/make-call/{lead}", name="app_telephony_make_call", methods={"GET"})
      *
-     * @param Lead $lead
+     * @param ClientInterface $client
+     * @param Lead            $lead
      *
      * @return Response
      */
-    public function makeCallAction(Lead $lead): Response
+    public function makeCallAction(ClientInterface $client, Lead $lead): Response
     {
         if (!$this->isGranted('ROLE_COMPANY')) {
             return new JsonResponse(
@@ -36,7 +38,7 @@ class TelephonyController extends Controller
             );
         }
 
-        //todo: тут необходимо сделать проверку на возможность делать звонки.
+        return new Response('ok!');
     }
 
     /**
