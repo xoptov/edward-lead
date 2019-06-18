@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 class LeadVoter extends Voter
 {
     const VIEW = 'view';
+    const FIRST_CALL = 'first_call';
 
     /**
      * @var AccessDecisionManagerInterface
@@ -52,20 +53,24 @@ class LeadVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if ($subject->isActive() && self::VIEW === $attribute) {
+        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 
-        if ($this->decisionManager->decide($token, [self::VIEW])) {
-            return true;
+        if (self::VIEW === $attribute) {
+            if ($subject->isActive()) {
+                return true;
+            }
+
+            if ($subject->getUser() === $token->getUser()) {
+                return true;
+            }
         }
 
-        if ($subject->getUser() === $token->getUser()) {
-            return true;
-        }
-
-        if ($subject->getBuyer() === $token->getUser() && self::VIEW === $attribute) {
-            return true;
+        if (self::FIRST_CALL === $attribute) {
+            if ($subject->isReserved() && $subject->getBuyer() === $token->getUser()) {
+                return true;
+            }
         }
 
         return false;

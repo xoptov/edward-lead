@@ -4,12 +4,18 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
 use Psr\Log\LoggerInterface;
-use GuzzleHttp\ClientInterface;
+use AppBundle\Entity\Account;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Form\Type\CallbackType;
+use AppBundle\Service\PhoneCallManager;
+use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Exception\OperationException;
+use AppBundle\Exception\PhoneCallException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use AppBundle\Exception\InsufficientFundsException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class TelephonyController extends Controller
@@ -17,28 +23,47 @@ class TelephonyController extends Controller
     /**
      * @Route("/telephony/make-call/{lead}", name="app_telephony_make_call", methods={"GET"})
      *
-     * @param ClientInterface $client
-     * @param Lead            $lead
+     * @param PhoneCallManager       $phoneCallManager
+     * @param EntityManagerInterface $entityManager
+     * @param Lead                   $lead
      *
      * @return Response
      */
-    public function makeCallAction(ClientInterface $client, Lead $lead): Response
+    public function makeCallAction(PhoneCallManager $phoneCallManager, EntityManagerInterface $entityManager, Lead $lead): Response
     {
-        if (!$this->isGranted('ROLE_COMPANY')) {
+        if (!$this->isGranted('FIRST_CALL', $lead)) {
             return new JsonResponse(
-                ['message' => 'Только пользователи компании могут делать звноки'],
-                Response::HTTP_BAD_REQUEST
+                ['message' => 'Для звонка лиду вы должны его сначала зарезервировать'],
+                Response::HTTP_FORBIDDEN
             );
         }
 
-        if (!$lead->isActive()) {
+        try {
+            $phoneCallManager->process($phoneCallManager->create($this->getUser(), $lead, false));
+        } catch (PhoneCallException $e) {
+            return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (OperationException $e) {
+            /** @var PhoneCall $phoneCall */
+            $phoneCall = $e->getOperation();
+            $hold = $phoneCall->getHold();
+
+            $phoneCall
+                ->setStatus(PhoneCall::STATUS_ERROR)
+                ->setDescription($e->getMessage())
+                ->setHold(null);
+
+            $entityManager->remove($hold);
+            $entityManager->flush();
+
+            return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (InsufficientFundsException $e) {
             return new JsonResponse(
-                ['message' => 'Звонок можно совершить только активному лиду'],
-                Response::HTTP_BAD_REQUEST
+                ['message' => $e->getMessage(), 'amount' => $e->getNeedle() / Account::DIVISOR],
+                Response::HTTP_PAYMENT_REQUIRED
             );
         }
 
-        return new Response('ok!');
+        return new JsonResponse(['message' => 'Запрос на соединение принят, ожидайте соединение с лидом']);
     }
 
     /**
@@ -58,6 +83,8 @@ class TelephonyController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $data = $form->getData();
+
             return new JsonResponse(['message' => 'Данные о звонке успешно приняты']);
         }
 
