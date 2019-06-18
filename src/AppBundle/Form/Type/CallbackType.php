@@ -74,8 +74,6 @@ class CallbackType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => PhoneCall::class,
-            'allow_extra_fields' => true,
             'csrf_protection' => false
         ]);
     }

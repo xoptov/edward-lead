@@ -10,9 +10,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PhoneCall extends Operation
 {
-    const STATUS_ANSWER = 'answer';
-    const STATUS_BUSY = 'busy';
+    const STATUS_NEW       = 'new';
+    const STATUS_REQUESTED = 'requested';
+    const STATUS_ANSWER    = 'answer';
+    const STATUS_BUSY      = 'busy';
     const STATUS_NO_ANSWER = 'no_answer';
+    const STATUS_ERROR     = 'error';
 
     /**
      * @var string|null
@@ -70,7 +73,7 @@ class PhoneCall extends Operation
      *
      * @ORM\Column(name="status", type="string", length=9, nullable=true)
      */
-    private $status;
+    private $status = self::STATUS_NEW;
 
     /**
      * @var int|null
@@ -127,6 +130,14 @@ class PhoneCall extends Operation
     }
 
     /**
+     * @return string
+     */
+    public function getCallerPhone(): string
+    {
+        return $this->caller->getOfficePhone();
+    }
+
+    /**
      * @param Lead $lead
      *
      * @return PhoneCall
@@ -144,6 +155,14 @@ class PhoneCall extends Operation
     public function getLead(): ?Lead
     {
         return $this->lead;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLeadPhone(): string
+    {
+        return $this->lead->getPhone();
     }
 
     /**
