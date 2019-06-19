@@ -21,15 +21,33 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class TelephonyController extends Controller
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var PhoneCallManager
+     */
+    private $phoneCallManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param PhoneCallManager       $phoneCallManager
+     */
+    public function __construct(EntityManagerInterface $entityManager, PhoneCallManager $phoneCallManager)
+    {
+        $this->entityManager = $entityManager;
+        $this->phoneCallManager = $phoneCallManager;
+    }
+
+    /**
      * @Route("/telephony/make-call/{lead}", name="app_telephony_make_call", methods={"GET"})
      *
-     * @param PhoneCallManager       $phoneCallManager
-     * @param EntityManagerInterface $entityManager
-     * @param Lead                   $lead
+     * @param Lead $lead
      *
      * @return Response
      */
-    public function makeCallAction(PhoneCallManager $phoneCallManager, EntityManagerInterface $entityManager, Lead $lead): Response
+    public function makeCallAction(Lead $lead): Response
     {
         if (!$this->isGranted('FIRST_CALL', $lead)) {
             return new JsonResponse(
@@ -39,7 +57,8 @@ class TelephonyController extends Controller
         }
 
         try {
-            $phoneCallManager->process($phoneCallManager->create($this->getUser(), $lead, false));
+            $phoneCall = $this->phoneCallManager->create($this->getUser(), $lead, false);
+            $this->phoneCallManager->makeCall($phoneCall);
         } catch (PhoneCallException $e) {
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (OperationException $e) {
@@ -52,8 +71,8 @@ class TelephonyController extends Controller
                 ->setDescription($e->getMessage())
                 ->setHold(null);
 
-            $entityManager->remove($hold);
-            $entityManager->flush();
+            $this->entityManager->remove($hold);
+            $this->entityManager->flush();
 
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         } catch (InsufficientFundsException $e) {
@@ -73,10 +92,11 @@ class TelephonyController extends Controller
      * @param LoggerInterface $logger
      *
      * @return Response
+     * @todo: переделать обработку результата звонка после ответа серверу. KERNEL_TERMINATE событие.
      */
     public function callbackAction(Request $request, LoggerInterface $logger): Response
     {
-//        $logger->debug('Callback from Asterisk', $request->request->all());
+//        $logger->debug('Callback from PBX', $request->request->all());
 //        return new Response('Request received!');
 
         $form = $this->createForm(CallbackType::class);
@@ -84,6 +104,19 @@ class TelephonyController extends Controller
 
         if ($form->isValid()) {
             $data = $form->getData();
+
+            if (!isset($data['externalId'])) {
+                return new JsonResponse(['message' => 'Не указан call_id']);
+            }
+
+            $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
+                ->findOneBy(['externalId' => $data['externalId']]);
+
+            if (!$phoneCall) {
+                return new JsonResponse(['message' => 'Вызов с указаным call_id не найден']);
+            }
+
+            $this->phoneCallManager->process($phoneCall, $data);
 
             return new JsonResponse(['message' => 'Данные о звонке успешно приняты']);
         }
@@ -96,6 +129,8 @@ class TelephonyController extends Controller
                 'message' => $error->getMessage()
             ];
         }
+
+        $logger->error('Error callback from PBX', $errors);
 
         return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
     }

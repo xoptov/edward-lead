@@ -131,7 +131,7 @@ class PhoneCallManager
      *
      * @throws OperationException
      */
-    public function process(PhoneCall $phoneCall, ?bool $flush = true): void
+    public function makeCall(PhoneCall $phoneCall, ?bool $flush = true): void
     {
         try {
             $response = $this->client->request(Request::METHOD_GET, $this->pbxCallUrl, [
@@ -154,8 +154,7 @@ class PhoneCallManager
             throw new OperationException($phoneCall, 'Ошибка. Не указан идентификатор вызова');
         }
 
-        $phoneCall
-            ->setExternalId($json['call_id'])
+        $phoneCall->setExternalId($json['call_id'])
             ->setStatus(PhoneCall::STATUS_REQUESTED);
 
         if ($flush) {
@@ -166,9 +165,30 @@ class PhoneCallManager
     /**
      * @param PhoneCall $phoneCall
      * @param array     $data
+     * @param bool|null $flush
      */
-    public function populateFromData(PhoneCall $phoneCall, array $data): void
+    public function process(PhoneCall $phoneCall, array $data, ?bool $flush = true): void
     {
-        //todo: необходимо реализовтаь заполнение из массива. Этот костуль нужен потаму как наши друзья не могут обращаться к разным url.
+        $reflection = new \ReflectionObject($phoneCall);
+        $properties = $reflection->getProperties();
+
+        foreach ($properties as $property) {
+            $propertyName = $property->getName();
+            if (!isset($data[$propertyName])) {
+                continue;
+            }
+            $property->setValue($phoneCall, $data[$propertyName]);
+        }
+
+        if ($phoneCall->getStatus() === PhoneCall::STATUS_ANSWER) {
+            $caller  = $phoneCall->getCaller();
+
+        } else {
+
+        }
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 }
