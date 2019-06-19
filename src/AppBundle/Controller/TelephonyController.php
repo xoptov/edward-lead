@@ -41,13 +41,13 @@ class TelephonyController extends Controller
     }
 
     /**
-     * @Route("/telephony/make-call/{lead}", name="app_telephony_make_call", methods={"GET"})
+     * @Route("/telephony/request-call/{lead}", name="app_telephony_make_call", methods={"GET"})
      *
      * @param Lead $lead
      *
      * @return Response
      */
-    public function makeCallAction(Lead $lead): Response
+    public function requestCallAction(Lead $lead): Response
     {
         if (!$this->isGranted('FIRST_CALL', $lead)) {
             return new JsonResponse(
@@ -58,7 +58,7 @@ class TelephonyController extends Controller
 
         try {
             $phoneCall = $this->phoneCallManager->create($this->getUser(), $lead, false);
-            $this->phoneCallManager->makeCall($phoneCall);
+            $this->phoneCallManager->requestConnection($phoneCall);
         } catch (PhoneCallException $e) {
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (OperationException $e) {
@@ -105,10 +105,6 @@ class TelephonyController extends Controller
         if ($form->isValid()) {
             $data = $form->getData();
 
-            if (!isset($data['externalId'])) {
-                return new JsonResponse(['message' => 'Не указан call_id']);
-            }
-
             $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
                 ->findOneBy(['externalId' => $data['externalId']]);
 
@@ -116,7 +112,13 @@ class TelephonyController extends Controller
                 return new JsonResponse(['message' => 'Вызов с указаным call_id не найден']);
             }
 
-            $this->phoneCallManager->process($phoneCall, $data);
+            try {
+                $this->phoneCallManager->process($phoneCall, $data);
+            } catch (\Exception $e) {
+                $logger->error('Ошибка обработки callback от PBX', ['message' => $e->getMessage()]);
+
+                return new JsonResponse(['message' => 'Ошибка обработки callback запроса'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
 
             return new JsonResponse(['message' => 'Данные о звонке успешно приняты']);
         }

@@ -4,9 +4,9 @@
 parameters:
     database_host: 127.0.0.1
     database_port: ~
-    database_name: edward_stage
-    database_user: edward
-    database_password: AtufwF
+    database_name: edward
+    database_user: root
+    database_password: 'ghjlf;b'
     # You should uncomment this if you want to use pdo_sqlite
     #database_path: '%kernel.project_dir%/var/data/data.sqlite'
 
@@ -26,3 +26,8 @@ parameters:
 
     upload_store_path: '%kernel.project_dir%/web/uploads'
     upload_max_size: 1048576
+
+    # Telephony
+    pbx_call_url: 'http://159.253.123.139:81/make.php'
+    cost_per_second: 350
+    first_call_timeout: 300
