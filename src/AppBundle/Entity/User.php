@@ -219,6 +219,18 @@ class User implements AdvancedUserInterface, ParticipantInterface
     }
 
     /**
+     * @return null|string
+     */
+    public function getOfficePhone(): ?string
+    {
+        if ($this->company) {
+            return $this->company->getOfficePhone();
+        }
+
+        return null;
+    }
+
+    /**
      * @param ClientAccount $account
      *
      * @return User

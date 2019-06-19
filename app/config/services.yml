@@ -158,9 +158,17 @@ services:
             $starCost: '%star_cost%'
             $leadExpirationPeriod: '%lead_expiration_period%'
 
+    AppBundle\Service\PhoneCallManager:
+        arguments:
+            $pbxCallUrl: '%pbx_call_url%'
+            $costPerSecond: '%cost_per_second%'
+            $firstCallTimeout: '%first_call_timeout%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'
+
+    GuzzleHttp\Client: ~
 
     AppBundle\Twig\TemplateExtension:
         public: false
