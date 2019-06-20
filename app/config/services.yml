@@ -149,6 +149,13 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: exchange, label: Trades }
         public: true
+    
+    app.admin.thread:
+        class: AppBundle\Admin\ThreadAdmin
+        arguments: [~, AppBundle\Entity\Thread, AppBundle\Controller\Admin\ThreadController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: exchange, label: Appeals }
+        public: true
 
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
