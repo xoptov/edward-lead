@@ -1,0 +1,12 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{%- block field -%}
+    {% for message in value %}
+        <div>
+            <p><span class="small">{{ message.createdAt|date_format }}</span> <b>{{ message.sender.username }}{% if message.sender.name is defined and message.sender.name is not empty %} ({{ message.sender.name }}){% endif %}</b> {{ message.body }}</p>
+        </div>
+        {% if not loop.last %}<hr>{% endif %}
+    {% else %}
+        <div class="col-xs-12">Сообщений нет!</div>
+    {% endfor %}
+{%- endblock -%}
