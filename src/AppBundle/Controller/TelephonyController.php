@@ -6,8 +6,8 @@ use AppBundle\Entity\Lead;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
-use AppBundle\Form\Type\CallbackType;
 use AppBundle\Service\PhoneCallManager;
+use AppBundle\Form\Type\PBXCallbackType;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\OperationException;
 use AppBundle\Exception\PhoneCallException;
@@ -64,14 +64,16 @@ class TelephonyController extends Controller
         } catch (OperationException $e) {
             /** @var PhoneCall $phoneCall */
             $phoneCall = $e->getOperation();
-            $hold = $phoneCall->getHold();
 
             $phoneCall
                 ->setStatus(PhoneCall::STATUS_ERROR)
-                ->setDescription($e->getMessage())
-                ->setHold(null);
+                ->setDescription($e->getMessage());
 
-            $this->entityManager->remove($hold);
+            if ($phoneCall->hasHold()) {
+                $hold = $phoneCall->takeHold();
+                $this->entityManager->remove($hold);
+            }
+
             $this->entityManager->flush();
 
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -96,24 +98,12 @@ class TelephonyController extends Controller
      */
     public function callbackAction(Request $request, LoggerInterface $logger): Response
     {
-//        $logger->debug('Callback from PBX', $request->request->all());
-//        return new Response('Request received!');
-
-        $form = $this->createForm(CallbackType::class);
+        $form = $this->createForm(PBXCallbackType::class);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $data = $form->getData();
-
-            $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
-                ->findOneBy(['externalId' => $data['externalId']]);
-
-            if (!$phoneCall) {
-                return new JsonResponse(['message' => 'Вызов с указаным call_id не найден']);
-            }
-
             try {
-                $this->phoneCallManager->process($phoneCall, $data);
+                $this->phoneCallManager->process($form->getData());
             } catch (\Exception $e) {
                 $logger->error('Ошибка обработки callback от PBX', ['message' => $e->getMessage()]);
 

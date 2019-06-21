@@ -142,6 +142,17 @@ class Operation
     }
 
     /**
+     * @return MonetaryHold|null
+     */
+    public function takeHold(): ?MonetaryHold
+    {
+        $hold = $this->hold;
+        $this->hold = null;
+
+        return $hold;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt(): \DateTime
