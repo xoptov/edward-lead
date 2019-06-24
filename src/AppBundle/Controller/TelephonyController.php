@@ -98,12 +98,17 @@ class TelephonyController extends Controller
      */
     public function callbackAction(Request $request, LoggerInterface $logger): Response
     {
+//        $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
+//        return new Response('Callback received');
+
         $form = $this->createForm(PBXCallbackType::class);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             try {
-                $this->phoneCallManager->process($form->getData());
+                $pbxCallback = $form->getData();
+                $this->entityManager->persist($pbxCallback);
+                $this->phoneCallManager->process($pbxCallback);
             } catch (\Exception $e) {
                 $logger->error('Ошибка обработки callback от PBX', ['message' => $e->getMessage()]);
 

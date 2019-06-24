@@ -32,6 +32,7 @@ final class Version20190621144050 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('DELETE FROM account WHERE type=\'system\' AND description LIKE \'%для%телефонии%\'');
         $this->addSql('DROP TABLE pbx_callback');
         $this->addSql('ALTER TABLE company CHANGE phone phone VARCHAR(12) NOT NULL COLLATE utf8_unicode_ci, CHANGE office_phone office_phone VARCHAR(12) DEFAULT NULL COLLATE utf8_unicode_ci');
         $this->addSql('ALTER TABLE lead CHANGE phone phone VARCHAR(12) NOT NULL COLLATE utf8_unicode_ci, CHANGE description description VARCHAR(255) DEFAULT NULL COLLATE utf8_unicode_ci');

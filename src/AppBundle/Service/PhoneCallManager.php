@@ -188,39 +188,63 @@ class PhoneCallManager
     public function process(PBXCallback $pbxCallback): void
     {
         if ($pbxCallback->hasPhoneCall()) {
-
             $phoneCall = $pbxCallback->getPhoneCall();
 
             if ($pbxCallback->isAnswered()) {
-                $caller  = $phoneCall->getCaller();
-
-                $telephonyAccount = $this->entityManager
-                    ->getRepository(Account::class)
-                    ->getTelephonyAccount();
-
-                $transactions = $this->transactionManager->create($caller->getAccount(), $telephonyAccount, $phoneCall, false);
-
-                $this->entityManager->transactional(function(EntityManagerInterface $em) use ($phoneCall, $transactions) {
-                    $this->transactionManager->process($transactions);
-
-                    if ($phoneCall->hasHold()) {
-                        $hold = $phoneCall->takeHold();
-                        $em->remove($hold);
-                    }
-
-                    $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
-
-                    $em->flush();
-                });
-
-                return;
-
-            } elseif ($phoneCall->hasHold()) {
-                $hold = $phoneCall->takeHold();
-                $this->entityManager->remove($hold);
+                $this->processAnsweredPhoneCall($phoneCall);
+            } else {
+                $this->processOtherPhoneCall($phoneCall);
             }
-            $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
+        } else {
+            $this->entityManager->flush();
         }
+    }
+
+    /**
+     * @param PhoneCall $phoneCall
+     *
+     * @throws AccountException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function processAnsweredPhoneCall(PhoneCall $phoneCall): void
+    {
+        $caller  = $phoneCall->getCaller();
+
+        $telephonyAccount = $this->entityManager
+            ->getRepository(Account::class)
+            ->getTelephonyAccount();
+
+        $transactions = $this->transactionManager->create($caller->getAccount(), $telephonyAccount, $phoneCall, false);
+
+        $this->entityManager->transactional(function(EntityManagerInterface $em) use ($phoneCall, $transactions) {
+
+            if (!empty($transactions)) {
+                $this->transactionManager->process($transactions);
+            }
+
+            if ($phoneCall->hasHold()) {
+                $hold = $phoneCall->takeHold();
+                $em->remove($hold);
+            }
+
+            $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
+
+            $em->flush();
+        });
+    }
+
+    /**
+     * @param PhoneCall $phoneCall
+     */
+    public function processOtherPhoneCall(PhoneCall $phoneCall): void
+    {
+        if ($phoneCall->hasHold()) {
+            $hold = $phoneCall->takeHold();
+            $this->entityManager->remove($hold);
+        }
+
+        $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
 
         $this->entityManager->flush();
     }
