@@ -44,17 +44,25 @@ class TransactionManager
             throw new AccountException($destination, 'Счёт назначения заблокирован и не может участвовать в транзакциях');
         }
 
+        $result = [];
+
         $outgoing = $this->createOutgoing($source, $operation);
-        $this->entityManager->persist($outgoing);
+        if ($outgoing) {
+            $this->entityManager->persist($outgoing);
+            $result[] = $outgoing;
+        }
 
         $income = $this->createIncome($destination, $operation);
-        $this->entityManager->persist($income);
+        if ($income) {
+            $this->entityManager->persist($income);
+            $result[] = $income;
+        }
 
         if ($flush) {
             $this->entityManager->flush();
         }
 
-        return [$outgoing, $income];
+        return $result;
     }
 
     /**
@@ -79,11 +87,15 @@ class TransactionManager
      * @param Account   $account
      * @param Operation $operation
      *
-     * @return MonetaryTransaction
+     * @return MonetaryTransaction|null
      */
-    private function createOutgoing(Account $account, Operation $operation): MonetaryTransaction
+    private function createOutgoing(Account $account, Operation $operation): ?MonetaryTransaction
     {
         $amount = -$operation->getAmount();
+
+        if (empty($amount)) {
+            return null;
+        }
 
         $transaction = new MonetaryTransaction();
         $transaction
@@ -98,15 +110,21 @@ class TransactionManager
      * @param Account   $account
      * @param Operation $operation
      *
-     * @return MonetaryTransaction
+     * @return MonetaryTransaction|null
      */
-    private function createIncome(Account $account, Operation $operation): MonetaryTransaction
+    private function createIncome(Account $account, Operation $operation): ?MonetaryTransaction
     {
+        $amount = $operation->getAmount();
+
+        if (empty($amount)) {
+            return null;
+        }
+
         $transaction = new MonetaryTransaction();
         $transaction
             ->setAccount($account)
             ->setOperation($operation)
-            ->setAmount($operation->getAmount());
+            ->setAmount($amount);
 
         return $transaction;
     }

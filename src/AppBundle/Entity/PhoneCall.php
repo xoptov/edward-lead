@@ -12,9 +12,7 @@ class PhoneCall extends Operation
 {
     const STATUS_NEW       = 'new';
     const STATUS_REQUESTED = 'requested';
-    const STATUS_ANSWER    = 'answer';
-    const STATUS_BUSY      = 'busy';
-    const STATUS_NO_ANSWER = 'no_answer';
+    const STATUS_PROCESSED = 'processed';
     const STATUS_ERROR     = 'error';
 
     /**
@@ -25,10 +23,17 @@ class PhoneCall extends Operation
     private $externalId;
 
     /**
+     * @var PBXCallback|null
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\PBXCallback", mappedBy="phoneCall")
+     */
+    private $callback;
+
+    /**
      * @var User|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $caller;
 
@@ -36,37 +41,9 @@ class PhoneCall extends Operation
      * @var Lead|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
-     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", onDelete="SET NULL")
      */
     private $lead;
-
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="duration_in_secs", type="integer", nullable=true, options={"unsigned": true})
-     */
-    private $durationInSecs;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="started_at", type="datetime", nullable=true)
-     */
-    private $startedAt;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="answer_at", type="datetime", nullable=true)
-     */
-    private $answerAt;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="completed_at", type="datetime", nullable=true)
-     */
-    private $completedAt;
 
     /**
      * @var string
@@ -76,25 +53,11 @@ class PhoneCall extends Operation
     private $status = self::STATUS_NEW;
 
     /**
-     * @var int|null
-     *
-     * @ORM\Column(name="bill_secs", type="integer", nullable=true)
-     */
-    private $billSecs;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="record", type="string", nullable=true)
-     */
-    private $record;
-
-    /**
-     * @param string $externalId
+     * @param null|string $externalId
      *
      * @return PhoneCall
      */
-    public function setExternalId(string $externalId): self
+    public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
 
@@ -102,11 +65,31 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function getExternalId(): ?string
     {
         return $this->externalId;
+    }
+
+    /**
+     * @param PBXCallback|null $callback
+     *
+     * @return PhoneCall
+     */
+    public function setCallback(?PBXCallback $callback): self
+    {
+        $this->callback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @return PBXCallback|null
+     */
+    public function getCallback(): ?PBXCallback
+    {
+        return $this->callback;
     }
 
     /**
@@ -166,82 +149,6 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @param int $durationInSecs
-     *
-     * @return PhoneCall
-     */
-    public function setDurationInSecs(int $durationInSecs): self
-    {
-        $this->durationInSecs = $durationInSecs;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getDurationInSecs(): ?int
-    {
-        return $this->durationInSecs;
-    }
-
-    /**
-     * @param \DateTime $startedAt
-     */
-    public function setStartedAt(\DateTime $startedAt): void
-    {
-        $this->startedAt = $startedAt;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getStartedAt(): ?\DateTime
-    {
-        return $this->startedAt;
-    }
-
-    /**
-     * @param \DateTime $answerAt
-     *
-     * @return PhoneCall
-     */
-    public function setAnswerAt(\DateTime $answerAt): self
-    {
-        $this->answerAt = $answerAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getAnswerAt(): ?\DateTime
-    {
-        return $this->answerAt;
-    }
-
-    /**
-     * @param \DateTime $completedAt
-     *
-     * @return PhoneCall
-     */
-    public function setCompletedAt(\DateTime $completedAt): self
-    {
-        $this->completedAt = $completedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getCompletedAt(): ?\DateTime
-    {
-        return $this->completedAt;
-    }
-
-    /**
      * @param string $status
      *
      * @return PhoneCall
@@ -262,42 +169,10 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @param int $billSecs
-     *
-     * @return PhoneCall
+     * @return bool
      */
-    public function setBillSecs(int $billSecs): self
+    public function isProcessed(): bool
     {
-        $this->billSecs = $billSecs;
-
-        return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getBillSecs(): ?int
-    {
-        return $this->billSecs;
-    }
-
-    /**
-     * @param string $record
-     *
-     * @return PhoneCall
-     */
-    public function setRecord(string $record): self
-    {
-        $this->record = $record;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getRecord(): ?string
-    {
-        return $this->record;
+        return self::STATUS_PROCESSED === $this->status;
     }
 }
