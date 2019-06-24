@@ -7,6 +7,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
+use Sonata\AdminBundle\Show\ShowMapper;
 
 class ThreadAdmin extends AbstractAdmin
 {
@@ -82,6 +83,53 @@ class ThreadAdmin extends AbstractAdmin
                 'catalogue' => 'messages'
             ])
             ->add('createdAt')
+            ->add('_action', null, [
+                'actions' => [
+                    'show' => []
+                ],
+            ])
+        ;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function configureShowFields(ShowMapper $showMapper)
+    {
+        $showMapper
+            ->with('General', [
+                'class' => 'col-xs-12 col-sm-4 col-md-3',
+                'box_class' => 'box box-solid box-default'
+            ])
+                ->add('id')
+                ->add('createdBy.username')
+                ->add('status', 'choice', [
+                    'choices' => [
+                        Thread::STATUS_NEW => 'New',
+                        Thread::STATUS_WAIT_USER => 'Waiting for user response',
+                        Thread::STATUS_WAIT_SUPPORT => 'Waiting for support response',
+                        Thread::STATUS_CLOSED => 'Closed'
+                    ],
+                    'catalogue' => 'messages'
+                ])
+                ->add('typeAppeal', 'choice', [
+                    'choices' => [
+                        Thread::TYPE_ARBITRATION => 'Arbitration',
+                        Thread::TYPE_SUPPORT => 'Support'
+                    ],
+                    'catalogue' => 'messages'
+                ])
+                ->add('createdAt')
+            ->end()
+            ->with('Appeal', [
+                'class' => 'col-xs-12 col-sm-8 col-md-9',
+                'box_class' => 'box box-solid box-default'
+            ])
+                ->add('subject')
+                ->add('messages', 'collection', [
+                    'template' => '@App/CRUD/show_messages_field.html.twig'
+                ])
+            ->end()
         ;
     }
 
@@ -94,7 +142,16 @@ class ThreadAdmin extends AbstractAdmin
             'create', // ToDo Удалить после теста
             //'edit',
             'list',
-            //'show'
+            'show'
         ]);
+    }
+
+    /**
+     * @param Thread $object
+     * @return string
+     */
+    public function toString($object)
+    {
+        return '#' . $object->getId() . ' ' . $object->getSubject() ?? "";
     }
 }
