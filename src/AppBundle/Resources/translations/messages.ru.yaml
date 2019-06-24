@@ -91,3 +91,17 @@ ROLE_SUPER_ADMIN: Суперадминистратор
 status_answer: 'Ответил'
 status_busy: 'Занят'
 status_no_answer: 'Не отвечает'
+
+Waiting for user response: жидает ответа пользователя
+Waiting for support response: Ожидает ответа техподдержки
+Closed: Закрыто
+Created By Username: Создано пользователем
+Subject: Тема
+Type Appeal: Тип обращения
+Arbitration: Арбитраж
+Support: Техподдержка
+Appeals: Обращения
+Thread List: Список обращений
+General: Основное
+Appeal: Обращение
+Messages: Сообщения

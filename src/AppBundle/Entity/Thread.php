@@ -43,4 +43,70 @@ class Thread extends BaseThread
      * @var ThreadMetadata[]|Collection
      */
     protected $metadata;
+
+    /**
+     * const of status
+     */
+    const STATUS_NEW = 'new';
+    const STATUS_WAIT_USER = 'wait_user';
+    const STATUS_WAIT_SUPPORT = 'wait_support';
+    const STATUS_CLOSED = 'closed';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="status", type="string", length=20)
+     */
+    protected $status;
+
+    /**
+     * const of type appeal
+     */
+    const TYPE_ARBITRATION = 'arbitration';
+    const TYPE_SUPPORT = 'support';
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(name="type_appeal", type="string", length=20)
+     */
+    protected $typeAppeal;
+
+    /**
+     * @return string|null
+     */
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string|null $status
+     * @return Thread
+     */
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTypeAppeal(): ?string
+    {
+        return $this->typeAppeal;
+    }
+
+    /**
+     * @param string|null $typeAppeal
+     * @return Thread
+     */
+    public function setTypeAppeal(?string $typeAppeal): self
+    {
+        $this->typeAppeal = $typeAppeal;
+
+        return $this;
+    }
 }
