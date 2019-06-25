@@ -14,6 +14,15 @@ class MoneyFieldDescription extends FieldDescription
     protected $options = ['divisor' => 100];
 
     /**
+     * @param array|null $options
+     */
+    public function __construct(?array $options = array())
+    {
+        parent::__construct();
+        $this->options = array_merge_recursive($this->options, $options);
+    }
+
+    /**
      * @inheritdoc
      *
      * @throws NoValueException

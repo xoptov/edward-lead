@@ -2,7 +2,7 @@
 
 {% block field%}
     {%- if value is empty -%}
-        Запись отсгтствует
+        Запись отсутствует
     {% else %}
         <audio controls src="{{ asset('uploads/' ~ value) }}">
             Ваш браузер не позволяет прослушивавать аудио записи.

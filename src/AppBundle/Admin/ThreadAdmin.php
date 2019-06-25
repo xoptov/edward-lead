@@ -138,12 +138,7 @@ class ThreadAdmin extends AbstractAdmin
      */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept([
-            'create', // ToDo Удалить после теста
-            //'edit',
-            'list',
-            'show'
-        ]);
+        $collection->clearExcept(['list', 'show']);
     }
 
     /**
