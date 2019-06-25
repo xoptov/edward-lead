@@ -1,6 +1,7 @@
 main: Главное
 financial: Финансы
 exchange: Биржа
+telephony: Телефония
 flash_enable_success: Успешно включен
 flash_enable_error: Ошибка включения
 flash_disable_success: Успешно выключен

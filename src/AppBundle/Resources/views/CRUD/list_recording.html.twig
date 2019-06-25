@@ -1,0 +1,11 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value is empty %}
+        Аудио запись отсутствует
+    {% else %}
+        <audio controls src="{{ value }}">
+            Ваш браузер не позволяет прослушивавать аудио записи.
+        </audio>
+    {% endif %}
+{% endblock %}

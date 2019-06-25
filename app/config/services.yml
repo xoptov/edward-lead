@@ -157,6 +157,13 @@ services:
             - { name: sonata.admin, manager_type: orm, group: exchange, label: Appeals }
         public: true
 
+    app.admin.phone_call:
+        class: AppBundle\Admin\PhoneCallAdmin
+        arguments: [~, AppBundle\Entity\PhoneCall, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: telephony, label: PhoneCalls }
+        public: true
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
     AppBundle\Service\LeadManager:

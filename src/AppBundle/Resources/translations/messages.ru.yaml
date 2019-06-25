@@ -40,9 +40,6 @@ Users: Пользователи
 Regions: Регионы
 Invoices: Счета-фактуры
 Status: Статус
-new: новая
-done: Завершено
-canceled: Отменено
 User Email: Email пользователя
 User Phone: Телефон пользователя
 title_process_invoice: Обработка счёт-фактуры
@@ -71,9 +68,6 @@ Seller Name: Имя продавца
 Lead Name: Имя лида
 Trade List: Список сделок
 Trades: Сделки
-New: Новая
-Accepted: Принята
-Rejected: Отклонена
 Sale Lead Limit: Лимит продаваемых лидов
 Lead Audio Record: Запись разговора
 Properties: Свойства
@@ -105,3 +99,23 @@ Thread List: Список обращений
 General: Основное
 Appeal: Обращение
 Messages: Сообщения
+
+new: Новая
+accepted: Принята
+rejected: Отклонена
+requested: Запрошен
+processed: Обработан
+error: Ошибка
+done: Завершено
+canceled: Отменено
+
+External Id: Внешний ID
+Caller Id: ID вызывающего абонента
+Caller Name: Имя вызывающего абонента
+Caller Phone: Телефон вызывающего абонента
+Lead Id: ID лида
+Lead Phone: Телефон лида
+Phone Call List: Список телефонных звонков
+telephony: Телефония
+PhoneCalls: Телефонные звонки
+Recording: Запись разговора
