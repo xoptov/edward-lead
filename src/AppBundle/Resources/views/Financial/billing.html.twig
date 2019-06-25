@@ -2,10 +2,8 @@
 
 {% block content %}
 <div class="office-settings u-w-100">
+    {% include '@App/flash_messages.html.twig' %}
     <h3 class="office-settings__title">Биллинг</h3>
-    {% for message in app.flashes('success') %}
-        <div class="label label-danger">{{ message }}</div>
-    {% endfor %}
     <div class="billing__header">
         <div class="billing__side-left">
             <div class="plain__text text-mod-2">Баланс личного счёта: {{ availableBalance }} руб.</div>

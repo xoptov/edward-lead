@@ -131,4 +131,22 @@ class TelephonyController extends Controller
 
         return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
     }
+
+    /**
+     * @Route("/telephony/calls", name="app_telephony_calls", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function callListAction(): Response
+    {
+        $user = $this->getUser();
+
+        $phoneCalls = $this->entityManager
+            ->getRepository(PhoneCall::class)
+            ->findBy(['caller' => $user]);
+
+        return $this->render('@App/Telephony/lead_call_list.html.twig', [
+            'phoneCalls' => $phoneCalls
+        ]);
+    }
 }

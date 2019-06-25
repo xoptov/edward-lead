@@ -3,6 +3,7 @@
 namespace AppBundle\Security\Voter;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
@@ -63,6 +64,10 @@ class LeadVoter extends Voter
             }
 
             if ($subject->getUser() === $token->getUser()) {
+                return true;
+            }
+
+            if ($subject->hasTrade() && $subject->getBuyer() === $token->getUser()) {
                 return true;
             }
         }

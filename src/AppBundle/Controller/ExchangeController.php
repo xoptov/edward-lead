@@ -308,7 +308,7 @@ class ExchangeController extends Controller
     {
         if (!$this->isGranted(LeadVoter::VIEW, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
-            return $this->redirectToRoute('app_exchange_show_lead', ['id' => $lead->getId()]);
+            return $this->redirectToRoute('app_exchange_my_leads');
         }
 
         if ($lead->getUser() === $this->getUser()) {
