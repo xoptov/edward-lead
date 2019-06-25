@@ -35,13 +35,7 @@
 {% block content %}
     <div class="office-settings u-w-100">
         <h3 class="office-settings__title">Заполните карточку лида</h3>
-        {%- if app.session.flashBag.has('error') -%}
-            <div>
-                {%- for message in app.session.flashBag.get('error') -%}
-                    <div class="text-red">{{ message }}</div>
-                {%- endfor -%}
-            </div>
-        {%- endif -%}
+        {% include '@App/flash_messages.html.twig' %}
         <div class="pos-sb">
             <div class="plain__text text-mod-5">Чем подробнее будет заполнена карточка, тем выше будет стоимость лида
             </div>

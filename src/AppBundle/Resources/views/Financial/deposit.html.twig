@@ -12,10 +12,8 @@
 
 {% block content %}
     <div class="office-settings u-w-100 page_pay">
+        {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Пополнить счёт</h3>
-        {% for message in app.flashes('success') %}
-            <div class="label label-danger">{{ message }}</div>
-        {% endfor %}
         {{ form_start(form, {'attr': {'novalidate': true, 'class': 'office-settings__office-form office'}}) }}
             <div class="personal__input--box personal">
                 {{ form_row(form.amount, {

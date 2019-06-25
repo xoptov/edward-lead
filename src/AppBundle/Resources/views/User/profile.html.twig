@@ -25,14 +25,8 @@
 {% block content %}
     <div class="office-settings u-w-100">
         <div class="ref_programs">
+            {% include '@App/flash_messages.html.twig' %}
             <h2 class="profile__head">Мой профиль</h2>
-            {%- if app.session.flashBag.has('success') -%}
-                <div>
-                    {%- for message in app.session.flashBag.get('success') -%}
-                        <div class="text-green">{{ message }}</div>
-                    {%- endfor -%}
-                </div>
-            {%- endif -%}
             <div class="profile-tabs">
                 <div class="profile-tabs__controls">
                     <button class="profile-tabs__control selected">О себе</button>

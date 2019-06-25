@@ -2,10 +2,8 @@
 
 {% block content %}
     <div class="office-settings u-w-100">
+        {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Вывод средств</h3>
-        {% for message in app.flashes('error') %}
-            <div class="label label-danger">{{ message }}</div>
-        {% endfor %}
         <div class="form">
             {{ form_start(form, {'attr': {'class': 'form'}}) }}
                 <div class="form__input--item">

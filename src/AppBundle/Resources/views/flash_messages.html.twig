@@ -1,0 +1,14 @@
+{%- if app.session.flashBag.has('success') -%}
+    {% set flash_type = 'success' %}
+    {% set flash_class = 'green' %}
+{%- elseif app.session.flashBag.has('error') -%}
+    {% set flash_type = 'error' %}
+    {% set flash_class = 'red' %}
+{%- endif -%}
+{%- if flash_type is defined -%}
+    <div class="label-{{ flash_type }}">
+        {%- for message in app.session.flashBag.get(flash_type) -%}
+            <div class="text-{{ flash_class }}">{{ message }}</div>
+        {%- endfor -%}
+    </div>
+{%- endif -%}

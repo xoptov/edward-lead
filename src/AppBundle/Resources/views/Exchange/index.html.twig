@@ -6,20 +6,7 @@
 
 {% block content %}
     <div class="lead">
-        {%- if app.session.flashBag.has('success') -%}
-            {% set flash_type = 'success' %}
-            {% set flash_class = 'green' %}
-        {%- elseif app.session.flashBag.has('error') -%}
-            {% set flash_type = 'error' %}
-            {% set flash_class = 'red' %}
-        {%- endif -%}
-        {%- if flash_type is defined -%}
-            <div>
-                {%- for message in app.session.flashBag.get(flash_type) -%}
-                    <div class="text-{{ flash_class }}">{{ message }}</div>
-                {%- endfor -%}
-            </div>
-        {%- endif -%}
+        {% include '@App/flash_messages.html.twig' %}
         <div class="lead__header mb-30">
             <h2 class="lead__title">Биржа лидов</h2>
             {%- if is_granted('ROLE_WEBMASTER') -%}

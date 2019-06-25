@@ -61,13 +61,8 @@
     </li>
     <li>
         <div class="sidebar__item dropdownlink">
-            <i class="sprite-3 sprite-ico7"></i><a href="#" class="sidebar__link">Телефония</a>
+            <i class="sprite-3 sprite-ico7"></i><a href="{{ path('app_telephony_calls') }}" class="sidebar__link">Телефония</a>
         </div>
-        <ul class="sidebar__sub-item-box submenuItems">
-            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>
-            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>
-            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>
-        </ul>
     </li>
     {% if app.user.company %}
         <li>

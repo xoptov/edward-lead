@@ -1,13 +1,7 @@
 {% extends '@App/layout.html.twig' %}
 
 {% block content %}
-    {%- if app.session.flashBag.has('success') -%}
-        <div>
-            {%- for message in app.session.flashBag.get('success') -%}
-                <div class="text-green">{{ message }}</div>
-            {%- endfor -%}
-        </div>
-    {%- endif -%}
+    {% include '@App/flash_messages.html.twig' %}
     <div class="table_leads">
         <div class="table_leads_layout exposed_leads">
             <div class="exposed_leads_title">

@@ -111,6 +111,8 @@ class FinancialController extends Controller
                 $this->entityManager->flush();
 
                 $this->addFlash('success', 'Запрос на пополнение баланса принят');
+
+                return $this->redirectToRoute('app_billing');
             }
         }
 

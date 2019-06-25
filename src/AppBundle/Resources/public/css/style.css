@@ -4118,46 +4118,10 @@ input.is-tel-correct:invalid ~ .error-note {
     background-color: #fff;
 }
 
-.table_leads_block table tr th:first-child,
-.table_leads_block table tr td:first-child {
-    width: 169px;
-}
-
-.table_leads_block table tr th:nth-child(2),
-.table_leads_block table tr td:nth-child(2) {
-    width: 119px;
-}
-
-.table_leads_block table tr th:nth-child(3),
-.table_leads_block table tr td:nth-child(3) {
-    width: 115px;
-}
-
-.table_leads_block table tr th:nth-child(4),
-.table_leads_block table tr td:nth-child(4) {
-    width: 150px;
-}
-
 .table_leads_block table tr td:nth-child(5) {
     color: #00a368;
     font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
-    font-weight: 400;
-}
-
-.table_leads_block table tr th:nth-child(5),
-.table_leads_block table tr td:nth-child(5) {
-    width: 122px;
-}
-
-.table_leads_block table tr th:nth-child(6),
-.table_leads_block table tr td:nth-child(6) {
-    width: 132px;
-}
-
-.table_leads_block table tr th:nth-child(7),
-.table_leads_block table tr td:nth-child(7) {
-    width: 79px;
 }
 
 .table_leads_block table tr td {
@@ -4181,6 +4145,10 @@ input.is-tel-correct:invalid ~ .error-note {
 
 .table_leads_block table tr td:last-child .table_leads_block table tr th:last-child {
     border: none;
+}
+
+.table_leads_block audio {
+    width: 100%;
 }
 
 .lead_exchange,

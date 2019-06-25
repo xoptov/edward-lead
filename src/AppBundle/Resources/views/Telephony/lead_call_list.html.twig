@@ -1,0 +1,80 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    <div class="table_leads">
+        {% include '@App/flash_messages.html.twig' %}
+        <div class="table_leads_layout exposed_leads">
+            <div class="exposed_leads_title">
+                <h2>Телефония (история)</h2>
+            </div>
+            <div class="table_leads_block">
+                {% if phoneCalls|length %}
+                <table>
+                    <tr>
+                        <th>Дата и время</th>
+                        <th>ID лида</th>
+                        <th>Номер абонента</th>
+                        <th>Время разговора</th>
+                        <th>Списанная сумма</th>
+                        <th>Статус</th>
+                        <th>Запись</th>
+                    </tr>
+                    {% for phoneCall in phoneCalls %}
+                        <tr>
+                            <td>{{ phoneCall.createdAt|date_format('d.m.Y в H:i:s') }}</td>
+                            <td>
+                                <a class="id_lids" target="_blank" href="{{ path('app_exchange_show_lead', {'id': phoneCall.lead.id}) }}">#{{ phoneCall.lead.id }}</a>
+                            </td>
+                            <td>{{ phoneCall.lead.phone|human_phone }}</td>
+                            <td>
+                                {% if phoneCall.callback is not empty %}
+                                    {{ phoneCall.callback.duration }}сек
+                                {% else %}
+                                    нет
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if phoneCall.amount %}
+                                    {{ phoneCall.amount|money_format }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set lead_status = phoneCall.lead.status %}
+                                {% if lead_status is constant('STATUS_ACTIVE', phoneCall.lead) %}
+                                    {% set status_class = 'lead_active' %}
+                                    {% set status_label = 'Активный' %}
+                                {% elseif lead_status is constant('STATUS_RESERVED', phoneCall.lead) %}
+                                    {% set status_class = 'lead_exchange' %}
+                                    {% set status_label = 'Зарезервирован' %}
+                                {% elseif lead_status is constant('STATUS_BLOCKED', phoneCall.lead) %}
+                                    {% set status_class = 'lead_arbitration' %}
+                                    {% set status_label = 'Арбитраж' %}
+                                {% elseif lead_status is constant('STATUS_SOLD', phoneCall.lead) %}
+                                    {% set status_class = 'lead_sale' %}
+                                    {% set status_label = 'Сделка завершена' %}
+                                {% else %}
+                                    {% set status_class = 'lead_nottar' %}
+                                    {% set status_label = 'Не указано' %}
+                                {% endif %}
+                                <span class="{{ status_class }}">{{ status_label }}</span>
+                            </td>
+                            <td>
+                                {% if phoneCall.callback is not empty and phoneCall.callback.recording %}
+                                    <audio controls src="{{ phoneCall.callback.recording }}">
+                                        Ваш браузер не позволяет прослушивавать аудио записи.
+                                    </audio>
+                                {% else %}
+                                    нет записи разговора
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                    <div>У вас нет совершенных звонков к лидам</div>
+                {% endif %}
+            </div>
+        </div>
+        {% include '@App/block_copyright.html.twig' %}
+    </div>
+{% endblock %}
