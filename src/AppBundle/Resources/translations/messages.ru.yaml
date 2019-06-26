@@ -119,3 +119,6 @@ Phone Call List: Список телефонных звонков
 telephony: Телефония
 PhoneCalls: Телефонные звонки
 Recording: Запись разговора
+User Id: ID пользователя
+User Delete Request List: Список запросов на удаление пользователя
+UserDeleteRequests: Запросы на уделения пользователей

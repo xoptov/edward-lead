@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Company;
+use AppBundle\Entity\UserDeleteRequest;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
@@ -330,5 +331,36 @@ class UserController extends Controller
             'profileForm' => $profileForm->createView(),
             'passwordForm' => $passwordForm->createView()
         ]);
+    }
+
+    /**
+     * @Route("/request/delete", name="app_request_delete", methods={"GET"})
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function deleteRequestAction(): Response
+    {
+        $deleteRequest = $this->entityManager
+            ->getRepository(UserDeleteRequest::class)
+            ->findOneBy(['user' => $this->getUser()]);
+
+        if ($deleteRequest) {
+            throw new \Exception('Запрос на удаление пользователя уже отправлен');
+        }
+
+        $deleteRequest = new UserDeleteRequest();
+        $deleteRequest
+            ->setUser($this->getUser());
+
+        $this->entityManager->persist($deleteRequest);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Запрос на удаление аккаунта принят');
+
+        //todo: тут нужно добавить создание обращения в техподдержку.
+
+        return $this->redirectToRoute('app_profile');
     }
 }

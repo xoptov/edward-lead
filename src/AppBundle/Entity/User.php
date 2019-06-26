@@ -177,6 +177,13 @@ class User implements AdvancedUserInterface, ParticipantInterface
     private $saleLeadLimit;
 
     /**
+     * @var UserDeleteRequest|null
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserDeleteRequest", mappedBy="user")
+     */
+    private $deleteRequest;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -685,6 +692,26 @@ class User implements AdvancedUserInterface, ParticipantInterface
     public function getSaleLeadLimit(): ?int
     {
         return $this->saleLeadLimit;
+    }
+
+    /**
+     * @param UserDeleteRequest|null $deleteRequest
+     *
+     * @return User
+     */
+    public function setDeleteRequest(?UserDeleteRequest $deleteRequest): self
+    {
+        $this->deleteRequest = $deleteRequest;
+
+        return $this;
+    }
+
+    /**
+     * @return UserDeleteRequest|null
+     */
+    public function getDeleteRequest(): ?UserDeleteRequest
+    {
+        return $this->deleteRequest;
     }
 }
 
