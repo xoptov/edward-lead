@@ -8,3 +8,7 @@ flash_disable_success: Успешно выключен
 flash_disable_error: Ошибка выключения
 flash_process_success: Успешно обработана
 flase_process_error: Ошибка побработка
+flash_reject_success: Успешно отклонена
+flash_reject_error: Ошибка отклонения
+flash_accept_success: Успешно принята
+flash_accept_error: Ошибка принятия

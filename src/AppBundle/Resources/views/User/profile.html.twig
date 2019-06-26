@@ -31,6 +31,7 @@
                 <div class="profile-tabs__controls">
                     <button class="profile-tabs__control selected">О себе</button>
                     <button class="profile-tabs__control">Безопасность</button>
+                    <button class="profile-tabs__control">Аккаунт</button>
                     <a href="{{ path('app_logout') }}" class="profile-tabs__exit">
                         <img src="{{ asset('bundles/app/img/exit.png') }}" alt="Выйти">
                     </a>
@@ -65,6 +66,15 @@
                             {{ form_row(passwordForm.password.second, {'label': 'Ещё раз пароль:', 'label_attr': {'class': 'form__label'}, 'attr': {'class': 'form__input'}}) }}
                             {{ form_widget(passwordForm.submit, {'label': 'Сохранить', 'attr': {'class': 'btn form__btn'}}) }}
                         {{ form_end(passwordForm) }}
+                    </div>
+                    <div class="profile-tabs__content profile-tabs__content_delete">
+                        <h3 class="profile-tabs__head">Аккаунт</h3>
+                        {% if app.user.deleteRequest is empty %}
+                            <p>Вы можете отправить запрос на удаление аккаунта.</p>
+                            <a class="btn btn-danger" href="{{ path('app_request_delete') }}">Удалить аккаунт</a>
+                        {% else %}
+                            <p>Запрос на удаление ваше аккаунта в обработке</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
