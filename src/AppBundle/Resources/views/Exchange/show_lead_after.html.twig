@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="office-settings u-w-100">
+    <div id="lead-description" class="office-settings u-w-100">
         {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Лид #{{ lead.id }}</h3>
         <div class="plain__text text-mod-5">Просмотрите карточку лида, если Вам он показался интересный, Вы можете его купить и получить его контактные данные. Мы продаём лида только одной организации.</div>
@@ -22,7 +22,13 @@
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Телефон:</div>
-                            <div class="info-block__column-right">{{ lead.phone|hidden_phone }}</div>
+                            <div class="info-block__column-right">
+                                {% if has_answered_phone_call(lead, app.user) %}
+                                    {{ lead.phone|human_phone }}
+                                {% else %}
+                                    {{ lead.phone|hidden_phone }}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Город:</div>
@@ -32,8 +38,22 @@
                             <div class="info-block__column-left">&nbsp;</div>
                             <div class="info-block__column-right">
                                 <div class="info-block__first-call-box">
-                                    <button class="btn btn-small btn-green">Сделать первый звонок</button>
-                                    <span class="info-block__attention">Отображение номера будет доступно после Вашего первого звонка &nbsp; <a href="#" class="info-block__link">Правила платформы Edward</a></span>
+                                    {% if has_answered_phone_call(lead, app.user) == false %}
+                                        <div v-if="requestCallResult">
+                                            <div v-if="requestCallResult == 'success'">
+                                                <span>Запрос на звонок успешно принят, ожидайте соединения</span>
+                                            </div>
+                                            <div v-else>
+                                                <span v-text="requestCallResult"></span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-small btn-green" @click.prevent="requestCall({{ lead.id }}, $event)">Сделать первый звонок</button>
+                                            <span class="info-block__attention">
+                                                Отображение номера будет доступно после Вашего первого звонка <a href="#" class="info-block__link">Правила платформы Edward</a>
+                                            </span>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -140,4 +160,41 @@
         </div>
         {% include '@App/block_copyright.html.twig' %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    {% endif %}
+    <script>
+        new Vue({
+            el: '#lead-description',
+            data: {
+                requestCallResult: null
+            },
+            methods: {
+                requestCall(id, e) {
+                    e.target.disabled = true;
+                    jQuery.ajax({
+                        url: '/telephony/request-call/' + id,
+                        method: 'GET',
+                        context: this,
+                        success: function() {
+                            this.$data.requestCallResult = 'success';
+                        },
+                        error: function(xhr) {
+                            if (xhr.responseJSON && 'message' in xhr.responseJSON) {
+                                this.$data.requestCallResult = xhr.responseJSON['message'];
+                            } else {
+                                this.$data.requestCallResult = 'Произошла ошибка запроса соединения с лидом';
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 {% endblock %}

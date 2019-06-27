@@ -38,7 +38,7 @@ class LeadVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::VIEW])) {
+        if (!in_array($attribute, [self::VIEW, self::FIRST_CALL])) {
             return false;
         }
 

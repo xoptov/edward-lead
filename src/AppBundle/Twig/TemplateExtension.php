@@ -4,8 +4,12 @@ namespace AppBundle\Twig;
 
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -41,26 +45,24 @@ class TemplateExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead'])
+            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
+            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall'])
         ];
     }
 
     /**
      * @param $phone
+     *
      * @return string
      */
     public function hiddenPhone($phone): string
     {
-        if (substr($phone, 0, 1) == "+") {
-            return sprintf(
-                "%s %s %s ** **",
-                substr($phone, 0, 2),
-                substr($phone, 2, 3),
-                substr($phone, 5, 3)
-            );
+        if (strlen($phone) === 3) {
+            return sprintf('%s * *', substr($phone,0 , 1));
         }
+
         return sprintf(
-            "%s %s %s ** **",
+            '+%s(%s)-%s-**-**',
             substr($phone, 0, 1),
             substr($phone, 1, 3),
             substr($phone, 4, 3)
@@ -122,17 +124,19 @@ class TemplateExtension extends \Twig_Extension
      * @param User $user
      *
      * @return bool
+     *
+     * @throws NonUniqueResultException
      */
     public function hasReservedLead(User $user)
     {
-        try {
-            $lead = $this->entityManager->getRepository('AppBundle:Lead')
-                ->getByUserAndReserved($user);
-        } catch (\Exception $e) {
+        $lead = $this->entityManager->getRepository('AppBundle:Lead')
+            ->getByUserAndReserved($user);
+
+        if (!$lead) {
             return false;
         }
 
-        return $lead instanceof Lead;
+        return $this->hasAnsweredPhoneCall($lead, $user);
     }
 
     /**
@@ -146,9 +150,9 @@ class TemplateExtension extends \Twig_Extension
             return '';
         }
 
-        $formattedPhone = sprintf('%s(%s)%s-%s-%s',
-            substr($phone, 0, 2),
-            substr($phone, 2, 3),
+        $formattedPhone = sprintf('+%s(%s)%s-%s-%s',
+            substr($phone, 0, 1),
+            substr($phone, 1, 3),
             substr($phone, 5, 3),
             substr($phone, 8, 2),
             substr($phone, 10, 2)
@@ -171,5 +175,21 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return $result;
+    }
+
+    /**
+     * @param Lead $lead
+     *
+     * @return bool
+     *
+     * @throws NonUniqueResultException
+     */
+    public function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
+    {
+        $phoneCall = $this->entityManager
+            ->getRepository(PhoneCall::class)
+            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
+
+        return $phoneCall instanceof PhoneCall;
     }
 }
