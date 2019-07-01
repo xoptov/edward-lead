@@ -22,7 +22,9 @@ final class Version20190621144050 extends AbstractMigration
         $this->addSql('ALTER TABLE user CHANGE phone phone VARCHAR(32) NOT NULL');
         $this->addSql('ALTER TABLE company CHANGE phone phone VARCHAR(32) NOT NULL, CHANGE office_phone office_phone VARCHAR(32) DEFAULT NULL');
         $this->addSql('ALTER TABLE phone_call ADD external_id VARCHAR(16) NOT NULL, ADD status VARCHAR(9) DEFAULT NULL, DROP duration_in_secs, CHANGE caller_id caller_id INT UNSIGNED DEFAULT NULL, CHANGE lead_id lead_id INT UNSIGNED DEFAULT NULL');
+        $this->addSql('ALTER TABLE phone_call DROP FOREIGN KEY FK_2F8A7D2CA5626C52');
         $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2CA5626C52 FOREIGN KEY (caller_id) REFERENCES user (id) ON DELETE SET NULL');
+        $this->addSql('ALTER TABLE phone_call DROP FOREIGN KEY FK_2F8A7D2C55458D');
         $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2C55458D FOREIGN KEY (lead_id) REFERENCES lead (id) ON DELETE SET NULL');
         $this->addSql('INSERT INTO account(balance, type, description, enabled) VALUES(0, \'system\', \'для телефонии\', 1)');
     }
@@ -38,7 +40,9 @@ final class Version20190621144050 extends AbstractMigration
         $this->addSql('ALTER TABLE lead CHANGE phone phone VARCHAR(12) NOT NULL COLLATE utf8_unicode_ci, CHANGE description description VARCHAR(255) DEFAULT NULL COLLATE utf8_unicode_ci');
         $this->addSql('ALTER TABLE operation CHANGE amount amount INT UNSIGNED NOT NULL');
         $this->addSql('ALTER TABLE phone_call DROP FOREIGN KEY FK_2F8A7D2CA5626C52');
+        $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2CA5626C52 FOREIGN KEY (caller_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE phone_call DROP FOREIGN KEY FK_2F8A7D2C55458D');
+        $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2C55458D FOREIGN KEY (lead_id) REFERENCES lead (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE phone_call ADD duration_in_secs INT UNSIGNED NOT NULL, DROP external_id, DROP status, CHANGE caller_id caller_id INT UNSIGNED NOT NULL, CHANGE lead_id lead_id INT UNSIGNED NOT NULL');
         $this->addSql('ALTER TABLE user CHANGE phone phone VARCHAR(12) NOT NULL COLLATE utf8_unicode_ci');
     }
