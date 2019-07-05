@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
 
 /**
  * @ORM\Entity
@@ -11,20 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class UserDeleteRequest
 {
-    use TimeTrackableTrait;
-
     const STATUS_NEW = 'new';
     const STATUS_REJECTED = 'rejected';
     const STATUS_ACCEPTED = 'accepted';
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     */
-    private $id;
+    use IdentificatorTrait;
+
+    use TimeTrackableTrait;
 
     /**
      * @var User
@@ -40,14 +35,6 @@ class UserDeleteRequest
      * @ORM\Column(name="status", type="string", length=8)
      */
     private $status = self::STATUS_NEW;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param User $user

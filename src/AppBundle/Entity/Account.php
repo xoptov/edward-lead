@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\EnabledTrait;
+use AppBundle\Entity\Part\UpdatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="account")
@@ -21,14 +24,11 @@ class Account
 {
     const DIVISOR = 100;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     */
-    protected $id;
+    use IdentificatorTrait;
+
+    use UpdatedAtTrait;
+
+    use EnabledTrait;
 
     /**
      * @var string|null
@@ -48,28 +48,6 @@ class Account
      * @ORM\Column(name="balance", type="bigint")
      */
     private $balance = 0;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean")
-     */
-    private $enabled = true;
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @param string $type
@@ -132,46 +110,10 @@ class Account
     }
 
     /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
      * @param int $amount
      */
     public function changeBalance(int $amount): void
     {
         $this->balance += $amount;
-    }
-
-    /**
-     * @param bool $value
-     *
-     * @return Account
-     */
-    public function setEnabled(bool $value): self
-    {
-        $this->enabled = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled(): bool
-    {
-        return $this->enabled;
     }
 }

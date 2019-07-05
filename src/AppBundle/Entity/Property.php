@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="property")
@@ -12,14 +13,7 @@ class Property
 {
     const CHANNEL = 'channel';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use IdentificatorTrait;
 
     /**
      * @var string
@@ -34,15 +28,6 @@ class Property
      * @ORM\Column(name="value", type="string", length=100)
      */
     private $value;
-
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @param string $value

@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\EnabledTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="city")
@@ -11,16 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class City
 {
+    use IdentificatorTrait;
+
     use TimeTrackableTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="smallint", options={"unsigned":true})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use EnabledTrait;
 
     /**
      * @var Region
@@ -50,21 +48,6 @@ class City
      * @ORM\Column(name="star_price", type="integer", nullable=true, options={"unsigned":true})
      */
     private $starPrice;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean")
-     */
-    private $enabled = false;
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @param Region $region
@@ -144,26 +127,6 @@ class City
     public function getStarPrice(): ?int
     {
         return $this->starPrice;
-    }
-
-    /**
-     * @param bool $enabled
-     *
-     * @return City
-     */
-    public function setEnabled(bool $enabled): self
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled(): bool
-    {
-        return $this->enabled;
     }
 }
 

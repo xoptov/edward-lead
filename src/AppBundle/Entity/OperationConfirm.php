@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\CreatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="operation_confirm")
@@ -17,14 +19,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class OperationConfirm
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    use IdentificatorTrait;
+
+    use CreatedAtTrait;
 
     /**
      * @var User
@@ -40,21 +37,6 @@ class OperationConfirm
      * @ORM\Column(name="description", type="string", nullable=true)
      */
     private $description;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param User $author
@@ -94,21 +76,5 @@ class OperationConfirm
     public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
     }
 }
