@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="image")
@@ -10,14 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Image
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use IdentificatorTrait;
 
     /**
      * @var string
@@ -32,14 +26,6 @@ class Image
      * @ORM\Column(name="filename", type="string", length=40, unique=true)
      */
     private $filename;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param string $path

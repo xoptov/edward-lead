@@ -3,9 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FOS\MessageBundle\Entity\ThreadMetadata as BaseThreadMetadata;
-use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ThreadInterface;
+use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Entity\ThreadMetadata as BaseThreadMetadata;
 
 /**
  * @ORM\Entity

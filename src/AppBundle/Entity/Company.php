@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use AppBundle\Entity\Part\TimeTrackableTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,16 +16,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Company
 {
-    use TimeTrackableTrait;
+    use IdentificatorTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use TimeTrackableTrait;
 
     /**
      * @var User
@@ -222,14 +217,6 @@ class Company
     public function __construct()
     {
         $this->cities = new ArrayCollection();
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\TimeTrackableTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -12,21 +14,22 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class Lead
 {
+    use IdentificatorTrait;
+
     use TimeTrackableTrait;
 
-    const STATUS_BLOCKED = 'blocked';
-    const STATUS_ACTIVE = 'active';
+    const STATUS_BLOCKED  = 'blocked';
+    const STATUS_ACTIVE   = 'active';
     const STATUS_RESERVED = 'reserved';
-    const STATUS_SOLD = 'sold';
+    const STATUS_SOLD     = 'sold';
 
     /**
-     * @var int
+     * @var Room|null
      *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Room")
+     * @ORM\JoinColumn(name="room_id", referencedColumnName="id")
      */
-    private $id;
+    private $room;
 
     /**
      * @var User
@@ -142,11 +145,23 @@ class Lead
     private $price;
 
     /**
-     * @return int
+     * @param Room|null $room
+     *
+     * @return Lead
      */
-    public function getId()
+    public function setRoom(?Room $room): self
     {
-        return $this->id;
+        $this->room = $room;
+
+        return $this;
+    }
+
+    /**
+     * @return Room|null
+     */
+    public function getRoom(): ?Room
+    {
+        return $this->room;
     }
 
     /**

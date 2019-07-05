@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="pbx_callback")
@@ -20,14 +21,7 @@ class PBXCallback
     const STATUS_BUSY      = 'busy';
     const STATUS_NO_ANSWER = 'no_answer';
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     */
-    private $id;
+    use IdentificatorTrait;
 
     /**
      * @var string|null
@@ -113,14 +107,6 @@ class PBXCallback
      * @ORM\Column(name="recording", type="string", length=255)
      */
     private $recording;
-
-    /**
-     * @return int|null
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param string $event

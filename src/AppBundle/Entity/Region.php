@@ -3,6 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\EnabledTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
 
 /**
  * @ORM\Table(name="region")
@@ -11,16 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Region
 {
+    use IdentificatorTrait;
+
     use TimeTrackableTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="smallint", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use EnabledTrait;
 
     /**
      * @var Country|null
@@ -36,21 +34,6 @@ class Region
      * @ORM\Column(name="name", type="string", length=30, unique=true)
      */
     private $name;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean")
-     */
-    private $enabled = false;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param Country $country
@@ -90,25 +73,5 @@ class Region
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    /**
-     * @param boolean $enabled
-     *
-     * @return Region
-     */
-    public function setEnabled(bool $enabled): self
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled(): bool
-    {
-        return $this->enabled;
     }
 }

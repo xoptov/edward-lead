@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\CreatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="monetary_transaction")
@@ -11,14 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class MonetaryTransaction
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     */
-    private $id;
+    use IdentificatorTrait;
+
+    use CreatedAtTrait;
 
     /**
      * @var Account
@@ -49,22 +46,6 @@ class MonetaryTransaction
      * @ORM\Column(name="processed", type="boolean")
      */
     private $processed = false;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="createdAt", type="datetime")
-     */
-    private $createdAt;
-
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @param Account $account
@@ -154,21 +135,5 @@ class MonetaryTransaction
     public function isProcessed(): bool
     {
         return $this->processed;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime();
     }
 }
