@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="room",options={"auto_increment"="1000"})
@@ -29,15 +30,17 @@ class Room
     private $owner;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\NotBlank(message="Название комнаты должно быть указано")
      * @ORM\Column(name="name", type="string")
      */
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      *
+     * @Assert\NotBlank(message="Сфера должна быть указана")
      * @ORM\Column(name="sphere", type="string")
      */
     private $sphere;
@@ -91,9 +94,9 @@ class Room
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -111,9 +114,9 @@ class Room
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSphere(): string
+    public function getSphere(): ?string
     {
         return $this->sphere;
     }
