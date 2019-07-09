@@ -74,9 +74,9 @@ class Room
     private $inviteToken;
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getOwner(): User
+    public function getOwner(): ?User
     {
         return $this->owner;
     }
