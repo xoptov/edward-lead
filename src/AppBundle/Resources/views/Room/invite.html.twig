@@ -1,0 +1,15 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    <div>
+        <div>Принять приглашение в комнату "{{ room.name }}".</div>
+        <div>
+            <div>
+                <a href="{{ path('app_accept_invite', {'token': room.inviteToken}) }}">Принять</a>
+            </div>
+            <div>
+                <a href="{{ path('app_reject_invite') }}">Отклонить</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
