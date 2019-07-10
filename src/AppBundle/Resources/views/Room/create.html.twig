@@ -1,0 +1,12 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block content %}
+    {{ form_start(form, {'attr': {'novalidate': true}}) }}
+        {{ form_row(form.name, {'label': 'Название комнаты'}) }}
+        {{ form_row(form.sphere, {'label': 'Сфера деятельности'}) }}
+        {{ form_row(form.leadCriteria, {'label': 'Критерии целевого лида'}) }}
+        {{ form_row(form.leadPrice, {'label': 'Стоимость лида'}) }}
+        {{ form_row(form.platformWarranty, {'label': 'Требуются ли гарантии'}) }}
+        {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}

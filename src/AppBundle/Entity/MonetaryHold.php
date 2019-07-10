@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\CreatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="monetary_hold")
@@ -11,14 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class MonetaryHold
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use IdentificatorTrait;
+
+    use CreatedAtTrait;
 
     /**
      * @var ClientAccount
@@ -42,21 +39,6 @@ class MonetaryHold
      * @ORM\Column(name="amount", type="integer", options={"unsigned"="false"})
      */
     private $amount;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param ClientAccount $account
@@ -126,21 +108,5 @@ class MonetaryHold
     public function getHumanAmount(?int $divisor = 100): float
     {
         return $this->amount / $divisor;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime();
     }
 }

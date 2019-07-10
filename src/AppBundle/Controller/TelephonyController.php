@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Security\Voter\LeadVoter;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -49,7 +50,7 @@ class TelephonyController extends Controller
      */
     public function requestCallAction(Lead $lead): Response
     {
-        if (!$this->isGranted('FIRST_CALL', $lead)) {
+        if (!$this->isGranted(LeadVoter::FIRST_CALL, $lead)) {
             return new JsonResponse(
                 ['message' => 'Для звонка лиду вы должны его сначала зарезервировать'],
                 Response::HTTP_FORBIDDEN
@@ -98,8 +99,10 @@ class TelephonyController extends Controller
      */
     public function callbackAction(Request $request, LoggerInterface $logger): Response
     {
-//        $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
-//        return new Response('Callback received');
+        if ('dev' === $this->getParameter('kernel.environment')) {
+            $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
+            return new Response('Callback received');
+        }
 
         $form = $this->createForm(PBXCallbackType::class);
         $form->handleRequest($request);

@@ -4,9 +4,9 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Entity\Message as BaseMessage;
-use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Model\ThreadInterface;
+use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Entity\Message as BaseMessage;
 
 /**
  * @ORM\Entity

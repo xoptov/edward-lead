@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\UpdatedAtTrait;
 
 /**
  * @ORM\Table(name="invoice")
@@ -13,6 +14,8 @@ class Invoice extends Operation
     const STATUS_NEW = 0;
     const STATUS_DONE = 1;
     const STATUS_CANCELED = 2;
+
+    use UpdatedAtTrait;
 
     /**
      * @var User
@@ -35,13 +38,6 @@ class Invoice extends Operation
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
      */
     private $status = self::STATUS_NEW;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
 
     /**
      * @param User $user
@@ -109,22 +105,6 @@ class Invoice extends Operation
     public function getStatus(): int
     {
         return $this->status;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 
     /**

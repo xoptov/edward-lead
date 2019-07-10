@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -16,8 +18,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class User implements AdvancedUserInterface, ParticipantInterface
 {
-    use TimeTrackableTrait;
-
     const ROLE_USER        = 'ROLE_USER';
     const ROLE_COMPANY     = 'ROLE_COMPANY';
     const ROLE_WEBMASTER   = 'ROLE_WEBMASTER';
@@ -25,14 +25,9 @@ class User implements AdvancedUserInterface, ParticipantInterface
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const DEFAULT_ROLE     = self::ROLE_USER;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use IdentificatorTrait;
+
+    use TimeTrackableTrait;
 
     /**
      * @var Company|null
@@ -182,14 +177,6 @@ class User implements AdvancedUserInterface, ParticipantInterface
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\UserDeleteRequest", mappedBy="user")
      */
     private $deleteRequest;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @return array
@@ -418,13 +405,16 @@ class User implements AdvancedUserInterface, ParticipantInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getPassword(): string
     {
         return $this->password;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getSalt()
     {
         return null;
@@ -451,7 +441,7 @@ class User implements AdvancedUserInterface, ParticipantInterface
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUsername(): string
     {
@@ -471,7 +461,7 @@ class User implements AdvancedUserInterface, ParticipantInterface
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getRoles(): array
     {
@@ -531,7 +521,7 @@ class User implements AdvancedUserInterface, ParticipantInterface
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isEnabled(): bool
     {

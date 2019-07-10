@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\HistoryActionRepository")
@@ -13,14 +14,7 @@ class HistoryAction
 {
     const ACTION_LOGIN = 'login';
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    use IdentificatorTrait;
 
     /**
      * @var User
@@ -57,14 +51,6 @@ class HistoryAction
     public function __construct(?string $action = self::ACTION_LOGIN)
     {
         $this->action = $action;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**

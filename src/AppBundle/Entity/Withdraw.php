@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\UpdatedAtTrait;
 
 /**
  * @ORM\Table(name="withdraw")
@@ -14,6 +15,8 @@ class Withdraw extends Operation
     const STATUS_DONE = 1;
     const STATUS_REJECTED = 2;
     const STATUS_CANCELED = 3;
+
+    use UpdatedAtTrait;
 
     /**
      * @var User
@@ -36,13 +39,6 @@ class Withdraw extends Operation
      * @ORM\Column(name="status", type="smallint")
      */
     private $status = self::STATUS_NEW;
-
-    /**
-     * @var \DateTime|null
-     *
-     * @ORM\Column(name="updated_at", type="datetime", nullable=true)
-     */
-    private $updatedAt;
 
     /**
      * @param User $user
@@ -118,22 +114,6 @@ class Withdraw extends Operation
     public function getStatus(): int
     {
         return $this->status;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 
     /**

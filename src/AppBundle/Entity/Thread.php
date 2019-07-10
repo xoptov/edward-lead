@@ -4,8 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Entity\Thread as BaseThread;
 use FOS\MessageBundle\Model\ParticipantInterface;
+use FOS\MessageBundle\Entity\Thread as BaseThread;
 
 /**
  * @ORM\Entity
@@ -47,10 +47,10 @@ class Thread extends BaseThread
     /**
      * const of status
      */
-    const STATUS_NEW = 'new';
-    const STATUS_WAIT_USER = 'wait_user';
+    const STATUS_NEW          = 'new';
+    const STATUS_WAIT_USER    = 'wait_user';
     const STATUS_WAIT_SUPPORT = 'wait_support';
-    const STATUS_CLOSED = 'closed';
+    const STATUS_CLOSED       = 'closed';
 
     /**
      * @var string|null
@@ -63,7 +63,7 @@ class Thread extends BaseThread
      * const of type appeal
      */
     const TYPE_ARBITRATION = 'arbitration';
-    const TYPE_SUPPORT = 'support';
+    const TYPE_SUPPORT     = 'support';
 
     /**
      * @var string|null

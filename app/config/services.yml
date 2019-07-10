@@ -171,6 +171,13 @@ services:
             - { name: sonata.admin, manager_type: orm, group: main, label: UserDeleteRequests }
         public: true
 
+    app.admin.room:
+        class: AppBundle\Admin\RoomAdmin
+        arguments: [~, AppBundle\Entity\Room, AppBundle\Controller\Admin\RoomController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Room }
+        public: true
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
     AppBundle\Service\LeadManager:

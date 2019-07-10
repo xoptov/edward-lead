@@ -2,9 +2,17 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Lead;
+use AppBundle\Entity\PBXCallback;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints\Callback;
 
 class PhoneCallRepository extends EntityRepository
 {
@@ -51,5 +59,32 @@ class PhoneCallRepository extends EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $caller
+     *
+     * @return PhoneCall|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getAnsweredPhoneCallByLeadAndCaller(Lead $lead, User $caller): ?PhoneCall
+    {
+        $qb = $this->createQueryBuilder('pc');
+
+        $query = $qb
+            ->join('pc.callback', 'cb', Join::WITH, 'cb.status = :answered')
+                ->setParameter('answered', PBXCallback::STATUS_ANSWER)
+            ->where('pc.lead = :lead')
+                ->setParameter('lead', $lead)
+            ->andWhere('pc.caller = :caller')
+                ->setParameter('caller', $caller)
+            ->andWhere('pc.status = :processed')
+                ->setParameter('processed', PhoneCall::STATUS_PROCESSED)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
     }
 }

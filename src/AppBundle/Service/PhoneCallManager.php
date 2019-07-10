@@ -153,7 +153,7 @@ class PhoneCallManager
                 'query' => [
                     'ext' => $phoneCall->getCallerPhone(),
                     'num' => $phoneCall->getLeadPhone(),
-                    'timeout' => $this->firstCallTimeout
+                    'dur' => $this->firstCallTimeout
                 ]
             ]);
             if ($response->getStatusCode() !== Response::HTTP_OK) {

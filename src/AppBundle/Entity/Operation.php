@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\CreatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="operation")
@@ -22,14 +24,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Operation
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(name="id", type="integer", options={"unsigned"="true"})
-     */
-    protected $id;
+    use IdentificatorTrait;
+
+    use CreatedAtTrait;
 
     /**
      * @var string|null
@@ -51,21 +48,6 @@ class Operation
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\MonetaryHold", mappedBy="operation")
      */
     private $hold;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     /**
      * @param null|string $description
@@ -150,31 +132,5 @@ class Operation
         $this->hold = null;
 
         return $hold;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt(): \DateTime
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param int $multiple
-     *
-     * @return int
-     */
-    public function getCreatedAtTimestamp(int $multiple = 1000): int
-    {
-        return $this->createdAt->getTimestamp() * $multiple;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist(): void
-    {
-        $this->createdAt = new \DateTime();
     }
 }
