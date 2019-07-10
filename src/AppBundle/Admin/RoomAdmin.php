@@ -9,6 +9,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
+use Sonata\AdminBundle\Show\ShowMapper;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use AppBundle\Form\Type\DataTransformer\MoneyTransformer;
 
@@ -49,6 +50,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('enabled')
             ->add('_action', null, [
                 'actions' => [
+                    'show' => [],
                     'edit' => [],
                     'delete' => []
                 ]
@@ -78,8 +80,26 @@ class RoomAdmin extends AbstractAdmin
     /**
      * @inheritdoc
      */
+    protected function configureShowFields(ShowMapper $show)
+    {
+        $leadPrice = new MoneyFieldDescription();
+        $leadPrice->setName('leadPrice');
+
+        $show
+            ->add('name')
+            ->add('owner.name')
+            ->add('sphere')
+            ->add('leadCriteria')
+            ->add('platformWarranty')
+            ->add($leadPrice)
+            ->add('enabled');
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept(['create', 'edit', 'delete', 'list']);
+        $collection->clearExcept(['create', 'edit', 'delete', 'list', 'show']);
     }
 }
