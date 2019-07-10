@@ -46,7 +46,7 @@ class TemplateExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
-            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall'])
+            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall']),
             new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable'])
         ];
