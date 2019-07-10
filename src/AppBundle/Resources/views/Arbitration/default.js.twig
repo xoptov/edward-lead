@@ -1,0 +1,47 @@
+var data = {
+    openTab: true,
+    archiveTab: false,
+    currentThread: {
+        id: null,
+        messages: []
+    },
+    openedThreads: [
+        {% for thread in openedThreads %}
+        {
+            id: {{ thread.id }},
+            lead: {% if thread.lead is not empty %}{{ thread.lead.id  }}{% else %}null{% endif %},
+            date: '{{ thread.createdAt|date('d.m.Y') }}',
+            status: '{{ thread.status }}',
+            type: '{{ thread.typeAppeal }}',
+            thread: 'open',
+            messages: [
+                {% for message in thread.messages %}
+                {% set sender = message.sender %}
+                {
+                    target_in: {% if app.user == sender %}false{% else %}true{% endif %},
+                    target_out: {% if app.user == sender %}true{% else %}false{% endif %},
+                    sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
+                    body: '{{ message.body }}',
+                    time: '{{ message.createdAt|date('d.m.Y H:m') }}',
+                    logo: {% if sender.company is not null %}{% set logotype = sender.company.logotype %}{% if logotype is not null %}'{{ logotype.path }}/{{ logotype.filename }}'{% else %}null{% endif %}{% else %}null{% endif %}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }
+        {% if not loop.last %},{% endif %}
+        {% endfor %}
+    ],
+    archiveThreads: [
+        {% for thread in archiveThreads %}
+        {
+            id: {{ thread.id }},
+            lead: {{ thread.lead.id }},
+            date: '{{ thread.createdAt|date('d.m.Y') }}',
+            status: '{{ thread.status }}',
+            type: '{{ thread.typeAppeal }}',
+            thread: 'archive'
+        }
+        {% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+};

@@ -41,7 +41,8 @@ class TemplateExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead'])
+            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
+            new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable'])
         ];
     }
 
@@ -171,5 +172,15 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $var
+     *
+     * @return string
+     */
+    public function vueVariable(string $var): string
+    {
+        return '{{'.$var.'}}';
     }
 }

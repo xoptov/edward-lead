@@ -73,6 +73,14 @@ class Thread extends BaseThread
     protected $typeAppeal;
 
     /**
+     * @var Lead|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
+     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", nullable=true)
+     */
+    protected $lead;
+
+    /**
      * @return string|null
      */
     public function getStatus(): ?string
@@ -106,6 +114,25 @@ class Thread extends BaseThread
     public function setTypeAppeal(?string $typeAppeal): self
     {
         $this->typeAppeal = $typeAppeal;
+
+        return $this;
+    }
+
+    /**
+     * @return Lead|null
+     */
+    public function getLead(): ?Lead
+    {
+        return $this->lead;
+    }
+
+    /**
+     * @param Lead|null $lead
+     * @return Thread
+     */
+    public function setLead(?Lead $lead): self
+    {
+        $this->lead = $lead;
 
         return $this;
     }
