@@ -74,23 +74,12 @@ class LeadType extends AbstractType
             ->add('description', TextareaType::class, [
                 'required' => false
             ])
-            ->add('uploadedAudioRecord', FileType::class, [
+            ->add('uploader', FileType::class, [
                 'required' => false,
-                'constraints' => [
-                    new File([
-                        'mimeTypes' => [
-                            'audio/webm',
-                            'audio/ogg',
-                            'audio/mpeg',
-                            'audio/mp3',
-                            'audio/wave',
-                            'audio/wav',
-                            'audio/flac'
-                        ],
-                        'maxSize' => '8M'
-                    ])
-                ]
+                'mapped' => false,
+                'attr' => ['accept' => 'webm,ogg,mpeg,mp3,wave,wav,flac']
             ])
+            ->add('audioRecord', HiddenType::class)
             ->add('publicationRule', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [

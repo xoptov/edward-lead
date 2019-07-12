@@ -185,6 +185,7 @@ services:
             $leadCost: '%lead_cost%'
             $starCost: '%star_cost%'
             $leadExpirationPeriod: '%lead_expiration_period%'
+            $leadPerUser: '%lead_per_user%'
 
     AppBundle\Service\PhoneCallManager:
         arguments:

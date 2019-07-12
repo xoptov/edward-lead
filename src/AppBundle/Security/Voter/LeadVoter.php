@@ -3,14 +3,14 @@
 namespace AppBundle\Security\Voter;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class LeadVoter extends Voter
 {
-    const VIEW = 'view';
+    const VIEW       = 'view';
+    const EDIT       = 'edit';
     const FIRST_CALL = 'first_call';
 
     /**
@@ -38,7 +38,7 @@ class LeadVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::VIEW, self::FIRST_CALL])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::FIRST_CALL])) {
             return false;
         }
 
@@ -74,6 +74,12 @@ class LeadVoter extends Voter
 
         if (self::FIRST_CALL === $attribute) {
             if ($subject->isReserved() && $subject->getBuyer() === $token->getUser()) {
+                return true;
+            }
+        }
+
+        if (self::EDIT === $attribute) {
+            if ($subject->getUser() === $token->getUser()) {
                 return true;
             }
         }

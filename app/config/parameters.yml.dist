@@ -24,7 +24,8 @@ parameters:
     lead_per_user: 5
     lead_expiration_period: 7
 
-    upload_store_path: '%kernel.project_dir%/web/uploads'
+    upload_path: 'uploads'
+    upload_store_path: '%kernel.project_dir%/web/%upload_path%'
     upload_max_size: 1048576
 
     # Telephony

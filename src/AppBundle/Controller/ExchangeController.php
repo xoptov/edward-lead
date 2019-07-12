@@ -9,7 +9,6 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
 use AppBundle\Entity\PhoneCall;
-use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
@@ -83,124 +82,6 @@ class ExchangeController extends Controller
         }
 
         return $this->render('@App/Exchange/my_leads.html.twig', $data );
-    }
-
-    /**
-     * @Route("/exchange/lead/create", name="app_exchange_create_lead", methods={"GET", "POST"})
-     *
-     * @param Request                  $request
-     * @param Uploader                 $uploader
-     * @param LeadManager              $leadManager
-     * @param EventDispatcherInterface $eventDispatcher
-     *
-     * @return Response
-     */
-    public function createLeadAction(
-        Request $request,
-        Uploader $uploader,
-        LeadManager $leadManager,
-        EventDispatcherInterface $eventDispatcher
-    ): Response {
-
-        $form = $this->createForm(LeadType::class);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            /** @var Lead $data */
-            $data = $form->getData();
-
-            /** @var User $user */
-            $user = $this->getUser();
-            $data->setUser($user);
-
-            $existed = $this->entityManager->getRepository(Lead::class)->findBy([
-                'phone' => $data->getPhone(),
-                'status' => Lead::STATUS_ACTIVE
-            ]);
-
-            if (count($existed)) {
-                $this->addFlash('error', 'Лид с указанным телефонам уже торгуется на бирже');
-
-                return $this->render('@App/Exchange/create_lead.html.twig', [
-                    'form' => $form->createView()
-                ]);
-            }
-
-            $leadManager->setExpirationDate($data);
-
-            try {
-                $activeLeadsCount = $this->entityManager
-                    ->getRepository(Lead::class)
-                    ->getActiveCountByUser($user);
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Произошла ошибка при создании лида');
-
-                return $this->render('@App/Exchange/create_lead.html.twig', ['form' => $form->createView()]);
-            }
-
-            if ($user->getSaleLeadLimit()) {
-                $leadLimit = $user->getSaleLeadLimit();
-            } else {
-                $leadLimit = $this->container->getParameter('lead_per_user');
-            }
-
-            if ($activeLeadsCount >= $leadLimit) {
-                $this->addFlash('error', 'Превышено количество активных лидов на бирже');
-
-                return $this->render('@App/Exchange/create_lead.html.twig', ['form' => $form->createView()]);
-            }
-
-            if ($data->getUploadedAudioRecord()) {
-                $filePath = $uploader->store($data->getUploadedAudioRecord(), Uploader::DIRECTORY_AUDIO);
-                $data->setAudioRecord($filePath);
-            }
-
-            $leadManager->setExpirationDate($data);
-            $data->setPrice($leadManager->calculateCost($data));
-
-            $this->entityManager->persist($data);
-            $this->entityManager->flush();
-
-            $eventDispatcher->dispatch(LeadEvent::NEW_LEAD_PLACED, new LeadEvent($data));
-
-            $this->addFlash('success', 'Лид размещён на бирже');
-
-            return $this->redirectToRoute('app_exchange_my_leads');
-        }
-
-        return $this->render('@App/Exchange/create_lead.html.twig', [
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/exchange/calculate-lead-cost", name="app_exchange_calculate_lead_cost", methods={"POST"}, defaults={"_format"="json"})
-     *
-     * @param Request     $request
-     * @param LeadManager $leadManager
-     *
-     * @return JsonResponse
-     */
-    public function calculateLeadCostAction(Request $request, LeadManager $leadManager): JsonResponse
-    {
-        $form = $this->createForm(LeadType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
-            /** @var Lead $data */
-            $data = $form->getData();
-            $stars = $leadManager->calculateStars($data);
-
-            return new JsonResponse(['stars' => $stars, 'cost' => $leadManager->calculateCost($data, Account::DIVISOR)]);
-        }
-
-        $errors = [];
-
-        foreach ($form->getErrors(true) as $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        return new JsonResponse(['error' => $errors], Response::HTTP_BAD_REQUEST);
     }
 
     /**

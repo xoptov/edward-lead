@@ -2,10 +2,9 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Account;
 use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -37,24 +36,32 @@ class LeadManager
     private $leadExpirationPeriod;
 
     /**
+     * @var int
+     */
+    private $leadPerUser;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TradeManager           $tradeManager
      * @param int                    $leadCost
      * @param int                    $starCost
      * @param int                    $leadExpirationPeriod
+     * @param int                    $leadPerUser
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TradeManager $tradeManager,
         int $leadCost,
         int $starCost,
-        int $leadExpirationPeriod
+        int $leadExpirationPeriod,
+        int $leadPerUser
     ) {
         $this->entityManager = $entityManager;
         $this->tradeManager = $tradeManager;
         $this->leadCost = $leadCost;
         $this->starCost = $starCost;
         $this->leadExpirationPeriod = $leadExpirationPeriod;
+        $this->leadPerUser = $leadPerUser;
     }
 
     /**
@@ -63,7 +70,7 @@ class LeadManager
      *
      * @return int
      */
-    public function calculateCost(Lead $lead, ?int $divisor = 1): int
+    public function estimateCost(Lead $lead, ?int $divisor = 1): int
     {
         $city = $lead->getCity();
 
@@ -84,7 +91,7 @@ class LeadManager
             $starCost = $this->starCost;
         }
 
-        $stars = $this->calculateStars($lead);
+        $stars = $this->estimateStars($lead);
 
         return ($leadCost + $stars * $starCost) / $divisor;
     }
@@ -94,13 +101,9 @@ class LeadManager
      *
      * @return int
      */
-    public function calculateStars(Lead $lead): int
+    public function estimateStars(Lead $lead): int
     {
-        $stars = 0;
-
-        if ($lead->getPhone() && $lead->getName() && $lead->getCity()) {
-            $stars = 1;
-        }
+        $stars = 1;
 
         if ($lead->getChannel() && $lead->getOrderDate()) {
             $stars++;
@@ -118,7 +121,7 @@ class LeadManager
             $stars++;
         }
 
-        if ($lead->getUploadedAudioRecord()) {
+        if ($lead->getAudioRecord()) {
             $stars++;
         }
 
@@ -179,5 +182,33 @@ class LeadManager
 
         $trade = $lead->getTrade();
         $this->tradeManager->handleReject($trade);
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function checkActiveLeadPerUser(User $user): bool
+    {
+        try {
+            $activeLeadsCount = $this->entityManager
+                ->getRepository(Lead::class)
+                ->getActiveCountByUser($user);
+        } catch(\Exception $e) {
+            return false;
+        }
+
+        if ($user->getSaleLeadLimit()) {
+            $leadPerUser = $user->getSaleLeadLimit();
+        } else {
+            $leadPerUser = $this->leadPerUser;
+        }
+
+        if ($activeLeadsCount >= $leadPerUser) {
+            return false;
+        }
+
+        return true;
     }
 }

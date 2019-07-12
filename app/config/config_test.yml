@@ -14,3 +14,15 @@ web_profiler:
 
 swiftmailer:
     disable_delivery: true
+
+security:
+    encoders:
+        AppBundle\Entity\User: 'plaintext'
+    providers:
+        default:
+            memory:
+                users:
+                    test_webmaster: #todo: тут продолжить
+    firewalls:
+        main:
+            http_basic: ~
