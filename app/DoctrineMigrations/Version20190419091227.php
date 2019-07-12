@@ -51,6 +51,8 @@ class Version20190419091227 extends AbstractMigration
         $this->addSql('ALTER TABLE referrer_reward ADD CONSTRAINT FK_E96D313A44AC3583 FOREIGN KEY (operation_id) REFERENCES operation (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE referrer_reward ADD CONSTRAINT FK_E96D313A798C22DB FOREIGN KEY (referrer_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE referrer_reward ADD CONSTRAINT FK_E96D313ABF396750 FOREIGN KEY (id) REFERENCES operation (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2CA5626C52 FOREIGN KEY (caller_id) REFERENCES user (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2C55458D FOREIGN KEY (lead_id) REFERENCES lead (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE phone_call ADD CONSTRAINT FK_2F8A7D2CBF396750 FOREIGN KEY (id) REFERENCES operation (id) ON DELETE CASCADE');
     }
 
