@@ -35,7 +35,6 @@ var vm = new Vue({
             this.archiveTab = tab === 'archive';
         },
         changeThread: function (item, thread) {
-            console.log(item, thread);
             if (thread === 'open') {
                 this.currentThread = this.openedThreads[item];
             } else if (thread === 'archive') {

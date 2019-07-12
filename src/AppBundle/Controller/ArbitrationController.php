@@ -15,7 +15,17 @@ class ArbitrationController extends Controller
     {
         $provider = $this->get('fos_message.provider');
 
-        $threads = $provider->getInboxThreads();
+        $inboxThreads = $provider->getInboxThreads();
+        $sentThreads = $provider->getSentThreads();
+
+        $threads = array_merge($inboxThreads, $sentThreads);
+
+        usort($threads, function (Thread $a, Thread $b) {
+            if ($a->getCreatedAt() == $b->getCreatedAt()) {
+                return 0;
+            }
+            return ($a->getCreatedAt() > $b->getCreatedAt()) ? -1 : 1;
+        });
 
         $user = $this->getUser();
 
