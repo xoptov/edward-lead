@@ -15,14 +15,13 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-security:
-    encoders:
-        AppBundle\Entity\User: 'plaintext'
-    providers:
-        default:
-            memory:
-                users:
-                    test_webmaster: #todo: тут продолжить
-    firewalls:
-        main:
-            http_basic: ~
+doctrine:
+    dbal:
+        driver: pdo_mysql
+        host: '%test_database_host%'
+        port: '%test_database_port%'
+        dbname: '%test_database_name%'
+        user: '%test_database_user%'
+        password: '%test_database_password%'
+        charset: UTF8
+        server_version: '5.7'

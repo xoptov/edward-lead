@@ -585,4 +585,14 @@ class Lead
     {
         return self::STATUS_SOLD === $this->status;
     }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $this->user === $user;
+    }
 }

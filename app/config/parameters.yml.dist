@@ -7,8 +7,12 @@ parameters:
     database_name: edward
     database_user: root
     database_password: 'ghjlf;b'
-    # You should uncomment this if you want to use pdo_sqlite
-    #database_path: '%kernel.project_dir%/var/data/data.sqlite'
+
+    test_database_host: ~
+    test_database_port: ~
+    test_database_name: ~
+    test_database_user: ~
+    test_database_password: ~
 
     mailer_transport: smtp
     mailer_host: 127.0.0.1

@@ -4,9 +4,13 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Exception\TradeException;
+use AppBundle\Util\Formatter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
 class LeadManager
 {
@@ -210,5 +214,68 @@ class LeadManager
         }
 
         return true;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $caller
+     *
+     * @return bool
+     *
+     * @throws NonUniqueResultException
+     */
+    public function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
+    {
+        $phoneCall = $this->entityManager
+            ->getRepository(PhoneCall::class)
+            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
+
+        return $phoneCall instanceof PhoneCall;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $buyer
+     *
+     * @return bool
+     *
+     * @throws NonUniqueResultException
+     */
+    public function hasAcceptedTrade(Lead $lead, User $buyer): bool
+    {
+        $trade = $this->entityManager
+            ->getRepository(Trade::class)
+            ->getByLeadAndBuyerAndStatus($lead, $buyer, Trade::STATUS_ACCEPTED);
+
+        return $trade instanceof Trade;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $user
+     *
+     * @return string
+     */
+    public function getNormalizedPhone(Lead $lead, User $user): string
+    {
+        $room = $lead->getRoom();
+
+        if ($lead->isOwner($user)) {
+            return Formatter::humanizePhone($lead->getPhone());
+        }
+
+        if ($room && !$room->isPlatformWarranty()) {
+            return Formatter::humanizePhone($lead->getPhone());
+        }
+
+        try {
+            if ($this->hasAnsweredPhoneCall($lead, $user) || $this->hasAcceptedTrade($lead, $user)) {
+                return Formatter::humanizePhone($lead->getPhone());
+            }
+        } catch (\Exception $e) {
+            return 'Ошибка получения номера';
+        }
+
+        return Formatter::hidePhoneNumber($lead->getPhone());
     }
 }

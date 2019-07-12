@@ -2,14 +2,12 @@
 
 namespace AppBundle\Twig;
 
-
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\User;
+use AppBundle\Util\Formatter;
+use AppBundle\Entity\PhoneCall;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Symfony\Component\Security\Csrf\TokenStorage\TokenStorageInterface;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -51,73 +49,43 @@ class TemplateExtension extends \Twig_Extension
     }
 
     /**
-     * @param $phone
+     * @param string $phone
      *
      * @return string
      */
-    public function hiddenPhone($phone): string
+    public function hiddenPhone(string $phone): string
     {
-        if (strlen($phone) === 3) {
-            return sprintf('%s * *', substr($phone,0 , 1));
-        }
-
-        return sprintf(
-            '+%s(%s)-%s-**-**',
-            substr($phone, 0, 1),
-            substr($phone, 1, 3),
-            substr($phone, 4, 3)
-        );
+        return Formatter::hidePhoneNumber($phone);
     }
 
     /**
-     * @param \DateTime $dateTime
+     * @param \DateTime $date
+     *
      * @return string
      */
-    public function dateFormat(\DateTime $dateTime): string
+    public function dateFormat(\DateTime $date): string
     {
-        $day = date_format($dateTime, 'j');
-        $month = date_format($dateTime, 'n');
-        $year = date_format($dateTime, 'Y');
+        return Formatter::localizeDate($date);
+    }
 
-        switch ($month) {
-            case 1:
-                $month = "января";
-                break;
-            case 2:
-                $month = "февраля";
-                break;
-            case 3:
-                $month = "марта";
-                break;
-            case 4:
-                $month = "апреля";
-                break;
-            case 5:
-                $month = "мая";
-                break;
-            case 6:
-                $month = "июня";
-                break;
-            case 7:
-                $month = "июля";
-                break;
-            case 8:
-                $month = "августа";
-                break;
-            case 9:
-                $month = "сентябя";
-                break;
-            case 10:
-                $month = "октября";
-                break;
-            case 11:
-                $month = "ноября";
-                break;
-            case 12:
-                $month = "декабря";
-                break;
-        }
-        return sprintf("%s %s %s г.", $day, $month, $year);
+    /**
+     * @param null|string $phone
+     *
+     * @return string
+     */
+    public function humanPhone(?string $phone): string
+    {
+        return Formatter::humanizePhone($phone);
+    }
+
+    /**
+     * @param int $money
+     *
+     * @return string
+     */
+    public function moneyFormat(int $money): string
+    {
+        return Formatter::humanizeMoney($money);
     }
 
     /**
@@ -137,44 +105,6 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return $this->hasAnsweredPhoneCall($lead, $user);
-    }
-
-    /**
-     * @param null|string $phone
-     *
-     * @return string
-     */
-    public function humanPhone(?string $phone): string
-    {
-        if (!$phone) {
-            return '';
-        }
-
-        $formattedPhone = sprintf('+%s(%s)%s-%s-%s',
-            substr($phone, 0, 1),
-            substr($phone, 1, 3),
-            substr($phone, 5, 3),
-            substr($phone, 8, 2),
-            substr($phone, 10, 2)
-        );
-
-        return $formattedPhone;
-    }
-
-    /**
-     * @param int $money
-     *
-     * @return string
-     */
-    public function moneyFormat(int $money): string
-    {
-        $result = intdiv($money, 100) . ' руб.';
-
-        if ($end = $money % 100) {
-            $result .= ' ' . $money % 100 . ' коп.';
-        }
-
-        return $result;
     }
 
     /**

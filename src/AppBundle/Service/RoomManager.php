@@ -35,16 +35,27 @@ class RoomManager
      * @param Room $room
      * @param User $user
      *
+     * @return bool
+     */
+    public function isMember(Room $room, User $user): bool
+    {
+        $member = $this->entityManager->getRepository(Member::class)
+            ->findOneBy(['room' => $room, 'user' => $user]);
+
+        return $member instanceof Member;
+    }
+
+    /**
+     * @param Room $room
+     * @param User $user
+     *
      * @return Member
      *
      * @throws \Exception
      */
     public function joinInRoom(Room $room, User $user): Member
     {
-        $member = $this->entityManager->getRepository(Member::class)
-            ->findOneBy(['room' => $room, 'user' => $user]);
-
-        if ($member) {
+        if (!$this->isMember($room, $user)) {
             throw new \Exception('Пользователь уже находится в группе');
         }
 

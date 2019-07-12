@@ -34,31 +34,32 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/form/{lead}", name="app_lead_form", methods={"GET"}, defaults={"lead":null})
-     *
-     * @param Lead $lead
+     * @Route("/lead/{id}/form", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
      *
      * @return Response
      */
-    public function getFormAction(?Lead $lead = null): Response
+    public function getFormAction(?int $id = null): Response
     {
-        $form = $this->createForm(LeadType::class, $lead, [
+        $form = $this->createForm(LeadType::class, null, [
             'csrf_protection' => false
         ]);
 
         return $this->render('@App/Lead/form.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'id' => $id
         ]);
     }
+
 
     /**
      * @Route("/lead/{id}", name="app_lead_view", methods={"GET"}, defaults={"_format": "json"})
      *
-     * @param Lead $lead
+     * @param Lead        $lead
+     * @param LeadManager $leadManager
      *
      * @return JsonResponse
      */
-    public function viewAction(Lead $lead): JsonResponse
+    public function viewAction(Lead $lead, LeadManager $leadManager): JsonResponse
     {
         if (!$this->isGranted(LeadVoter::VIEW, $lead)) {
             return new JsonResponse(['errors' => 'У Вас нет прав на просмотр информации по указанному лиду'], Response::HTTP_FORBIDDEN);
@@ -66,7 +67,7 @@ class LeadController extends Controller
 
         $result = [
             'id' => $lead->getId(),
-            'phone' => $lead->getPhone(),
+            'phone' => $leadManager->getNormalizedPhone($lead, $this->getUser()),
             'name' => $lead->getName(),
             'orderDate' => $lead->getOrderDateFormatted('c'),
             'decisionMaker' => $lead->isDecisionMaker(),
@@ -162,6 +163,36 @@ class LeadController extends Controller
     }
 
     /**
+     * @Route("/lead/estimate", name="app_lead_estimate", methods={"POST"}, defaults={"_format"="json"})
+     *
+     * @param Request     $request
+     * @param LeadManager $leadManager
+     *
+     * @return JsonResponse
+     */
+    public function estimateAction(Request $request, LeadManager $leadManager): JsonResponse
+    {
+        $form = $this->createForm(LeadType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            /** @var Lead $data */
+            $data = $form->getData();
+            $stars = $leadManager->estimateStars($data);
+
+            return new JsonResponse(['stars' => $stars, 'cost' => $leadManager->estimateCost($data, Account::DIVISOR)]);
+        }
+
+        $errors = [];
+
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        return new JsonResponse(['error' => $errors], Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
      * @Route("/lead/{id}", name="app_lead_edit", methods={"PUT", "PATCH"}, defaults={"_format": "json"})
      *
      * @param Lead                     $lead
@@ -191,36 +222,6 @@ class LeadController extends Controller
         $eventDispatcher->dispatch(LeadEvent::EDITED, new LeadEvent($lead));
 
         return new JsonResponse(['id' => $lead->getId()]);
-    }
-
-    /**
-     * @Route("/lead/estimate", name="app_lead_estimate", methods={"POST"}, defaults={"_format"="json"})
-     *
-     * @param Request     $request
-     * @param LeadManager $leadManager
-     *
-     * @return JsonResponse
-     */
-    public function estimateAction(Request $request, LeadManager $leadManager): JsonResponse
-    {
-        $form = $this->createForm(LeadType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
-            /** @var Lead $data */
-            $data = $form->getData();
-            $stars = $leadManager->estimateStars($data);
-
-            return new JsonResponse(['stars' => $stars, 'cost' => $leadManager->estimateCost($data, Account::DIVISOR)]);
-        }
-
-        $errors = [];
-
-        foreach ($form->getErrors(true) as $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        return new JsonResponse(['error' => $errors], Response::HTTP_BAD_REQUEST);
     }
 
     /**

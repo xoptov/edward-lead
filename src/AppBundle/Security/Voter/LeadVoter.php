@@ -58,7 +58,7 @@ class LeadVoter extends Voter
             return true;
         }
 
-        if (self::VIEW === $attribute) {
+        if (self::VIEW === $attribute) { //todo: добавить проверку на причастность в общую комнату.
             if ($subject->isActive()) {
                 return true;
             }
