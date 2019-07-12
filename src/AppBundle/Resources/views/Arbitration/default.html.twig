@@ -1,0 +1,106 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="arbitrate" id="arbitrate">
+        <div class="arbitrate__tabs">
+            <div class="tabs tabs-arbitrate">
+                <span class="tabs__header">Арбитраж/поддержка</span>
+                <ul class="tabs-nav tabs-arbitrate__nav">
+                    <li class="tabs-arbitrate__item block-mod-11" v-on:click="changeTabBox($event, 'open')" v-bind:class="{active: openTab}">Открытые ({{ vue_var('openedThreads.length') }})</li>
+                    <li class="tabs-arbitrate__item block-mod-12" v-on:click="changeTabBox($event, 'archive')" v-bind:class="{active: archiveTab}">Архив ({{ vue_var('archiveThreads.length') }})</li>
+                </ul>
+                <div class="tabs-box tabs-box-arbitrate">
+                    <div class="tabs-box-arbitrate__item" v-bind:class="{active: openTab}">
+                        <thread-tab
+                                v-if="openedThreads.length > 0"
+                                v-for="tab, key in openedThreads"
+                                v-bind:id="tab.id"
+                                v-bind:lead="tab.lead"
+                                v-bind:date="tab.date"
+                                v-bind:status="tab.status"
+                                v-bind:type="tab.type"
+                                v-bind:item="key"
+                                v-bind:thread="tab.thread"
+                                v-on:change-thread="changeThread"
+                        ></thread-tab>
+                        <p v-if="openedThreads.length === 0">У вас нет открытых обращений</p>
+                    </div>
+                    <div class="tabs-box-arbitrate__item" v-bind:class="{active: archiveTab}">
+                        <thread-tab
+                                v-if="archiveThreads.length > 0"
+                                v-for="tab, key in archiveThreads"
+                                v-bind:id="tab.id"
+                                v-bind:lead="tab.lead"
+                                v-bind:date="tab.date"
+                                v-bind:status="tab.status"
+                                v-bind:type="tab.type"
+                                v-bind:item="key"
+                                v-bind:thread="tab.thread"
+                                v-on:change-thread="changeThread"
+                        ></thread-tab>
+                        <p v-if="archiveThreads.length === 0">У вас нет архивных обращений</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-middle-green u-margin-auto">Открыть новое обращение</button>
+        </div>
+        <div class="arbitrate__info">
+            <span class="arbitrate__info__title" v-if="currentThread.id === null">Выберите обращение для отображения</span>
+            <span class="arbitrate__info__title" v-if="currentThread.id !== null">Арбитраж #{{ vue_var('currentThread.id') }}</span>
+            <thread-message
+                    v-if="currentThread !== null"
+                    v-for="message in currentThread.messages"
+                    v-bind:sender="message.sender"
+                    v-bind:time="message.time"
+                    v-bind:logo="message.logo"
+                    v-bind:body="message.body"
+                    v-bind:target_in="message.target_in"
+                    v-bind:target_out="message.target_out"
+            ></thread-message>
+
+            {#<form action="#" class="arbitrate-form" method="post">
+                <textarea class="arbitrate-form__textarea autoExpand" name="arbitrate-message" id="arbitrate-message" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required=""></textarea>
+
+
+                <div class="arbitrate-form__button-block">
+                    <button class="arbitrate-form__button"><span class="icon-submit"></span>
+                    </button>
+                    <button type="submit" class="arbitrate-form__button"><span class="icon-clip"></span>
+                    </button>
+                </div>
+                <div class="arbitrate-form__selected-files binded">
+                    <div class="binded__item">
+                        <button class="binded__button"><span class="icon-clip"></span>
+                        </button>
+                        <span class="binded__file">Без-названия.jpg</span>
+                        <button class="button-close">×</button>
+                    </div>
+                    <div class="binded__item">
+                        <button class="binded__button"><span class="icon-clip"></span>
+                        </button>
+                        <span class="binded__file">Без-названия.jpg</span>
+                        <button class="binded__close">×</button>
+                    </div>
+                </div>
+            </form>#}
+        </div>
+        {#<div class="block-copyright">
+            © 2019 Edward - решения для бизнеса
+        </div>#}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    {% endif %}
+    <script type="application/javascript">{{ include('@App/Arbitration/default.js.twig') }}</script>
+    <script src="{{ asset('bundles/app/js/arbitration.js') }}"></script>
+{% endblock %}

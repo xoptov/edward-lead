@@ -46,7 +46,9 @@ class TemplateExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
-            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall'])
+            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall']),
+            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
+            new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable'])
         ];
     }
 
@@ -179,6 +181,7 @@ class TemplateExtension extends \Twig_Extension
 
     /**
      * @param Lead $lead
+     * @param User $caller
      *
      * @return bool
      *
@@ -191,5 +194,15 @@ class TemplateExtension extends \Twig_Extension
             ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
 
         return $phoneCall instanceof PhoneCall;
+    }
+
+    /**
+     * @param string $var
+     *
+     * @return string
+     */
+    public function vueVariable(string $var): string
+    {
+        return '{{'.$var.'}}';
     }
 }
