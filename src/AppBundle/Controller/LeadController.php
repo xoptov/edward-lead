@@ -8,8 +8,10 @@ use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
-use AppBundle\Security\Voter\LeadVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Security\Voter\LeadEditVoter;
+use AppBundle\Security\Voter\LeadViewVoter;
+use AppBundle\Security\Voter\LeadCreateVoter;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,15 +28,24 @@ class LeadController extends Controller
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var LeadManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $leadManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param LeadManager            $leadManager
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        LeadManager $leadManager
+    ) {
         $this->entityManager = $entityManager;
+        $this->leadManager = $leadManager;
     }
 
     /**
-     * @Route("/lead/form/{id}", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
+     * @Route("/lead/form/{lead}", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
      *
      * @param int|null $id
      *
@@ -51,20 +62,21 @@ class LeadController extends Controller
     /**
      * @Route("/lead/{id}", name="app_lead_view", methods={"GET"}, defaults={"_format": "json"})
      *
-     * @param Lead        $lead
-     * @param LeadManager $leadManager
+     * @param Lead $lead
      *
      * @return JsonResponse
      */
-    public function viewAction(Lead $lead, LeadManager $leadManager): JsonResponse
+    public function viewAction(Lead $lead): JsonResponse
     {
-        if (!$this->isGranted(LeadVoter::VIEW, $lead)) {
-            return new JsonResponse(['errors' => 'У Вас нет прав на просмотр информации по указанному лиду'], Response::HTTP_FORBIDDEN);
+        if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
+            return new JsonResponse([
+                'errors' => 'У Вас нет прав на просмотр информации по указанному лиду'
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $result = [
             'id' => $lead->getId(),
-            'phone' => $leadManager->getNormalizedPhone($lead, $this->getUser()),
+            'phone' => $this->leadManager->getNormalizedPhone($lead, $this->getUser()),
             'name' => $lead->getName(),
             'orderDate' => $lead->getOrderDateFormatted('c'),
             'decisionMaker' => $lead->isDecisionMaker(),
@@ -112,14 +124,12 @@ class LeadController extends Controller
      * @Route("/lead", name="app_lead_create", methods={"POST"}, defaults={"_format": "json"})
      *
      * @param Request                  $request
-     * @param LeadManager              $leadManager
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
     public function createAction(
         Request $request,
-        LeadManager $leadManager,
         EventDispatcherInterface $eventDispatcher
     ): Response {
 
@@ -137,7 +147,7 @@ class LeadController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        if (!$leadManager->checkActiveLeadPerUser($user)) {
+        if (!$this->leadManager->checkActiveLeadPerUser($user)) {
             return new JsonResponse([
                 'errors' => 'Привышено количество активных лидов для пользователя'
             ], Response::HTTP_BAD_REQUEST);
@@ -147,11 +157,11 @@ class LeadController extends Controller
         $newLead = $form->getData();
         $newLead
             ->setUser($user)
-            ->setPrice($leadManager->estimateCost($newLead));
+            ->setPrice($this->leadManager->estimateCost($newLead));
 
-        $leadManager->setExpirationDate($newLead);
+        $this->leadManager->setExpirationDate($newLead);
 
-        if (!$this->isGranted(LeadVoter::CREATE)) {
+        if (!$this->isGranted(LeadCreateVoter::OPERATION)) {
             return new JsonResponse(['errors' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
         }
 
@@ -166,22 +176,25 @@ class LeadController extends Controller
     /**
      * @Route("/lead/estimate", name="app_lead_estimate", methods={"POST"}, defaults={"_format"="json"})
      *
-     * @param Request     $request
-     * @param LeadManager $leadManager
+     * @param Request $request
      *
      * @return JsonResponse
      */
-    public function estimateAction(Request $request, LeadManager $leadManager): JsonResponse
+    public function estimateAction(Request $request): JsonResponse
     {
-        $form = $this->createForm(LeadType::class);
+        $form = $this->createForm(LeadType::class, null, [
+            'csrf_protection' => false
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
             /** @var Lead $data */
             $data = $form->getData();
-            $stars = $leadManager->estimateStars($data);
 
-            return new JsonResponse(['stars' => $stars, 'cost' => $leadManager->estimateCost($data, Account::DIVISOR)]);
+            return new JsonResponse([
+                'stars' => $this->leadManager->estimateStars($data),
+                'cost' => $this->leadManager->estimateCost($data, Account::DIVISOR)
+            ]);
         }
 
         $errors = [];
@@ -208,7 +221,7 @@ class LeadController extends Controller
         EventDispatcherInterface $eventDispatcher
     ): Response {
 
-        if (!$this->isGranted(LeadVoter::EDIT, $lead)) {
+        if (!$this->isGranted(LeadEditVoter::OPERATION, $lead)) {
             return new JsonResponse(['errors' => 'У Вас нет прав на редактирование чужего лида'], Response::HTTP_FORBIDDEN);
         }
 

@@ -20,11 +20,20 @@ class RoomController extends Controller
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var RoomManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $roomManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param RoomManager            $roomManager
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        RoomManager $roomManager
+    ) {
         $this->entityManager = $entityManager;
+        $this->roomManager = $roomManager;
     }
 
     /**
@@ -56,12 +65,11 @@ class RoomController extends Controller
     /**
      * @Route("/room/create", name="app_room", methods={"GET", "POST"})
      *
-     * @param Request     $request
-     * @param RoomManager $roomManager
+     * @param Request $request
      *
      * @return Response
      */
-    public function createAction(Request $request, RoomManager $roomManager): Response
+    public function createAction(Request $request): Response
     {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
@@ -77,14 +85,14 @@ class RoomController extends Controller
             $this->entityManager->persist($data);
 
             try {
-                $roomManager->joinInRoom($data, $this->getUser());
+                $this->roomManager->joinInRoom($data, $this->getUser());
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 
                 return $this->redirectToRoute('app_profile');
             }
 
-            $roomManager->updateInviteToken($data);
+            $this->roomManager->updateInviteToken($data);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Новая комната успешно создана');
@@ -123,12 +131,11 @@ class RoomController extends Controller
     /**
      * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
      *
-     * @param string                 $token
-     * @param RoomManager            $roomManager
+     * @param string $token
      *
      * @return Response
      */
-    public function acceptInviteAction(string $token, RoomManager $roomManager): Response
+    public function acceptInviteAction(string $token): Response
     {
         $room = $this->entityManager->getRepository(Room::class)->findOneBy([
             'inviteToken' => $token,
@@ -142,8 +149,8 @@ class RoomController extends Controller
         }
 
         try {
-            $roomManager->joinInRoom($room, $this->getUser());
-            $roomManager->updateInviteToken($room);
+            $this->roomManager->joinInRoom($room, $this->getUser());
+            $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());

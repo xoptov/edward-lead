@@ -5,10 +5,8 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
-use AppBundle\Entity\Account;
-use AppBundle\Entity\PhoneCall;
-use AppBundle\Exception\TradeException;
 use AppBundle\Util\Formatter;
+use AppBundle\Entity\PhoneCall;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 
@@ -139,53 +137,6 @@ class LeadManager
     {
         $expirationDate = new \DateTime(sprintf('+%d days', $this->leadExpirationPeriod));
         $lead->setExpirationDate($expirationDate);
-    }
-
-    /**
-     * @param Lead $lead
-     *
-     * @throws \Exception
-     */
-    public function successBuy(Lead $lead): void
-    {
-        if (!$lead->hasTrade()) {
-            throw new \RuntimeException('Для подтверждения сделки необходимо её создать');
-        }
-
-        if (!$lead->isReserved()) {
-            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
-        }
-
-        $lead->setStatus(Lead::STATUS_SOLD);
-
-        $trade = $lead->getTrade();
-
-        $feeAccount = $this->entityManager->getRepository(Account::class)
-            ->getFeesAccount();
-
-        $this->tradeManager->handleSuccess($trade, $feeAccount);
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $buyer
-     *
-     * @throws \Exception
-     */
-    public function rejectBuy(Lead $lead): void
-    {
-        if (!$lead->hasTrade()) {
-            throw new \RuntimeException('Для отмены сделки необходимо её создать');
-        }
-
-        if (!$lead->isReserved()) {
-            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
-        }
-
-        $lead->setStatus(Lead::STATUS_BLOCKED);
-
-        $trade = $lead->getTrade();
-        $this->tradeManager->handleReject($trade);
     }
 
     /**

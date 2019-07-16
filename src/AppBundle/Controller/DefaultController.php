@@ -19,15 +19,32 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 class DefaultController extends Controller
 {
     /**
+     * @var Uploader
+     */
+    private $uploader;
+
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+
+    /**
      * @var int
      */
     private $uploadMaxSize;
 
     /**
-     * @param int $uploadMaxSize
+     * @param Uploader           $uploader
+     * @param ValidatorInterface $validator
+     * @param int                $uploadMaxSize
      */
-    public function __construct(int $uploadMaxSize)
-    {
+    public function __construct(
+        Uploader $uploader,
+        ValidatorInterface $validator,
+        int $uploadMaxSize
+    ) {
+        $this->uploader = $uploader;
+        $this->validator = $validator;
         $this->uploadMaxSize = $uploadMaxSize;
     }
 
@@ -44,17 +61,13 @@ class DefaultController extends Controller
     /**
      * @Route("/upload/logotype/{filter}", name="app_upload_logotype", methods={"POST"})
      *
-     * @param ValidatorInterface $validator
-     * @param Uploader           $uploader
-     * @param CacheManager       $imagineCacheManager
-     * @param Request            $request
-     * @param string             $filter
+     * @param CacheManager $imagineCacheManager
+     * @param Request      $request
+     * @param string       $filter
      *
      * @return Response
      */
     public function uploadImageAction(
-        ValidatorInterface $validator,
-        Uploader $uploader,
         CacheManager $imagineCacheManager,
         Request $request,
         string $filter
@@ -72,14 +85,14 @@ class DefaultController extends Controller
             'maxSizeMessage' => 'Максимальный размер загружаемого изображения должен быть {size}'
         ]);
 
-        $violations = $validator->validate($uploadedFile, $constraint);
+        $violations = $this->validator->validate($uploadedFile, $constraint);
 
         if ($violations->count()) {
             return $this->responseErrors($violations);
         }
 
         try {
-            $path = $uploader->store($uploadedFile, 'logotype');
+            $path = $this->uploader->store($uploadedFile, 'logotype');
         } catch (FileException $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -95,18 +108,12 @@ class DefaultController extends Controller
     }
 
     /**
-     * @param Request            $request
-     * @param ValidatorInterface $validator
-     * @param Uploader           $uploader
+     * @param Request $request
      *
      * @return Response
      */
-    public function uploadAudioRecordAction(
-        Request $request,
-        ValidatorInterface $validator,
-        Uploader $uploader
-    ): Response {
-
+    public function uploadAudioRecordAction(Request $request): Response
+    {
         if (!$request->files->has('uploader')) {
             return new JsonResponse(['errors' => ['Файл не отправлен']]);
         }
@@ -127,14 +134,14 @@ class DefaultController extends Controller
             'maxSizeMessage' => 'Максимальный размер загружаемой аудио записи должен быть {size}'
         ]);
 
-        $violations = $validator->validate($uploadedFile, $constraint);
+        $violations = $this->validator->validate($uploadedFile, $constraint);
 
         if ($violations->count()) {
             return $this->responseErrors($violations);
         }
 
         try {
-            $path = $uploader->store($uploadedFile, 'audio');
+            $path = $this->uploader->store($uploadedFile, 'audio');
         } catch (FileException $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }

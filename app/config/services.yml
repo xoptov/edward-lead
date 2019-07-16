@@ -61,6 +61,9 @@ services:
     AppBundle\Security\Voter\LeadFirstCallVoter:
         tags: ['security.voter']
 
+    AppBundle\Security\Voter\LeadBuyVoter:
+        tags: ['security.voter']
+
     AppBundle\Security\Voter\TradeVoter:
         tags: ['security.voter']
 

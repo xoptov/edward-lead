@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
-
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
@@ -11,9 +10,10 @@ use AppBundle\Event\LeadEvent;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
-use AppBundle\Security\Voter\LeadVoter;
 use AppBundle\Security\Voter\TradeVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Security\Voter\LeadBuyVoter;
+use AppBundle\Security\Voter\LeadViewVoter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,11 +28,28 @@ class ExchangeController extends Controller
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var LeadManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $leadManager;
+
+    /**
+     * @var TradeManager
+     */
+    private $tradeManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param LeadManager            $leadManager
+     * @param TradeManager           $tradeManager
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        LeadManager $leadManager,
+        TradeManager $tradeManager
+    ) {
         $this->entityManager = $entityManager;
+        $this->leadManager = $leadManager;
+        $this->tradeManager = $tradeManager;
     }
 
     /**
@@ -86,11 +103,9 @@ class ExchangeController extends Controller
     /**
      * @Route("/exchange/leads", name="app_exchange_leads", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @param LeadManager $leadManager
-     *
      * @return JsonResponse
      */
-    public function getOffersAction(LeadManager $leadManager): JsonResponse
+    public function getOffersAction(): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -116,7 +131,7 @@ class ExchangeController extends Controller
             $result[] = [
                 'id' => $lead->getId(),
                 'created_at' => $lead->getCreatedAtTimestamp(),
-                'stars' => $leadManager->estimateStars($lead),
+                'stars' => $this->leadManager->estimateStars($lead),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
                 'audio_record' => $lead->hasAudioRecord(),
@@ -131,11 +146,9 @@ class ExchangeController extends Controller
     /**
      * @Route("/exchange/trades", name="app_exchange_trades", methods={"GET"}, defaults={"_format"="json"})
      *
-     * @param LeadManager $leadManager
-     *
      * @return JsonResponse
      */
-    public function getTradesAction(LeadManager $leadManager): JsonResponse
+    public function getTradesAction(): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -166,7 +179,7 @@ class ExchangeController extends Controller
                 'lead' => $lead->getId(),
                 'buyer' => $trade->getBuyerId(),
                 'seller' => $trade->getSellerId(),
-                'stars' => $leadManager->estimateStars($lead),
+                'stars' => $this->leadManager->estimateStars($lead),
                 'audio_record' => $lead->hasAudioRecord(),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
@@ -186,8 +199,9 @@ class ExchangeController extends Controller
      */
     public function showLeadAction(Lead $lead)
     {
-        if (!$this->isGranted(LeadVoter::VIEW, $lead)) {
+        if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
+
             return $this->redirectToRoute('app_exchange_my_leads');
         }
 
@@ -204,38 +218,38 @@ class ExchangeController extends Controller
      * @Route("/exchange/lead/buy/{id}", name="app_exchange_buy_lead", methods={"GET"})
      *
      * @param Lead         $lead
-     * @param TradeManager $tradeManager
      *
      * @return Response
      */
-    public function buyLeadAction(Lead $lead, TradeManager $tradeManager): Response
+    public function buyLeadAction(Lead $lead): Response
     {
-        $buyer = $this->getUser();
-        $seller = $lead->getUser();
+        if (!$this->isGranted(LeadBuyVoter::OPERATION, $lead)) {
+            $this->addFlash('error', 'У вас нет прав на покупку этого лида');
+
+            return $this->redirectToRoute('app_exchange');
+        }
 
         try {
-            $trade = $tradeManager->create($buyer, $seller, $lead, $lead->getPrice());
+            $trade = $this->tradeManager->start($this->getUser(), $lead->getUser(), $lead, $lead->getPrice());
             $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
-            return $this->redirectToRoute('app_exchange');
         }
 
         return $this->redirectToRoute('app_exchange');
     }
 
     /**
-     * @Route("/exchange/lead/success/{id}", name="app_exchange_lead_success", methods={"GET"})
+     * @Route("/exchange/trade/success/{id}", name="app_exchange_trade_success", methods={"GET"})
      *
-     * @param Lead                     $lead
-     * @param LeadManager              $leadManager
+     * @param Trade                    $trade
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function successBuyLeadAction(Lead $lead, LeadManager $leadManager, EventDispatcherInterface $eventDispatcher): Response
+    public function successBuyAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
-        $trade = $lead->getTrade();
+        $lead = $trade->getLead();
 
         if (!$this->isGranted(TradeVoter::SUCCESS, $trade)) {
             $this->addFlash('error', 'У Вас нет прав для подтверждения качества лида');
@@ -244,9 +258,15 @@ class ExchangeController extends Controller
         }
 
         try {
-            $leadManager->successBuy($lead);
-            $eventDispatcher->dispatch(LeadEvent::SOLD, new LeadEvent($lead));
+
+            $feesAccount = $this->entityManager->getRepository(Account::class)
+                ->getFeesAccount();
+
+            $this->tradeManager->finishSuccess($trade, $feesAccount);
+            $eventDispatcher->dispatch(LeadEvent::SOLD, new LeadEvent($trade->getLead()));
+
             $this->addFlash('success', 'Покупка лида завершена');
+
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
@@ -255,17 +275,16 @@ class ExchangeController extends Controller
     }
 
     /**
-     * @Route("/exchange/lead/reject/{id}", name="app_exchange_lead_reject", methods={"GET"})
+     * @Route("/exchange/trade/reject/{id}", name="app_exchange_trade_reject", methods={"GET"})
      *
-     * @param Lead                     $lead
-     * @param LeadManager              $leadManager
+     * @param Trade                    $trade
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function rejectBuyLeadAction(Lead $lead, LeadManager $leadManager, EventDispatcherInterface $eventDispatcher): Response
+    public function rejectBuyAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
-        $trade = $lead->getTrade();
+        $lead = $trade->getLead();
 
         if (!$this->isGranted(TradeVoter::REJECT, $trade)) {
             $this->addFlash('error', 'У Вас нет прав для отказа от указанной сделки');
@@ -274,9 +293,12 @@ class ExchangeController extends Controller
         }
 
         try {
-            $leadManager->rejectBuy($lead);
+
+            $this->tradeManager->finishReject($trade);
             $eventDispatcher->dispatch(LeadEvent::BLOCK_BY_REJECT, new LeadEvent($lead));
+
             $this->addFlash('success', 'Покупка успешно отменена');
+
         } catch(\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }
