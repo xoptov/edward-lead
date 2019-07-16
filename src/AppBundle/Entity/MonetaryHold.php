@@ -11,7 +11,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class MonetaryHold
+class MonetaryHold implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

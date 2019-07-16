@@ -4,50 +4,50 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\Property;
-use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use AppBundle\Form\DataTransformer\EntityToIdTransformer;
+use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class LeadType extends AbstractType
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('room', HiddenType::class)
             ->add('name', TextType::class)
-            ->add('city', EntityType::class, [
-                'class' => City::class,
-                'choice_label' => 'name'
-            ])
+            ->add('city', HiddenType::class)
             ->add('phone', TelType::class)
-            ->add('channel', EntityType::class, [
-                'class' => Property::class,
-                'choice_label' => 'value',
-                'required' => false,
-                'query_builder' => function(EntityRepository $er) {
-                    $qb = $er->createQueryBuilder('ch')
-                        ->where('ch.type = :type')
-                        ->setParameter('type', Property::CHANNEL);
-
-                    return $qb;
-                }
-            ])
+            ->add('channel', HiddenType::class)
             ->add('orderDate', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'dd.MM.yyyy',
@@ -73,11 +73,6 @@ class LeadType extends AbstractType
             ->add('description', TextareaType::class, [
                 'required' => false
             ])
-            ->add('uploader', FileType::class, [
-                'required' => false,
-                'mapped' => false,
-                'attr' => ['accept' => 'webm,ogg,mpeg,mp3,wave,wav,flac']
-            ])
             ->add('audioRecord', HiddenType::class)
             ->add('publicationRule', CheckboxType::class, [
                 'mapped' => false,
@@ -90,8 +85,19 @@ class LeadType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Необходимо указать что клиент согласен на обработку данных третьими лицами'])
                 ]
-            ])
-            ->add('submit', SubmitType::class);
+            ]);
+
+        $builder->get('room')->addViewTransformer(
+            new EntityToIdTransformer($this->entityManager, Room::class)
+        );
+
+        $builder->get('city')->addViewTransformer(
+            new EntityToIdTransformer($this->entityManager, City::class)
+        );
+
+        $builder->get('channel')->addViewTransformer(
+            new EntityToIdTransformer($this->entityManager, Property::class)
+        );
 
         $builder->get('phone')->addViewTransformer(new PhoneTransformer());
     }
@@ -102,5 +108,13 @@ class LeadType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', Lead::class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return null;
     }
 }

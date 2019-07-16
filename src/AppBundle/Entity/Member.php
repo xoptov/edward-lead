@@ -11,7 +11,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Member
+class Member implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

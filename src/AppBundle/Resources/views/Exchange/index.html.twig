@@ -10,7 +10,7 @@
         <div class="lead__header mb-30">
             <h2 class="lead__title">Биржа лидов</h2>
             {%- if is_granted('ROLE_WEBMASTER') -%}
-                <a class="lead__button" href="{{ path("app_exchange_create_lead") }}">Продать лида</a>
+                <a class="lead__button" href="{{ path("app_lead_form") }}">Продать лида</a>
             {%- endif -%}
         </div>
         <h3 class="mb-10">Предложения</h3>

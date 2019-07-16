@@ -12,7 +12,7 @@ use AppBundle\Entity\Part\TimeTrackableTrait;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Region
+class Region implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

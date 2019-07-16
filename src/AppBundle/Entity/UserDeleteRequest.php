@@ -11,7 +11,7 @@ use AppBundle\Entity\Part\TimeTrackableTrait;
  * @ORM\Table(name="user_delete_request")
  * @ORM\HasLifecycleCallbacks
  */
-class UserDeleteRequest
+class UserDeleteRequest implements IdentifiableInterface
 {
     const STATUS_NEW = 'new';
     const STATUS_REJECTED = 'rejected';

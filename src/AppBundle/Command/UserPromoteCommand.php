@@ -20,10 +20,10 @@ class UserPromoteCommand extends Command
     private $entityManager;
 
     /**
-     * @param null|string $name
      * @param EntityManagerInterface $entityManager
+     * @param null|string $name
      */
-    public function __construct(?string $name = null, EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, ?string $name = null)
     {
         parent::__construct($name);
 

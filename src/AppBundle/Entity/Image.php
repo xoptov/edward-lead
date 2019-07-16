@@ -9,7 +9,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Table(name="image")
  * @ORM\Entity
  */
-class Image
+class Image implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

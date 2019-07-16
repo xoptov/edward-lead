@@ -34,18 +34,15 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/{id}/form", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
+     * @Route("/lead/form/{id}", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
+     *
+     * @param int|null $id
      *
      * @return Response
      */
     public function getFormAction(?int $id = null): Response
     {
-        $form = $this->createForm(LeadType::class, null, [
-            'csrf_protection' => false
-        ]);
-
         return $this->render('@App/Lead/form.html.twig', [
-            'form' => $form->createView(),
             'id' => $id
         ]);
     }
@@ -150,9 +147,13 @@ class LeadController extends Controller
         $newLead = $form->getData();
         $newLead
             ->setUser($user)
-            ->setPrice($leadManager->calculateCost($newLead));
+            ->setPrice($leadManager->estimateCost($newLead));
 
         $leadManager->setExpirationDate($newLead);
+
+        if (!$this->isGranted(LeadVoter::CREATE)) {
+            return new JsonResponse(['errors' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
+        }
 
         $this->entityManager->persist($newLead);
         $this->entityManager->flush();

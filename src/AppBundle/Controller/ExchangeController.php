@@ -9,13 +9,11 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
 use AppBundle\Entity\PhoneCall;
-use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\LeadVoter;
 use AppBundle\Security\Voter\TradeVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -55,7 +53,8 @@ class ExchangeController extends Controller
     public function myLeadsAction(): Response
     {
         /** @var User $user */
-        $user   = $this->getUser();
+        $user = $this->getUser();
+        $data = null;
 
         if ($this->isGranted('ROLE_WEBMASTER')) {
             $leads = $this->getDoctrine()
@@ -81,7 +80,7 @@ class ExchangeController extends Controller
             );
         }
 
-        return $this->render('@App/Exchange/my_leads.html.twig', $data );
+        return $this->render('@App/Exchange/my_leads.html.twig', $data);
     }
 
     /**
@@ -117,7 +116,7 @@ class ExchangeController extends Controller
             $result[] = [
                 'id' => $lead->getId(),
                 'created_at' => $lead->getCreatedAtTimestamp(),
-                'stars' => $leadManager->calculateStars($lead),
+                'stars' => $leadManager->estimateStars($lead),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
                 'audio_record' => $lead->hasAudioRecord(),
@@ -167,7 +166,7 @@ class ExchangeController extends Controller
                 'lead' => $lead->getId(),
                 'buyer' => $trade->getBuyerId(),
                 'seller' => $trade->getSellerId(),
-                'stars' => $leadManager->calculateStars($lead),
+                'stars' => $leadManager->estimateStars($lead),
                 'audio_record' => $lead->hasAudioRecord(),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
@@ -197,13 +196,12 @@ class ExchangeController extends Controller
         } elseif ($lead->getBuyer() === $this->getUser()) {
             return $this->render('@App/Exchange/show_lead_after.html.twig', ['lead' => $lead]);
         } else {
-            //todo: тут нужно показывать
             return $this->render("@App/Exchange/show_lead_before.html.twig", ["lead" => $lead]);
         }
     }
 
     /**
-     * @Route("/exchange/lead/{id}/buy", name="app_exchange_buy_lead", methods={"GET"})
+     * @Route("/exchange/lead/buy/{id}", name="app_exchange_buy_lead", methods={"GET"})
      *
      * @param Lead         $lead
      * @param TradeManager $tradeManager
@@ -227,10 +225,11 @@ class ExchangeController extends Controller
     }
 
     /**
-     * @Route("/exchange/lead/{id}/success", name="app_exchange_lead_success", methods={"GET"})
+     * @Route("/exchange/lead/success/{id}", name="app_exchange_lead_success", methods={"GET"})
      *
-     * @param Lead         $lead
-     * @param LeadManager  $leadManager
+     * @param Lead                     $lead
+     * @param LeadManager              $leadManager
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
@@ -246,7 +245,7 @@ class ExchangeController extends Controller
 
         try {
             $leadManager->successBuy($lead);
-            $eventDispatcher->dispatch(LeadEvent::LEAD_SOLD, new LeadEvent($lead));
+            $eventDispatcher->dispatch(LeadEvent::SOLD, new LeadEvent($lead));
             $this->addFlash('success', 'Покупка лида завершена');
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -256,7 +255,7 @@ class ExchangeController extends Controller
     }
 
     /**
-     * @Route("/exchange/lead/{id}/reject", name="app_exchange_lead_reject", methods={"GET"})
+     * @Route("/exchange/lead/reject/{id}", name="app_exchange_lead_reject", methods={"GET"})
      *
      * @param Lead                     $lead
      * @param LeadManager              $leadManager
@@ -276,7 +275,7 @@ class ExchangeController extends Controller
 
         try {
             $leadManager->rejectBuy($lead);
-            $eventDispatcher->dispatch(LeadEvent::LEAD_BLOCK_BY_REJECT, new LeadEvent($lead));
+            $eventDispatcher->dispatch(LeadEvent::BLOCK_BY_REJECT, new LeadEvent($lead));
             $this->addFlash('success', 'Покупка успешно отменена');
         } catch(\Exception $e) {
             $this->addFlash('error', $e->getMessage());

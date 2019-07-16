@@ -12,7 +12,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class City
+class City implements IdentifiableInterface
 {
     use IdentificatorTrait;
 
@@ -67,6 +67,38 @@ class City
     public function getRegion(): ?Region
     {
         return $this->region;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRegion(): bool
+    {
+        return $this->region instanceof Region;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRegionId(): ?int
+    {
+        if ($this->region) {
+            return $this->region->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRegionName(): ?string
+    {
+        if ($this->region) {
+            return $this->region->getName();
+        }
+
+        return null;
     }
 
     /**

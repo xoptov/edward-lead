@@ -10,7 +10,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Table(name="history_action")
  * @ORM\HasLifecycleCallbacks
  */
-class HistoryAction
+class HistoryAction implements IdentifiableInterface
 {
     const ACTION_LOGIN = 'login';
 

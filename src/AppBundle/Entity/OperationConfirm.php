@@ -17,7 +17,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * })
  * @ORM\HasLifecycleCallbacks
  */
-class OperationConfirm
+class OperationConfirm implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

@@ -10,10 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="room",options={"auto_increment"="1000"})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RoomRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Room
+class Room implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

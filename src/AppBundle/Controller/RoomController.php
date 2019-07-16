@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class RoomController extends Controller
@@ -27,7 +28,33 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/create", name="app_create_room", methods={"GET", "POST"})
+     * @Route("/rooms", name="app_rooms", methods={"GET"}, options={"_format": "json"})
+     *
+     * @return JsonResponse
+     */
+    public function getAllAction(): JsonResponse
+    {
+        $rooms = $this->entityManager->getRepository(Room::class)
+            ->getByMember($this->getUser());
+
+        $result = [];
+
+        /** @var Room $room */
+        foreach ($rooms as $room) {
+            $result[] = [
+                'id' => $room->getId(),
+                'name' => $room->getName(),
+                'leadCriteria' => $room->getLeadCriteria(),
+                'leadPrice' => $room->getLeadPrice(),
+                'platformWarranty' => $room->isPlatformWarranty()
+            ];
+        }
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/room/create", name="app_room", methods={"GET", "POST"})
      *
      * @param Request     $request
      * @param RoomManager $roomManager
@@ -69,7 +96,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/{token}", name="app_invite_room", methods={"GET"})
+     * @Route("/room/invite/{token}", name="app_room_invite", methods={"GET"})
      *
      * @param string $token
      *
@@ -94,7 +121,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/invite/accept/{token}", name="app_accept_invite", methods={"GET"})
+     * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
      *
      * @param string                 $token
      * @param RoomManager            $roomManager
@@ -128,7 +155,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/invite/reject", name="app_reject_invite", methods={"GET"})
+     * @Route("/room/invite/reject", name="app_room_invite_reject", methods={"GET"})
      *
      * @return Response
      */
