@@ -4713,12 +4713,17 @@ span.id_lids:hover {
     padding-bottom: 237px;
 }
 
-.star-box__item.hover > span {
-    color: #FFCC36;
+.star-box__item > span {
+    color: #b0b0b0;
 }
 
-.rating-stars div > div.star-box__item.selected > span {
-    color:#f8a609;
+.star-box__item.selected > span {
+    color: #f8a609;
+}
+
+.star-box__item:hover > span {
+    color: #FFCC36;
+    cursor: pointer;
 }
 
 .form__reg, .form_sign-in {

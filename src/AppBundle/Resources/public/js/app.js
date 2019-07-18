@@ -17,7 +17,9 @@ const overlay = document.querySelector('.overlay');
 // event
 window.addEventListener("click", outsideClick);
 
-call.addEventListener('click', showModal);
+if (call) {
+    call.addEventListener('click', showModal);
+}
 
 function showModal() {
 	overlay.style.display = "flex";
@@ -42,12 +44,11 @@ function showModal() {
 		},
 	});
 
-
 	const next = document.querySelector('.modal-item__next-slide');
 	const nextBtn = document.querySelector('.modal-item__next');
 
-	next.addEventListener('click', () => mySiemaWithDots.next())
-	nextBtn.addEventListener('click', () => mySiemaWithDots.next())
+	next.addEventListener('click', () => mySiemaWithDots.next());
+	nextBtn.addEventListener('click', () => mySiemaWithDots.next());
 }
 
 function outsideClick(event) {
@@ -57,26 +58,26 @@ function outsideClick(event) {
 	}
 }
 
-
-class SiemaWithDots extends Siema {
-	addDots() {
-		this.dots = document.createElement('div');
-		this.dots.classList.add('dots');
-		for (let i = 0; i < this.innerElements.length; i++) {
-			const dot = document.createElement('button');
-			dot.classList.add('dots__item');
-			dot.addEventListener('click', () => {
-				this.goTo(i);
-			})
-			this.dots.appendChild(dot);
-		}
-		this.selector.parentNode.insertBefore(this.dots, this.selector.nextSibling);
-	}
-	updateDots() {
-		for (let i = 0; i < this.dots.querySelectorAll('button').length; i++) {
-			const addOrRemove = this.currentSlide === i ? 'add' : 'remove';
-			this.dots.querySelectorAll('button')[i].classList[addOrRemove]('dots__item--active');
-		}
-	}
+if (typeof Siema !== 'undefined') {
+    class SiemaWithDots extends Siema {
+        addDots() {
+            this.dots = document.createElement('div');
+            this.dots.classList.add('dots');
+            for (let i = 0; i < this.innerElements.length; i++) {
+                const dot = document.createElement('button');
+                dot.classList.add('dots__item');
+                dot.addEventListener('click', () => {
+                    this.goTo(i);
+                });
+                this.dots.appendChild(dot);
+            }
+            this.selector.parentNode.insertBefore(this.dots, this.selector.nextSibling);
+        }
+        updateDots() {
+            for (let i = 0; i < this.dots.querySelectorAll('button').length; i++) {
+                const addOrRemove = this.currentSlide === i ? 'add' : 'remove';
+                this.dots.querySelectorAll('button')[i].classList[addOrRemove]('dots__item--active');
+            }
+        }
+    }
 }
-
