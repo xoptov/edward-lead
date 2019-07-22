@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Liip\ImagineBundle\LiipImagineBundle(),
             new FOS\MessageBundle\FOSMessageBundle(),
             new EightPoints\Bundle\GuzzleBundle\EightPointsGuzzleBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
             new AppBundle\AppBundle(),
         ];
 

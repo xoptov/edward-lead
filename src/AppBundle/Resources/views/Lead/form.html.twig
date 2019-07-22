@@ -21,15 +21,171 @@
             <a href="#" class="label__link link-mod-6">Подробнее о заполнении карточки лида</a>
         </div>
         <div id="lead-form-app" class="office-settings__office-form office">
-            <form novalidate>
+            <form novalidate @submit.prevent="onSubmit">
                 <div class="info-block">
                     <div class="info-block__list">
-                        <lead-step-1></lead-step-1>
-                        <lead-step-2></lead-step-2>
-                        <lead-step-3></lead-step-3>
-                        <lead-step-4></lead-step-4>
-                        <lead-step-5></lead-step-5>
-                        <lead-step-6></lead-step-6>
+
+                        <div class="info-block__item">
+                            <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
+                            <div class="info-block__row-box block-mod-3">
+                                <div class="info-block__row-item block-mod-2">
+                                    <span v-if="$v.lead.name.$dirty && !$v.lead.name.required">Необходимо указать имя</span>
+                                    <label class="form__label text-mod-10" for="lead-name">Имя Лида</label>
+                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="$v.lead.name.$model">
+                                </div>
+                                <div class="info-block__row-item block-mod-2">
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +X(XXX)XXX-XX-XX</span>
+                                    <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
+                                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model.trim="$v.lead.phone.$model">
+                                </div>
+                                <div class="info-block__row-item block-mod-2">
+                                    <div class="info-block__row-item block-mod-2">
+                                        <div v-if="$v.lead.city.$dirty && !$v.lead.city.required">Необходимо выбрать город</div>
+                                        <label class="form__label text-mod-10" for="lead-city">Город</label>
+                                        <select id="lead-city" class="form__input select-field" v-model="$v.lead.city.$model">
+                                            <option value="" selected>Выбирите город</option>
+                                            <option v-for="item in cities" :value="item.id" v-text="item.name"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="canShowSecondStep">
+                            <div class="info-block__item">
+                                <span class="icon-star-new span-mod-3" :class="{'text-yellow': isSecondStepFilled, 'text-gray': !isSecondStepFilled}"></span>
+                                <div class="info-block__row-box block-mod-3">
+                                    <div class="info-block__row-item block-mod-2">
+                                        <label class="form__label text-mod-10" for="lead-channel">Рекламный канал</label>
+                                        <select id="lead-channel" class="form__input select-field" v-model="lead.channel">
+                                            <option value="" selected>Выбирите канал</option>
+                                            <option v-for="item in channels" :value="item.id" v-text="item.value"></option>
+                                        </select>
+                                    </div>
+                                    <div class="info-block__row-item block-mod-2">
+                                        <label class="form__label text-mod-16" for="lead-order-date">Дата поступления заявки</label>
+                                        <input id="lead-order-date" class="form__input date-field" placeholder="дд.мм.гггг" autocomplete="off" type="text" ref="orderDate" v-model="lead.orderDate">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowThirdStep">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box block-mod-7">
+                                    <div class="info-block__row-item block-mod-7">
+                                        <div class="info-block__column-left">Лицо принемающее решение</div>
+                                        <div class="info-block__column-right">
+                                            <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model="lead.decisionMaker">
+                                                    <label for="lead-decision-maker-yes">Да</label>
+                                                </div>
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model="lead.decisionMaker">
+                                                    <label for="lead-decision-maker-no">Нет</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item block-mod-7">
+                                        <div class="info-block__column-left ">Делали замер на адресе</div>
+                                        <div class="info-block__column-right">
+                                            <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model="lead.madeMeasurement">
+                                                    <label for="lead-made-measurement-yes">Да</label>
+                                                </div>
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model="lead.madeMeasurement">
+                                                    <label for="lead-made-measurement-no">Нет</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowFoursStep">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFoursStepFilled, 'text-gray': !isFoursStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box">
+                                    <div class="info-block__row-item">
+                                        <div class="info-block__column-right block-mod-1">
+                                            Оценка заинтересованость в покупке по 10 бальной шкале:
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item">
+                                        <div class="info-block__column-right rating-stars">
+                                            <div class="star-box__list" id="stars">
+                                                <div class="star-box__item" v-for="star in 10" @click="interestAssessmentChanged(star)" :class="{'selected': star <= lead.interestAssessment}">
+                                                    <span class="icon-star-new span-mod-7"></span>
+                                                    <span class="span-mod-5" v-text="star"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowFifthStep">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFifthStepFilled, 'text-gray': !isFifthStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box block-mod-8">
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right block-mod-1">
+                                            <br>Расскажите подробнее про лида <br>
+                                            <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right">
+                                            <textarea class="arbitrate-form__textarea autoExpand textarea-mod-1" rows="3" data-min-rows="3" placeholder="Напишите здесь в свободной форме" autocomplete="off" v-model="lead.description" @change="onDescriptionChanged"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div class="info-block__item" v-show="canShowSixthStep">
+                            <div class="info-block__img">
+                                <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isSixthStepFilled, 'text-gray': !isSixthStepFilled}">gold</span>
+                            </div>
+                            <div class="info-block__row-box">
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right block-mod-1">Запись разговора</div>
+                                </div>
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right text-mod-2">
+                                        <div class="binded__item">
+                                            <input style="display: none" accept="audio/*" type="file">
+                                            <button class="binded__button"><span class="icon-clip"></span></button>
+                                            <span class="binded__file">Прикрепить запись</span>
+                                            <button class="button-close">×</button>
+                                        </div>
+                                        <input type="hidden" v-model="lead.audioRecord">
+                                        <div class="form-error"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="info-block__item">
                             <div class="info-block__row-box block-mod-5">
                                 <div class="info-block__row-item block-mod-4">
@@ -39,12 +195,7 @@
                                                 <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
                                             </div>
                                             <div class="js-points info-block__line-right">
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
-                                                <span class="icon-star-new text-gray span-mod-16"></span>
+                                                <span class="icon-star-new span-mod-16" v-for="star in 6" :class="{'text-yellow': star <= estimate.stars, 'text-gray': star > estimate.stars}"></span>
                                             </div>
                                         </div>
                                         <div class="info-block__line block-mode-5">
@@ -52,7 +203,8 @@
                                                 <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
                                             </div>
                                             <div class="info-block__line-right text-mod-11">
-                                                <span class="js-cost">0</span> руб.
+                                                <span v-if="estimate.cost" v-text="estimate.cost"></span>
+                                                <span v-else>Не известно</span>
                                             </div>
                                         </div>
                                         <div class="info-block__line"></div>
@@ -60,15 +212,16 @@
                                 </div>
                                 <div class="info-block__row-item block-mod-4">
                                     <div class="row">
-                                        <input id="publication-rule" type="checkbox" class="checkbox" v-model="publicationRule">
+                                        <input id="publication-rule" type="checkbox" class="checkbox" v-model="lead.publicationRule">
                                         <label for="publication-rule" class="form__label-reg">
                                             Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead
                                         </label>
-                                        <input id="has-agreement" type="checkbox" class="checkbox" v-model="hasAgreement">
+                                        <input id="has-agreement" type="checkbox" class="checkbox" v-model="lead.hasAgreement">
                                         <label for="has-agreement" class="form__label-reg">
                                             Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам
                                         </label>
                                     </div>
+                                    <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6">Выставить лида на биржу</button>
                                 </div>
                             </div>
                         </div>
@@ -93,308 +246,7 @@
     <script src="{{ asset('bundles/app/js/lib/datepicker-ru.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
-
-    <script type="text/x-template" id="lead-step-1">
-        <div class="info-block__item">
-            <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}"></span>
-            <div class="info-block__row-box block-mod-3">
-                <div class="info-block__row-item block-mod-2">
-                    <label class="form__label text-mod-10" for="lead-name">Имя Лида</label>
-                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model="name">
-                </div>
-                <div class="info-block__row-item block-mod-2">
-                    <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
-                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model="phone">
-                </div>
-                <div class="info-block__row-item block-mod-2">
-                    <div class="info-block__row-item block-mod-2">
-                        <label class="form__label text-mod-10" for="lead-city">Город</label>
-                        <select id="lead-city" class="form__input select-field" v-model="city">
-                            <option v-for="variant in cities" :value="variant.id" v-text="variant.name"></option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="lead-step-2">
-        <div>
-            <div class="info-block__item">
-                <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}"></span>
-                <div class="info-block__row-box block-mod-3">
-                    <div class="info-block__row-item block-mod-2">
-                        <label class="form__label text-mod-10" for="lead-channel">Рекламный канал</label>
-                        <select id="lead-channel" class="form__input select-field" v-model="channel">
-                            <option v-for="variant in channels" :value="variant.id" v-text="variant.value"></option>
-                        </select>
-                    </div>
-                    <div class="info-block__row-item block-mod-2">
-                        <label class="form__label text-mod-16" for="lead-order-date">Дата поступления заявки</label>
-                        <input id="lead-order-date" class="form__input date-field" placeholder="дд.мм.гггг" autocomplete="off" type="text" ref="orderDate" v-model="orderDate">
-                    </div>
-                </div>
-            </div>
-            <div class="hr-line">&nbsp;</div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="lead-step-3">
-        <div>
-            <div class="info-block__item">
-                <div class="info-block__img">
-                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}"></span>
-                </div>
-                <div class="info-block__row-box block-mod-7">
-                    <div class="info-block__row-item block-mod-7">
-                        <div class="info-block__column-left">Лицо принемающее решение</div>
-                        <div class="info-block__column-right">
-                            <div class="info-block__radio-list">
-                                <div class="info-block__radio-box">
-                                    <input id="lead-decision-maker-yes" class="info-block__radio checkbox" value="1" type="radio" v-model="decisionMaker">
-                                    <label for="lead-decision-maker-yes">Да</label>
-                                </div>
-                                <div class="info-block__radio-box">
-                                    <input id="lead-decision-maker-no" class="info-block__radio checkbox" value="2" type="radio" v-model="decisionMaker">
-                                    <label for="lead-decision-maker-no">Нет</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="info-block__row-item block-mod-7">
-                        <div class="info-block__column-left ">Делали замер на адресе</div>
-                        <div class="info-block__column-right">
-                            <div class="info-block__radio-list">
-                                <div class="info-block__radio-box">
-                                    <input id="lead-made-measurement-yes" class="info-block__radio checkbox" value="1" type="radio" v-model="madeMeasurement">
-                                    <label for="lead-made-measurement-yes">Да</label>
-                                </div>
-                                <div class="info-block__radio-box">
-                                    <input id="lead-made-measurement-no" class="info-block__radio checkbox" value="2" type="radio" v-model="madeMeasurement">
-                                    <label for="lead-made-measurement-no">Нет</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hr-line">&nbsp;</div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="lead-step-4">
-        <div>
-            <div class="info-block__item">
-                <div class="info-block__img">
-                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}"></span>
-                </div>
-                <div class="info-block__row-box">
-                    <div class="info-block__row-item">
-                        <div class="info-block__column-right block-mod-1">
-                            Оценка заинтересованость в покупке по 10 бальной шкале:
-                        </div>
-                    </div>
-                    <div class="info-block__row-item">
-                        <div class="info-block__column-right rating-stars">
-                            <div class="star-box__list" id="stars">
-                                <div class="star-box__item" v-for="star in [1,2,3,4,5,6,7,8,9,10]" @click="onStarClicked(star)" :class="{'selected': star <= stars}">
-                                    <span class="icon-star-new span-mod-7"></span>
-                                    <span class="span-mod-5" v-text="star"></span>
-                                </div>
-                                <input type="hidden" v-model="interestAssessment">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hr-line">&nbsp;</div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="lead-step-5">
-        <div>
-            <div class="info-block__item">
-                <div class="info-block__img">
-                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}"></span>
-                </div>
-                <div class="info-block__row-box block-mod-8">
-                    <div class="info-block__row-item">
-                        <div></div>
-                        <div class="info-block__column-right block-mod-1">
-                            <br>Расскажите подробнее про лида <br>
-                            <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
-                        </div>
-                    </div>
-                    <div class="info-block__row-item">
-                        <div></div>
-                        <div class="info-block__column-right">
-                            <textarea class="arbitrate-form__textarea autoExpand textarea-mod-1" rows="3" data-min-rows="3" placeholder="Напишите здесь в свободной форме" autocomplete="off" v-model="description"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hr-line">&nbsp;</div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="lead-step-6">
-        <div class="info-block__item">
-            <div class="info-block__img">
-                <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isFilled, 'text-gray': !isFilled}">gold</span>
-            </div>
-            <div class="info-block__row-box">
-                <div class="info-block__row-item">
-                    <div class="info-block__column-right block-mod-1">Запись разговора</div>
-                </div>
-                <div class="info-block__row-item">
-                    <div class="info-block__column-right text-mod-2">
-                        <div class="binded__item">
-                            <input style="display: none" accept="audio/*" type="file">
-                            <button class="binded__button"><span class="icon-clip"></span></button>
-                            <span class="binded__file">Прикрепить запись</span>
-                            <button class="button-close">×</button>
-                        </div>
-                        <input type="hidden" v-model="audioRecord">
-                        <div class="form-error"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="application/javascript">
-
-        const storage = {
-            step1: {
-                name: null,
-                phone: null,
-                city: null,
-                cities: null
-            },
-            step2: {
-                channel: null,
-                orderDate: null,
-                channels: null
-            },
-            step3: {
-                decisionMaker: null,
-                madeMeasurement: null
-            },
-            step4: {
-                interestAssessment: null
-            },
-            step5: {
-                description: null
-            },
-            step6: {
-                audioRecord: null
-            },
-            publicationRule: null,
-            hasAgreement: null
-        };
-
-        Vue.component('lead-step-1', {
-            template: '#lead-step-1',
-            data: function() {
-                return storage.step1;
-            },
-            beforeCreate: function() {
-                this.$http.get('/cities').then(
-                    response => response.json().then(data => this.cities = data)
-                )
-            },
-            computed: {
-                isFilled: function() {
-                    return this.name && this.phone && this.city;
-                }
-            }
-        });
-
-        Vue.component('lead-step-2', {
-            template: '#lead-step-2',
-            data: function() {
-                return storage.step2;
-            },
-            beforeCreate: function() {
-                this.$http.get('/properties/channel').then(
-                    response => response.json().then(data => this.channels = data)
-                );
-            },
-            mounted: function() {
-                $(this.$refs.orderDate).datepicker({onSelect: this.onOrderDateSelect});
-            },
-            computed: {
-                isFilled: function() {
-                    return this.channel && this.orderDate;
-                }
-            },
-            methods: {
-                onOrderDateSelect: function(value) {
-                    this.orderDate = value;
-                }
-            }
-        });
-
-        Vue.component('lead-step-3', {
-            template: '#lead-step-3',
-            data: function() {
-                return storage.step3;
-            },
-            computed: {
-                isFilled: function() {
-                    return this.decisionMaker && this.madeMeasurement;
-                }
-            }
-        });
-
-        Vue.component('lead-step-4', {
-            template: '#lead-step-4',
-            data: function() {
-                return storage.step4;
-            },
-            computed: {
-                isFilled: function() {
-                    return this.interestAssessment;
-                },
-                stars: function() {
-                    return this.interestAssessment;
-                }
-            },
-            methods: {
-                onStarClicked: function(star) {
-                    this.interestAssessment = star;
-                }
-            }
-        });
-
-        Vue.component('lead-step-5', {
-            template: '#lead-step-5',
-            data: function() {
-                return storage.step5;
-            },
-            computed: {
-                isFilled: function() {
-                    return this.description;
-                }
-            }
-        });
-
-        Vue.component('lead-step-6', {
-            template: '#lead-step-6',
-            data: function() {
-                return storage.step6;
-            },
-            computed: {
-                isFilled: function() {
-                    return this.audioRecord;
-                }
-            }
-        });
-
-        const vm = new Vue({
-            el: '#lead-form-app',
-            data: storage
-        });
-
-    </script>
+    <script src="{{ asset('bundles/app/js/lib/vuelidate.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/validators.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lead-form/app.js') }}"></script>
 {% endblock %}
