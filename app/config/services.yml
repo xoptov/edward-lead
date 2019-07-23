@@ -37,6 +37,8 @@ services:
     AppBundle\Controller\DefaultController:
         arguments:
             $uploadMaxSize: '%upload_max_size%'
+            $audioAllowedTypes: '%audio_allowed_types%'
+            $audioMaxSize: '%audio_max_size%'
 
     AppBundle\EventListener\UserSubscriber:
         tags: ['kernel.event_subscriber']

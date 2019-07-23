@@ -105,7 +105,11 @@ class LeadManager
      */
     public function estimateStars(Lead $lead): int
     {
-        $stars = 1;
+        $stars = 0;
+
+        if ($lead->getName() && $lead->getPhone() && $lead->getCity()) {
+            $stars++;
+        }
 
         if ($lead->getChannel() && $lead->getOrderDate()) {
             $stars++;

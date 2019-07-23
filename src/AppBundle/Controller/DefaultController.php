@@ -34,18 +34,34 @@ class DefaultController extends Controller
     private $uploadMaxSize;
 
     /**
+     * @var array
+     */
+    private $audioAllowedTypes;
+
+    /**
+     * @var int
+     */
+    private $audioMaxSize;
+
+    /**
      * @param Uploader           $uploader
      * @param ValidatorInterface $validator
      * @param int                $uploadMaxSize
+     * @param array              $audioAllowedTypes
+     * @param int                $audioMaxSize
      */
     public function __construct(
         Uploader $uploader,
         ValidatorInterface $validator,
-        int $uploadMaxSize
+        int $uploadMaxSize,
+        array $audioAllowedTypes,
+        int $audioMaxSize
     ) {
         $this->uploader = $uploader;
         $this->validator = $validator;
         $this->uploadMaxSize = $uploadMaxSize;
+        $this->audioAllowedTypes = $audioAllowedTypes;
+        $this->audioMaxSize = $audioMaxSize;
     }
 
     /**
@@ -92,22 +108,22 @@ class DefaultController extends Controller
         }
 
         try {
-            $path = $this->uploader->store($uploadedFile, 'logotype');
+            $result = $this->uploader->store($uploadedFile, 'logotype');
         } catch (FileException $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
-        $url = $imagineCacheManager->getBrowserPath($path, $filter);
+        $url = $imagineCacheManager->getBrowserPath($result['path'], $filter);
 
         return new JsonResponse([
-            'logotype' => [
-                'path' => $path,
-                'url' => $url
-            ]
+            'path' => $result['path'],
+            'url' => $url
         ]);
     }
 
     /**
+     * @Route("/upload/audio", name="app_upload_audio", methods={"POST"})
+     *
      * @param Request $request
      *
      * @return Response
@@ -119,18 +135,11 @@ class DefaultController extends Controller
         }
 
         $uploadedFile = $request->files->get('uploader');
+
         $constraint = new File([
-            'mimeTypes' => [
-                'audio/webm',
-                'audio/ogg',
-                'audio/mpeg',
-                'audio/mp3',
-                'audio/wave',
-                'audio/wav',
-                'audio/flac'
-            ],
+            'mimeTypes' => $this->audioAllowedTypes,
             'mimeTypesMessage' => 'Неподдерживается тип загружаемого файла',
-            'maxSize' => '8M',
+            'maxSize' => $this->audioMaxSize,
             'maxSizeMessage' => 'Максимальный размер загружаемой аудио записи должен быть {size}'
         ]);
 
@@ -141,18 +150,19 @@ class DefaultController extends Controller
         }
 
         try {
-            $path = $this->uploader->store($uploadedFile, 'audio');
+            $result = $this->uploader->store($uploadedFile, 'audio');
         } catch (FileException $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
-        $url = $this->generateUrl('app_uploads', ['path' => $path]);
+        $url = $this->generateUrl('app_uploaded_path', [
+            'directory' => 'audio',
+            'filename' => $result['filename']]
+        );
 
         return new JsonResponse([
-            'audioRecord' => [
-                'path' => $path,
-                'url' => $url
-            ]
+            'path' => $result['path'],
+            'url' => $url
         ]);
     }
 

@@ -37,7 +37,7 @@
                                     <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
                                     <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +X(XXX)XXX-XX-XX</span>
                                     <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
-                                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model.trim="$v.lead.phone.$model">
+                                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model.trim.lazy="$v.lead.phone.$model">
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
                                     <div class="info-block__row-item block-mod-2">
@@ -52,7 +52,7 @@
                             </div>
                         </div>
 
-                        <div v-show="canShowSecondStep">
+                        <div v-show="canShowSecondStep || debugMode">
                             <div class="info-block__item">
                                 <span class="icon-star-new span-mod-3" :class="{'text-yellow': isSecondStepFilled, 'text-gray': !isSecondStepFilled}"></span>
                                 <div class="info-block__row-box block-mod-3">
@@ -72,7 +72,7 @@
                             <div class="hr-line">&nbsp;</div>
                         </div>
 
-                        <div v-show="canShowThirdStep">
+                        <div v-show="canShowThirdStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
@@ -83,11 +83,11 @@
                                         <div class="info-block__column-right">
                                             <div class="info-block__radio-list">
                                                 <div class="info-block__radio-box">
-                                                    <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model="lead.decisionMaker">
+                                                    <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.decisionMaker">
                                                     <label for="lead-decision-maker-yes">Да</label>
                                                 </div>
                                                 <div class="info-block__radio-box">
-                                                    <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model="lead.decisionMaker">
+                                                    <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.decisionMaker">
                                                     <label for="lead-decision-maker-no">Нет</label>
                                                 </div>
                                             </div>
@@ -98,11 +98,11 @@
                                         <div class="info-block__column-right">
                                             <div class="info-block__radio-list">
                                                 <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model="lead.madeMeasurement">
+                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.madeMeasurement">
                                                     <label for="lead-made-measurement-yes">Да</label>
                                                 </div>
                                                 <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model="lead.madeMeasurement">
+                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.madeMeasurement">
                                                     <label for="lead-made-measurement-no">Нет</label>
                                                 </div>
                                             </div>
@@ -113,7 +113,7 @@
                             <div class="hr-line">&nbsp;</div>
                         </div>
 
-                        <div v-show="canShowFoursStep">
+                        <div v-show="canShowFoursStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFoursStepFilled, 'text-gray': !isFoursStepFilled}"></span>
@@ -139,7 +139,7 @@
                             <div class="hr-line">&nbsp;</div>
                         </div>
 
-                        <div v-show="canShowFifthStep">
+                        <div v-show="canShowFifthStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFifthStepFilled, 'text-gray': !isFifthStepFilled}"></span>
@@ -163,7 +163,7 @@
                             <div class="hr-line">&nbsp;</div>
                         </div>
 
-                        <div class="info-block__item" v-show="canShowSixthStep">
+                        <div class="info-block__item" v-show="canShowSixthStep || debugMode">
                             <div class="info-block__img">
                                 <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isSixthStepFilled, 'text-gray': !isSixthStepFilled}">gold</span>
                             </div>
@@ -173,14 +173,21 @@
                                 </div>
                                 <div class="info-block__row-item">
                                     <div class="info-block__column-right text-mod-2">
-                                        <div class="binded__item">
-                                            <input style="display: none" accept="audio/*" type="file">
-                                            <button class="binded__button"><span class="icon-clip"></span></button>
-                                            <span class="binded__file">Прикрепить запись</span>
-                                            <button class="button-close">×</button>
+                                        <div v-if="isAudioUploaded">
+                                            <audio controls :src="lead.audioRecord"></audio>
+                                            <button class="button-close" @click.prevent="onRemoveAudioClicked">×</button>
                                         </div>
-                                        <input type="hidden" v-model="lead.audioRecord">
-                                        <div class="form-error"></div>
+                                        <div v-else>
+                                            <div class="binded__item">
+                                                <span class="error" v-if="$v.uploadingFile.$model && !$v.uploadingFile.fileSize">Загружаемый файл превышает допустимый размер</span>
+                                                <span class="error" v-if="$v.uploadingFile.$model && !$v.uploadingFile.fileType">Загружаемый файл недопустимого формата</span>
+                                                <input style="display: none" accept="audio/*" type="file" @change="onUploadChanged" ref="recordUploader">
+                                                <button type="button" @click.prevent="onUploadClicked">
+                                                    <span class="icon-clip"></span> Прикрепить запись
+                                                </button>
+                                            </div>
+                                            <input type="hidden" v-model="lead.audioRecord">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +228,12 @@
                                             Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам
                                         </label>
                                     </div>
-                                    <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6">Выставить лида на биржу</button>
+                                    <div v-if="isReadyForSubmit && !submitted">
+                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6">Выставить лида на биржу</button>
+                                    </div>
+                                    <div v-else-if="submitted">
+                                        Лид успешно добавлен
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -248,5 +260,18 @@
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vuelidate.min.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/validators.min.js') }}"></script>
+    <script>
+        let leadId = null;
+        let roomId = null;
+
+        {% if lead is defined and lead is not empty %}
+            leadId = {{ lead.id }};
+        {% endif %}
+
+        {% if room is defined and room is not empty %}
+            roomId = {{ room.id }};
+        {% endif %}
+
+    </script>
     <script src="{{ asset('bundles/app/js/lead-form/app.js') }}"></script>
 {% endblock %}

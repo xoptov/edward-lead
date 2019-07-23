@@ -16,10 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use AppBundle\Form\DataTransformer\EntityToIdTransformer;
 use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use AppBundle\Form\DataTransformer\NumberToBooleanTransformer;
 
 class LeadType extends AbstractType
 {
@@ -52,22 +52,8 @@ class LeadType extends AbstractType
                 'format' => 'dd.MM.yyyy',
                 'required' => false
             ])
-            ->add('decisionMaker', ChoiceType::class, [
-                'expanded' => true,
-                'required' => false,
-                'choices' => [
-                    'Да' => true,
-                    'Нет' => false
-                ]
-            ])
-            ->add('madeMeasurement', ChoiceType::class, [
-                'expanded' => true,
-                'required' => false,
-                'choices' => [
-                    'Да' => true,
-                    'Нет' => false
-                ]
-            ])
+            ->add('decisionMaker', HiddenType::class)
+            ->add('madeMeasurement', HiddenType::class)
             ->add('interestAssessment', HiddenType::class)
             ->add('description', TextareaType::class, [
                 'required' => false
@@ -99,6 +85,14 @@ class LeadType extends AbstractType
         );
 
         $builder->get('phone')->addViewTransformer(new PhoneTransformer());
+
+        $builder->get('decisionMaker')->addViewTransformer(
+            new NumberToBooleanTransformer()
+        );
+
+        $builder->get('madeMeasurement')->addViewTransformer(
+            new NumberToBooleanTransformer()
+        );
     }
 
     /**

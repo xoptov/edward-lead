@@ -2,10 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\City;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
+use AppBundle\Entity\Property;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Form\DataTransformer\NumberToBooleanTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LeadController extends Controller
@@ -45,19 +49,73 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/form/{lead}", name="app_lead_form", methods={"GET"}, defaults={"lead": null})
+     * @Route("/lead/form/settings", name="app_lead_form_settings", methods={"GET"})
      *
-     * @param int|null $id
+     * @return JsonResponse
+     */
+    public function getFormSettings(): JsonResponse
+    {
+        $result = [];
+
+        $cities = $this->entityManager->getRepository(City::class)
+            ->findBy(['enabled' => true]);
+
+        if (!empty($cities)) {
+            $result['cities'] = [];
+            foreach ($cities as $city) {
+                $result['cities'][] = [
+                    'id' => $city->getId(),
+                    'name' => $city->getName()
+                ];
+            }
+        }
+
+        $channels = $this->entityManager->getRepository(Property::class)
+            ->findBy(['type' => Property::CHANNEL]);
+
+        if (!empty($channels)) {
+            $result['channels'] = [];
+            foreach ($channels as $channel) {
+                $result['channels'][] = [
+                    'id' => $channel->getId(),
+                    'value' => $channel->getValue()
+                ];
+            }
+        }
+
+        $result['audioAllowedTypes'] = $this->getParameter('audio_allowed_types');
+        $result['audioMaxSize'] = $this->getParameter('audio_max_size');
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/lead/create/form/{room}", name="app_lead_create_form", methods={"GET"}, defaults={"room": null})
+     *
+     * @param Room|null $room
      *
      * @return Response
      */
-    public function getFormAction(?int $id = null): Response
+    public function getCreateFormAction(?Room $room = null): Response
     {
         return $this->render('@App/Lead/form.html.twig', [
-            'id' => $id
+            'room' => $room
         ]);
     }
 
+    /**
+     * @Route("/lead/edit/form/{lead}", name="app_lead_edit_form", methods={"GET"})
+     *
+     * @param Lead $lead
+     *
+     * @return Response
+     */
+    public function getEditFormAction(Lead $lead): Response
+    {
+        return $this->render('@App/Lead/form.html.twig', [
+            'lead' => $lead
+        ]);
+    }
 
     /**
      * @Route("/lead/{id}", name="app_lead_view", methods={"GET"}, defaults={"_format": "json"})
@@ -74,13 +132,15 @@ class LeadController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
+        $numToBoolTransformer = new NumberToBooleanTransformer();
+
         $result = [
             'id' => $lead->getId(),
             'phone' => $this->leadManager->getNormalizedPhone($lead, $this->getUser()),
             'name' => $lead->getName(),
             'orderDate' => $lead->getOrderDateFormatted('c'),
-            'decisionMaker' => $lead->isDecisionMaker(),
-            'madeMeasurement' => $lead->isMadeMeasurement(),
+            'decisionMaker' => $numToBoolTransformer->transform($lead->isDecisionMaker()),
+            'madeMeasurement' => $numToBoolTransformer->transform($lead->isMadeMeasurement()),
             'interestAssessment' => $lead->getInterestAssessment(),
             'description' => $lead->getDescription(),
             'audioRecord' => $lead->getAudioRecord(),
@@ -161,7 +221,7 @@ class LeadController extends Controller
 
         $this->leadManager->setExpirationDate($newLead);
 
-        if (!$this->isGranted(LeadCreateVoter::OPERATION)) {
+        if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
             return new JsonResponse(['errors' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
         }
 
@@ -170,7 +230,7 @@ class LeadController extends Controller
 
         $eventDispatcher->dispatch(LeadEvent::NEW_PLACED, new LeadEvent($newLead));
 
-        return new JsonResponse(['id' => $newLead->getId()], Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(['id' => $newLead->getId()]);
     }
 
     /**
@@ -251,6 +311,6 @@ class LeadController extends Controller
             $errors[] = $error->getMessage();
         }
 
-        return new JsonResponse(['errors' => $errors]);
+        return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 }

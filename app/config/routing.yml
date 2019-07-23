@@ -26,6 +26,6 @@ app_logout:
     path: /logout
     methods: GET
 
-app_uploads:
-    path: /uploads/{path}
+app_uploaded_path:
+    path: /uploads/{directory}/{filename}
     methods: GET

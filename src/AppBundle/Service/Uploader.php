@@ -25,15 +25,20 @@ class Uploader
      * @param UploadedFile $uploadedFile
      * @param string       $directory
      *
-     * @return string
+     * @return array
      */
-    public function store(UploadedFile $uploadedFile, string $directory): string
+    public function store(UploadedFile $uploadedFile, string $directory): array
     {
         $fileName = md5($uploadedFile->getFilename() . $uploadedFile->getSize(), false) . '.' . $uploadedFile->guessExtension();
         $storePath = $this->storePath . DIRECTORY_SEPARATOR . $directory;
 
         $uploadedFile->move($storePath, $fileName);
 
-        return $directory . DIRECTORY_SEPARATOR . $fileName;
+        $result = [
+            'filename' => $fileName,
+            'path' => $directory . DIRECTORY_SEPARATOR . $fileName
+        ];
+
+        return $result;
     }
 }
