@@ -16,7 +16,6 @@
                 <div class="tabs-box tabs-box-arbitrate">
                     <div class="tabs-box-arbitrate__item" v-bind:class="{active: openTab}">
                         <thread-tab
-                                v-if="openedThreads.length > 0"
                                 v-for="tab, key in openedThreads"
                                 v-bind:id="tab.id"
                                 v-bind:lead="tab.lead"
@@ -31,7 +30,6 @@
                     </div>
                     <div class="tabs-box-arbitrate__item" v-bind:class="{active: archiveTab}">
                         <thread-tab
-                                v-if="archiveThreads.length > 0"
                                 v-for="tab, key in archiveThreads"
                                 v-bind:id="tab.id"
                                 v-bind:lead="tab.lead"
@@ -52,7 +50,6 @@
             <span class="arbitrate__info__title" v-if="currentThread.id === null">Выберите обращение для отображения</span>
             <span class="arbitrate__info__title" v-if="currentThread.id !== null">Арбитраж #{{ vue_var('currentThread.id') }}</span>
             <thread-message
-                    v-if="currentThread !== null"
                     v-for="message in currentThread.messages"
                     v-bind:sender="message.sender"
                     v-bind:time="message.time"
@@ -61,33 +58,40 @@
                     v-bind:target_in="message.target_in"
                     v-bind:target_out="message.target_out"
             ></thread-message>
-
-            {#<form action="#" class="arbitrate-form" method="post">
-                <textarea class="arbitrate-form__textarea autoExpand" name="arbitrate-message" id="arbitrate-message" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required=""></textarea>
-
-
-                <div class="arbitrate-form__button-block">
-                    <button class="arbitrate-form__button"><span class="icon-submit"></span>
-                    </button>
-                    <button type="submit" class="arbitrate-form__button"><span class="icon-clip"></span>
-                    </button>
-                </div>
-                <div class="arbitrate-form__selected-files binded">
-                    <div class="binded__item">
-                        <button class="binded__button"><span class="icon-clip"></span>
-                        </button>
-                        <span class="binded__file">Без-названия.jpg</span>
-                        <button class="button-close">×</button>
-                    </div>
-                    <div class="binded__item">
-                        <button class="binded__button"><span class="icon-clip"></span>
-                        </button>
-                        <span class="binded__file">Без-названия.jpg</span>
-                        <button class="binded__close">×</button>
-                    </div>
-                </div>
-            </form>#}
+            <message-form
+                    v-if="currentThread.id !== null"
+                    v-bind:action="form.action"
+                    v-bind:method="form.method"
+                    v-bind:children="form.children"
+                    v-bind:thread="currentThread.id"
+                    v-on:submit-form="formSubmit"
+            ></message-form>
         </div>
+        {# Vuejs components template #}
+        <script type="text/x-template" id="component-thread-tab">
+            <div v-on:click="$emit('change-thread', item, thread)">
+                <div class="tabs-box-arbitrate__number"v-if="type == 'arbitration'">Арбитраж #{{ vue_var('id') }}</div>
+                <div class="tabs-box-arbitrate__number"v-if="type == 'support'">Обращение #{{ vue_var('id') }}</div>
+                <div class="tabs-box-arbitrate__date">{{ vue_var('date') }}</div>
+                <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'new'">Лид #{{ vue_var('lead') }}</div>
+                <div class="tabs-box-arbitrate__state text-green" v-if="status == 'wait_user'">Вам ответила тех. поддержка</div>
+                <div class="tabs-box-arbitrate__state" v-if="status == 'wait_support'">Ожидаем ответа от поддержки</div>
+                <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'closed'">Лид #{{ vue_var('lead') }}</div>
+            </div>
+        </script>
+        <script type="text/x-template" id="component-thread-message">
+            <div class="message" v-bind:class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
+                <div class="message__img"><span v-if="logo"><img v-bind:src="logo"></span></div>
+                <div class="message__content">
+                    <p class="message__header"><b>{{ vue_var('sender') }}</b>
+                        <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
+                    </p>
+                    <br>
+                    <p class="message__text">{{ vue_var('body') }}</p>
+                </div>
+            </div>
+        </script>
+
         {#<div class="block-copyright">
             © 2019 Edward - решения для бизнеса
         </div>#}

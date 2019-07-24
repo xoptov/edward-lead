@@ -39,9 +39,46 @@ var data = {
             date: '{{ thread.createdAt|date('d.m.Y') }}',
             status: '{{ thread.status }}',
             type: '{{ thread.typeAppeal }}',
-            thread: 'archive'
+            thread: 'archive',
+            messages: [
+                {% for message in thread.messages %}
+                {% set sender = message.sender %}
+                {
+                    target_in: {% if app.user == sender %}false{% else %}true{% endif %},
+                    target_out: {% if app.user == sender %}true{% else %}false{% endif %},
+                    sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
+                    body: '{{ message.body }}',
+                    time: '{{ message.createdAt|date('d.m.Y H:m') }}',
+                    logo: {% if sender.company is not null %}{% set logotype = sender.company.logotype %}{% if logotype is not null %}'{{ logotype.path }}'{% else %}null{% endif %}{% else %}null{% endif %}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
         }
         {% if not loop.last %},{% endif %}
         {% endfor %}
-    ]
+    ],
+    form: {
+        action: '{{ path('app_arbitration_reply') }}',
+        method: '{{ form.vars.method }}',
+        children: {
+            body: {
+                data: null,
+                errors: []
+            },
+            images: {
+                data: {},
+                errors: [],
+                uploadUrl: '{{ path('app_arbitration_file') }}',
+                deleteUrl: '{{ path('app_arbitration_delete') }}'
+            },
+            thread: {
+                data: null,
+                errors: []
+            },
+            _token: {
+                data: '{{ form.children._token.vars.value }}',
+                errors: []
+            }
+        }
+    }
 };
