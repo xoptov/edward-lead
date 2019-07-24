@@ -4713,10 +4713,6 @@ span.id_lids:hover {
     padding-bottom: 237px;
 }
 
-.star-box__item > span {
-    color: #b0b0b0;
-}
-
 .star-box__item.selected > span {
     color: #f8a609;
 }

@@ -88,9 +88,9 @@
                         <div></div>
                         <div class="info-block__column-right">
                             <div class="star-box__list">
-                                {% for ind in range(1,10) %}
+                                {% for i in range(1,10) %}
                                     <div class="star-box__item">
-                                        <span class="icon-star-new {% if lead.interestAssessment >= ind %}text-yellow{% else %}text-gray{% endif %} span-mod-7"> </span> <span class="span-mod-5">{{ ind }}</span>
+                                        <span class="icon-star-new {% if lead.interestAssessment >= i %}text-yellow{% else %}text-gray{% endif %} span-mod-7"> </span> <span class="span-mod-5">{{ i }}</span>
                                     </div>
                                 {% endfor %}
                             </div>

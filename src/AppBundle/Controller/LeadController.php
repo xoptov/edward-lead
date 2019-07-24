@@ -267,7 +267,7 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/{id}", name="app_lead_edit", methods={"PUT", "PATCH"}, defaults={"_format": "json"})
+     * @Route("/lead/{id}", name="app_lead_edit", methods={"PUT"}, defaults={"_format": "json"})
      *
      * @param Lead                     $lead
      * @param Request                  $request
@@ -285,7 +285,11 @@ class LeadController extends Controller
             return new JsonResponse(['errors' => 'У Вас нет прав на редактирование чужего лида'], Response::HTTP_FORBIDDEN);
         }
 
-        $form = $this->createForm(LeadType::class, $lead, ['csrf_protection' => false]);
+        $form = $this->createForm(LeadType::class, $lead, [
+            'method' => REquest::METHOD_PUT,
+            'csrf_protection' => false
+        ]);
+
         $form->handleRequest($request);
 
         if (!$form->isValid()) {

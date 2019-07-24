@@ -54,12 +54,7 @@ const vm = new Vue({
         },
         channels: null,
         cities: null,
-        errors: {
-            name: null,
-            phone: null,
-            city: null,
-            audioRecord: null
-        },
+        submitErrors: null,
         estimate: {
             stars: null,
             cost: null
@@ -207,6 +202,9 @@ const vm = new Vue({
             this.lead.orderDate = newOrderDate;
         },
         interestAssessmentChanged: function(star) {
+            if (this.submitted) {
+                return false;
+            }
             this.lead.interestAssessment = star;
         },
         onDescriptionChanged: function() {
@@ -218,6 +216,9 @@ const vm = new Vue({
                 .then(response => this.estimate = response.data);
         },
         onUploadClicked: function() {
+            if (this.submitted) {
+                return false;
+            }
             this.$refs.recordUploader.click();
         },
         onUploadChanged: function(event) {
@@ -238,6 +239,9 @@ const vm = new Vue({
             }
         },
         onRemoveAudioClicked: function() {
+            if (this.submitted) {
+                return false;
+            }
             this.uploadingFile = null;
             this.lead.audioRecord = null;
         },
@@ -246,18 +250,24 @@ const vm = new Vue({
                 if (this.leadId) {
                     this.$http.put('/lead/' + this.leadId, this.lead)
                         .then(
-                            response => this.submitted = true
+                            response => {
+                                this.submitted = true;
+                                //todo: тут необходимо реализовать редирект на просмотр отредактированного лида лида.
+                            }
                         )
                         .catch(
-                            error => console.debug(error)
+                            response => this.submitErrors = response.data.errors
                         );
                 } else {
                     this.$http.post('/lead', this.lead)
                         .then(
-                            response => this.submitted = true
+                            response => {
+                                this.submitted = true
+                                //todo: тут необходимо реализовать редирект на происмотр добавленного лида.
+                            }
                         )
                         .catch(
-                            error => console.debug(error)
+                            response => this.submitErrors = response.data.errors
                         );
                 }
             }
