@@ -2,17 +2,17 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Image;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\Company;
-use AppBundle\Entity\UserDeleteRequest;
-use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
 use AppBundle\Form\Type\ProfileType;
+use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
+use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

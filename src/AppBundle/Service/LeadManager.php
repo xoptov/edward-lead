@@ -2,12 +2,13 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
-use AppBundle\Exception\TradeException;
+use AppBundle\Entity\Trade;
+use AppBundle\Util\Formatter;
+use AppBundle\Entity\PhoneCall;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
 class LeadManager
 {
@@ -37,24 +38,32 @@ class LeadManager
     private $leadExpirationPeriod;
 
     /**
+     * @var int
+     */
+    private $leadPerUser;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TradeManager           $tradeManager
      * @param int                    $leadCost
      * @param int                    $starCost
      * @param int                    $leadExpirationPeriod
+     * @param int                    $leadPerUser
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TradeManager $tradeManager,
         int $leadCost,
         int $starCost,
-        int $leadExpirationPeriod
+        int $leadExpirationPeriod,
+        int $leadPerUser
     ) {
         $this->entityManager = $entityManager;
         $this->tradeManager = $tradeManager;
         $this->leadCost = $leadCost;
         $this->starCost = $starCost;
         $this->leadExpirationPeriod = $leadExpirationPeriod;
+        $this->leadPerUser = $leadPerUser;
     }
 
     /**
@@ -63,7 +72,7 @@ class LeadManager
      *
      * @return int
      */
-    public function calculateCost(Lead $lead, ?int $divisor = 1): int
+    public function estimateCost(Lead $lead, ?int $divisor = 1): int
     {
         $city = $lead->getCity();
 
@@ -84,7 +93,7 @@ class LeadManager
             $starCost = $this->starCost;
         }
 
-        $stars = $this->calculateStars($lead);
+        $stars = $this->estimateStars($lead);
 
         return ($leadCost + $stars * $starCost) / $divisor;
     }
@@ -94,12 +103,12 @@ class LeadManager
      *
      * @return int
      */
-    public function calculateStars(Lead $lead): int
+    public function estimateStars(Lead $lead): int
     {
         $stars = 0;
 
-        if ($lead->getPhone() && $lead->getName() && $lead->getCity()) {
-            $stars = 1;
+        if ($lead->getName() && $lead->getPhone() && $lead->getCity()) {
+            $stars++;
         }
 
         if ($lead->getChannel() && $lead->getOrderDate()) {
@@ -118,7 +127,7 @@ class LeadManager
             $stars++;
         }
 
-        if ($lead->getUploadedAudioRecord()) {
+        if ($lead->getAudioRecord()) {
             $stars++;
         }
 
@@ -135,49 +144,93 @@ class LeadManager
     }
 
     /**
-     * @param Lead $lead
+     * @param User $user
      *
-     * @throws \Exception
+     * @return bool
      */
-    public function successBuy(Lead $lead): void
+    public function checkActiveLeadPerUser(User $user): bool
     {
-        if (!$lead->hasTrade()) {
-            throw new \RuntimeException('Для подтверждения сделки необходимо её создать');
+        try {
+            $activeLeadsCount = $this->entityManager
+                ->getRepository(Lead::class)
+                ->getActiveCountByUser($user);
+        } catch(\Exception $e) {
+            return false;
         }
 
-        if (!$lead->isReserved()) {
-            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
+        if ($user->getSaleLeadLimit()) {
+            $leadPerUser = $user->getSaleLeadLimit();
+        } else {
+            $leadPerUser = $this->leadPerUser;
         }
 
-        $lead->setStatus(Lead::STATUS_SOLD);
+        if ($activeLeadsCount >= $leadPerUser) {
+            return false;
+        }
 
-        $trade = $lead->getTrade();
+        return true;
+    }
 
-        $feeAccount = $this->entityManager->getRepository(Account::class)
-            ->getFeesAccount();
+    /**
+     * @param Lead $lead
+     * @param User $caller
+     *
+     * @return bool
+     *
+     * @throws NonUniqueResultException
+     */
+    public function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
+    {
+        $phoneCall = $this->entityManager
+            ->getRepository(PhoneCall::class)
+            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
 
-        $this->tradeManager->handleSuccess($trade, $feeAccount);
+        return $phoneCall instanceof PhoneCall;
     }
 
     /**
      * @param Lead $lead
      * @param User $buyer
      *
-     * @throws \Exception
+     * @return bool
+     *
+     * @throws NonUniqueResultException
      */
-    public function rejectBuy(Lead $lead): void
+    public function hasAcceptedTrade(Lead $lead, User $buyer): bool
     {
-        if (!$lead->hasTrade()) {
-            throw new \RuntimeException('Для отмены сделки необходимо её создать');
+        $trade = $this->entityManager
+            ->getRepository(Trade::class)
+            ->getByLeadAndBuyerAndStatus($lead, $buyer, Trade::STATUS_ACCEPTED);
+
+        return $trade instanceof Trade;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $user
+     *
+     * @return string
+     */
+    public function getNormalizedPhone(Lead $lead, User $user): string
+    {
+        $room = $lead->getRoom();
+
+        if ($lead->isOwner($user)) {
+            return Formatter::humanizePhone($lead->getPhone());
         }
 
-        if (!$lead->isReserved()) {
-            throw new TradeException($lead, $lead->getBuyer(), $lead->getUser(), 'Лида необходимо зарезервировать перед покупкой');
+        if ($room && !$room->isPlatformWarranty()) {
+            return Formatter::humanizePhone($lead->getPhone());
         }
 
-        $lead->setStatus(Lead::STATUS_BLOCKED);
+        try {
+            if ($this->hasAnsweredPhoneCall($lead, $user) || $this->hasAcceptedTrade($lead, $user)) {
+                return Formatter::humanizePhone($lead->getPhone());
+            }
+        } catch (\Exception $e) {
+            return 'Ошибка получения номера';
+        }
 
-        $trade = $lead->getTrade();
-        $this->tradeManager->handleReject($trade);
+        return Formatter::hidePhoneNumber($lead->getPhone());
     }
 }

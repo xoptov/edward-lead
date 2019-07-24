@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Company
+class Company implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class RoomController extends Controller
@@ -19,22 +20,56 @@ class RoomController extends Controller
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var RoomManager
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $roomManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param RoomManager            $roomManager
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        RoomManager $roomManager
+    ) {
         $this->entityManager = $entityManager;
+        $this->roomManager = $roomManager;
     }
 
     /**
-     * @Route("/room/create", name="app_create_room", methods={"GET", "POST"})
+     * @Route("/rooms", name="app_rooms", methods={"GET"}, options={"_format": "json"})
      *
-     * @param Request     $request
-     * @param RoomManager $roomManager
+     * @return JsonResponse
+     */
+    public function getAllAction(): JsonResponse
+    {
+        $rooms = $this->entityManager->getRepository(Room::class)
+            ->getByMember($this->getUser());
+
+        $result = [];
+
+        /** @var Room $room */
+        foreach ($rooms as $room) {
+            $result[] = [
+                'id' => $room->getId(),
+                'name' => $room->getName(),
+                'leadCriteria' => $room->getLeadCriteria(),
+                'leadPrice' => $room->getLeadPrice(),
+                'platformWarranty' => $room->isPlatformWarranty()
+            ];
+        }
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/room/create", name="app_room", methods={"GET", "POST"})
+     *
+     * @param Request $request
      *
      * @return Response
      */
-    public function createAction(Request $request, RoomManager $roomManager): Response
+    public function createAction(Request $request): Response
     {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
@@ -50,14 +85,14 @@ class RoomController extends Controller
             $this->entityManager->persist($data);
 
             try {
-                $roomManager->joinInRoom($data, $this->getUser());
+                $this->roomManager->joinInRoom($data, $this->getUser());
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 
                 return $this->redirectToRoute('app_profile');
             }
 
-            $roomManager->updateInviteToken($data);
+            $this->roomManager->updateInviteToken($data);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Новая комната успешно создана');
@@ -69,7 +104,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/{token}", name="app_invite_room", methods={"GET"})
+     * @Route("/room/invite/{token}", name="app_room_invite", methods={"GET"})
      *
      * @param string $token
      *
@@ -94,14 +129,13 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/invite/accept/{token}", name="app_accept_invite", methods={"GET"})
+     * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
      *
-     * @param string                 $token
-     * @param RoomManager            $roomManager
+     * @param string $token
      *
      * @return Response
      */
-    public function acceptInviteAction(string $token, RoomManager $roomManager): Response
+    public function acceptInviteAction(string $token): Response
     {
         $room = $this->entityManager->getRepository(Room::class)->findOneBy([
             'inviteToken' => $token,
@@ -115,8 +149,8 @@ class RoomController extends Controller
         }
 
         try {
-            $roomManager->joinInRoom($room, $this->getUser());
-            $roomManager->updateInviteToken($room);
+            $this->roomManager->joinInRoom($room, $this->getUser());
+            $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -128,7 +162,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/invite/reject", name="app_reject_invite", methods={"GET"})
+     * @Route("/room/invite/reject", name="app_room_invite_reject", methods={"GET"})
      *
      * @return Response
      */

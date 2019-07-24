@@ -37,6 +37,8 @@ services:
     AppBundle\Controller\DefaultController:
         arguments:
             $uploadMaxSize: '%upload_max_size%'
+            $audioAllowedTypes: '%audio_allowed_types%'
+            $audioMaxSize: '%audio_max_size%'
 
     AppBundle\EventListener\UserSubscriber:
         tags: ['kernel.event_subscriber']
@@ -48,6 +50,21 @@ services:
         arguments:
             $firewallMap: '@security.firewall.map'
         tags: ['kernel.event_subscriber']
+
+    AppBundle\Security\Voter\LeadCreateVoter:
+        tags: ['security.voter']
+
+    AppBundle\Security\Voter\LeadViewVoter:
+        tags: ['security.voter']
+
+    AppBundle\Security\Voter\LeadEditVoter:
+        tags: ['security.voter']
+
+    AppBundle\Security\Voter\LeadFirstCallVoter:
+        tags: ['security.voter']
+
+    AppBundle\Security\Voter\LeadBuyVoter:
+        tags: ['security.voter']
 
     AppBundle\Security\Voter\TradeVoter:
         tags: ['security.voter']
@@ -185,6 +202,7 @@ services:
             $leadCost: '%lead_cost%'
             $starCost: '%star_cost%'
             $leadExpirationPeriod: '%lead_expiration_period%'
+            $leadPerUser: '%lead_per_user%'
 
     AppBundle\Service\PhoneCallManager:
         arguments:

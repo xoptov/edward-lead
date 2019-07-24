@@ -7,8 +7,12 @@ parameters:
     database_name: edward
     database_user: root
     database_password: 'ghjlf;b'
-    # You should uncomment this if you want to use pdo_sqlite
-    #database_path: '%kernel.project_dir%/var/data/data.sqlite'
+
+    test_database_host: ~
+    test_database_port: ~
+    test_database_name: ~
+    test_database_user: ~
+    test_database_password: ~
 
     mailer_transport: smtp
     mailer_host: 127.0.0.1
@@ -24,10 +28,14 @@ parameters:
     lead_per_user: 5
     lead_expiration_period: 7
 
-    upload_store_path: '%kernel.project_dir%/web/uploads'
+    upload_path: 'uploads'
+    upload_store_path: '%kernel.project_dir%/web/%upload_path%'
     upload_max_size: 1048576
 
     # Telephony
     pbx_call_url: 'http://159.253.123.139:81/make.php'
     cost_per_second: 5.84
     first_call_timeout: 300
+
+    audio_allowed_types: ['audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/wave', 'audio/wav', 'audio/flac']
+    audio_max_size: 2097152

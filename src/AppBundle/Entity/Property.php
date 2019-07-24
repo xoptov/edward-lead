@@ -9,7 +9,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Table(name="property")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PropertyRepository")
  */
-class Property
+class Property implements IdentifiableInterface
 {
     const CHANNEL = 'channel';
 

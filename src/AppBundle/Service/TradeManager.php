@@ -6,14 +6,18 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
+use Doctrine\ORM\NoResultException;
 use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Exception\FinancialException;
 use AppBundle\Exception\OperationException;
 use AppBundle\Exception\InsufficientFundsException;
 
 class TradeManager
 {
+    const START_TRADE_DESCRIPTION = 'Сделка по приобритению лида';
+
     /**
      * @var EntityManagerInterface
      */
@@ -71,11 +75,14 @@ class TradeManager
      *
      * @throws FinancialException
      * @throws TradeException
+     * @throws OperationException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
-    public function create(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
+    public function start(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
     {
-        if (in_array($lead->getStatus(), [Lead::STATUS_RESERVED, Lead::STATUS_SOLD])) {
-            throw new TradeException($lead, $buyer, $seller, 'Лид не может быть продан повторно');
+        if (!$lead->isActive()) {
+            throw new TradeException($lead, $buyer, $seller, 'У лида должен быть статус активный для совершения сделки');
         }
 
         if ($lead->getUser() === $buyer) {
@@ -89,17 +96,16 @@ class TradeManager
             throw new InsufficientFundsException($buyer->getAccount(), $amount + $fee, 'Недостаточно средств у покупателя');
         }
 
-        $trade = new Trade();
-        $trade->setBuyer($buyer)
-            ->setSeller($seller)
-            ->setLead($lead)
-            ->setDescription('Сделка по приобритению лида')
-            ->setAmount($amount);
-
-        $this->entityManager->persist($trade);
+        $trade = $this->create($buyer, $seller, $lead, $amount);
         $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amount + $fee, false);
         $trade->setHold($hold);
-        $lead->setStatus(Lead::STATUS_RESERVED);
+
+        if ($lead->hasRoom() && $lead->getRoom()->isPlatformWarranty() === false) {
+            $feesAccount = $this->entityManager->getRepository(Account::class)
+                ->getFeesAccount();
+
+            $this->finishSuccess($trade, $feesAccount);
+        }
 
         if ($flush) {
             $this->entityManager->flush();
@@ -115,7 +121,7 @@ class TradeManager
      * @throws FinancialException
      * @throws OperationException
      */
-    public function handleSuccess(Trade $trade, Account $feesAccount): void
+    public function finishSuccess(Trade $trade, Account $feesAccount): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
@@ -170,6 +176,7 @@ class TradeManager
                 $em->remove($hold);
             }
 
+            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
             $trade->setStatus(Trade::STATUS_ACCEPTED);
 
             $em->flush();
@@ -181,20 +188,49 @@ class TradeManager
      *
      * @throws OperationException
      */
-    public function handleReject(Trade $trade): void
+    public function finishReject(Trade $trade): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        if ($trade->hasHold()) {
-            $hold = $trade->getHold();
-            $trade->setHold(null);
-            $this->entityManager->remove($hold);
-        }
+        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade) {
 
-        $trade->setStatus(Trade::STATUS_REJECTED);
+            if ($trade->hasHold()) {
+                $hold = $trade->getHold();
+                $trade->setHold(null);
+                $em->remove($hold);
+            }
 
-        $this->entityManager->flush();
+            $trade->getLead()->setStatus(Lead::STATUS_BLOCKED);
+            $trade->setStatus(Trade::STATUS_REJECTED);
+
+            $em->flush();
+        });
+    }
+
+    /**
+     * @param User $buyer
+     * @param User $seller
+     * @param Lead $lead
+     * @param int  $amount
+     *
+     * @return Trade
+     */
+    private function create(User $buyer, User $seller, Lead $lead, int $amount): Trade
+    {
+        $trade = new Trade();
+        $trade
+            ->setBuyer($buyer)
+            ->setSeller($seller)
+            ->setLead($lead)
+            ->setDescription(self::START_TRADE_DESCRIPTION)
+            ->setAmount($amount);
+
+        $this->entityManager->persist($trade);
+
+        $lead->setStatus(Lead::STATUS_RESERVED);
+
+        return $trade;
     }
 }
