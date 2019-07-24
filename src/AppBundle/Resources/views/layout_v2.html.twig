@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Панель управления</title>
+    <meta content="" name="description" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="format-detection" content="telephone=no">
+    <!-- Template Basic Images Start -->
+    <link rel="icon" href="{{ asset('bundles/app/v2/img/favicon/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('bundles/app/v2/img/favicon/apple-touch-icon-180x180.png') }}">
+    <!-- Template Basic Images End -->
+    {% block stylesheets -%}
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/libs.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/main.css') }}">
+    {%- endblock %}
+</head>
+<body>
+    <header>
+        <div class="header_top">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 header_logo">
+                        <div class="logo">
+                            <a href="/">
+                                <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 header_main">
+                        <div class="main">
+                            <div class="notifications droparrow">
+                                <div class="box_title">
+                                    <p>Уведомления<span class="num">999999</span></p>
+                                </div>
+                                <div class="dropdownbox">
+                                    <div class="notifications_box">
+                                        <ul>
+                                            <li>
+                                                <div class="top">
+                                                    <div class="achtung">
+                                                        ВАЖНОЕ
+                                                    </div>
+                                                    <span class="date">10 февраля</span>
+                                                </div>
+                                                <div class="dec">
+                                                    <p>Вам прислали приглашение присоедениться к закрытой комнате #23548 - Медведи Москва </p>
+                                                </div>
+                                                <div class="box_btn">
+                                                    <a href="#" class="btn green">Принять</a>
+                                                    <a href="#" class="btn red">Отклонить</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="news_box">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <div class="top">
+                                                        <div class="achtung">новости</div>
+                                                        <span class="date">9 февраля</span>
+                                                    </div>
+                                                    <div class="desc">
+                                                        <p>На Вашем аккаунте в Edward Lead закончились деньги. Не забудьте пополнить баланс</p>
+                                                        <div class="circle">
+                                                            <img src="{{ asset('bundles/app/v2/img/icon_11.png') }}">
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <div class="top">
+                                                        <div class="achtung">новости</div>
+                                                        <span class="date">9 февраля</span>
+                                                    </div>
+                                                    <div class="desc">
+                                                        <p>На Вашем аккаунте в Edward Lead закончились деньги. Не забудьте пополнить баланс</p>
+                                                        <div class="circle">
+                                                            <img src="{{ asset('bundles/app/v2/img/icon_11.png') }}">
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="manager droparrow">
+                                <div class="box_title">
+                                    <span class="name">Ваш менеджер</span>
+                                    <p>Алексей Сергеевич Киселев</p>
+                                </div>
+                                <div class="dropdownbox">
+                                    <p>Ваш персональный менеджер: <span>Алексей Киселев</span></p>
+                                    <a class="phone" href="tel:+74951002030">Тел: +7 (495) 100 20 30</a>
+                                    <span class="time">Пн-Пт с 9:00 до 19:00 по МСК</span>
+                                    <a href="#" class="btn green">Написать в тех. подержку</a>
+                                </div>
+                            </div>
+                            <div class="balance">
+                                <p>Баланс: <span>5680 руб.</span></p>
+                                <p>Холд: <span>580 руб.</span></p>
+                            </div>
+                            <div class="userbox droparrow">
+                                <div class="box_title">
+                                    <img src="{{ asset('bundles/app/v2/img/icon_2.png') }}">
+                                </div>
+                                <div class="dropdownbox">
+                                    <ul>
+                                        <li><a href="#">Кабинет компании</a></li>
+                                        <li><a href="#">Мой профиль</a></li>
+                                        <li><a href="#">Оплата</a></li>
+                                        <li><a href="#">Выход</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl1-4 col-xl-3 col-lg-4 main_nav">
+                        {% include '@App/menu_v2.html.twig' %}
+                    </div>
+                    <div class="col-xl1-8  col-xl-9 col-lg-8 main_content">
+                        {% block content -%}{%- endblock %}
+                        <div class="footer">
+                            <p>© 2019 Edward - решения для бизнеса</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% block javascripts -%}
+        <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
+    {%- endblock %}
+</body>
+</html>

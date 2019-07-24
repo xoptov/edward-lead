@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Приглашения</title>
+    <meta content="" name="description" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="format-detection" content="telephone=no">
+    <!-- Template Basic Images Start -->
+    <link rel="icon" href="{{ asset('bundles/app/v2/img/favicon/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('bundles/app/v2/img/favicon/apple-touch-icon-180x180.png') }}">
+    <!-- Template Basic Images End -->
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/libs.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/main.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <header class="invite">
+        <div class="header_top">
+            <div class="logo">
+                <a href="/">
+                    <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
+                </a>
+            </div>
+        </div>
+    </header>
+    <main class="body_invite">
+    {% block content -%}{%- endblock %}
+    </main>
+    {% block javascripts -%}
+        <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
+    {%- endblock %}
+</body>
+</html>

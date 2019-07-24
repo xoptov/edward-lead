@@ -1,0 +1,242 @@
+{% extends '@App/layout_v2.html.twig' %}
+
+{% block content %}
+    <div class="content">
+        <div class="row align-items-center">
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <div class="main_title">
+                        <h1>Комната #14536 - Саратов Оконная Империя</h1>
+                        <div>
+                            <a href="#" class="deactiv_room">Деактивировать комнату</a>
+                            <p class="balance">Баланс покупателей: <span>120 лидов</span> (?)</p>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn_room green">Добавить лида</a>
+                </div>
+            </div>
+            <div class="col-12 content_box room_list">
+                <div class="table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>Дата публикации</td>
+                            <td>Вебмастер</td>
+                            <td>Телефон</td>
+                            <td>Источник</td>
+                            <td>Компания</td>
+                            <td>Статус</td>
+                            <td class="last"></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status soldout"><span>Продан</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status soldout"><span>Продан</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td></td>
+                            <td class="status wait"><span>Ожидает</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status arbitrage"><span>Арбитраж</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status soldout"><span>Продан</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status soldout"><span>Продан</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status soldout"><span>Продан</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td>01.04.2019 в 18:00</td>
+                            <td>Nikitosik</td>
+                            <td>+79173150878</td>
+                            <td>Яндекс</td>
+                            <td>Окна Тиссен</td>
+                            <td class="status nottarget"><span>Не целевой</span></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>
+                </div>
+            </div>
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <h2>Информация о комнате</h2>
+                </div>
+                <div class="row">
+
+                    <div class="col-lg-3 room_info box_desc">
+                        <div class="box_title">
+                            Описание целевого лида:
+                        </div>
+                        <p>Здесь будет краткое описание, что такое целевой лид. Эту информацию создатель комнаты заводит при ее создании в специальном поле. Агент тех поддержки (арбитраж) при решении конфиктов будет ссылать на то, что здесь написанно.</p>
+                    </div>
+                    <div class="col-lg-3 room_info box_price">
+                        <div class="box_title">Стоимость лида:</div>
+                        <span class="price">500 рублей.</span>
+                        <div class="box_title proc">
+                            Ср. % целевых:
+                        </div>
+                        <span>56%</span>
+                    </div>
+                    <div class="col-lg-3 room_info box_guarantee">
+                        <div class="box_title">Гарантии Edward:</div>
+                        <span class="guarantee">Нет</span>
+                        <div class="box_btn">
+                            <a href="#" class="enable">Включить</a>
+                            <a href="#" class="disable">Отключить</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 room_info box_date">
+                        <div class="box_title">
+                            Дата создания:
+                        </div>
+                        <span class="date">02.07.2019 г.</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <h2>Участники комнаты</h2>
+                </div>
+                <div class="row">
+                    <div class="col-12 room_members_box">
+                        <div class="row">
+                            <div class="col-md-2 room_members">
+                                <div class="number">
+                                    <div class="number_title">
+                                        Вебмастера:
+                                    </div>
+                                    <p>Кол: <span>3</span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-7 room_members">
+                                <ul class="user">
+                                    <li>
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                    <li>
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                    <li>
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3 room_members">
+                                <div class="add_webmaster">
+                                    <a href="#">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--  room_members_box  -->
+                    <div class="col-12 room_members_box">
+                        <div class="row">
+                            <div class="col-md-2 room_members">
+                                <div class="number">
+                                    <div class="number_title">
+                                        Компании:
+                                    </div>
+                                    <p>Кол: <span>3</span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-7 room_members">
+                                <ul class="user">
+                                    <li class="crown">
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                    <li>
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                    <li>
+                                        <div class="image">
+                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
+                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                        </div>
+                                        <span class="nick">Nikitosik</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3 room_members">
+                                <div class="add_webmaster">
+                                    <a href="#">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
