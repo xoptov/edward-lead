@@ -27,46 +27,25 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="id"><a href="#">#26547</a></td>
-                            <td>Саратов Окна Империя</td>
-                            <td>16</td>
-                            <td class="today">3</td>
-                            <td>3</td>
-                            <td>1</td>
-                            <td class="enable"></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td class="id"><a href="#">#26547</a></td>
-                            <td>Саратов Окна Империя</td>
-                            <td>16</td>
-                            <td class="today">3</td>
-                            <td>3</td>
-                            <td>1</td>
-                            <td class="enable"></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td class="id"><a href="#">#26547</a></td>
-                            <td>Саратов Окна Империя</td>
-                            <td>16</td>
-                            <td class="today">3</td>
-                            <td>3</td>
-                            <td>1</td>
-                            <td class="enable"></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td class="id"><a href="#">#26547</a></td>
-                            <td>Саратов Окна Империя</td>
-                            <td>16</td>
-                            <td class="today">3</td>
-                            <td>3</td>
-                            <td>1</td>
-                            <td class="disable"></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
+                            {% if rooms is defined and rooms is not null -%}
+                                {%- for row in rooms -%}
+                                    {%- set room = row.room -%}
+                                    <tr>
+                                        <td class="id">#{{ room.id }}</td>
+                                        <td>{{ room.name }}</td>
+                                        <td>{{ row.daily }}</td>
+                                        <td>{{ row.reserved }}</td>
+                                        <td>{{ row.companies }}</td>
+                                        <td>{{ row.webmasters }}</td>
+                                        <td class="{% if room.enabled %}enable{% else %}disable{% endif %}"></td>
+                                        <td><a href="{{ path('app_room_view', {'id': room.id}) }}"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                                    </tr>
+                                {%- endfor -%}
+                            {%- else -%}
+                                <tr>
+                                    <td cols="8">У вас нет комнта и вы не состаите не в одной из комнат</td>
+                                </tr>
+                            {%- endif -%}
                         </tbody>
                     </table>
                 </div>
