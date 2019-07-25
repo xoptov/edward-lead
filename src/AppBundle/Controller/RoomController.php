@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
+use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\RoomManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -115,8 +117,72 @@ class RoomController extends Controller
         $rooms = $this->entityManager->getRepository(Room::class)
             ->getByMember($user);
 
+        if (empty($rooms)) {
+            return $this->render('@App/Room/list.html.twig');
+        }
+
+        $rooms = array_map(function(Room $room) {
+            return [
+                'room' => $room,
+                'daily' => 0,
+                'reserved' => 0,
+                'webmasters' => 0,
+                'companies' => 0
+            ];
+        }, $rooms);
+
+        $now = new \DateTime();
+
+        $dailyLeads = $this->entityManager->getRepository(Lead::class)
+            ->getAddedInRoomsByDate($rooms, $now);
+
+
+        $reservedLeads = $this->entityManager->getRepository(Lead::class)
+            ->getReservedInRooms($rooms);
+
+        for ($i = 0; $i < count($rooms); $i++) {
+            /** @var Lead $dailyLead */
+            foreach ($dailyLeads as $dailyLead) {
+                if ($dailyLead->getRoom() === $rooms[$i]['room']) {
+                    $rooms[$i]['daily']++;
+                }
+            }
+
+            /** @var Lead $reservedLead */
+            foreach ($reservedLeads as $reservedLead) {
+                if ($reservedLead->getRoom() === $rooms[$i]['room']) {
+                    $rooms[$i]['reserved']++;
+                }
+            }
+
+            $users = $this->entityManager->getRepository(User::class)
+                ->getUsersInRoom($rooms[$i]['room']);
+
+            /** @var User $user */
+            foreach ($users as $user) {
+                if ($user->isWebmaster()) {
+                    $rooms[$i]['webmasters'] +=1 ;
+                } elseif ($user->isCompany()) {
+                    $rooms[$i]['companies'] += 1;
+                }
+            }
+        }
 
         return $this->render('@App/Room/list.html.twig', ['rooms' => $rooms]);
+    }
+
+    /**
+     * @Route("/room/{id}", name="app_room_view", methods={"GET"})
+     *
+     * @param Room $room
+     *
+     * @return Response
+     */
+    public function viewAction(Room $room): Response
+    {
+        return $this->render('@App/Room/view.html.twig', [
+            'room' => $room
+        ]);
     }
 
     /**

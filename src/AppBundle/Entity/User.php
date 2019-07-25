@@ -703,5 +703,21 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     {
         return $this->deleteRequest;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCompany(): bool
+    {
+        return in_array(self::ROLE_COMPANY, $this->roles);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWebmaster(): bool
+    {
+        return in_array(self::ROLE_WEBMASTER, $this->roles);
+    }
 }
 
