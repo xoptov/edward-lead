@@ -48,6 +48,7 @@ class Room implements IdentifiableInterface
     /**
      * @var string|null
      *
+     * @Assert\NotBlank(message="Необходимо указать критерии")
      * @ORM\Column(name="lead_criteria", type="text", nullable=true)
      */
     private $leadCriteria;
@@ -55,6 +56,7 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
+     * @Assert\GreaterThan(value="0", message="Стоимость должна быть больше ноля")
      * @ORM\Column(name="lead_price", type="integer", nullable=true)
      */
     private $leadPrice;
@@ -174,19 +176,19 @@ class Room implements IdentifiableInterface
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isPlatformWarranty(): bool
+    public function isPlatformWarranty(): ?bool
     {
         return $this->platformWarranty;
     }
 
     /**
-     * @param bool $platformWarranty
+     * @param bool|null $platformWarranty
      *
      * @return Room
      */
-    public function setPlatformWarranty(bool $platformWarranty): Room
+    public function setPlatformWarranty(?bool $platformWarranty = false): Room
     {
         $this->platformWarranty = $platformWarranty;
 

@@ -63,7 +63,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/create", name="app_room", methods={"GET", "POST"})
+     * @Route("/room/create", name="app_room_create", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -101,6 +101,34 @@ class RoomController extends Controller
         }
 
         return $this->render('@App/Room/create.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/room/list", name="app_room_list", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function listAction(): Response
+    {
+        $user = $this->getUser();
+
+        $rooms = $this->entityManager->getRepository(Room::class)
+            ->getByMember($user);
+
+
+        return $this->render('@App/Room/list.html.twig', ['rooms' => $rooms]);
+    }
+
+    /**
+     * @Route("/room/{room}/invite-token", name="app_room_invite_token", methods={"GET"})
+     *
+     * @param Room $room
+     *
+     * @return Response
+     */
+    public function inviteToken(Room $room): Response
+    {
+        return $this->render('@App/Room/invite_token.html.twig');
     }
 
     /**

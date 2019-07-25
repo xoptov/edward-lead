@@ -1,0 +1,76 @@
+{% extends '@App/layout_v2.html.twig' %}
+
+{% block content %}
+    <div class="content">
+        <div class="row">
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <div class="main_title">
+                        <h1>Комнаты</h1>
+                    </div>
+                    <a href="{{ path('app_room_create') }}" class="btn btn_room green">Создать новую комнату</a>
+                </div>
+            </div>
+            <div class="col-12 content_box room_list">
+                <div class="table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>ID комнаты</td>
+                            <td>Название комнаты</td>
+                            <td>Лидов за сегодня</td>
+                            <td>Лидов ожидает</td>
+                            <td>Компания</td>
+                            <td>Вебмастер</td>
+                            <td class="state"></td>
+                            <td class="last"></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="id"><a href="#">#26547</a></td>
+                            <td>Саратов Окна Империя</td>
+                            <td>16</td>
+                            <td class="today">3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td class="enable"></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td class="id"><a href="#">#26547</a></td>
+                            <td>Саратов Окна Империя</td>
+                            <td>16</td>
+                            <td class="today">3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td class="enable"></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td class="id"><a href="#">#26547</a></td>
+                            <td>Саратов Окна Империя</td>
+                            <td>16</td>
+                            <td class="today">3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td class="enable"></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        <tr>
+                            <td class="id"><a href="#">#26547</a></td>
+                            <td>Саратов Окна Империя</td>
+                            <td>16</td>
+                            <td class="today">3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td class="disable"></td>
+                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
