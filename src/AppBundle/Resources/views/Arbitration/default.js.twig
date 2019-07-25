@@ -57,6 +57,7 @@ var data = {
         {% if not loop.last %},{% endif %}
         {% endfor %}
     ],
+
     form: {
         action: '{{ path('app_arbitration_reply') }}',
         method: '{{ form.vars.method }}',
