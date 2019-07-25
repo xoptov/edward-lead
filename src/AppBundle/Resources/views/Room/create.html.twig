@@ -1,12 +1,87 @@
-{% extends '@App/layout.html.twig' %}
+{% extends '@App/layout_v2.html.twig' %}
+
+{% block _room_platformWarranty_entry_row %}
+    <label class="wrapper">
+        {{ label }}
+        {{ block('radio_widget') }}
+        <span class="checkmark"></span>
+    </label>
+{% endblock %}
+
+{% form_theme form _self %}
 
 {% block content %}
-    {{ form_start(form, {'attr': {'novalidate': true}}) }}
-        {{ form_row(form.name, {'label': 'Название комнаты'}) }}
-        {{ form_row(form.sphere, {'label': 'Сфера деятельности'}) }}
-        {{ form_row(form.leadCriteria, {'label': 'Критерии целевого лида'}) }}
-        {{ form_row(form.leadPrice, {'label': 'Стоимость лида'}) }}
-        {{ form_row(form.platformWarranty, {'label': 'Требуются ли гарантии'}) }}
-        {{ form_widget(form.submit) }}
-    {{ form_end(form) }}
+    <div class="content">
+        <div class="row">
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <div class="main_title">
+                        <h1>Создать новую комнату</h1>
+                    </div>
+                </div>
+                <div class="create_room">
+                    <div class="form">
+                        {{ form_start(form, {'attr': {'novalidate': true}}) }}
+                            <div class="row">
+                                <div class="col-xl-7 col-12">
+                                    <div class="form_item">
+                                        {{ form_label(form.name, 'Название комнаты') }}
+                                        <span {% if form.name.vars.errors|length %}class="error"{% endif %}>
+                                            {{ form_widget(form.name, {'attr': {'placeholder': 'Василий'}}) }}
+                                            {% if form.name.vars.errors|length %}
+                                                <span class="text-error">{{ form.name.vars.errors[0].message }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="form_item">
+                                        {{ form_label(form.sphere, 'Сфера деятельности') }}
+                                        <span {% if form.sphere.vars.errors|length %}class="error"{% endif %}>
+                                            {{ form_widget(form.sphere, {'attr': {'class': 'activity', 'placeholder': 'пример: Пластиковые окна'}}) }}
+                                            {% if form.sphere.vars.errors|length %}
+                                                <span class="text-error">{{ form.sphere.vars.errors[0].message }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="form_item">
+                                        {{ form_label(form.leadCriteria, 'Критерий целевого лида: Опишите как можно подробнее. Чем отвественее Вы отнесетесь к этому вопросу, тем быстрее и проще будут решаться вопросы в арбитраже<') }}
+                                        <span class="message {% if form.leadCriteria.vars.errors|length %}error{% endif %}">
+                                            {{ form_widget(form.leadCriteria, {'attr': {
+                                                'placeholder':'пример: 1. Окна нужны не более чем через 30 дней 2. Хочет минимум 2 окна 3. Регион Москвоская область'
+                                            }}) }}
+                                            {% if form.leadCriteria.vars.errors|length %}
+                                                <span class="text-error">{{ form.leadCriteria.vars.errors[0].message }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="form_item">
+                                        {{ form_label(form.leadPrice, 'Стоимость лида:') }}
+                                        <span {% if form.leadPrice.vars.errors|length %}class="error"{% endif %}>
+                                            {{ form_widget(form.leadPrice, {'attr': {'class': 'price', 'placeholder': 'пример: 500'}}) }}
+                                            {% if form.leadPrice.vars.errors|length %}
+                                                <span class="text-error">{{ form.leadPrice.vars.errors[0].message }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    {{ form_widget(form.submit, {'label': 'Создать новую комнату'}) }}
+                                </div>
+                                <div class="col-xl-5 col-12">
+                                    <div class="guarantee">
+                                        {{ form_label(form.platformWarranty, 'Требуется ли Вам гарантии нашей платформы?', {'attr': {'class': 'guarantee_title'}}) }}
+                                        <p>В случае спорных ситуаций, наша техподдержка будет прослушивать записи разговоров (которые создаются автоматически путём двухсторонней связи менеджера с лидом)</p>
+                                        <p>Стоимость 1 минуты разговора составляет 3,00 руб.</p>
+                                        <p>Деньги будут списанны автоматически после окончания разговора. Трафикация посекундная.</p>
+                                        <a href="#" class="more">Подробнее про гарантии Edward</a>
+                                        <div class="box_checkbox">
+                                            {{ form_row(form.platformWarranty[0]) }}
+                                            {{ form_row(form.platformWarranty[1], {'attr': {'selected': true}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

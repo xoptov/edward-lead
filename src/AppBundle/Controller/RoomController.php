@@ -63,7 +63,7 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/create", name="app_room", methods={"GET", "POST"})
+     * @Route("/room/create", name="app_room_create", methods={"GET", "POST"})
      *
      * @param Request $request
      *

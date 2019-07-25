@@ -55,7 +55,7 @@ class RoomManager
      */
     public function joinInRoom(Room $room, User $user): Member
     {
-        if (!$this->isMember($room, $user)) {
+        if ($this->isMember($room, $user)) {
             throw new \Exception('Пользователь уже находится в группе');
         }
 
