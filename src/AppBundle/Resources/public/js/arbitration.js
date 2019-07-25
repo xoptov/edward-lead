@@ -10,27 +10,7 @@ Vue.component('thread-message', {
 
 Vue.component('message-form', {
     props: ['children', 'thread'],
-    template: '<form class="arbitrate-form" method="post" enctype="multipart/form-data" name="message"' +
-        '   v-on:open-dialog="openFileDialog"' +
-        '>' +
-        '   <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required="" v-model="children.body.data"></textarea>' +
-        '   <div class="arbitrate-form__button-block">' +
-        '       <button type="button" class="arbitrate-form__button" v-on:click="$emit(\'submit-form\')"><span class="icon-submit"></span></button>' +
-        '       <button type="button" class="arbitrate-form__button" v-on:click="openFileDialog"><span class="icon-clip"></span></button>' +
-        '   </div>' +
-        '   <div class="arbitrate-form__selected-files binded">' +
-        '       <form-image' +
-        '           v-for="image, key in children.images.data"' +
-        '           v-bind:image="image"' +
-        '           v-bind:id="key"' +
-        '           v-bind:url="children.images.deleteUrl"' +
-        '           v-on:delete-image="deleteImage"' +
-        '       ></form-image>' +
-        '   </div>' +
-        '   <input type="hidden" id="message_thread" name="message[thread]" v-bind:value="thread">' +
-        '   <input type="hidden" id="message__token" name="message[_token]" v-bind:value="children._token.data">' +
-        '   <input type="file" accept="image/jpeg,image/png" multiple style="display: none" ref="file" v-on:change="addedFiles">' +
-        '</form>',
+    template: '#component-message-form',
     methods: {
         openFileDialog() {
             this.$refs.file.click();
@@ -91,12 +71,7 @@ Vue.component('message-form', {
 
 Vue.component('form-image', {
     props: ['image', 'id', 'url'],
-    template: '<div class="binded__item">' +
-        '   <input type="hidden" v-bind:id="\'message_images_\' + image.id" v-bind:name="\'message[images][\' + image.id + \']\'" v-bind:value="id">' +
-        '   <button class="binded__button" type="button" v-on:click="$emit(\'open-dialog\')"><span class="icon-clip"></span></button>' +
-        '   <span class="binded__file">{{ image.realName }}</span>' +
-        '   <button class="button-close" type="button" v-on:click="deleteImage(id, image.serverName)">×</button>' +
-        '</div>',
+    template: '#component-form-image',
     methods: {
         deleteImage(id, name) {
             let xhr = new XMLHttpRequest(),

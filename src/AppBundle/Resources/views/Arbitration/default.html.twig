@@ -67,31 +67,6 @@
                     v-on:submit-form="formSubmit"
             ></message-form>
         </div>
-        {# Vuejs components template #}
-        <script type="text/x-template" id="component-thread-tab">
-            <div v-on:click="$emit('change-thread', item, thread)">
-                <div class="tabs-box-arbitrate__number"v-if="type == 'arbitration'">Арбитраж #{{ vue_var('id') }}</div>
-                <div class="tabs-box-arbitrate__number"v-if="type == 'support'">Обращение #{{ vue_var('id') }}</div>
-                <div class="tabs-box-arbitrate__date">{{ vue_var('date') }}</div>
-                <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'new'">Лид #{{ vue_var('lead') }}</div>
-                <div class="tabs-box-arbitrate__state text-green" v-if="status == 'wait_user'">Вам ответила тех. поддержка</div>
-                <div class="tabs-box-arbitrate__state" v-if="status == 'wait_support'">Ожидаем ответа от поддержки</div>
-                <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'closed'">Лид #{{ vue_var('lead') }}</div>
-            </div>
-        </script>
-        <script type="text/x-template" id="component-thread-message">
-            <div class="message" v-bind:class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
-                <div class="message__img"><span v-if="logo"><img v-bind:src="logo"></span></div>
-                <div class="message__content">
-                    <p class="message__header"><b>{{ vue_var('sender') }}</b>
-                        <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
-                    </p>
-                    <br>
-                    <p class="message__text">{{ vue_var('body') }}</p>
-                </div>
-            </div>
-        </script>
-
         {#<div class="block-copyright">
             © 2019 Edward - решения для бизнеса
         </div>#}
@@ -100,6 +75,61 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/x-template" id="component-thread-tab">
+        <div v-on:click="$emit('change-thread', item, thread)">
+            <div class="tabs-box-arbitrate__number"v-if="type == 'arbitration'">Арбитраж #{{ vue_var('id') }}</div>
+            <div class="tabs-box-arbitrate__number"v-if="type == 'support'">Обращение #{{ vue_var('id') }}</div>
+            <div class="tabs-box-arbitrate__date">{{ vue_var('date') }}</div>
+            <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'new'">Лид #{{ vue_var('lead') }}</div>
+            <div class="tabs-box-arbitrate__state text-green" v-if="status == 'wait_user'">Вам ответила тех. поддержка</div>
+            <div class="tabs-box-arbitrate__state" v-if="status == 'wait_support'">Ожидаем ответа от поддержки</div>
+            <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'closed'">Лид #{{ vue_var('lead') }}</div>
+        </div>
+    </script>
+    <script type="text/x-template" id="component-thread-message">
+        <div class="message" v-bind:class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
+            <div class="message__img"><span v-if="logo"><img v-bind:src="logo"></span></div>
+            <div class="message__content">
+                <p class="message__header"><b>{{ vue_var('sender') }}</b>
+                    <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
+                </p>
+                <br>
+                <p class="message__text">{{ vue_var('body') }}</p>
+            </div>
+        </div>
+    </script>
+    <script type="text/x-template" id="component-message-form">
+        <form class="arbitrate-form" method="post" enctype="multipart/form-data" name="message"
+              v-on:open-dialog="openFileDialog"
+        >
+            <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required="" v-model="children.body.data"></textarea>
+            <div class="arbitrate-form__button-block">
+                <button type="button" class="arbitrate-form__button" v-on:click="$emit('submit-form')"><span class="icon-submit"></span></button>
+                <button type="button" class="arbitrate-form__button" v-on:click="openFileDialog"><span class="icon-clip"></span></button>
+            </div>
+            <div class="arbitrate-form__selected-files binded">
+                <form-image
+                        v-for="image, key in children.images.data"
+                        v-bind:image="image"
+                        v-bind:id="key"
+                        v-bind:url="children.images.deleteUrl"
+                        v-on:delete-image="deleteImage"
+                ></form-image>
+            </div>
+            <input type="hidden" id="message_thread" name="message[thread]" v-bind:value="thread">
+            <input type="hidden" id="message__token" name="message[_token]" v-bind:value="children._token.data">
+            <input type="file" accept="image/jpeg,image/png" multiple style="display: none" ref="file" v-on:change="addedFiles">
+        </form>
+    </script>
+    <script type="text/x-template" id="component-form-image">
+        <div class="binded__item">
+            <input type="hidden" v-bind:id="'message_images_' + image.id" v-bind:name="'message[images][' + image.id + ']'" v-bind:value="id">
+            <button class="binded__button" type="button" v-on:click="$emit('open-dialog')"><span class="icon-clip"></span></button>
+            <span class="binded__file">{{ vue_var('image.realName') }}</span>
+            <button class="button-close" type="button" v-on:click="deleteImage(id, image.serverName)">×</button>
+        </div>
+    </script>
+
     {% if app.environment == 'prod' %}
         <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
     {% else %}
