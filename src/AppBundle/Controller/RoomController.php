@@ -5,14 +5,20 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Member;
+use AppBundle\Event\RoomEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\RoomManager;
+use AppBundle\Service\AccountManager;
+use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomController extends Controller
 {
@@ -27,15 +33,23 @@ class RoomController extends Controller
     private $roomManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param RoomManager            $roomManager
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EntityManagerInterface   $entityManager
+     * @param RoomManager              $roomManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        RoomManager $roomManager
+        RoomManager $roomManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->roomManager = $roomManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -174,14 +188,25 @@ class RoomController extends Controller
     /**
      * @Route("/room/{id}", name="app_room_view", methods={"GET"})
      *
-     * @param Room $room
+     * @param Room           $room
+     * @param AccountManager $accountManager
      *
      * @return Response
      */
-    public function viewAction(Room $room): Response
+    public function viewAction(Room $room, AccountManager $accountManager): Response
     {
+        $leads = $this->entityManager->getRepository(Lead::class)
+            ->findBy(['room' => $room], ['createdAt' => 'DESC']);
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $availableBalance = $accountManager->getAvailableBalance($user->getAccount());
+        $countCanBy = $availableBalance / $room->getLeadPrice();
+
         return $this->render('@App/Room/view.html.twig', [
-            'room' => $room
+            'room' => $room,
+            'leads' => $leads,
+            'countCanBuy' => $countCanBy
         ]);
     }
 
@@ -263,5 +288,105 @@ class RoomController extends Controller
     public function rejectInviteAction(): Response
     {
         return new Response('Вы отказались вступить в группу');
+    }
+
+    /**
+     * @Route("/room/{room}/members", name="app_room_members", methods={"GET"}, defaults={"_format":"json"})
+     *
+     * @param Room         $room
+     * @param CacheManager $cacheManager
+     *
+     * @return JsonResponse
+     */
+    public function getMembersAction(Room $room, CacheManager $cacheManager): JsonResponse
+    {
+        if (!$this->isGranted(RoomVoter::VIEW, $room)) {
+            return new JsonResponse(['error' => 'Нет прав на просмотр списка членов группы'], Response::HTTP_FORBIDDEN);
+        }
+
+        $members = $this->entityManager->getRepository(Member::class)
+            ->findBy(['room' => $room]);
+
+        $result = [
+            'companies' => [],
+            'webmasters' => []
+        ];
+
+        foreach ($members as $member) {
+            $user = $member->getUser();
+
+            $item = [
+                'id' => $member->getId(),
+                'user' => [
+                    'id' => $user->getId(),
+                    'name' => $user->getName(),
+                    'isOwner' => $room->isOwner($user),
+                    'logotype' => null
+                ]
+            ];
+
+            if ($user->isCompany() && $user->getCompany()->getLogotype()) {
+                $logotype = $user->getCompany()->getLogotype();
+                $item['user']['logotype'] = $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_34x34');
+            }
+
+            if ($user->isWebmaster()) {
+                $result['webmasters'][] = $item;
+            } elseif ($user->isCompany()) {
+                $result['companies'][] = $item;
+            }
+        }
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/room/{room}/revoke/{member}", name="app_room_revoke_member", methods={"GET"}, defaults={"_format":"json"})
+     *
+     * @param Room   $room
+     * @param Member $member
+     *
+     * @return JsonResponse
+     */
+    public function revokeMemberAction(Room $room, Member $member): JsonResponse
+    {
+        if (!$this->isGranted(RoomVoter::REVOKE_MEMBER, $room)) {
+            return new JsonResponse(['error' => 'Нет прав на удаление пользователя'], Response::HTTP_FORBIDDEN);
+        }
+
+        $user = $member->getUser();
+
+        $this->entityManager->remove($member);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'message' => 'Отозвано участие у пользователя в комнате',
+            'room' => $room->getId(),
+            'user' => $user->getId()
+        ]);
+    }
+
+    /**
+     * @Route("/room/{room}/deactivate", name="app_room_deactivate", methods={"GET"}, defaults={"_format":"json"})
+     *
+     * @param Room $room
+     *
+     * @return JsonResponse
+     */
+    public function deactivateAction(Room $room): JsonResponse
+    {
+        if (!$this->isGranted(RoomVoter::DEACTIVATE, $room)) {
+            return new JsonResponse(['error' => 'Нет прав для деактивации комнаты'], Response::HTTP_FORBIDDEN);
+        }
+
+        $room->setEnabled(false);
+        $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(RoomEvent::DEACTIVATED, new RoomEvent($room));
+
+        return new JsonResponse([
+            'message' => 'Комната успешно деактивирована',
+            'room' => $room->getId()
+        ]);
     }
 }

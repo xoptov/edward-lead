@@ -20,10 +20,11 @@ class Lead implements IdentifiableInterface
 
     use TimeTrackableTrait;
 
-    const STATUS_BLOCKED  = 'blocked';
-    const STATUS_ACTIVE   = 'active';
-    const STATUS_RESERVED = 'reserved';
-    const STATUS_SOLD     = 'sold';
+    const STATUS_BLOCKED   = 'blocked';
+    const STATUS_ACTIVE    = 'active';
+    const STATUS_RESERVED  = 'reserved';
+    const STATUS_SOLD      = 'sold';
+    const STATUS_NO_TARGET = 'no_target';
 
     /**
      * @var Room|null

@@ -130,6 +130,8 @@ class LeadRepository extends EntityRepository
         $query = $queryBuilder
             ->where('l.room IN (:rooms)')
                 ->setParameter('rooms', $rooms)
+            ->andWhere('l.status = :status')
+                ->setParameter('status', Lead::STATUS_RESERVED)
             ->getQuery();
 
         return $query->getResult();

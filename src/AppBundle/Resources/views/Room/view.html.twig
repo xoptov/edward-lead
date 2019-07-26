@@ -2,17 +2,30 @@
 
 {% block content %}
     <div class="content">
-        <div class="row align-items-center">
+        <div id="app" class="row align-items-center">
             <div class="col-12 content_box">
                 <div class="content_title">
                     <div class="main_title">
-                        <h1>Комната #14536 - Саратов Оконная Империя</h1>
-                        <div>
-                            <a href="#" class="deactiv_room">Деактивировать комнату</a>
-                            <p class="balance">Баланс покупателей: <span>120 лидов</span> (?)</p>
+                        <h1>Комната #{{ room.id }} - {{ room.name }}</h1>
+                        <div v-if="activated">
+                            {% if room.owner(app.user) %}
+                                <span v-if="deactivationError" v-text="deactivationError"></span>
+                                <button @click.prevent="onDeactivateClick">Деактивировать комнату</button>
+                            {% endif %}
+                            {% if app.user.company %}
+                                <p class="balance">
+                                    {% if countCanBuy > 0 %}
+                                        Баланс покупателей: <span>{{ countCanBuy }} лидов</span> (?)
+                                    {% else %}
+                                        У вас недостаточно средств для покупки лидов (?)
+                                    {% endif %}
+                                </p>
+                            {% endif %}
                         </div>
                     </div>
-                    <a href="#" class="btn btn_room green">Добавить лида</a>
+                    {% if app.user.webmaster and room.enabled %}
+                        <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn_room green" v-if="activated">Добавить лида</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-12 content_box room_list">
@@ -30,81 +43,56 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status soldout"><span>Продан</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status soldout"><span>Продан</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td></td>
-                            <td class="status wait"><span>Ожидает</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status arbitrage"><span>Арбитраж</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status soldout"><span>Продан</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status soldout"><span>Продан</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status soldout"><span>Продан</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
-                        <tr>
-                            <td>01.04.2019 в 18:00</td>
-                            <td>Nikitosik</td>
-                            <td>+79173150878</td>
-                            <td>Яндекс</td>
-                            <td>Окна Тиссен</td>
-                            <td class="status nottarget"><span>Не целевой</span></td>
-                            <td><a href="#"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
-                        </tr>
+                        {% if leads|length %}
+                            {% for lead in leads %}
+                                <tr>
+                                    <td>{{ lead.createdAt|date_format('d.m.Y в H:i') }}</td>
+                                    <td>{{ lead.user.name }}</td>
+                                    {% if room.owner(app.user) %}
+                                        <td>{{ lead.phone|human_phone }}</td>
+                                    {% else %}
+                                        <td>{{ lead.phone|hidden_phone }}</td>
+                                    {% endif %}
+                                    <td>
+                                        {% if lead.channel is not null %}
+                                            {{ lead.channel.value }}
+                                        {% else %}
+                                            Не указано
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if lead.trade is not null and lead.trade.buyer.company %}
+                                            {{ lead.trade.buyer.company.short_name }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="status">
+                                        {% if lead.status is constant('STATUS_ACTIVE', lead) %}
+                                            <span class="active">Торгуется</span>
+                                        {% elseif lead.status is constant('STATUS_RESERVED', lead) %}
+                                            <span class="reserved">Ожидает</span>
+                                        {% elseif lead.status is constant('STATUS_SOLD', lead) %}
+                                            <span class="sold">Продан</span>
+                                        {% elseif lead.status is constant('STATUS_BLOCKED', lead) %}
+                                            <span class="blocked">Арбитраж</span>
+                                        {% elseif lead.status is constant('STATUS_NO_TARGET', lead) %}
+                                            <span class="no-target">Не целевой</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if room.enabled %}
+                                            <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}" v-if="activated"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">В данной комнате ещё небыло лидов на продажу</td>
+                            </tr>
+                        {% endif %}
                         </tbody>
                     </table>
-                    <a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>
+                    {#<a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>#}
                 </div>
             </div>
             <div class="col-12 content_box">
@@ -112,36 +100,52 @@
                     <h2>Информация о комнате</h2>
                 </div>
                 <div class="row">
-
                     <div class="col-lg-3 room_info box_desc">
                         <div class="box_title">
                             Описание целевого лида:
                         </div>
-                        <p>Здесь будет краткое описание, что такое целевой лид. Эту информацию создатель комнаты заводит при ее создании в специальном поле. Агент тех поддержки (арбитраж) при решении конфиктов будет ссылать на то, что здесь написанно.</p>
+                        <p>
+                            {% if room.leadCriteria is not empty %}
+                                {{ room.leadCriteria }}
+                            {% else %}
+                                Нет описания лида
+                            {% endif %}
+                        </p>
                     </div>
                     <div class="col-lg-3 room_info box_price">
                         <div class="box_title">Стоимость лида:</div>
-                        <span class="price">500 рублей.</span>
-                        <div class="box_title proc">
-                            Ср. % целевых:
-                        </div>
-                        <span>56%</span>
+                        <span class="price">
+                            {% if room.leadPrice %}
+                                {{ room.leadPrice|money_format }}
+                            {% else %}
+                                Зависит от населенного пункта
+                            {% endif %}
+                        </span>
+                        <div class="box_title proc">Ср. % целевых:</div>
+                        <span>Ещё не расчитан</span>
                     </div>
                     <div class="col-lg-3 room_info box_guarantee">
                         <div class="box_title">Гарантии Edward:</div>
-                        <span class="guarantee">Нет</span>
-                        <div class="box_btn">
-                            <a href="#" class="enable">Включить</a>
-                            <a href="#" class="disable">Отключить</a>
-                        </div>
+                        <span class="guarantee">
+                            {% if room.platformWarranty %}
+                                Да
+                            {% else %}
+                                Нет
+                            {% endif %}
+                        </span>
+                        {#<div class="box_btn">#}
+                            {#<a href="#" class="enable">Включить</a>#}
+                            {#<a href="#" class="disable">Отключить</a>#}
+                        {#</div>#}
                     </div>
                     <div class="col-lg-3 room_info box_date">
                         <div class="box_title">
                             Дата создания:
                         </div>
-                        <span class="date">02.07.2019 г.</span>
+                        <span class="date">
+                            {{ room.createdAt|date_format('d.m.Y г.') }}
+                        </span>
                     </div>
-
                 </div>
             </div>
             <div class="col-12 content_box">
@@ -156,43 +160,31 @@
                                     <div class="number_title">
                                         Вебмастера:
                                     </div>
-                                    <p>Кол: <span>3</span></p>
+                                    <p>Кол: <span v-text="webmastersCount"></span></p>
                                 </div>
                             </div>
                             <div class="col-md-7 room_members">
                                 <ul class="user">
-                                    <li>
+                                    <li v-for="member in members.webmasters" :class="{'crown': member.user.isOwner}">
                                         <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                            <img class="user_image" :src="getLogotype(member)">
+                                            <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
+                                                <img src="{{ asset('bundles/app/v2/img/del.png') }}">
+                                            </a>
                                         </div>
-                                        <span class="nick">Nikitosik</span>
-                                    </li>
-                                    <li>
-                                        <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
-                                        </div>
-                                        <span class="nick">Nikitosik</span>
-                                    </li>
-                                    <li>
-                                        <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
-                                        </div>
-                                        <span class="nick">Nikitosik</span>
+                                        <span class="nick" v-text="member.user.name"></span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-3 room_members">
-                                <div class="add_webmaster">
-                                    <a href="#">ДОБАВИТЬ ВЕБМАСТЕРА</a>
-                                </div>
+                                {% if room.owner(app.user) and room.enabled %}
+                                    <div class="add_webmaster" v-if="activated">
+                                        <a href="{{ path('app_room_invite_token', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-
-                    <!--  room_members_box  -->
                     <div class="col-12 room_members_box">
                         <div class="row">
                             <div class="col-md-2 room_members">
@@ -200,38 +192,28 @@
                                     <div class="number_title">
                                         Компании:
                                     </div>
-                                    <p>Кол: <span>3</span></p>
+                                    <p>Кол: <span v-text="companiesCount"></span></p>
                                 </div>
                             </div>
                             <div class="col-md-7 room_members">
                                 <ul class="user">
-                                    <li class="crown">
+                                    <li v-for="member in members.companies" :class="{'crown': member.user.isOwner}">
                                         <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
+                                            <img class="user_image" :src="getLogotype(member)">
+                                            <a class="del" href="#" @click="onRevokeMemberClick(member)">
+                                                <img src="{{ asset('bundles/app/v2/img/del.png') }}">
+                                            </a>
                                         </div>
-                                        <span class="nick">Nikitosik</span>
-                                    </li>
-                                    <li>
-                                        <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
-                                        </div>
-                                        <span class="nick">Nikitosik</span>
-                                    </li>
-                                    <li>
-                                        <div class="image">
-                                            <img class="user_image" src="{{ asset('bundles/app/v2/img/user.png') }}">
-                                            <a class="del" href="#"><img src="{{ asset('bundles/app/v2/img/del.png') }}"></a>
-                                        </div>
-                                        <span class="nick">Nikitosik</span>
+                                        <span class="nick" v-text="member.user.name"></span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-3 room_members">
-                                <div class="add_webmaster">
-                                    <a href="#">ДОБАВИТЬ ВЕБМАСТЕРА</a>
-                                </div>
+                                {% if room.owner(app.user) and room.enabled %}
+                                    <div class="add_webmaster" v-if="activated">
+                                        <a href="{{ path('app_room_invite_token', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -239,4 +221,15 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    <script>
+        const roomId = {{ room.id }};
+        const roomEnabled = {% if room.enabled %}true{% else %}false{% endif %};
+    </script>
+    <script src="{{ asset('bundles/app/v2/js/room-view/app.js') }}"></script>
 {% endblock %}
