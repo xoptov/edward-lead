@@ -130,7 +130,7 @@
                                 {% if lead.audioRecord is empty %}
                                     Запись отсутствует
                                 {% else %}
-                                    <audio controls src="{{ asset('uploads/' ~ lead.audioRecord) }}">
+                                    <audio controls src="{{ asset(lead.audioRecord) }}">
                                         Ваш браузер не позволяет прослушивавать аудио записи.
                                     </audio>
                                 {% endif %}

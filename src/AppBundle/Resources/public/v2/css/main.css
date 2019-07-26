@@ -1526,29 +1526,41 @@ header .header_top .header_main .main .balance p {
   display: block;
   margin: 0 auto; }
 
-#main .main_content .content .content_box .table table tbody tr td.status.soldout span {
-  background-color: #00a368; }
+#main .main_content .content .content_box .table table tbody tr td.status span.active {
+  color: #fff;
+  background-color: #979ba3;
+}
 
-#main .main_content .content .content_box .table table tbody tr td.status.wait span {
+#main .main_content .content .content_box .table table tbody tr td.status span.sold {
+  background-color: #00a368;
+}
+
+#main .main_content .content .content_box .table table tbody tr td.status span.reserved {
   color: #545454;
-  background-color: #ffd964; }
+  background-color: #ffd964;
+}
 
-#main .main_content .content .content_box .table table tbody tr td.status.arbitrage span {
-  background-color: #ff7f85; }
+#main .main_content .content .content_box .table table tbody tr td.status span.blocked {
+  background-color: #ff7f85;
+}
 
-#main .main_content .content .content_box .table table tbody tr td.status.nottarget span {
-  background-color: #ff3a3a; }
+#main .main_content .content .content_box .table table tbody tr td.status span.no-target {
+  background-color: #ff3a3a;
+}
 
 #main .main_content .content .content_box .table a.more {
   color: #00a368;
   text-transform: uppercase;
   margin: 20px 0 0 auto;
   display: block;
-  text-align: right; }
+  text-align: right;
+}
 
 @media all and (max-width: 575px) {
   #main .main_content .content .content_box .table a.more {
-    text-align: left; } }
+    text-align: left;
+  }
+}
 
 #main .main_content .content .content_box .table a.more:hover {
   text-decoration: underline; }

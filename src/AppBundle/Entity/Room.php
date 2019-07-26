@@ -96,6 +96,16 @@ class Room implements IdentifiableInterface
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $this->owner === $user;
+    }
+
+    /**
      * @return string|null
      */
     public function getName(): ?string
