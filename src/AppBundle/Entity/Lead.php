@@ -595,6 +595,14 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isNoTarget(): bool
+    {
+        return self::STATUS_NO_TARGET === $this->status;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool

@@ -8,7 +8,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="monetary_transaction")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MonetaryTransactionRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class MonetaryTransaction implements IdentifiableInterface
