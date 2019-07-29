@@ -97,6 +97,27 @@ class LeadRepository extends EntityRepository
     }
 
     /**
+     * @param \DateTime $compareDate
+     *
+     * @return int
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getCountAddedByDate(\DateTime $compareDate): int
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->select('count(l.id)')
+            ->where('l.createdAt BETWEEN :from AND :to')
+                ->setParameter('from', $compareDate->format('Y-m-d 00:00:00'))
+                ->setParameter('to', $compareDate->format('Y-m-d 23:59:59'))
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
+    /**
      * @param array     $rooms
      * @param \DateTime $compareDate
      *
@@ -135,5 +156,43 @@ class LeadRepository extends EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param array $rooms
+     *
+     * @return array
+     */
+    public function getByRoomsAndDone(array $rooms): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->where('l.room IN (:rooms)')
+                ->setParameter('rooms', $rooms)
+            ->andWhere('l.status IN (:statuses)')
+                ->setParameter('statuses', [Lead::STATUS_SOLD, Lead::STATUS_NO_TARGET])
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return int
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getCountByStatus(string $status): int
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+        $query = $queryBuilder
+            ->select('count(l.id)')
+            ->where('l.status = :status')
+                ->setParameter('status', $status)
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
     }
 }
