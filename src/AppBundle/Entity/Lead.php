@@ -5,23 +5,26 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="lead")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(fields={"phone", "status"}, message="Лид с таким номером телефона и с таким же статусом уже существует")
  */
-class Lead
+class Lead implements IdentifiableInterface
 {
     use IdentificatorTrait;
 
     use TimeTrackableTrait;
 
-    const STATUS_BLOCKED  = 'blocked';
-    const STATUS_ACTIVE   = 'active';
-    const STATUS_RESERVED = 'reserved';
-    const STATUS_SOLD     = 'sold';
+    const STATUS_BLOCKED   = 'blocked';
+    const STATUS_ACTIVE    = 'active';
+    const STATUS_RESERVED  = 'reserved';
+    const STATUS_SOLD      = 'sold';
+    const STATUS_NO_TARGET = 'no_target';
 
     /**
      * @var Room|null
@@ -42,6 +45,8 @@ class Lead
     /**
      * @var string
      *
+     * @Assert\NotBlank(message="Необходимо указать номер телефона")
+     *
      * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
@@ -56,12 +61,16 @@ class Lead
     /**
      * @var string|null
      *
+     * @Assert\NotBlank(message="Необходимо указать имя")
+     *
      * @ORM\Column(name="name", type="string", length=30, nullable=true)
      */
     private $name;
 
     /**
      * @var City
+     *
+     * @Assert\NotBlank(message="Необходимо указать город")
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=false)
@@ -112,11 +121,6 @@ class Lead
     private $description;
 
     /**
-     * @var UploadedFile|null
-     */
-    private $uploadedAudioRecord;
-
-    /**
      * @var string|null
      *
      * @ORM\Column(name="audio_record", type="string", nullable=true)
@@ -162,6 +166,14 @@ class Lead
     public function getRoom(): ?Room
     {
         return $this->room;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasRoom(): bool
+    {
+        return $this->room instanceof Room;
     }
 
     /**
@@ -317,6 +329,18 @@ class Lead
     }
 
     /**
+     * @return int|null
+     */
+    public function getChannelId(): ?int
+    {
+        if ($this->channel) {
+            return $this->channel->getId();
+        }
+
+        return null;
+    }
+
+    /**
      * @return null|string
      */
     public function getChannelName(): ?string
@@ -346,6 +370,20 @@ class Lead
     public function getOrderDate(): ?\DateTime
     {
         return $this->orderDate;
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return string
+     */
+    public function getOrderDateFormatted(string $format): ?string
+    {
+        if ($this->orderDate) {
+            return $this->orderDate->format($format);
+        }
+
+        return null;
     }
 
     /**
@@ -429,26 +467,6 @@ class Lead
     }
 
     /**
-     * @param UploadedFile $uploadedAudioRecord
-     *
-     * @return Lead
-     */
-    public function setUploadedAudioRecord(UploadedFile $uploadedAudioRecord): self
-    {
-        $this->uploadedAudioRecord = $uploadedAudioRecord;
-
-        return $this;
-    }
-
-    /**
-     * @return UploadedFile|null
-     */
-    public function getUploadedAudioRecord(): ?UploadedFile
-    {
-        return $this->uploadedAudioRecord;
-    }
-
-    /**
      * @return string|null
      */
     public function getAudioRecord(): ?string
@@ -494,6 +512,16 @@ class Lead
     public function getExpirationDate(): \DateTime
     {
         return $this->expirationDate;
+    }
+
+    /**
+     * @param string $format
+     *
+     * @return string
+     */
+    public function getExpirationDateFormatted(string $format): string
+    {
+        return $this->expirationDate->format($format);
     }
 
     /**
@@ -564,5 +592,23 @@ class Lead
     public function isSold(): bool
     {
         return self::STATUS_SOLD === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNoTarget(): bool
+    {
+        return self::STATUS_NO_TARGET === $this->status;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $this->user === $user;
     }
 }

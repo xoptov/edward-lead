@@ -1,0 +1,152 @@
+{% extends '@App/layout_v2.html.twig' %}
+
+
+{% block content %}
+    <div class="content">
+        <div class="row">
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <div class="main_title"><h1>Панель управления</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 box">
+                        <div class="box_inner">
+                            <h5>Лидов поступило за сегодня</h5>
+                            <p>76 / 100</p>
+                            <a href="#">как повысить ?</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 box">
+                        <div class="box_inner">
+                            <h5>Средний % целевых лидов</h5>
+                            <p>{{ data.averageTarget }}%</p>
+                            <a href="#">как считается ?</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 box">
+                        <div class="box_inner">
+                            <h5>Лидов поступило за сегодня</h5>
+                            <p>{{ data.addedLeadsToday }} лидов</p>
+                            {#<span>47 принято | 3 холд | 16 не целевые</span>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 content_box room_list">
+                <div class="content_title">
+                    <h2>Список комнат</h2>
+                </div>
+                <div class="table">
+                {% if data.list|length %}
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>ID комнаты</td>
+                            <td>Название комнаты</td>
+                            <td>Лидов за сегодня</td>
+                            <td>Ср. % целевых</td>
+                            <td>Компания</td>
+                            <td>Вебмастер</td>
+                            <td class="state"></td>
+                            <td class="last"></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in data.list %}
+                            <tr>
+                                <td>{{ item.room.id }}</td>
+                                <td>{{ item.room.name }}</td>
+                                <td>{{ item.daily }}</td>
+                                <td>{{ item.averageTarget }}</td>
+                                <td>{{ item.companies }}</td>
+                                <td>{{ item.webmasters }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div class="achtung center">
+                        <p>На данный момент у нас нет созданных комнат.</p>
+                        <a href="{{ path('app_lead_create_form') }}">Создать первую комнату</a>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+            <div class="col-12 content_box">
+                <div class="row">
+                    <div class="col-lg-6 last_box">
+                        <div class="box">
+                            <div class="content_title">
+                                <h2>Поседние начисления</h2>
+                            </div>
+                            <div class="table">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Дата</td>
+                                        <td>Сумма</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for income in data.lastIncomes %}
+                                        <tr>
+                                            <td>{{ income.createdAt|date('d.m.Y в H:i') }}</td>
+                                            <td class="total">{{ income.amount|money_format }}</td>
+                                            <td>
+                                                <a href="#">
+                                                    <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 last_box">
+                        <div class="box">
+                            <div class="content_title">
+                                <h2>Последние лиды</h2>
+                            </div>
+                            <div class="table">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <td>Дата</td>
+                                        <td>Направление</td>
+                                        <td></td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for lead in data.lastLeads %}
+                                        <tr>
+                                            <td>{{ lead.createdAt|date('d.m.Y в H:i') }}</td>
+                                            {% if lead.room is not empty %}
+                                                <td class="total">Комната #{{ lead.room.id }}</td>
+                                            {% else %}
+                                                <td class="total">Биржа</td>
+                                            {% endif %}
+                                            <td>
+                                                <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}">
+                                                    <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <a href="#" class="more">СМОТРЕТЬ ВСЕХ ЛИДОВ</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

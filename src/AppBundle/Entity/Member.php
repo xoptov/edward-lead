@@ -8,10 +8,10 @@ use AppBundle\Entity\Part\IdentificatorTrait;
 
 /**
  * @ORM\Table(name="member")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MemberRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Member
+class Member implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

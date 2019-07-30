@@ -22,7 +22,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * })
  * @ORM\HasLifecycleCallbacks
  */
-class Operation
+class Operation implements IdentifiableInterface
 {
     use IdentificatorTrait;
 

@@ -1,0 +1,55 @@
+{% extends '@App/layout_v2.html.twig' %}
+
+{% block content %}
+    <div class="content">
+        <div class="row">
+            <div class="col-12 content_box">
+                <div class="content_title">
+                    <div class="main_title">
+                        <h1>Комнаты</h1>
+                    </div>
+                    <a href="{{ path('app_room_create') }}" class="btn btn_room green">Создать новую комнату</a>
+                </div>
+            </div>
+            <div class="col-12 content_box room_list">
+                <div class="table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>ID комнаты</td>
+                            <td>Название комнаты</td>
+                            <td>Лидов за сегодня</td>
+                            <td>Лидов ожидает</td>
+                            <td>Компания</td>
+                            <td>Вебмастер</td>
+                            <td class="state"></td>
+                            <td class="last"></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% if rooms is defined and rooms is not null -%}
+                                {%- for row in rooms -%}
+                                    {%- set room = row.room -%}
+                                    <tr>
+                                        <td class="id">#{{ room.id }}</td>
+                                        <td>{{ room.name }}</td>
+                                        <td>{{ row.daily }}</td>
+                                        <td>{{ row.reserved }}</td>
+                                        <td>{{ row.companies }}</td>
+                                        <td>{{ row.webmasters }}</td>
+                                        <td class="{% if room.enabled %}enable{% else %}disable{% endif %}"></td>
+                                        <td><a href="{{ path('app_room_view', {'id': room.id}) }}"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
+                                    </tr>
+                                {%- endfor -%}
+                            {%- else -%}
+                                <tr>
+                                    <td cols="8">У вас нет комнта и вы не состаите не в одной из комнат</td>
+                                </tr>
+                            {%- endif -%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

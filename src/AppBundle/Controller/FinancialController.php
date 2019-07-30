@@ -2,29 +2,29 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Invoice;
-use AppBundle\Entity\MonetaryTransaction;
-use AppBundle\Entity\User;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Event\WithdrawEvent;
-use AppBundle\Exception\FinancialException;
-use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\InvoiceManager;
 use AppBundle\Service\WithdrawManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Entity\MonetaryTransaction;
+use AppBundle\Exception\FinancialException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class FinancialController extends Controller
 {
@@ -75,7 +75,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/deposit", name="app_deposit", methods={"GET", "POST"})
+     * @Route("/financial/deposit", name="app_deposit", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -122,7 +122,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/billing", name="app_billing", methods={"GET"})
+     * @Route("/financial/billing", name="app_billing", methods={"GET"})
      *
      * @return Response
      */
@@ -141,7 +141,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/withdraw", name="app_withdraw", methods={"GET", "POST"})
+     * @Route("/financial/withdraw", name="app_withdraw", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -206,7 +206,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/invoice/list", name="app_invoice_list", methods={"GET"})
+     * @Route("/financial/invoice/list", name="app_invoice_list", methods={"GET"})
      *
      * @return Response
      */
@@ -224,7 +224,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/billing/transactions-history", name="app_billing_transactions_history", methods={"GET"})
+     * @Route("/financial/billing/transactions-history", name="app_billing_transactions_history", methods={"GET"})
      *
      * @return Response
      */

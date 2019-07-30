@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже существует")
  */
-class User implements AdvancedUserInterface, ParticipantInterface
+class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface
 {
     const ROLE_USER        = 'ROLE_USER';
     const ROLE_COMPANY     = 'ROLE_COMPANY';
@@ -702,6 +702,22 @@ class User implements AdvancedUserInterface, ParticipantInterface
     public function getDeleteRequest(): ?UserDeleteRequest
     {
         return $this->deleteRequest;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCompany(): bool
+    {
+        return in_array(self::ROLE_COMPANY, $this->roles);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWebmaster(): bool
+    {
+        return in_array(self::ROLE_WEBMASTER, $this->roles);
     }
 }
 

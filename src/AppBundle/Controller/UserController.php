@@ -2,17 +2,22 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Image;
+use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\Company;
-use AppBundle\Entity\UserDeleteRequest;
-use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
 use AppBundle\Form\Type\ProfileType;
+use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\MonetaryTransaction;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -362,5 +367,109 @@ class UserController extends Controller
         //todo: тут нужно добавить создание обращения в техподдержку.
 
         return $this->redirectToRoute('app_profile');
+    }
+
+    /**
+     * @Route("/dashboard", name="app_dashboard", methods={"GET"})
+     *
+     * @return Response
+     *
+     * @throws NonUniqueResultException
+     */
+    public function dashboardAction(): Response
+    {
+        $result = [
+            'list' => [],
+            'addedLeadsToday' => 0,
+            'averageTarget' => 0
+        ];
+
+        $leadRepository = $this->entityManager->getRepository(Lead::class);
+
+        $now = new \DateTime();
+
+        $result['addedLeadsToday'] = $leadRepository->getCountAddedByDate($now);
+
+        $totalSoldCount = $leadRepository->getCountByStatus(Lead::STATUS_SOLD);
+        $totalNoTargetCount = $leadRepository->getCountByStatus(Lead::STATUS_NO_TARGET);
+
+        if ($totalSoldCount && $totalNoTargetCount) {
+            $result['averageTarget'] = $totalSoldCount / (($totalSoldCount + $totalNoTargetCount) / 100);
+        } elseif ($totalSoldCount) {
+            $result['averageTarget'] = 100;
+        }
+
+        $rooms = $this->entityManager->getRepository(Room::class)
+            ->getByMember($this->getUser());
+
+        $members = $this->entityManager->getRepository(Member::class)
+            ->getByRooms($rooms);
+
+        $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
+        $doneLeads = $leadRepository->getByRoomsAndDone($rooms);
+
+        /** @var Room $room */
+        foreach ($rooms as $room) {
+            $row = [
+                'room' => $room,
+                'daily' => 0,
+                'sold' => 0,
+                'noTarget' => 0,
+                'averageTarget' => 0,
+                'webmasters' => 0,
+                'companies' => 0
+            ];
+
+            /** @var Lead $dailyLead */
+            foreach ($dailyLeads as $dailyLead) {
+                if ($dailyLead->getRoom() === $room) {
+                    $row['daily']++;
+                }
+            }
+
+            /** @var Lead $doneLead */
+            foreach ($doneLeads as $doneLead) {
+                if ($doneLead->getRoom() === $room) {
+                    if ($doneLead->isSold()) {
+                        $row['sold']++;
+                    }
+                    if ($doneLead->isNoTarget()) {
+                        $row['noTarget']++;
+                    }
+                }
+            }
+
+            if ($row['noTarget'] && $row['sold']) {
+                $row['averageTarget'] = $row['sold'] / (($row['sold'] + $row['noTarget']) / 100);
+            } elseif ($row['sold']) {
+                $row['averageTarget'] = 100;
+            }
+
+            /** @var Member $member */
+            foreach ($members as $member) {
+                if ($member->getRoom() !== $room) {
+                    continue;
+                }
+                $memberUser = $member->getUser();
+                if ($memberUser->isWebmaster()) {
+                    $row['webmasters']++;
+                } elseif ($memberUser->isCompany()) {
+                    $row['companies']++;
+                }
+            }
+
+            $result['list'][] = $row;
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $lastIncomes = $this->entityManager->getRepository(MonetaryTransaction::class)
+            ->getIncoming($user->getAccount());
+        $result['lastIncomes'] = $lastIncomes;
+
+        $result['lastLeads'] = $leadRepository->findBy(['status' => Lead::STATUS_ACTIVE], ['createdAt' => 'DESC'], 5);
+
+        return $this->render('@App/User/dashboard.html.twig', ['data' => $result]);
     }
 }

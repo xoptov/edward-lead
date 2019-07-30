@@ -27,7 +27,11 @@ class CompanyVoter extends Voter
     }
 
     /**
-     * @inheritdoc
+     * @param string         $attribute
+     * @param Company        $subject
+     * @param TokenInterface $token
+     *
+     * @return bool
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {

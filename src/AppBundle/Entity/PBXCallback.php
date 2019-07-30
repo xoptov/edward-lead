@@ -9,7 +9,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * @ORM\Table(name="pbx_callback")
  * @ORM\Entity
  */
-class PBXCallback
+class PBXCallback implements IdentifiableInterface
 {
     const EVENT_HANGUP = 'hangup';
 

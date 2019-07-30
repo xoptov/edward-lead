@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Security\Voter\LeadVoter;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -15,6 +14,7 @@ use AppBundle\Exception\PhoneCallException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Security\Voter\LeadFirstCallVoter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Exception\InsufficientFundsException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,8 +35,10 @@ class TelephonyController extends Controller
      * @param EntityManagerInterface $entityManager
      * @param PhoneCallManager       $phoneCallManager
      */
-    public function __construct(EntityManagerInterface $entityManager, PhoneCallManager $phoneCallManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        PhoneCallManager $phoneCallManager
+    ) {
         $this->entityManager = $entityManager;
         $this->phoneCallManager = $phoneCallManager;
     }
@@ -50,7 +52,7 @@ class TelephonyController extends Controller
      */
     public function requestCallAction(Lead $lead): Response
     {
-        if (!$this->isGranted(LeadVoter::FIRST_CALL, $lead)) {
+        if (!$this->isGranted(LeadFirstCallVoter::OPERATION, $lead)) {
             return new JsonResponse(
                 ['message' => 'Для звонка лиду вы должны его сначала зарезервировать'],
                 Response::HTTP_FORBIDDEN

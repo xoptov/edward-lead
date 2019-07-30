@@ -10,10 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="room",options={"auto_increment"="1000"})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RoomRepository")
  * @ORM\HasLifecycleCallbacks
  */
-class Room
+class Room implements IdentifiableInterface
 {
     use IdentificatorTrait;
 
@@ -48,6 +48,7 @@ class Room
     /**
      * @var string|null
      *
+     * @Assert\NotBlank(message="Необходимо указать критерии")
      * @ORM\Column(name="lead_criteria", type="text", nullable=true)
      */
     private $leadCriteria;
@@ -55,6 +56,7 @@ class Room
     /**
      * @var int|null
      *
+     * @Assert\GreaterThan(value="0", message="Стоимость должна быть больше ноля")
      * @ORM\Column(name="lead_price", type="integer", nullable=true)
      */
     private $leadPrice;
@@ -91,6 +93,16 @@ class Room
         $this->owner = $owner;
 
         return $this;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isOwner(User $user): bool
+    {
+        return $this->owner === $user;
     }
 
     /**
@@ -174,19 +186,19 @@ class Room
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
-    public function isPlatformWarranty(): bool
+    public function isPlatformWarranty(): ?bool
     {
         return $this->platformWarranty;
     }
 
     /**
-     * @param bool $platformWarranty
+     * @param bool|null $platformWarranty
      *
      * @return Room
      */
-    public function setPlatformWarranty(bool $platformWarranty): Room
+    public function setPlatformWarranty(?bool $platformWarranty = false): Room
     {
         $this->platformWarranty = $platformWarranty;
 

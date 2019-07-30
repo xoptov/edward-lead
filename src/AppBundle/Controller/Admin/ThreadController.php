@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Admin;
 
-
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use Sonata\AdminBundle\Controller\CRUDController;

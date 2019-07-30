@@ -20,7 +20,7 @@ use AppBundle\Entity\Part\IdentificatorTrait;
  * })
  * @ORM\HasLifecycleCallbacks
  */
-class Account
+class Account implements IdentifiableInterface
 {
     const DIVISOR = 100;
 

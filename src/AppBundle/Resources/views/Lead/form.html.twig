@@ -1,0 +1,290 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    {% if app.environment == 'dev' %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.css') }}">
+    {% else %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.min.css') }}">
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="office-settings u-w-100">
+        <h3 class="office-settings__title">Заполните карточку лида</h3>
+        {% include '@App/flash_messages.html.twig' %}
+        <div class="pos-sb">
+            <div class="plain__text text-mod-5">Чем подробнее будет заполнена карточка, тем выше будет стоимость лида
+            </div>
+            <a href="#" class="label__link link-mod-6">Подробнее о заполнении карточки лида</a>
+        </div>
+        <div id="lead-form-app" class="office-settings__office-form office">
+            <form novalidate @submit.prevent="onSubmit">
+                <div class="info-block">
+                    <div class="info-block__list">
+
+                        <div class="info-block__item">
+                            <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
+                            <div class="info-block__row-box block-mod-3">
+                                <div class="info-block__row-item block-mod-2">
+                                    <span v-if="$v.lead.name.$dirty && !$v.lead.name.required">Необходимо указать имя</span>
+                                    <label class="form__label text-mod-10" for="lead-name">Имя Лида</label>
+                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="$v.lead.name.$model" :disabled="submitted">
+                                </div>
+                                <div class="info-block__row-item block-mod-2">
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +X(XXX)XXX-XX-XX</span>
+                                    <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
+                                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model.trim.lazy="$v.lead.phone.$model" :disabled="submitted">
+                                </div>
+                                <div class="info-block__row-item block-mod-2">
+                                    <div class="info-block__row-item block-mod-2">
+                                        <div v-if="$v.lead.city.$dirty && !$v.lead.city.required">Необходимо выбрать город</div>
+                                        <label class="form__label text-mod-10" for="lead-city">Город</label>
+                                        <select id="lead-city" class="form__input select-field" v-model="$v.lead.city.$model" :disabled="submitted">
+                                            <option value="" selected>Выбирите город</option>
+                                            <option v-for="item in cities" :value="item.id" v-text="item.name"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="canShowSecondStep || debugMode">
+                            <div class="info-block__item">
+                                <span class="icon-star-new span-mod-3" :class="{'text-yellow': isSecondStepFilled, 'text-gray': !isSecondStepFilled}"></span>
+                                <div class="info-block__row-box block-mod-3">
+                                    <div class="info-block__row-item block-mod-2">
+                                        <label class="form__label text-mod-10" for="lead-channel">Рекламный канал</label>
+                                        <select id="lead-channel" class="form__input select-field" v-model="lead.channel" :disabled="submitted">
+                                            <option value="" selected>Выбирите канал</option>
+                                            <option v-for="item in channels" :value="item.id" v-text="item.value"></option>
+                                        </select>
+                                    </div>
+                                    <div class="info-block__row-item block-mod-2">
+                                        <label class="form__label text-mod-16" for="lead-order-date">Дата поступления заявки</label>
+                                        <input id="lead-order-date" class="form__input date-field" placeholder="дд.мм.гггг" autocomplete="off" type="text" ref="orderDate" v-model="lead.orderDate" :disabled="submitted">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowThirdStep || debugMode">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box block-mod-7">
+                                    <div class="info-block__row-item block-mod-7">
+                                        <div class="info-block__column-left">Лицо принемающее решение</div>
+                                        <div class="info-block__column-right">
+                                            <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
+                                                    <label for="lead-decision-maker-yes">Да</label>
+                                                </div>
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
+                                                    <label for="lead-decision-maker-no">Нет</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item block-mod-7">
+                                        <div class="info-block__column-left ">Делали замер на адресе</div>
+                                        <div class="info-block__column-right">
+                                            <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
+                                                    <label for="lead-made-measurement-yes">Да</label>
+                                                </div>
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
+                                                    <label for="lead-made-measurement-no">Нет</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowFoursStep || debugMode">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFoursStepFilled, 'text-gray': !isFoursStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box">
+                                    <div class="info-block__row-item">
+                                        <div class="info-block__column-right block-mod-1">
+                                            Оценка заинтересованость в покупке по 10 бальной шкале:
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item">
+                                        <div class="info-block__column-right rating-stars">
+                                            <div class="star-box__list" id="stars">
+                                                <div class="star-box__item" v-for="star in 10" @click="interestAssessmentChanged(star)" :class="{'selected': star <= lead.interestAssessment}">
+                                                    <span class="icon-star-new span-mod-7"></span>
+                                                    <span class="span-mod-5" v-text="star"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div v-show="canShowFifthStep || debugMode">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFifthStepFilled, 'text-gray': !isFifthStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box block-mod-8">
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right block-mod-1">
+                                            <br>Расскажите подробнее про лида <br>
+                                            <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right">
+                                            <textarea class="arbitrate-form__textarea autoExpand textarea-mod-1" rows="3" data-min-rows="3" placeholder="Напишите здесь в свободной форме" autocomplete="off" v-model="lead.description" @change="onDescriptionChanged" :disabled="submitted"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+
+                        <div class="info-block__item" v-show="canShowSixthStep || debugMode">
+                            <div class="info-block__img">
+                                <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isSixthStepFilled, 'text-gray': !isSixthStepFilled}">gold</span>
+                            </div>
+                            <div class="info-block__row-box">
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right block-mod-1">Запись разговора</div>
+                                </div>
+                                <div class="info-block__row-item">
+                                    <div class="info-block__column-right text-mod-2">
+                                        <div v-if="isAudioUploaded">
+                                            <audio controls :src="lead.audioRecord"></audio>
+                                            <button class="button-close" @click.prevent="onRemoveAudioClicked">×</button>
+                                        </div>
+                                        <div v-else>
+                                            <div class="binded__item">
+                                                <span class="error" v-if="$v.uploadingFile.$model && !$v.uploadingFile.fileSize">Загружаемый файл превышает допустимый размер</span>
+                                                <span class="error" v-if="$v.uploadingFile.$model && !$v.uploadingFile.fileType">Загружаемый файл недопустимого формата</span>
+                                                <input style="display: none" accept="audio/*" type="file" @change="onUploadChanged" ref="recordUploader">
+                                                <button type="button" @click.prevent="onUploadClicked">
+                                                    <span class="icon-clip"></span> Прикрепить запись
+                                                </button>
+                                            </div>
+                                            <input type="hidden" v-model="lead.audioRecord">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-block__item">
+                            <div class="info-block__row-box block-mod-5">
+                                <div class="info-block__row-item block-mod-4">
+                                    <div class="info-block__content-list">
+                                        <div class="info-block__line">
+                                            <div class="info-block__line-left text-mod-12">Рейтинг лида
+                                                <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                            </div>
+                                            <div class="js-points info-block__line-right">
+                                                <span class="icon-star-new span-mod-16" v-for="star in 6" :class="{'text-yellow': star <= estimate.stars, 'text-gray': star > estimate.stars}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="info-block__line block-mode-5">
+                                            <div class="info-block__line-left text-mod-12">Стоимость лида
+                                                <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                            </div>
+                                            <div class="info-block__line-right text-mod-11">
+                                                <span v-if="estimate.cost" v-text="estimate.cost"></span>
+                                                <span v-else>Не известно</span>
+                                            </div>
+                                        </div>
+                                        <div class="info-block__line"></div>
+                                    </div>
+                                </div>
+                                <div class="info-block__row-item block-mod-4">
+                                    <div class="row">
+                                        <input id="publication-rule" type="checkbox" class="checkbox" v-model="lead.publicationRule" :disabled="submitted">
+                                        <label for="publication-rule" class="form__label-reg">
+                                            Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead
+                                        </label>
+                                        <input id="has-agreement" type="checkbox" class="checkbox" v-model="lead.hasAgreement" :disabled="submitted">
+                                        <label for="has-agreement" class="form__label-reg">
+                                            Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам
+                                        </label>
+                                    </div>
+                                    <div v-if="isReadyForSubmit && !submitted">
+                                        <ul v-if="submitErrors">
+                                            <li v-for="error in submitErrors" v-text="error"></li>
+                                        </ul>
+                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-if="leadId">
+                                            Обновить информацию
+                                        </button>
+                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-else>
+                                            Выставить лида на биржу
+                                        </button>
+                                    </div>
+                                    <div v-else-if="submitted">
+                                        <span v-if="leadId">
+                                            Информация обновлена
+                                        </span>
+                                        <span v-else>
+                                            Лид успешно добавлен
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {# Todo: короче этот ебаный блок копирайта повторяется на всех страницах, нужно чтобы был только на одной #}
+        <div class="info-block__list">
+            {% include '@App/block_copyright.html.twig' %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'dev' %}
+        <script src="{{ asset('bundles/app/js/lib/jquery-ui.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/jquery-ui.min.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/js/lib/datepicker-ru.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/vuelidate.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/validators.min.js') }}"></script>
+    <script>
+        let leadId = null;
+        let roomId = null;
+
+        {% if lead is defined and lead is not empty %}
+            leadId = {{ lead.id }};
+        {% endif %}
+
+        {% if room is defined and room is not empty %}
+            roomId = {{ room.id }};
+        {% endif %}
+
+    </script>
+    <script src="{{ asset('bundles/app/js/lead-form/app.js') }}"></script>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Service\RoomManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class RoomController extends CRUDController
      */
     protected function preCreate(Request $request, $object)
     {
-        /** @var User $owner */
+        /** @var Room $object */
         $owner = $object->getOwner();
 
         if ($owner) {
