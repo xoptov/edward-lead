@@ -162,9 +162,6 @@ class ArbitrationController extends Controller
             return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
-
-        $path = $this->getParameter('upload_store_path');
-
         try {
             $file = $uploader->store($file, Uploader::DIRECTORY_IMAGE);
         } catch (FileException $e) {
@@ -172,24 +169,19 @@ class ArbitrationController extends Controller
             return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
-        $info = explode(DIRECTORY_SEPARATOR, $file);
-
-        $path = 'uploads/' . $file;
-        $file = $info[1];
-
         $image = new Image();
-        $image->setPath($path);
-        $image->setFilename($file);
+        $image->setPath($file['path']);
+        $image->setFilename($file['filename']);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($image);
         $em->flush();
 
-        return new JsonResponse(['id' => $image->getId(), 'name' => $file]);
+        return new JsonResponse(['id' => $image->getId(), 'name' => $file['filename']]);
     }
 
     /**
-     * @Route("/arbitration/delete", name="app_arbitration_delete", methods={"GET"})
+     * @Route("/arbitration/delete", name="app_arbitration_image_delete", methods={"GET"})
      *
      * @param Request $request
      *

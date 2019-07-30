@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use AppBundle\Form\Type\DataTransformer\EntityToIdTransformer;
+use AppBundle\Form\DataTransformer\EntityToIdTransformer;
 
 class ImageType extends HiddenType
 {
