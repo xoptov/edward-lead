@@ -1,19 +1,21 @@
 <div class="nav">
     <ul class="nav_box">
-        <li>
-            <div class="nav_title">
-                <div class="img">
-                    <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
+        {% if is_granted('ROLE_WEBMASTER') %}
+            <li>
+                <div class="nav_title">
+                    <div class="img">
+                        <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
+                    </div>
+                    <a href="{{ path('app_dashboard') }}">Панель управления</a>
                 </div>
-                <a href="#">Панель управления</a>
-            </div>
-        </li>
+            </li>
+        {% endif %}
         <li>
             <div class="nav_title">
                 <div class="img">
                     <img src="{{ asset('bundles/app/v2/img/icon_4.png') }}">
                 </div>
-                <a href="#">Биржа лидов</a>
+                <a href="{{ path('app_exchange') }}">Биржа лидов</a>
             </div>
         </li>
         <li>
@@ -41,13 +43,13 @@
             </div>
             <ul class="nav_sub">
                 <li>
-                    <a href="#">Состояние счёта</a>
+                    <a href="{{ path('app_billing') }}">Состояние счёта</a>
                 </li>
                 <li>
-                    <a href="#">История операций</a>
+                    <a href="{{ path('app_billing_transactions_history') }}">История операций</a>
                 </li>
                 <li>
-                    <a href="#">Счета и акты</a>
+                    <a href="{{ path('app_invoice_list') }}">Счета и акты</a>
                 </li>
                 <li>
                     <a href="#">Акты</a>

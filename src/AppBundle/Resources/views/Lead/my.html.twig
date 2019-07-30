@@ -28,7 +28,7 @@
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
                                     <td>{{ lead.city.name }}</td>
-                                    <td>{{ lead.price }}</td>
+                                    <td>{{ lead.price|money_format }}</td>
                                     <td>
                                         {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
                                             <span class="lead_arbitration">Арбитраж</span>

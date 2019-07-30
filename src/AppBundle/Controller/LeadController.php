@@ -4,7 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\Room;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
@@ -115,6 +117,44 @@ class LeadController extends Controller
         return $this->render('@App/Lead/form.html.twig', [
             'lead' => $lead
         ]);
+    }
+
+    /**
+     * @Route("/leads/my", name="app_leads_my", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function getMyAction(): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $data = null;
+
+        if ($this->isGranted('ROLE_WEBMASTER')) {
+            $leads = $this->getDoctrine()
+                ->getRepository(Lead::class)
+                ->findBy(["user" => $user], ["id" => "DESC"]);
+            $data = array(
+                'leads' => $leads
+            );
+        }
+
+        if ($this->isGranted('ROLE_COMPANY')) {
+            $trades = $this->getDoctrine()
+                ->getRepository(Trade::class)
+                ->findBy(["buyer" => $user], ["id" => "DESC"]);
+
+            $phoneCalls = $this->getDoctrine()
+                ->getRepository(PhoneCall::class)
+                ->getCallsWithTrades($user, $trades);
+
+            $data = array(
+                'trades'    => $trades,
+                'calls'     => $phoneCalls
+            );
+        }
+
+        return $this->render('@App/Lead/my.html.twig', $data);
     }
 
     /**

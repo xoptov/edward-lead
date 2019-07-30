@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Service\Uploader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -71,7 +72,16 @@ class DefaultController extends Controller
      */
     public function indexAction(): Response
     {
-        return $this->render('@App/Default/index.html.twig');
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($user->isWebmaster()) {
+            return $this->redirectToRoute('app_dashboard');
+        } elseif ($user->isCompany()) {
+            return $this->redirectToRoute('app_room_list');
+        }
+
+        return $this->redirectToRoute('app_select_type');
     }
 
     /**

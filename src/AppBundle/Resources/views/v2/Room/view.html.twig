@@ -1,4 +1,4 @@
-{% extends '@App/layout_v2.html.twig' %}
+{% extends '@App/v2/layout.html.twig' %}
 
 {% block content %}
     <div class="content">
@@ -179,7 +179,7 @@
                             <div class="col-md-3 room_members">
                                 {% if room.owner(app.user) and room.enabled %}
                                     <div class="add_webmaster" v-if="activated">
-                                        <a href="{{ path('app_room_invite_token', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
                                     </div>
                                 {% endif %}
                             </div>
@@ -211,7 +211,7 @@
                             <div class="col-md-3 room_members">
                                 {% if room.owner(app.user) and room.enabled %}
                                     <div class="add_webmaster" v-if="activated">
-                                        <a href="{{ path('app_room_invite_token', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
                                     </div>
                                 {% endif %}
                             </div>

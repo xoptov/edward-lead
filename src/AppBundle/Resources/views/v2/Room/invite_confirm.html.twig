@@ -1,0 +1,19 @@
+{% extends '@App/v2/blank_layout.html.twig' %}
+
+{% block content %}
+    <section class="section_invite">
+        <div class="wrapper">
+            <div class="box center">
+                <h2>Приглашение присоедениться к закрытой <br> к комнате #2354 - Название комнаты</h2>
+                <div class="box_btn">
+                    <a href="{{ path('app_room_invite_accept', {'token': room.inviteToken}) }}" class="btn green">Принять</a>
+                    <a href="{{ path('app_room_invite_reject') }}" class="btn gray">Отклонить</a>
+                </div>
+                <a href="#" class="whatis">Что это?</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>© 2019 Edward - решения для бизнеса</p>
+        </div>
+    </section>
+{% endblock %}

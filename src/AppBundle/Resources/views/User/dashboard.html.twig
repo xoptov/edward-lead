@@ -1,4 +1,4 @@
-{% extends '@App/layout_v2.html.twig' %}
+{% extends '@App/v2/layout.html.twig' %}
 
 
 {% block content %}
@@ -97,7 +97,7 @@
                                             <td>{{ income.createdAt|date('d.m.Y в H:i') }}</td>
                                             <td class="total">{{ income.amount|money_format }}</td>
                                             <td>
-                                                <a href="#">
+                                                <a href="{{ path('app_invoice_list') }}">
                                                     <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
                                                 </a>
                                             </td>
@@ -105,7 +105,7 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                <a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>
+                                {#<a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>#}
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                <a href="#" class="more">СМОТРЕТЬ ВСЕХ ЛИДОВ</a>
+                                {#<a href="#" class="more">СМОТРЕТЬ ВСЕХ ЛИДОВ</a>#}
                             </div>
                         </div>
                     </div>
