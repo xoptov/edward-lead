@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use Swift_Mailer;
+use Swift_Message;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
@@ -13,7 +14,6 @@ use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,6 +23,8 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomController extends Controller
@@ -432,9 +434,28 @@ class RoomController extends Controller
 
         if ($form->isValid()) {
             $data = $form->getData();
-            //todo: Тут надо хорошо подумать над отправкой сообщения.
 
+            $room = $this->entityManager->getRepository(Room::class)->findOneBy([
+                'inviteToken' => $data['token']
+            ]);
 
+            if (!$room) {
+                return new JsonResponse(['errors' => ['Невалидный токен приглашения']], Response::HTTP_BAD_REQUEST);
+            }
+
+            $content = $this->renderView('@App/v2/Room/invite_email.txt.twig', [
+                'room' => $room,
+                'inviteUrl' => $this->generateUrl('app_room_invite_confirm', ['token' => $data['token']], UrlGeneratorInterface::ABSOLUTE_URL)
+            ]);
+
+            $senderEmail = $this->getParameter('system_email');
+
+            $message = new Swift_Message('Приглашение в комнату', $content);
+            $message
+                ->setFrom($senderEmail)
+                ->setTo($data['email']);
+
+            $mailer->send($message);
 
             return new JsonResponse(['message' => 'Приглашение в комнату принято в очередь на отправку']);
         }

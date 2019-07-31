@@ -51,9 +51,11 @@ $(document).ready(function() {
 					disableInputAndButton();
 				},
 				success: function(resp) {
+					destroyError('.text-error');
 					alert(resp.message);
 				},
 				error: function (xhr) {
+					renderError($inputEmail, 'Ошибка отправки приглашения по Email');
 					enableInputAndButton();
 				}
 			});
@@ -78,16 +80,30 @@ $(document).ready(function() {
 		var pattern = /^\w+([\.-]?\w+)*@(((([a-z0-9]{2,})|([a-z0-9][-][a-z0-9]+))[\.][a-z0-9])|([a-z0-9]+[-]?))+[a-z0-9]+\.([a-z]{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$/i;
 		var emailValue = !!$inputEmail.val();
 
-		if (!emailValue)  {
-			$inputEmail.after('<span class="text-error for-email">Неправильно указан e-mail</span>');
-			$(".for-email").css({top: $inputEmail.position().top + $inputEmail.outerHeight() + 2});
-		} else if (!pattern.test($inputEmail.val())) {
-			$inputEmail.after('<span class="text-error for-email">Неправильно указан e-mail</span>');
-			$(".for-email").css({top: $inputEmail.position().top + $inputEmail.outerHeight() + 2});
+		if (!emailValue || !pattern.test($inputEmail.val()))  {
+			renderError($inputEmail, 'Неправильно указан e-mail');
+			return false;
 		}
 
 		$inputEmail.toggleClass('error', emailValue);
 		return emailValue;
+	}
+
+	function renderError($el, message) {
+		let $errorEl = $form.find('.text-error');
+		if (!$errorEl.length) {
+			$errorEl = $('<span class="text-error for-email"></span>');
+            $errorEl.css({top: $el.position().top + $el.outerHeight() + 2});
+			$el.after($errorEl);
+		}
+		$errorEl.text(message);
+	}
+
+	function destroyError(selector) {
+		let $errorEl = $form.find(selector);
+		if ($errorEl) {
+			$errorEl.remove();
+		}
 	}
 });
 
