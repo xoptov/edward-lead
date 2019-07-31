@@ -61,8 +61,8 @@
                                 <td>{{ item.averageTarget }}</td>
                                 <td>{{ item.companies }}</td>
                                 <td>{{ item.webmasters }}</td>
-                                <td></td>
-                                <td></td>
+                                <td class="{% if item.room.enabled %}enable{% else %}disable{% endif %}"></td>
+                                <td><a href="{{ path('app_room_view', {'id': item.room.id}) }}"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a></td>
                             </tr>
                         {% endfor %}
                         </tbody>
