@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use Swift_Mailer;
+use Swift_Message;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
@@ -17,7 +19,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomController extends Controller
@@ -105,7 +112,7 @@ class RoomController extends Controller
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 
-                return $this->redirectToRoute('app_profile');
+                return $this->redirectToRoute('app_room_list');
             }
 
             $this->roomManager->updateInviteToken($data);
@@ -113,10 +120,10 @@ class RoomController extends Controller
 
             $this->addFlash('success', 'Новая комната успешно создана');
 
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_room_list');
         }
 
-        return $this->render('@App/Room/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
     }
 
     /**
@@ -132,7 +139,7 @@ class RoomController extends Controller
             ->getByMember($user);
 
         if (empty($rooms)) {
-            return $this->render('@App/Room/list.html.twig');
+            return $this->render('@App/v2/Room/list.html.twig');
         }
 
         $rooms = array_map(function(Room $room) {
@@ -182,7 +189,7 @@ class RoomController extends Controller
             }
         }
 
-        return $this->render('@App/Room/list.html.twig', ['rooms' => $rooms]);
+        return $this->render('@App/v2/Room/list.html.twig', ['rooms' => $rooms]);
     }
 
     /**
@@ -203,7 +210,7 @@ class RoomController extends Controller
         $availableBalance = $accountManager->getAvailableBalance($user->getAccount());
         $countCanBy = $availableBalance / $room->getLeadPrice();
 
-        return $this->render('@App/Room/view.html.twig', [
+        return $this->render('@App/v2/Room/view.html.twig', [
             'room' => $room,
             'leads' => $leads,
             'countCanBuy' => $countCanBy
@@ -211,25 +218,45 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/{room}/invite-token", name="app_room_invite_token", methods={"GET"})
+     * @Route("/room/{room}/invite", name="app_room_invite", methods={"GET"})
      *
      * @param Room $room
      *
      * @return Response
      */
-    public function inviteToken(Room $room): Response
+    public function inviteAction(Room $room): Response
     {
-        return $this->render('@App/Room/invite_token.html.twig');
+        return $this->render('@App/v2/Room/invite.html.twig', ['room' => $room]);
     }
 
     /**
-     * @Route("/room/invite/{token}", name="app_room_invite", methods={"GET"})
+     * @Route("/room/invite/invalid", name="app_room_invite_invalid", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function inviteInvalidAction(): Response
+    {
+        return $this->render('@App/v2/Room/invite_invalid.html.twig');
+    }
+
+    /**
+     * @Route("/room/invite/reject", name="app_room_invite_reject", methods={"GET"})
+     *
+     * @return Response
+     */
+    public function rejectInviteAction(): Response
+    {
+        return $this->render('@App/v2/Room/invite_reject.html.twig');
+    }
+
+    /**
+     * @Route("/room/invite/{token}", name="app_room_invite_confirm", methods={"GET"})
      *
      * @param string $token
      *
      * @return Response
      */
-    public function inviteAction(string $token): Response
+    public function inviteConfirmAction(string $token): Response
     {
         $room = $this->entityManager->getRepository(Room::class)->findOneBy([
             'inviteToken' => $token,
@@ -237,12 +264,10 @@ class RoomController extends Controller
         ]);
 
         if (!$room) {
-            $this->addFlash('error', 'Невалидное приглашение в комнату');
-
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_room_invite_invalid');
         }
 
-        return $this->render('@App/Room/invite.html.twig', [
+        return $this->render('@App/v2/Room/invite_confirm.html.twig', [
             'room' => $room
         ]);
     }
@@ -262,9 +287,7 @@ class RoomController extends Controller
         ]);
 
         if (!$room) {
-            $this->addFlash('error', 'Невалидное приглашение в группу');
-
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_room_invite_invalid');
         }
 
         try {
@@ -272,22 +295,10 @@ class RoomController extends Controller
             $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (\Exception $e) {
-            $this->addFlash('error', $e->getMessage());
-
-            return $this->redirectToRoute('app_profile');
+            return $this->redirectToRoute('app_room_invite_invalid');
         }
 
-        return new Response('Вы вступили в приглашённую группу');
-    }
-
-    /**
-     * @Route("/room/invite/reject", name="app_room_invite_reject", methods={"GET"})
-     *
-     * @return Response
-     */
-    public function rejectInviteAction(): Response
-    {
-        return new Response('Вы отказались вступить в группу');
+        return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
     }
 
     /**
@@ -388,5 +399,73 @@ class RoomController extends Controller
             'message' => 'Комната успешно деактивирована',
             'room' => $room->getId()
         ]);
+    }
+
+    /**
+     * @Route("/room/send/invite", name="app_send_invite", methods={"POST"}, defaults={"_format": "json"})
+     *
+     * @param Request      $request
+     * @param Swift_Mailer $mailer
+     *
+     * @return JsonResponse
+     */
+    public function sendInviteAction(Request $request, Swift_Mailer $mailer): JsonResponse
+    {
+        $formBuilder = $this->createFormBuilder(null, [
+            'method' => Request::METHOD_POST,
+            'csrf_protection' => false
+        ]);
+
+        $formBuilder
+            ->add('email', EmailType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Необходимо указать email']),
+                    new Email(['message' => 'Указал невалидный email']),
+                ]
+            ])
+            ->add('token', HiddenType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Необходимо указать token'])
+                ]
+            ]);
+
+        $form = $formBuilder->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+
+            $room = $this->entityManager->getRepository(Room::class)->findOneBy([
+                'inviteToken' => $data['token']
+            ]);
+
+            if (!$room) {
+                return new JsonResponse(['errors' => ['Невалидный токен приглашения']], Response::HTTP_BAD_REQUEST);
+            }
+
+            $content = $this->renderView('@App/v2/Room/invite_email.txt.twig', [
+                'room' => $room,
+                'inviteUrl' => $this->generateUrl('app_room_invite_confirm', ['token' => $data['token']], UrlGeneratorInterface::ABSOLUTE_URL)
+            ]);
+
+            $senderEmail = $this->getParameter('system_email');
+
+            $message = new Swift_Message('Приглашение в комнату', $content);
+            $message
+                ->setFrom($senderEmail)
+                ->setTo($data['email']);
+
+            $mailer->send($message);
+
+            return new JsonResponse(['message' => 'Приглашение в комнату принято в очередь на отправку']);
+        }
+
+        $errors = [];
+
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 }

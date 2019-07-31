@@ -1,4 +1,4 @@
-{% extends '@App/layout_v2.html.twig' %}
+{% extends '@App/v2/layout.html.twig' %}
 
 {% block _room_platformWarranty_entry_row %}
     <label class="wrapper">
@@ -27,7 +27,7 @@
                                     <div class="form_item">
                                         {{ form_label(form.name, 'Название комнаты') }}
                                         <span {% if form.name.vars.errors|length %}class="error"{% endif %}>
-                                            {{ form_widget(form.name, {'attr': {'placeholder': 'Василий'}}) }}
+                                            {{ form_widget(form.name, {'attr': {'placeholder': 'Оконный рай'}}) }}
                                             {% if form.name.vars.errors|length %}
                                                 <span class="text-error">{{ form.name.vars.errors[0].message }}</span>
                                             {% endif %}

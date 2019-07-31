@@ -3,10 +3,10 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Image;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Company;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
@@ -15,8 +15,8 @@ use AppBundle\Form\Type\ProfileType;
 use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\MonetaryTransaction;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,22 +50,12 @@ class UserController extends Controller
 
     /**
      * @Route("/select-type", name="app_select_type", methods={"GET"})
+     *
      * @return Response
      */
     public function selectTypeAction(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        if (!$user->isTypeSelected()) {
-            return $this->render('@App/User/select_type.html.twig');
-        }
-
-        if ($user->hasCompany()) {
-            return $this->redirectToRoute('app_exchange');
-        }
-
-        return $this->redirectToRoute('app_exchange_my_leads');
+        return $this->render('@App/User/select_type.html.twig');
     }
 
     /**

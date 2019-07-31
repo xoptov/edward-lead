@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Панель управления</title>
+    <meta content="" name="description" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="format-detection" content="telephone=no">
+    <!-- Template Basic Images Start -->
+    <link rel="icon" href="{{ asset('bundles/app/v2/img/favicon/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('bundles/app/v2/img/favicon/apple-touch-icon-180x180.png') }}">
+    <!-- Template Basic Images End -->
+    {% block stylesheets -%}
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/libs.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/main.css') }}">
+    {%- endblock %}
+</head>
+<body>
+    <header>
+        <div class="header_top">
+            <div class="container">
+                <div class="row align-items-center">
+                    {% include '@App/v2/header.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl1-4 col-xl-3 col-lg-4 main_nav">
+                        {% include '@App/v2/menu.html.twig' %}
+                    </div>
+                    <div class="col-xl1-8  col-xl-9 col-lg-8 main_content">
+                        {% block content -%}{%- endblock %}
+                        <div class="footer">
+                            <p>© 2019 Edward - решения для бизнеса</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% block javascripts -%}
+        <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
+    {%- endblock %}
+</body>
+</html>

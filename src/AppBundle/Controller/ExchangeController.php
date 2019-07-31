@@ -7,7 +7,6 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
-use AppBundle\Entity\PhoneCall;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\TradeVoter;
@@ -60,44 +59,6 @@ class ExchangeController extends Controller
     public function indexAction(): Response
     {
         return $this->render('@App/Exchange/index.html.twig');
-    }
-
-    /**
-     * @Route("/exchange/my-leads", name="app_exchange_my_leads", methods={"GET"})
-     *
-     * @return Response
-     */
-    public function myLeadsAction(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        $data = null;
-
-        if ($this->isGranted('ROLE_WEBMASTER')) {
-            $leads = $this->getDoctrine()
-                ->getRepository(Lead::class)
-                ->findBy(["user" => $user], ["id" => "DESC"]);
-            $data = array(
-                'leads' => $leads
-            );
-        }
-
-        if ($this->isGranted('ROLE_COMPANY')) {
-            $trades = $this->getDoctrine()
-                ->getRepository(Trade::class)
-                ->findBy(["buyer" => $user], ["id" => "DESC"]);
-
-            $phoneCalls = $this->getDoctrine()
-                ->getRepository(PhoneCall::class)
-                ->getCallsWithTrades($user, $trades);
-
-            $data = array(
-                'trades'    => $trades,
-                'calls'     => $phoneCalls
-            );
-        }
-
-        return $this->render('@App/Exchange/my_leads.html.twig', $data);
     }
 
     /**
