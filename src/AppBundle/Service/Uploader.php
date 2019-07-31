@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class Uploader
 {
     const DIRECTORY_AUDIO = 'audio';
+    const DIRECTORY_IMAGE = 'image';
 
     /**
      * @var string
