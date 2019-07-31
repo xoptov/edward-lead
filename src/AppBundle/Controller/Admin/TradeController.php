@@ -3,7 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Trade;
-use AppBundle\Service\LeadManager;
+use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,16 +12,16 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TradeController extends CRUDController
 {
     /**
-     * @var LeadManager
+     * @var TradeManager
      */
-    private $leadManager;
+    private $tradeManager;
 
     /**
-     * @param LeadManager $leadManager
+     * @param TradeManager $tradeManager
      */
-    public function __construct(LeadManager $leadManager)
+    public function __construct(TradeManager $tradeManager)
     {
-        $this->leadManager = $leadManager;
+        $this->tradeManager = $tradeManager;
     }
 
     /**
@@ -51,7 +51,7 @@ class TradeController extends CRUDController
         $objectName = $this->admin->toString($object);
 
         try {
-            $this->leadManager->rejectBuy($object->getLead());
+            $this->tradeManager->finishReject($object);
             $this->admin->update($object);
 
             $this->addFlash(

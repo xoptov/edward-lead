@@ -34,7 +34,7 @@ services:
     #     arguments:
     #         $someArgument: 'some_value'
 
-    AppBundle\Controller\DefaultController:
+    AppBundle\Controller\API\v1\UploadController:
         arguments:
             $uploadMaxSize: '%upload_max_size%'
             $audioAllowedTypes: '%audio_allowed_types%'

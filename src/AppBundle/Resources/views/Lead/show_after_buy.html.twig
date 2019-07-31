@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="office-settings u-w-100">
+    <div id="lead-description" class="office-settings u-w-100">
         {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Лид #{{ lead.id }}</h3>
         <div class="plain__text text-mod-5">Просмотрите карточку лида, если Вам он показался интересный, Вы можете его купить и получить его контактные данные. Мы продаём лида только одной организации.</div>
@@ -22,22 +22,38 @@
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Телефон:</div>
-                            <div class="info-block__column-right">{{ lead.phone|hidden_phone }}</div>
+                            <div class="info-block__column-right">
+                                {% if has_answered_phone_call(lead, app.user) %}
+                                    {{ lead.phone|human_phone }}
+                                {% else %}
+                                    {{ lead.phone|hidden_phone }}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Город:</div>
                             <div class="info-block__column-right">{{ lead.city.name }}</div>
                         </div>
-                        <div class="info-block__row-item">
-                            <div class="info-block__column-left">Продавец:</div>
+                        <div class="info-block__row-item block-mod-6">
+                            <div class="info-block__column-left">&nbsp;</div>
                             <div class="info-block__column-right">
-                                <div class="info-block__seller-info">
-                                    <div>
-                                        {{ lead.user.name }}
-                                        <br>
-                                        <span class="text-green">рейтинг: 98/100</span>
-                                    </div>
-
+                                <div class="info-block__first-call-box">
+                                    {% if has_answered_phone_call(lead, app.user) == false %}
+                                        <div v-if="requestCallResult">
+                                            <div v-if="requestCallResult == 'success'">
+                                                <span>Запрос на звонок успешно принят, ожидайте соединения</span>
+                                            </div>
+                                            <div v-else>
+                                                <span v-text="requestCallResult"></span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-small btn-green" @click.prevent="requestCall({{ lead.id }}, $event)">Сделать первый звонок</button>
+                                            <span class="info-block__attention">
+                                                Отображение номера будет доступно после Вашего первого звонка <a href="#" class="info-block__link">Правила платформы Edward</a>
+                                            </span>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -88,9 +104,9 @@
                         <div></div>
                         <div class="info-block__column-right">
                             <div class="star-box__list">
-                                {% for i in range(1,10) %}
+                                {% for ind in range(1,10) %}
                                     <div class="star-box__item">
-                                        <span class="icon-star-new {% if lead.interestAssessment >= i %}text-yellow{% else %}text-gray{% endif %} span-mod-7"> </span> <span class="span-mod-5">{{ i }}</span>
+                                        <span class="icon-star-new {% if lead.interestAssessment >= ind %}text-yellow{% else %}text-gray{% endif %} span-mod-7"> </span> <span class="span-mod-5">{{ ind }}</span>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -127,26 +143,58 @@
                         <div></div>
                         <div class="info-block__column-right text-mod-2">
                             <div class="binded__item">
-                                {% if lead.audioRecord is empty %}
-                                    Запись отсутствует
-                                {% else %}
-                                    <audio controls src="{{ asset(lead.audioRecord) }}">
-                                        Ваш браузер не позволяет прослушивавать аудио записи.
-                                    </audio>
-                                {% endif %}
+                                <span class="binded__file span-mod-19">
+                                    {% if lead.audioRecord is empty %}
+                                        Запись отсутствует
+                                    {% else %}
+                                        <audio controls src="{{ asset('uploads/' ~ lead.audioRecord) }}">
+                                             Ваш браузер не позволяет прослушивавать аудио записи.
+                                        </audio>
+                                    {% endif %}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card-lead__offer">
-            <div class="plain__text text-mod-6">Стоимость лида на бирже:</div>
-            <div class="text-green">{{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</div>
-            {% if app.user != lead.user %}
-                <a class="btn btn-green btn-buy-lead" href="{{ path('app_exchange_buy_lead', {'id': lead.id}) }}">Купить лида за {{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</a>
-            {% endif %}
-        </div>
         {% include '@App/block_copyright.html.twig' %}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    {% endif %}
+    <script>
+        new Vue({
+            el: '#lead-description',
+            data: {
+                requestCallResult: null
+            },
+            methods: {
+                requestCall(id, e) {
+                    e.target.disabled = true;
+                    jQuery.ajax({
+                        url: '/api/v1/telephony/request-call/' + id,
+                        method: 'GET',
+                        context: this,
+                        success: function() {
+                            this.$data.requestCallResult = 'success';
+                        },
+                        error: function(xhr) {
+                            if (xhr.responseJSON && 'message' in xhr.responseJSON) {
+                                this.$data.requestCallResult = xhr.responseJSON['message'];
+                            } else {
+                                this.$data.requestCallResult = 'Произошла ошибка запроса соединения с лидом';
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 {% endblock %}

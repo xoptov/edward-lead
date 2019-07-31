@@ -33,7 +33,7 @@ $(function(){
             if (this.model.has('id')) {
                 this.$el.append($("<a>", {
                     tabIndex: -1,
-                    href: '/exchange/lead/' + this.model.get('id'),
+                    href: '/lead/' + this.model.get('id'),
                     title: this.title || formattedValue,
                     target: this.target
                 }).text('Подробнее'));
@@ -46,7 +46,7 @@ $(function(){
     const Lead = Backbone.Model.extend({});
     const Leads = Backbone.Collection.extend({
         model: Lead,
-        url: '/exchange/leads'
+        url: '/api/v1/leads'
     });
     const leads = new Leads();
     const leadColumns = [
@@ -114,7 +114,7 @@ $(function(){
     const Trade = Backbone.Model.extend({});
     const Trades = Backbone.Collection.extend({
         model: Trade,
-        url: '/exchange/trades'
+        url: '/api/v1/trades'
     });
 
     const trades = new Trades();
