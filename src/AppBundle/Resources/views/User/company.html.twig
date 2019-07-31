@@ -263,7 +263,7 @@
                 formData.append('logotype', target.files[0]);
                 view.button.disable();
                 $.ajax({
-                    url: '/upload/logotype/logotype_202x202',
+                    url: '/api/v1/upload/logotype/logotype_202x202',
                     method: 'POST',
                     data: formData,
                     processData: false,

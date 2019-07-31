@@ -4,7 +4,6 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Company;
-use AppBundle\Entity\Region;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

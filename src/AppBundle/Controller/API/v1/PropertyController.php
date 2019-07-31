@@ -1,38 +1,27 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Property;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @Route("/api/v1")
+ */
 class PropertyController extends Controller
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
-    /**
-     * @Route("/properties/{type}", name="app_properties_by_type", methods={"GET"})
+     * @Route("/properties/{type}", name="api_v1_properties", methods={"GET"})
      *
      * @param string $type
      *
      * @return JsonResponse
      */
-    public function getByTypeAction(string $type): JsonResponse
+    public function getAction(string $type): JsonResponse
     {
-        $properties = $this->entityManager->getRepository(Property::class)
+        $properties = $this->getDoctrine()->getRepository(Property::class)
             ->findBy(['type' => $type]);
 
         $result = [];

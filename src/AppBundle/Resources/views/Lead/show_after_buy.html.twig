@@ -23,7 +23,7 @@
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Телефон:</div>
                             <div class="info-block__column-right">
-                                {% if has_answered_phone_call(lead, app.user) %}
+                                {% if can_show_phone(lead, app.user) %}
                                     {{ lead.phone|human_phone }}
                                 {% else %}
                                     {{ lead.phone|hidden_phone }}
@@ -38,7 +38,7 @@
                             <div class="info-block__column-left">&nbsp;</div>
                             <div class="info-block__column-right">
                                 <div class="info-block__first-call-box">
-                                    {% if has_answered_phone_call(lead, app.user) == false %}
+                                    {% if must_show_call_button(lead, app.user) %}
                                         <div v-if="requestCallResult">
                                             <div v-if="requestCallResult == 'success'">
                                                 <span>Запрос на звонок успешно принят, ожидайте соединения</span>
@@ -179,7 +179,7 @@
                 requestCall(id, e) {
                     e.target.disabled = true;
                     jQuery.ajax({
-                        url: '/telephony/request-call/' + id,
+                        url: '/api/v1/telephony/request-call/' + id,
                         method: 'GET',
                         context: this,
                         success: function() {

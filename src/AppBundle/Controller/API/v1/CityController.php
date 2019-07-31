@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Region;
@@ -9,6 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @Route("/api/v1")
+ */
 class CityController extends Controller
 {
     /**
@@ -25,7 +28,7 @@ class CityController extends Controller
     }
 
     /**
-     * @Route("/cities", name="app_cities", methods={"GET"})
+     * @Route("/cities", name="api_v1_cities", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -60,7 +63,7 @@ class CityController extends Controller
     }
 
     /**
-     * @Route("/cities/{region}", name="app_cities_by_region", methods={"GET"})
+     * @Route("/cities/{region}", name="api_v1_region_cities", methods={"GET"})
      *
      * @param Region $region
      *

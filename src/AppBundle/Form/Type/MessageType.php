@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\Type;
 
-use AppBundle\Entity\Image;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
 use Doctrine\ORM\EntityManager;

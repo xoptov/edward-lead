@@ -10,7 +10,7 @@ const vm = new Vue({
         }
     },
     created: function() {
-        this.$http.get('/room/' + this.roomId + '/members').then(
+        this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
             response => {
                 this.members.webmasters = response.data.webmasters;
                 this.members.companies = response.data.companies;
@@ -33,7 +33,7 @@ const vm = new Vue({
             return '/bundles/app/v2/img/user.png';
         },
         onDeactivateClick: function() {
-            this.$http.get('/room/' + this.roomId + '/deactivate')
+            this.$http.get('/api/v1/room/' + this.roomId + '/deactivate')
                 .then(response => {
                     this.deactivationError = null;
                     this.activated = false;
@@ -41,7 +41,7 @@ const vm = new Vue({
                 .catch(response => this.deactivationError = response.data.error);
         },
         onRevokeMemberClick: function(member) {
-            this.$http.get('/room/' + roomId + '/revoke/' + member.id)
+            this.$http.delete('/api/v1/room/' + roomId + '/revoke/' + member.id)
                 .then(response => {
                     for (let i = 0; i < this.members.companies.length; i++) {
                         if (this.members.companies[i].id === member.id) {

@@ -24,7 +24,6 @@
             <form novalidate @submit.prevent="onSubmit">
                 <div class="info-block">
                     <div class="info-block__list">
-
                         <div class="info-block__item">
                             <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
                             <div class="info-block__row-box block-mod-3">
@@ -51,7 +50,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div v-show="canShowSecondStep || debugMode">
                             <div class="info-block__item">
                                 <span class="icon-star-new span-mod-3" :class="{'text-yellow': isSecondStepFilled, 'text-gray': !isSecondStepFilled}"></span>
@@ -71,7 +69,6 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-
                         <div v-show="canShowThirdStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
@@ -112,7 +109,6 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-
                         <div v-show="canShowFoursStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
@@ -138,7 +134,6 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-
                         <div v-show="canShowFifthStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
@@ -162,7 +157,6 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-
                         <div class="info-block__item" v-show="canShowSixthStep || debugMode">
                             <div class="info-block__img">
                                 <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isSixthStepFilled, 'text-gray': !isSixthStepFilled}">gold</span>
@@ -192,7 +186,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="info-block__item">
                             <div class="info-block__row-box block-mod-5">
                                 <div class="info-block__row-item block-mod-4">

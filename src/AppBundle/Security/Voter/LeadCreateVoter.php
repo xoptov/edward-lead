@@ -3,6 +3,7 @@
 namespace AppBundle\Security\Voter;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class LeadCreateVoter extends LeadVoter
@@ -30,7 +31,10 @@ class LeadCreateVoter extends LeadVoter
             return true;
         }
 
-        if ($this->roomManager->isMember($subject->getRoom(), $token->getUser())) {
+        /** @var User $user */
+        $user = $token->getUser();
+
+        if ($this->roomManager->isMember($subject->getRoom(), $user)) {
             return true;
         }
 

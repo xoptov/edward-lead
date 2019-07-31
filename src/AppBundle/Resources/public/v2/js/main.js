@@ -43,7 +43,7 @@ $(document).ready(function() {
 		if (validateForm()) {
 			$.ajax({
 				method: 'POST',
-				url: '/room/send/invite',
+				url: '/api/v1/room/send/invite',
 				contentType: 'application/json',
 				dataType: 'json',
 				data: data,

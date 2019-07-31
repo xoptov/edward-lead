@@ -121,7 +121,7 @@ const vm = new Vue({
 
     },
     beforeCreate: function() {
-        this.$http.get('/lead/form/settings')
+        this.$http.get('/api/v1/lead/form/settings')
             .then(response => {
                 this.channels = response.data.channels;
                 this.cities = response.data.cities;
@@ -130,7 +130,7 @@ const vm = new Vue({
     },
     created: function() {
         if (this.leadId) {
-            this.$http.get('/lead/' + this.leadId).then(
+            this.$http.get('/api/v1/lead/' + this.leadId).then(
                 response => {
                     this.$_lead_populateFromServer(response.data);
                 }
@@ -212,7 +212,7 @@ const vm = new Vue({
         },
         makeEstimation: function()
         {
-            this.$http.post('/lead/estimate', this.lead)
+            this.$http.post('/api/v1/lead/estimate', this.lead)
                 .then(response => this.estimate = response.data);
         },
         onUploadClicked: function() {
@@ -232,7 +232,7 @@ const vm = new Vue({
             if (!this.$v.uploadingFile.$invalid) {
                 const formData = new FormData();
                 formData.append('uploader', this.uploadingFile, this.uploadingFile.filename);
-                this.$http.post('/upload/audio', formData)
+                this.$http.post('/api/v1/upload/audio', formData)
                     .then(function(response) {
                         this.lead.audioRecord = response.data.url;
                     });
@@ -248,7 +248,7 @@ const vm = new Vue({
         onSubmit: function() {
             if (!this.$v.lead.$invalid) {
                 if (this.leadId) {
-                    this.$http.put('/lead/' + this.leadId, this.lead)
+                    this.$http.put('/api/v1/lead/' + this.leadId, this.lead)
                         .then(
                             response => {
                                 this.submitted = true;
@@ -259,7 +259,7 @@ const vm = new Vue({
                             response => this.submitErrors = response.data.errors
                         );
                 } else {
-                    this.$http.post('/lead', this.lead)
+                    this.$http.post('/api/v1/lead', this.lead)
                         .then(
                             response => {
                                 this.submitted = true
