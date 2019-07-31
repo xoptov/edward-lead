@@ -31,7 +31,7 @@
                 <div class="img">
                     <img src="{{ asset('bundles/app/v2/img/icon_6.png') }}">
                 </div>
-                <a href="#">Арбитраж / поддержка<span class="num">1000</span></a>
+                <a href="{{ path('app_arbitration') }}">Арбитраж / поддержка</a>
             </div>
         </li>
         <li>
@@ -55,13 +55,13 @@
                     <a href="#">Акты</a>
                 </li>
             </ul>
-        <li>
-            <div class="nav_title">
-                <div class="img">
-                    <img src="{{ asset('bundles/app/v2/img/icon_6.png') }}">
-                </div>
-                <a href="#">Реферальная программа</a>
-            </div>
-        </li>
+        {#<li>#}
+            {#<div class="nav_title">#}
+                {#<div class="img">#}
+                    {#<img src="{{ asset('bundles/app/v2/img/icon_6.png') }}">#}
+                {#</div>#}
+                {#<a href="#">Реферальная программа</a>#}
+            {#</div>#}
+        {#</li>#}
     </ul>
 </div>

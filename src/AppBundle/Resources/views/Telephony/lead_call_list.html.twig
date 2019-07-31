@@ -23,7 +23,7 @@
                         <tr>
                             <td>{{ phoneCall.createdAt|date_format('d.m.Y в H:i:s') }}</td>
                             <td>
-                                <a class="id_lids" target="_blank" href="{{ path('app_exchange_show_lead', {'id': phoneCall.lead.id}) }}">#{{ phoneCall.lead.id }}</a>
+                                <a class="id_lids" target="_blank" href="{{ path('app_lead_show', {'id': phoneCall.lead.id}) }}">#{{ phoneCall.lead.id }}</a>
                             </td>
                             <td>{{ phoneCall.lead.phone|human_phone }}</td>
                             <td>

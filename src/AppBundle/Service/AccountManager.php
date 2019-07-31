@@ -92,7 +92,7 @@ class AccountManager
      *
      * @return float
      */
-    public function getHoldAmount(Account $account, ?int $divisor = null): float
+    public function getHoldAmount(Account $account, ?int $divisor = null): int
     {
         $holds = $this->entityManager
             ->getRepository('AppBundle:MonetaryHold')

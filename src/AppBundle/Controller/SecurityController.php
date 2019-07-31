@@ -81,7 +81,10 @@ class SecurityController extends Controller
                 $this->userManager->updateUser($user, false);
 
                 $account = new ClientAccount();
-                $account->setUser($user);
+                $account
+                    ->setUser($user)
+                    ->setEnabled(true);
+
                 $this->entityManager->persist($account);
 
                 $this->eventDispatcher->dispatch(UserEvent::NEW_USER_REGISTERED, new UserEvent($user));

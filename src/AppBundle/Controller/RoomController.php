@@ -161,7 +161,7 @@ class RoomController extends Controller
         /** @var User $user */
         $user = $this->getUser();
         $availableBalance = $accountManager->getAvailableBalance($user->getAccount());
-        $countCanBy = $availableBalance / $room->getLeadPrice();
+        $countCanBy = (int)($availableBalance / $room->getLeadPrice());
 
         return $this->render('@App/v2/Room/view.html.twig', [
             'room' => $room,

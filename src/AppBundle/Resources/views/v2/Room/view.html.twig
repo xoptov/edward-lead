@@ -80,7 +80,7 @@
                                     </td>
                                     <td>
                                         {% if room.enabled %}
-                                            <a href="{{ path('app_exchange_show_lead', {'id': lead.id}) }}" v-if="activated"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a>
+                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" v-if="activated"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -228,8 +228,19 @@
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
     <script>
-        const roomId = {{ room.id }};
-        const roomEnabled = {% if room.enabled %}true{% else %}false{% endif %};
+        let roomId = null;
+
+        {% if room %}
+            roomId = {{ room.id }};
+        {% endif %}
+
+        let roomEnabled = false;
+
+        {% if room.enabled %}
+            roomEnabled = true;
+        {% else %}
+            roomEnabled = false;
+        {% endif %}
     </script>
     <script src="{{ asset('bundles/app/v2/js/room-view/app.js') }}"></script>
 {% endblock %}
