@@ -64,7 +64,8 @@ class LeadRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('l');
 
         $query = $queryBuilder
-            ->where('l.status = :status')
+            ->where('l.room IS NULL')
+            ->andWhere('l.status = :status')
                 ->setParameter('status', Lead::STATUS_ACTIVE)
             ->orderBy('l.updatedAt', 'DESC')
             ->addOrderBy('l.createdAt', 'DESC')
