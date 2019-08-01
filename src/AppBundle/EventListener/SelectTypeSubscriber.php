@@ -82,6 +82,10 @@ class SelectTypeSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if (preg_match('/^\/(?:api|media\/cache)/', $uri)) {
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
 
         if (!$token) {
