@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserController extends Controller
 {
@@ -61,11 +63,12 @@ class UserController extends Controller
     /**
      * @Route("/company/create", name="app_creating_company", methods={"GET", "POST"})
      *
-     * @param Request $request
+     * @param Request               $request
+     * @param TokenStorageInterface $tokenStorage
      *
      * @return Response
      */
-    public function creatingCompanyAction(Request $request): Response
+    public function creatingCompanyAction(Request $request, TokenStorageInterface $tokenStorage): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -96,6 +99,11 @@ class UserController extends Controller
 
                 $user->switchToCompany()
                     ->makeTypeSelected();
+
+                //todo: это костыль но пока незнаю как лучше сделать.
+                $token = $tokenStorage->getToken();
+                $newRoles = array_merge($user->getRoles(), ['ROLE_COMPANY']);
+                $tokenStorage->setToken(new UsernamePasswordToken($user, $token->getCredentials(), 'main', $newRoles));
 
                 $logotypePath = $company->getLogotypePath();
 
@@ -231,9 +239,11 @@ class UserController extends Controller
     /**
      * @Route("/stay/webmaster", name="app_stay_webmaster", methods={"GET"})
      *
+     * @param TokenStorageInterface $tokenStorage
+     *
      * @return Response
      */
-    public function stayWebmasterAction(): Response
+    public function stayWebmasterAction(TokenStorageInterface $tokenStorage): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -242,7 +252,13 @@ class UserController extends Controller
             return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
         }
 
-        $user->switchToWebmaster()->makeTypeSelected();
+        $user->switchToWebmaster()
+            ->makeTypeSelected();
+
+        //todo: это костыль который пока не знаю как лучше изменить.
+        $token = $tokenStorage->getToken();
+        $newRoles = array_merge($token->getRoles(), ['ROLE_WEBMASTER']);
+        $tokenStorage->setToken(new UsernamePasswordToken($user, $token->getCredentials(), 'main', $newRoles));
 
         $this->entityManager->flush();
 
