@@ -6,6 +6,7 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
+use AppBundle\Security\Voter\RoomVoter;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -155,6 +156,12 @@ class RoomController extends Controller
      */
     public function viewAction(Room $room, AccountManager $accountManager): Response
     {
+        if (!$this->isGranted(RoomVoter::VIEW, $room)) {
+            $this->addFlash('error', 'У вас нет прав на просмотр комнаты');
+
+            return $this->redirectToRoute('app_room_list');
+        }
+
         $leads = $this->entityManager->getRepository(Lead::class)
             ->findBy(['room' => $room], ['createdAt' => 'DESC']);
 
