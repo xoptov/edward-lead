@@ -65,6 +65,8 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
+     * @Assert\NotNull(message="Необходимо указать использование гарантии")
+     *
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
     private $platformWarranty = false;
