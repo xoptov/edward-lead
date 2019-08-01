@@ -75,6 +75,9 @@
                                             {{ form_row(form.platformWarranty[0]) }}
                                             {{ form_row(form.platformWarranty[1], {'attr': {'selected': true}}) }}
                                         </div>
+                                        {% if form.platformWarranty.vars.errors|length %}
+                                            <span class="text-error">{{ form.platformWarranty.vars.errors[0].message }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
