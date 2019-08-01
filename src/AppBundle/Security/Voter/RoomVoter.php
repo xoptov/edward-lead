@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class RoomVoter extends Voter
 {
     const VIEW          = 'view';
-    const REVOKE_MEMBER = 'revoke_member';
     const DEACTIVATE    = 'deactivate';
 
     /**
@@ -36,7 +35,7 @@ class RoomVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::VIEW, self::REVOKE_MEMBER, self::DEACTIVATE])) {
+        if (!in_array($attribute, [self::VIEW, self::DEACTIVATE])) {
             return false;
         }
 

@@ -203,7 +203,7 @@
                                         <div class="image">
                                             <img class="user_image" :src="getLogotype(member)">
                                             {% if room.isOwner(app.user) %}
-                                                <a class="del" href="#" @click="onRevokeMemberClick(member)">
+                                                <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
                                                     <img src="{{ asset('bundles/app/v2/img/del.png') }}">
                                                 </a>
                                             {% endif %}
@@ -215,7 +215,7 @@
                             <div class="col-md-3 room_members">
                                 {% if room.isOwner(app.user) and room.enabled %}
                                     <div class="add_webmaster" v-if="activated">
-                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
+                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ КОМПАНИЮ</a>
                                     </div>
                                 {% endif %}
                             </div>
