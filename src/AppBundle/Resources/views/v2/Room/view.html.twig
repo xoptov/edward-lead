@@ -8,7 +8,7 @@
                     <div class="main_title">
                         <h1>Комната #{{ room.id }} - {{ room.name }}</h1>
                         <div v-if="activated">
-                            {% if room.owner(app.user) %}
+                            {% if room.isOwner(app.user) %}
                                 <span v-if="deactivationError" v-text="deactivationError"></span>
                                 <button @click.prevent="onDeactivateClick">Деактивировать комнату</button>
                             {% endif %}
@@ -48,7 +48,7 @@
                                 <tr>
                                     <td>{{ lead.createdAt|date_format('d.m.Y в H:i') }}</td>
                                     <td>{{ lead.user.name }}</td>
-                                    {% if room.owner(app.user) %}
+                                    {% if room.isOwner(app.user) %}
                                         <td>{{ lead.phone|human_phone }}</td>
                                     {% else %}
                                         <td>{{ lead.phone|hidden_phone }}</td>
@@ -62,7 +62,7 @@
                                     </td>
                                     <td>
                                         {% if lead.trade is not null and lead.trade.buyer.company %}
-                                            {{ lead.trade.buyer.company.short_name }}
+                                            {{ lead.trade.buyer.company.shortName }}
                                         {% endif %}
                                     </td>
                                     <td class="status">
@@ -168,16 +168,18 @@
                                     <li v-for="member in members.webmasters" :class="{'crown': member.user.isOwner}">
                                         <div class="image">
                                             <img class="user_image" :src="getLogotype(member)">
-                                            <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
-                                                <img src="{{ asset('bundles/app/v2/img/del.png') }}">
-                                            </a>
+                                            {% if room.isOwner(app.user) %}
+                                                <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
+                                                    <img src="{{ asset('bundles/app/v2/img/del.png') }}">
+                                                </a>
+                                            {% endif %}
                                         </div>
                                         <span class="nick" v-text="member.user.name"></span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-3 room_members">
-                                {% if room.owner(app.user) and room.enabled %}
+                                {% if room.isOwner(app.user) and room.enabled %}
                                     <div class="add_webmaster" v-if="activated">
                                         <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
                                     </div>
@@ -200,16 +202,18 @@
                                     <li v-for="member in members.companies" :class="{'crown': member.user.isOwner}">
                                         <div class="image">
                                             <img class="user_image" :src="getLogotype(member)">
-                                            <a class="del" href="#" @click="onRevokeMemberClick(member)">
-                                                <img src="{{ asset('bundles/app/v2/img/del.png') }}">
-                                            </a>
+                                            {% if room.isOwner(app.user) %}
+                                                <a class="del" href="#" @click="onRevokeMemberClick(member)">
+                                                    <img src="{{ asset('bundles/app/v2/img/del.png') }}">
+                                                </a>
+                                            {% endif %}
                                         </div>
                                         <span class="nick" v-text="member.user.name"></span>
                                     </li>
                                 </ul>
                             </div>
                             <div class="col-md-3 room_members">
-                                {% if room.owner(app.user) and room.enabled %}
+                                {% if room.isOwner(app.user) and room.enabled %}
                                     <div class="add_webmaster" v-if="activated">
                                         <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
                                     </div>
