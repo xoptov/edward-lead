@@ -5,6 +5,7 @@ namespace AppBundle\Controller\API\v1;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Security\Voter\MemberVoter;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -115,8 +116,10 @@ class RoomController extends Controller
         Member $member,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        if (!$this->isGranted(RoomVoter::REVOKE_MEMBER, $room)) {
-            return new JsonResponse(['error' => 'Нет прав на удаление пользователя'], Response::HTTP_FORBIDDEN);
+        if (!$this->isGranted(MemberVoter::DELETE, $member)) {
+            return new JsonResponse([
+                'error' => 'Нет прав на удаление пользователя, а так же нельзя удалить самого себя из комнаты'
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $user = $member->getUser();
