@@ -56,8 +56,7 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\GreaterThan(value="0", message="Стоимость должна быть больше ноля")
-     * @Assert\LessThanOrEqual(value="9999", message="Стоимость должна быть меньше 10000")
+     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="999900", maxMessage="Максимальная стоимость 9999")
      *
      * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned"="true"})
      */

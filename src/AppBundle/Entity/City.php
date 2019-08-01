@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="city")
@@ -38,12 +39,16 @@ class City implements IdentifiableInterface
     /**
      * @var int|null
      *
+     * @Assert\Range(min="100", minMessage="Минимальное значение 1", max="999900", maxMessage="Максимальное значение 9999")
+     *
      * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":true})
      */
     private $leadPrice;
 
     /**
      * @var int|null
+     *
+     * @Assert\Range(min="100", minMessage="Минимальное значение 1", max="999900", maxMessage="Максимальное значение 9999")
      *
      * @ORM\Column(name="star_price", type="integer", nullable=true, options={"unsigned":true})
      */
