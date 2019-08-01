@@ -131,7 +131,7 @@ class LeadController extends Controller
         if (!$this->isGranted(LeadBuyVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У вас нет прав на покупку этого лида');
 
-            return $this->redirectToRoute('app_exchange');
+            return $this->redirectToRoute('app_leads_my');
         }
 
         try {
