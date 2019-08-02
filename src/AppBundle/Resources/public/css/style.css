@@ -4783,37 +4783,6 @@ span.lead_exchange:hover + div.error453_block{
     top: -17px;
 }
 
-.blocked-modal {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.blocked-modal .content-area {
-    display: flex;
-    flex-direction: column;
-    width: 1024px;
-    text-align: center;
-    font-family: "Helvetica Neue Cyr - Roman";
-}
-
-.content-area h2 {
-    color: white;
-    font-size: 20px;
-    font-weight: normal;
-}
-
-.content-area h3 {
-    color: white;
-    font-size: 14px;
-}
-
 .backgrid {
     border-top: 1px solid #dedede;
     border-collapse: collapse;
@@ -4857,45 +4826,6 @@ span.lead_exchange:hover + div.error453_block{
     outline: none;
     border-radius: 2px;
     -webkit-appearance: none;
-}
-
-.content-area .result-choices {
-    display: flex;
-    margin-top: 20px;
-    justify-content: space-around;
-}
-
-.result-choices .result-case {
-    padding: 20px 15px;
-    background-color: #fff;
-    border-radius: 3px;
-    width: 230px;
-    height: 270px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.result-case p {
-    margin-bottom: 15px;
-    font-size: 16px;
-}
-
-.result-case div:first-child {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.result-case .btn {
-    color: white;
-    padding: 5px 10px;
-    border-radius: 3px;
-    font-size: 14px;
-    display: block;
-    max-width: none;
 }
 
 /** Added 06.06.2019 */
