@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
@@ -62,14 +63,15 @@ class TradeController extends Controller
     }
 
     /**
-     * @Route("/trade/reject/{id}", name="app_trade_reject", methods={"GET"})
+     * @Route("/trade/reject/{id}/{status}", name="app_trade_reject", methods={"GET"})
      *
      * @param Trade                    $trade
+     * @param string                   $status
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function rejectBuyAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
+    public function rejectBuyAction(Trade $trade, string $status, EventDispatcherInterface $eventDispatcher): Response
     {
         $lead = $trade->getLead();
 
@@ -80,8 +82,7 @@ class TradeController extends Controller
         }
 
         try {
-
-            $this->tradeManager->finishReject($trade);
+            $this->tradeManager->finishRejectByLeadStatus($trade, $status);
             $eventDispatcher->dispatch(LeadEvent::BLOCK_BY_REJECT, new LeadEvent($lead));
 
             $this->addFlash('success', 'Покупка успешно отменена');

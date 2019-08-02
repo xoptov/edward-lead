@@ -97,15 +97,10 @@ class TradeManager
         }
 
         $trade = $this->create($buyer, $seller, $lead, $amount);
+        $lead->setStatus(Lead::STATUS_RESERVED);
+
         $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amount + $fee, false);
         $trade->setHold($hold);
-
-        if ($lead->hasRoom() && $lead->getRoom()->isPlatformWarranty() === false) {
-            $feesAccount = $this->entityManager->getRepository(Account::class)
-                ->getFeesAccount();
-
-            $this->finishSuccess($trade, $feesAccount);
-        }
 
         if ($flush) {
             $this->entityManager->flush();
@@ -185,16 +180,17 @@ class TradeManager
 
     /**
      * @param Trade $trade
+     * @param string $status
      *
      * @throws OperationException
      */
-    public function finishReject(Trade $trade): void
+    public function finishRejectByLeadStatus(Trade $trade, string $status): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade) {
+        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade, $status) {
 
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
@@ -202,7 +198,7 @@ class TradeManager
                 $em->remove($hold);
             }
 
-            $trade->getLead()->setStatus(Lead::STATUS_BLOCKED);
+            $trade->getLead()->setStatus($status);
             $trade->setStatus(Trade::STATUS_REJECTED);
 
             $em->flush();
@@ -228,8 +224,6 @@ class TradeManager
             ->setAmount($amount);
 
         $this->entityManager->persist($trade);
-
-        $lead->setStatus(Lead::STATUS_RESERVED);
 
         return $trade;
     }

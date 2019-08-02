@@ -53,8 +53,6 @@ class TemplateExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('has_reserved_lead', [$this, 'hasReservedLead']),
-            new \Twig_SimpleFunction('has_answered_phone_call', [$this, 'hasAnsweredPhoneCall']),
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'isCanShowPhone']),
@@ -103,42 +101,6 @@ class TemplateExtension extends \Twig_Extension
     }
 
     /**
-     * @param User $user
-     *
-     * @return bool
-     *
-     * @throws NonUniqueResultException
-     */
-    public function hasReservedLead(User $user)
-    {
-        $lead = $this->entityManager->getRepository('AppBundle:Lead')
-            ->getByUserAndReserved($user);
-
-        if (!$lead) {
-            return false;
-        }
-
-        return $this->hasAnsweredPhoneCall($lead, $user);
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $caller
-     *
-     * @return bool
-     *
-     * @throws NonUniqueResultException
-     */
-    public function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
-    {
-        $phoneCall = $this->entityManager
-            ->getRepository(PhoneCall::class)
-            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
-
-        return $phoneCall instanceof PhoneCall;
-    }
-
-    /**
      * @param string $var
      *
      * @return string
@@ -168,15 +130,21 @@ class TemplateExtension extends \Twig_Extension
      */
     public function isCanShowPhone(Lead $lead, User $user): bool
     {
+        if ($lead->isOwner($user)) {
+            return true;
+        }
+
         $room = $lead->getRoom();
 
         if ($room) {
             if (!$room->isPlatformWarranty()) {
-                return true;
+                if ($lead->getBuyer() === $user && ($lead->isReserved() || $lead->isSold())) {
+                    return true;
+                }
             }
         }
 
-        if ($this->hasAnsweredPhoneCall($lead, $user)) {
+        if ($lead->getBuyer() === $user && $this->hasAnsweredPhoneCall($lead, $user)) {
             return true;
         }
 
@@ -193,6 +161,10 @@ class TemplateExtension extends \Twig_Extension
      */
     public function isMustShowCallButton(Lead $lead, User $user): bool
     {
+        if ($lead->isOwner($user)) {
+            return false;
+        }
+
         $room = $lead->getRoom();
 
         if ($room) {
@@ -206,5 +178,22 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return true;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $caller
+     *
+     * @return bool
+     *
+     * @throws NonUniqueResultException
+     */
+    private function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
+    {
+        $phoneCall = $this->entityManager
+            ->getRepository(PhoneCall::class)
+            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
+
+        return $phoneCall instanceof PhoneCall;
     }
 }
