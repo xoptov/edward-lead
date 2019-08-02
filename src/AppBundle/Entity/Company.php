@@ -280,11 +280,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $shortName
+     * @param string|null $shortName
      *
      * @return Company
      */
-    public function setShortName(string $shortName): self
+    public function setShortName(?string $shortName): self
     {
         $this->shortName = $shortName;
 
@@ -300,11 +300,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $largeName
+     * @param string|null $largeName
      *
      * @return Company
      */
-    public function setLargeName(string $largeName): self
+    public function setLargeName(?string $largeName): self
     {
         $this->largeName = $largeName;
 
@@ -320,11 +320,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $phone
+     * @param string|null $phone
      *
      * @return Company
      */
-    public function setPhone(string $phone): self
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
 
@@ -340,11 +340,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $email
+     * @param string|null $email
      *
      * @return Company
      */
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -360,11 +360,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $inn
+     * @param string|null $inn
      *
      * @return Company
      */
-    public function setInn(string $inn): self
+    public function setInn(?string $inn): self
     {
         $this->inn = $inn;
 
@@ -380,11 +380,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $ogrn
+     * @param string|null $ogrn
      *
      * @return Company
      */
-    public function setOgrn(string $ogrn): self
+    public function setOgrn(?string $ogrn): self
     {
         $this->ogrn = $ogrn;
 
@@ -400,11 +400,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $kpp
+     * @param string|null $kpp
      *
      * @return Company
      */
-    public function setKpp(string $kpp): self
+    public function setKpp(?string $kpp): self
     {
         $this->kpp = $kpp;
 
@@ -420,11 +420,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $bik
+     * @param string|null $bik
      *
      * @return Company
      */
-    public function setBik(string $bik): self
+    public function setBik(?string $bik): self
     {
         $this->bik = $bik;
 
@@ -440,11 +440,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $accountNumber
+     * @param string|null $accountNumber
      *
      * @return Company
      */
-    public function setAccountNumber(string $accountNumber): self
+    public function setAccountNumber(?string $accountNumber): self
     {
         $this->accountNumber = $accountNumber;
 
@@ -460,11 +460,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $address
+     * @param string|null $address
      *
      * @return Company
      */
-    public function setAddress(string $address): self
+    public function setAddress(?string $address): self
     {
         $this->address = $address;
 
@@ -480,11 +480,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $zipcode
+     * @param string|null $zipcode
      *
      * @return Company
      */
-    public function setZipcode(string $zipcode): self
+    public function setZipcode(?string $zipcode): self
     {
         $this->zipcode = $zipcode;
 
@@ -520,11 +520,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $officeName
+     * @param string|null $officeName
      *
      * @return Company
      */
-    public function setOfficeName(string $officeName): self
+    public function setOfficeName(?string $officeName): self
     {
         $this->officeName = $officeName;
 
@@ -540,11 +540,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $officePhone
+     * @param string|null $officePhone
      *
      * @return Company
      */
-    public function setOfficePhone(string $officePhone): self
+    public function setOfficePhone(?string $officePhone): self
     {
         $this->officePhone = $officePhone;
 
@@ -560,11 +560,11 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @param string $officeAddress
+     * @param string|null $officeAddress
      *
      * @return Company
      */
-    public function setOfficeAddress(string $officeAddress): self
+    public function setOfficeAddress(?string $officeAddress): self
     {
         $this->officeAddress = $officeAddress;
 
