@@ -22,7 +22,13 @@
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Телефон:</div>
-                            <div class="info-block__column-right">{{ lead.phone|hidden_phone }}</div>
+                            <div class="info-block__column-right">
+                                {% if can_show_phone(lead, app.user) %}
+                                    {{ lead.phone|human_phone }}
+                                {% else %}
+                                    {{ lead.phone|hidden_phone }}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Город:</div>

@@ -141,7 +141,7 @@ class LeadController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->redirectToRoute('app_exchange');
+        return $this->redirectToRoute('app_leads_my');
     }
 
 
@@ -159,7 +159,18 @@ class LeadController extends Controller
             ->getByUserAndReserved($user);
 
         if ($lead) {
-            return $this->render('@App/Lead/reserved.html.twig', ['lead' => $lead]);
+            $room = $lead->getRoom();
+
+            if ($room && !$room->isPlatformWarranty()) {
+                return $this->render('@App/v2/Lead/reserved_without_warranty.html.twig', ['lead' => $lead]);
+            }
+
+            $phoneCall = $this->getDoctrine()->getRepository(PhoneCall::class)
+                ->getAnsweredPhoneCallByLeadAndCaller($lead, $user);
+
+            if ($phoneCall) {
+                return $this->render('@App/Lead/reserved.html.twig', ['lead' => $lead]);
+            }
         }
 
         return new Response();
