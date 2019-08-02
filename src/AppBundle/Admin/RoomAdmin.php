@@ -2,7 +2,10 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Account;
+use AppBundle\Service\RoomManager;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -10,11 +13,36 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use AppBundle\Form\Type\DataTransformer\MoneyTransformer;
+use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 class RoomAdmin extends AbstractAdmin
 {
+    /**
+     * @var RoomManager
+     */
+    private $roomManager;
+
+    /**
+     * @param RoomManager $roomManager
+     */
+    public function setRoomManager(RoomManager $roomManager)
+    {
+        $this->roomManager = $roomManager;
+    }
+
+    /**
+     * @param Room $object
+     *
+     * @throws \Exception
+     */
+    public function prePersist($object)
+    {
+        $owner = $object->getOwner();
+        $this->roomManager->joinInRoom($object, $owner);
+        $this->roomManager->updateInviteToken($object);
+    }
+
     /**
      * @inheritdoc
      */
@@ -64,17 +92,22 @@ class RoomAdmin extends AbstractAdmin
     {
         $form
             ->add('name')
-            ->add('owner', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'name'
+            ->add('owner', ModelAutocompleteType::class, [
+                'property' => 'name',
+                'to_string_callback' => function(User $entity) {
+                    return $entity->getId() . ' : ' . $entity->getName();
+                }
             ])
             ->add('sphere')
             ->add('leadCriteria')
-            ->add('platformWarranty')
-            ->add('leadPrice')
+            ->add('platformWarranty', null, [
+                'required' => false
+            ])
+            ->add('leadPrice', MoneyType::class, [
+                'currency' => 'RUB',
+                'divisor' => Account::DIVISOR
+            ])
             ->add('enabled');
-
-        $form->get('leadPrice')->addViewTransformer(new MoneyTransformer());
     }
 
     /**
