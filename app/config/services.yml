@@ -200,6 +200,8 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: Room }
         public: true
+        calls:
+            - [setRoomManager, ['@AppBundle\Service\RoomManager']]
 
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 

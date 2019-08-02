@@ -4,6 +4,7 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Region;
+use AppBundle\Entity\Account;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -11,6 +12,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
 class CityAdmin extends AbstractAdmin
 {
@@ -72,12 +74,6 @@ class CityAdmin extends AbstractAdmin
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
-        $leadPriceField = new MoneyFieldDescription();
-        $leadPriceField->setName('leadPrice');
-
-        $starPriceField = new MoneyFieldDescription();
-        $starPriceField->setName('starPrice');
-
         $formMapper
             ->add("region", EntityType::class, [
                 'label' => 'Region',
@@ -85,8 +81,14 @@ class CityAdmin extends AbstractAdmin
                 'choice_label' => 'name'
             ])
             ->add("name", null, ['label' => 'City'])
-            ->add($leadPriceField)
-            ->add($starPriceField)
+            ->add('leadPrice', MoneyType::class, [
+                'currency' => 'RUB',
+                'divisor' => Account::DIVISOR
+            ])
+            ->add('starPrice', MoneyType::class, [
+                'currency' => 'RUB',
+                'divisor' => Account::DIVISOR
+            ])
             ->add("enabled")
         ;
     }
