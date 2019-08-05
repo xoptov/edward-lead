@@ -21,9 +21,17 @@
         <li>
             <div class="nav_title">
                 <div class="img">
-                    <img src="{{ asset('bundles/app/v2/img/icon_5.png') }}">
+                    <img src="{{ asset('bundles/app/v2/img/icon_4.png') }}">
                 </div>
                 <a href="{{ path('app_room_list') }}">Комнаты</a>
+            </div>
+        </li>
+        <li>
+            <div class="nav_title">
+                <div class="img">
+                    <img src="{{ asset('bundles/app/v2/img/icon_5.png') }}">
+                </div>
+                <a href="{{ path('app_leads_my') }}">Мои лиды</a>
             </div>
         </li>
         <li>
@@ -49,7 +57,7 @@
                     <a href="{{ path('app_billing_transactions_history') }}">История операций</a>
                 </li>
                 <li>
-                    <a href="{{ path('app_invoice_list') }}">Счета и акты</a>
+                    <a href="{{ path('app_invoice_list') }}">Счета</a>
                 </li>
                 <li>
                     <a href="#">Акты</a>
@@ -63,5 +71,23 @@
                 {#<a href="#">Реферальная программа</a>#}
             {#</div>#}
         {#</li>#}
+        <li>
+            <div class="nav_title">
+                <div class="img">
+                    <img src="{{ asset('bundles/app/v2/img/icon_10.png') }}">
+                </div>
+                <a href="{{ path('app_telephony_calls') }}">Телефония</a>
+            </div>
+        </li>
+        {% if is_granted('ROLE_COMPANY') and app.user.company %}
+            <li>
+                <div class="nav_title">
+                    <div class="img">
+                        <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
+                    </div>
+                    <a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}">Кабинет компании</a>
+                </div>
+            </li>
+        {% endif %}
     </ul>
 </div>

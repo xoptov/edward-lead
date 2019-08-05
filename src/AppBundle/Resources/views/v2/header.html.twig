@@ -82,24 +82,7 @@
                 <p>Баланс: <span>{{ app.user.balance|money_format }}</span></p>
                 <p>Холд: <span>{{ balance_hold(app.user)|money_format }}</span></p>
             </div>
-            <div class="userbox droparrow">
-                <div class="box_title">
-                    <img src="{{ asset('bundles/app/v2/img/icon_2.png') }}">
-                </div>
-                <div class="dropdownbox">
-                    <ul>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li><a href="{{ path('sonata_admin_dashboard') }}">Админ панель</a></li>
-                        {% endif %}
-                        {% if app.user.company is not empty %}
-                            <li><a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}">Кабинет компании</a></li>
-                        {% endif %}
-                        <li><a href="{{ path('app_profile') }}">Мой профиль</a></li>
-                        <li><a href="{{ path('app_billing') }}">Оплата</a></li>
-                        <li><a href="{{ path('app_logout') }}">Выход</a></li>
-                    </ul>
-                </div>
-            </div>
+            {% include '@App/v2/top_menu.html.twig' %}
         </div>
     </div>
 {% endblock %}
