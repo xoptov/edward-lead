@@ -55,8 +55,8 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
-            new \Twig_SimpleFunction('can_show_phone', [$this, 'isCanShowPhone']),
-            new \Twig_SimpleFunction('must_show_call_button', [$this, 'isMustShowCallButton'])
+            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
+            new \Twig_SimpleFunction('must_show_call_button', [$this, 'mustShowCallButton'])
         ];
     }
 
@@ -128,7 +128,7 @@ class TemplateExtension extends \Twig_Extension
      *
      * @throws NonUniqueResultException
      */
-    public function isCanShowPhone(Lead $lead, User $user): bool
+    public function canShowPhone(Lead $lead, User $user): bool
     {
         if ($lead->isOwner($user)) {
             return true;
@@ -159,7 +159,7 @@ class TemplateExtension extends \Twig_Extension
      *
      * @throws NonUniqueResultException
      */
-    public function isMustShowCallButton(Lead $lead, User $user): bool
+    public function mustShowCallButton(Lead $lead, User $user): bool
     {
         if ($lead->isOwner($user)) {
             return false;
