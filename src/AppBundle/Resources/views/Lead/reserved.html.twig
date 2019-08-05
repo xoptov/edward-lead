@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <p>Целевой лид, записали на замер</p>
-                    <a class="btn btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
+                    <a class="btn green btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
                 </div>
             </div>
             <div class="result-case">
@@ -19,7 +19,7 @@
                 </div>
                 <dev>
                     <p>Целевой лид, взяли на просчёт</p>
-                    <a class="btn btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
+                    <a class="btn green btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
                 </dev>
             </div>
             <div class="result-case">
@@ -28,7 +28,7 @@
                 </div>
                 <dev>
                     <p>Целевой лид, но не смогли договориться</p>
-                    <a class="btn btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
+                    <a class="btn green btn-green" href="{{ path('app_trade_success', {'id': lead.trade.id}) }}">Выбрать вариант</a>
                 </dev>
             </div>
             <div class="result-case">
@@ -38,7 +38,7 @@
                 </div>
                 <div>
                     <p>Не целевой лид, окна ему не нужны</p>
-                    <a class="btn btn-green" href="{{ path('app_trade_reject', {'id': lead.trade.id, 'status': constant('STATUS_NO_TARGET', lead)}) }}">Выбрать вариант</a>
+                    <a class="btn green btn-green" href="{{ path('app_trade_reject', {'id': lead.trade.id, 'status': constant('STATUS_NO_TARGET', lead)}) }}">Выбрать вариант</a>
                 </div>
             </div>
         </div>

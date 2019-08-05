@@ -81,10 +81,10 @@
                                                 {% set current_call = call %}
                                             {% endif %}
                                         {% endfor %}
-                                        {% if show_number %}
-                                            {{ lead.phone }}
+                                        {% if can_show_phone(lead, app.user) %}
+                                            {{ lead.phone|human_phone }}
                                         {% else %}
-                                            номер скрыт
+                                            {{ lead.phone|hidden_phone }}
                                         {% endif %}
                                     </td>
                                     <td>{{ lead.city.name }}</td>

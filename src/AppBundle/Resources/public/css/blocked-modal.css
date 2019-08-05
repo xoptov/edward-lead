@@ -1,3 +1,7 @@
+.text-gray {
+    color: #b0b0b0;
+}
+
 .blocked-modal {
     position: fixed;
     left: 0;
@@ -61,7 +65,6 @@
 
 .result-case .btn {
     color: white;
-    padding: 5px 10px;
     border-radius: 3px;
     font-size: 14px;
     display: block;
