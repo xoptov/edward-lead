@@ -10,8 +10,8 @@
             <div class="plain__text text-mod-2">Блокированно по операциям: {{ holdBalance }} руб.</div>
         </div>
         <div class="billing__side-right">
-            <a class="btn btn-green btn-billig--mod" href="{{ path('app_deposit') }}">Пополнить баланс ЛС</a>
-            <a href="{{ path('app_withdraw') }}" class="billing__link link-mod-1">Создать заявку на вывод средств</a>
+            <a class="btn btn-green btn-billig--mod" href="{{ path('app_financial_deposit') }}">Пополнить баланс ЛС</a>
+            <a href="{{ path('app_financial_withdraw') }}" class="billing__link link-mod-1">Создать заявку на вывод средств</a>
         </div>
     </div>
     {% include '@App/block_copyright.html.twig' %}

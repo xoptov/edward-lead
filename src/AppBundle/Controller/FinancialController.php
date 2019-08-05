@@ -75,7 +75,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/financial/deposit", name="app_deposit", methods={"GET", "POST"})
+     * @Route("/financial/deposit", name="app_financial_deposit", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -112,7 +112,7 @@ class FinancialController extends Controller
 
                 $this->addFlash('success', 'Запрос на пополнение баланса принят');
 
-                return $this->redirectToRoute('app_billing');
+                return $this->redirectToRoute('app_financial_billing');
             }
         }
 
@@ -122,7 +122,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/financial/billing", name="app_billing", methods={"GET"})
+     * @Route("/financial/billing", name="app_financial_billing", methods={"GET"})
      *
      * @return Response
      */
@@ -141,7 +141,7 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/financial/withdraw", name="app_withdraw", methods={"GET", "POST"})
+     * @Route("/financial/withdraw", name="app_financial_withdraw", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -196,7 +196,7 @@ class FinancialController extends Controller
 
                 $this->addFlash('success', 'Зявка на вывод отправлена');
 
-                return $this->redirectToRoute('app_billing');
+                return $this->redirectToRoute('app_financial_billing');
             }
         }
 
@@ -206,11 +206,11 @@ class FinancialController extends Controller
     }
 
     /**
-     * @Route("/financial/invoice/list", name="app_invoice_list", methods={"GET"})
+     * @Route("/financial/invoices", name="app_financial_invoices", methods={"GET"})
      *
      * @return Response
      */
-    public function invoiceListAction(): Response
+    public function invoicesAction(): Response
     {
         $user = $this->getUser();
 
@@ -218,17 +218,17 @@ class FinancialController extends Controller
             ->getRepository(Invoice::class)
             ->getAllByUser($user);
 
-        return $this->render('@App/Financial/invoice_list.html.twig', [
+        return $this->render('@App/Financial/invoices.html.twig', [
             'invoices' => $invoices
         ]);
     }
 
     /**
-     * @Route("/financial/billing/transactions-history", name="app_billing_transactions_history", methods={"GET"})
+     * @Route("/financial/history", name="app_financial_history", methods={"GET"})
      *
      * @return Response
      */
-    public function operationsHistoryAction(): Response
+    public function historyAction(): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -237,7 +237,7 @@ class FinancialController extends Controller
             ->getRepository(MonetaryTransaction::class)
             ->findBy(['account' => $user->getAccount()], ["createdAt" => "DESC"]);
 
-        return $this->render('@App/Financial/transactions_history.html.twig', [
+        return $this->render('@App/Financial/history.html.twig', [
             'transactions' => $transactions
         ]);
     }
