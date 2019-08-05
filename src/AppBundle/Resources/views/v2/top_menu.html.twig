@@ -1,0 +1,22 @@
+<div class="userbox droparrow">
+    <div class="box_title">
+        {% if app.user.company and app.user.company.logotype is not empty %}
+            <img src="{{ app.user.company.logotype.path|imagine_filter('logotype_34x34') }}">
+        {% else %}
+            <img src="{{ asset('bundles/app/v2/img/icon_2.png') }}">
+        {% endif %}
+    </div>
+    <div class="dropdownbox">
+        <ul>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a href="{{ path('sonata_admin_dashboard') }}">Админ панель</a></li>
+            {% endif %}
+            {% if is_granted('ROLE_COMPANY') and app.user.company %}
+                <li><a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}">Кабинет компании</a></li>
+            {% endif %}
+            <li><a href="{{ path('app_profile') }}">Мой профиль</a></li>
+            <li><a href="{{ path('app_billing') }}">Оплата</a></li>
+            <li><a href="{{ path('app_logout') }}">Выход</a></li>
+        </ul>
+    </div>
+</div>

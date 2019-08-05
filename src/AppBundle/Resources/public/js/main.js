@@ -1,16 +1,20 @@
 $(".header__dropdown").click(function(e){
+    e.preventDefault();
    $(".header__dropdown").next(".notifications__list").toggleClass("show");
 });
 
 $(".icon-logo-top").hover(function(e){
+   e.preventDefault();
    $(".icon-logo-top").next(".profile").toggleClass("show");
 });
 
 $(".logo").hover(function(e){
+    e.preventDefault();
    $(".icon-logo-top").next(".profile").toggleClass("show");
 });
 
 $(".icon-logo-top").click(function(e){
+    e.preventDefault();
    $(".icon-logo-top").next(".profile").toggleClass("show");
 });
 
