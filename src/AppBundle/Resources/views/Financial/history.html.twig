@@ -30,6 +30,7 @@
                                 <th>{{ "operations_history.summ"|trans }}</th>
                             </tr>
                             {% for transaction in transactions %}
+                                {% set operation = transaction.operation %}
                                 <tr>
                                     <td>
                                         {% if transaction.amount < 0 %}
@@ -39,9 +40,15 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ transaction.createdAt|date("d.m.Y") }}</td>
-                                    <td>{{ transaction.operation.description }}</td>
+                                    <td>{{ operation.description }}</td>
                                     <td>
-                                        <a class="id_lids" href="#" target="_blank">---</a>{#What this do I do not undestend#}
+                                        {% if operation.lead is defined and operation.lead is not empty %}
+                                            <a class="id_lids" href="{{ path('app_lead_show', {'id': operation.lead.id}) }}" target="_blank">
+                                                #{{ operation.lead.id }}
+                                            </a>
+                                        {% else %}
+                                            ---
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <span class="{% if transaction.amount < 0 %}lead_amount_red{% else %}lead_amount{% endif %}">
