@@ -16,35 +16,35 @@
             {{ form_label(form.email, null, {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.email) }}
-                {{ form_widget(form.email, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш Email' }}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш Email', 'autocomplete': 'off'}}) }}
             </div>
         </div>
         <div class="form__input--item">
             {{ form_label(form.phone, 'Телефон', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.phone) }}
-                {{ form_widget(form.phone, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш номер' }}) }}
+                {{ form_widget(form.phone, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваш номер', 'autocomplete': 'off'}}) }}
             </div>
         </div>
         <div class="form__input--item">
             {{ form_label(form.name, 'Имя', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.name) }}
-                {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваше имя' }}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваше имя', 'autocomplete': 'off'}}) }}
             </div>
         </div>
         <div class="form__input--item">
             {{ form_label(form.plainPassword.first, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.plainPassword.first) }}
-                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль' }}) }}
+                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль', 'autocomplete': 'off'}}) }}
             </div>
         </div>
         <div class="form__input--item">
             {{ form_label(form.plainPassword.second, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.plainPassword.second) }}
-                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль ещё раз' }}) }}
+                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль ещё раз', 'autocomplete': 'off'}}) }}
             </div>
         </div>
     </div>
@@ -59,4 +59,16 @@
     </div>
     {{ form_end(form) }}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {%- if app.environment == 'prod' -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.min.js') }}"></script>
+    {%- else -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
+    {%- endif -%}
+    <script>
+        $('#registration_phone').inputmask('(+7|8)(999)999-99-99');
+    </script>
 {% endblock %}

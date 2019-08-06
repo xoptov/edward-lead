@@ -29,6 +29,7 @@ class CompanyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (self::MODE_COMPANY === $options['mode']) {
+
             $builder
                 ->add('shortName', TextType::class)
                 ->add('largeName', TextType::class)
@@ -52,6 +53,7 @@ class CompanyType extends AbstractType
 
             $builder->get('phone')
                 ->addViewTransformer(new PhoneTransformer());
+
         } else {
             $builder
                 ->add('officeName', TextType::class)

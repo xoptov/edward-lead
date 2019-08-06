@@ -82,3 +82,15 @@
         {% include '@App/block_copyright.html.twig' %}
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {%- if app.environment == 'prod' -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.min.js') }}"></script>
+    {%- else -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
+    {%- endif -%}
+    <script>
+        $('#profile_phone').inputmask('(+7|8)(999)999-99-99');
+    </script>
+{% endblock %}

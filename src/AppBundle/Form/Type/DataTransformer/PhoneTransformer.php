@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Type\DataTransformer;
 
+use AppBundle\Util\Formatter;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class PhoneTransformer implements DataTransformerInterface
@@ -11,7 +12,7 @@ class PhoneTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        return $value;
+        return Formatter::humanizePhone($value);
     }
 
     /**

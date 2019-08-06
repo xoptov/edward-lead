@@ -5,7 +5,7 @@ const audioMaxSize = 1024 * 1024 *  2;
 
 const phoneNumberValidator = function(value) {
     if (value !== null) {
-        return /^(?:\+7|8)\(?9\d{2}\)?[\-\s]?\d{3}[\-\s]?\d{2}[\-\s]?\d{2}$/.test(value);
+        return /^(?:\+7|8)(?:\(?\d{3}\)?\d{3}|\(?\d{4}\)?\d{2}|\(?\d{5}\)?\d{1})\-?\d{2}\-?\d{2}$/.test(value);
     }
     return false;
 };
@@ -71,9 +71,6 @@ const vm = new Vue({
                 required: validators.required,
                 phoneNumber: phoneNumberValidator
             },
-            city: {
-                required: validators.required
-            },
             publicationRule: {
                 required: validators.required
             },
@@ -87,7 +84,7 @@ const vm = new Vue({
         }
     },
     watch: {
-        'lead.city': function(oldValue, newValue) {
+        'lead.phone': function(oldValue, newValue) {
             if (oldValue !== newValue && this.isFirstStepFilled) {
                 this.makeEstimation();
             }
@@ -139,20 +136,17 @@ const vm = new Vue({
     },
     mounted: function() {
         $(this.$refs.orderDate).datepicker({onSelect: this.orderDateChanged});
+        $(this.$refs.phone).inputmask({mask: '(+7|8)(999)999-99-99', oncomplete: this.phoneChanged});
     },
     computed: {
         isFirstStepFilled: function() {
-            return this.lead.name
-                && this.lead.phone
-                && this.lead.city;
+            return this.lead.name && this.lead.phone;
         },
         isSecondStepFilled: function() {
-            return this.lead.channel
-                && this.lead.orderDate;
+            return this.lead.channel && this.lead.orderDate;
         },
         isThirdStepFilled: function() {
-            return this.lead.decisionMaker
-                && this.lead.madeMeasurement;
+            return this.lead.decisionMaker && this.lead.madeMeasurement;
         },
         isFoursStepFilled: function() {
             return this.lead.interestAssessment;
@@ -200,6 +194,9 @@ const vm = new Vue({
     methods: {
         orderDateChanged: function(newOrderDate) {
             this.lead.orderDate = newOrderDate;
+        },
+        phoneChanged: function(event) {
+            this.lead.phone = event.target.value;
         },
         interestAssessmentChanged: function(star) {
             if (this.submitted) {

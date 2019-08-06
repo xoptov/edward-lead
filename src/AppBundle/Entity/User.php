@@ -46,7 +46,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var string|null
      *
-     * @Assert\NotBlank(message="Имя должно быть указано.")
+     * @Assert\NotBlank(message="Имя должно быть указано")
      * @ORM\Column(name="name", type="string", length=30)
      */
     private $name;
@@ -54,7 +54,12 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var string|null
      *
-     * @Assert\NotBlank(message="Телефон должен быть указан.")
+     * @Assert\NotBlank(message="Телефон должен быть указан")
+     * @Assert\Regex(
+     *     pattern="/^7\d{10}$/",
+     *     message="Невалидный формат телефона"
+     * )
+     *
      * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
