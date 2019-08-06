@@ -135,7 +135,11 @@ const vm = new Vue({
         }
     },
     mounted: function() {
-        $(this.$refs.orderDate).datepicker({onSelect: this.orderDateChanged});
+        $(this.$refs.orderDate).datepicker({
+            minDate: '-2m',
+            maxDate: 'today',
+            onSelect: this.orderDateChanged
+        });
         $(this.$refs.phone).inputmask({mask: '(+7|8)(999)999-99-99', oncomplete: this.phoneChanged});
     },
     computed: {
