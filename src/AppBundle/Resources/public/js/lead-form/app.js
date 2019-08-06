@@ -249,7 +249,9 @@ const vm = new Vue({
                         .then(
                             response => {
                                 this.submitted = true;
-                                //todo: тут необходимо реализовать редирект на просмотр отредактированного лида лида.
+                                setTimeout(() => {
+                                    window.location.href = '/lead/' + this.leadId;
+                                }, 1000);
                             }
                         )
                         .catch(
@@ -259,8 +261,14 @@ const vm = new Vue({
                     this.$http.post('/api/v1/lead', this.lead)
                         .then(
                             response => {
-                                this.submitted = true
-                                //todo: тут необходимо реализовать редирект на происмотр добавленного лида.
+                                this.submitted = true;
+                                setTimeout(() => {
+                                    if (this.lead.room) {
+                                        window.location.href = '/room/' + this.lead.room;
+                                    } else {
+                                        window.location.href = '/exchange';
+                                    }
+                                }, 1000);
                             }
                         )
                         .catch(
