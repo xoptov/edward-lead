@@ -90,6 +90,11 @@ class Lead implements IdentifiableInterface
     /**
      * @var \DateTime|null
      *
+     * @Assert\LessThanOrEqual(
+     *     value="today",
+     *     message="Дата не может быть в будущем"
+     * )
+     *
      * @ORM\Column(name="order_date", type="date", nullable=true)
      */
     private $orderDate;
