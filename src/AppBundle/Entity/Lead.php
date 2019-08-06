@@ -46,6 +46,10 @@ class Lead implements IdentifiableInterface
      * @var string
      *
      * @Assert\NotBlank(message="Необходимо указать номер телефона")
+     * @Assert\Regex(
+     *     pattern="/^7\d{10}$/",
+     *     message="Невалидный формат телефона"
+     * )
      *
      * @ORM\Column(name="phone", type="string", length=32)
      */
@@ -68,12 +72,10 @@ class Lead implements IdentifiableInterface
     private $name;
 
     /**
-     * @var City
-     *
-     * @Assert\NotBlank(message="Необходимо указать город")
+     * @var City|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
-     * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="id")
      */
     private $city;
 
@@ -277,11 +279,11 @@ class Lead implements IdentifiableInterface
     }
 
     /**
-     * @param City $city
+     * @param City|null $city
      *
      * @return Lead
      */
-    public function setCity(City $city): self
+    public function setCity(?City $city): self
     {
         $this->city = $city;
 

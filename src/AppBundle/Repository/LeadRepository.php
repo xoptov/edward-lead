@@ -45,7 +45,7 @@ class LeadRepository extends EntityRepository
 
         $query = $queryBuilder
             ->where('l.room IS NULL')
-            ->andWhere('l.city IN (:cities)')
+            ->andWhere('l.city IN (:cities) OR l.city IS NULL')
                 ->setParameter('cities', $cities)
             ->andWhere('l.status = :status')
                 ->setParameter('status', Lead::STATUS_ACTIVE)

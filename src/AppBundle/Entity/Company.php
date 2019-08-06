@@ -49,6 +49,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать короткое название компании",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="short_name", type="string", length=30)
      */
     private $shortName;
@@ -61,6 +62,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать полное название компании",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="large_name", type="string", length=60)
      */
     private $largeName;
@@ -68,11 +70,15 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(min=11, max=32)
+     * @Assert\Regex(
+     *     pattern="/^7\d{10}$/",
+     *     message="Невалидный формат телефона"
+     * )
      * @Assert\NotBlank(
      *     message="Необходимо указать номер телефона",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="phone", type="string", length=32)
      */
     private $phone;
@@ -86,6 +92,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать email",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="email", type="string", length=30)
      */
     private $email;
@@ -98,6 +105,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать ИНН",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="inn", type="string", length=12)
      */
     private $inn;
@@ -110,6 +118,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать ОГРН",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="ogrn", type="string", length=15)
      */
     private $ogrn;
@@ -118,6 +127,7 @@ class Company implements IdentifiableInterface
      * @var string|null
      *
      * @Assert\Length(min=9, max=9)
+     *
      * @ORM\Column(name="kpp", type="string", length=9, nullable=true)
      */
     private $kpp;
@@ -130,6 +140,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать БИК",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="bik", type="string", length=9)
      */
     private $bik;
@@ -142,6 +153,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать расчётный счёт",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="account_number", type="string", length=25)
      */
     private $accountNumber;
@@ -154,6 +166,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать адрес",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="address", type="string", length=150)
      */
     private $address;
@@ -166,6 +179,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать почтовый индекс",
      *     groups={"Company"}
      * )
+     *
      * @ORM\Column(name="zipcode", type="string", length=6)
      */
     private $zipcode;
@@ -186,6 +200,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать название офиса",
      *     groups={"Office"}
      * )
+     *
      * @ORM\Column(name="office_name", type="string", length=30, nullable=true)
      */
     private $officeName;
@@ -193,11 +208,15 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(min=11, max=32)
+     * @Assert\Regex(
+     *     pattern="/^7\d{10}$/",
+     *     message="Невалидный формат телефона"
+     * )
      * @Assert\NotBlank(
      *     message="Необходимо указать контактный телефон офиса",
      *     groups={"Office"}
      * )
+     *
      * @ORM\Column(name="office_phone", type="string", length=32, nullable=true)
      */
     private $officePhone;
@@ -210,6 +229,7 @@ class Company implements IdentifiableInterface
      *     message="Необходимо указать адрес офиса",
      *     groups={"Office"}
      * )
+     *
      * @ORM\Column(name="office_address", type="string", length=150, nullable=true)
      */
     private $officeAddress;

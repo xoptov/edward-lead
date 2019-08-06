@@ -210,9 +210,11 @@
     {% if app.environment == 'prod' %}
         <script src="{{ asset('bundles/app/js/lib/underscore-min.js') }}"></script>
         <script src="{{ asset('bundles/app/js/lib/backbone-min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.min.js') }}"></script>
     {% else %}
         <script src="{{ asset('bundles/app/js/lib/underscore.js') }}"></script>
         <script src="{{ asset('bundles/app/js/lib/backbone.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
     {% endif %}
     <script src="{{ asset('bundles/app/js/user-company/app.js') }}"></script>
 {% endblock %}

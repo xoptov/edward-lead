@@ -27,7 +27,13 @@
                                     <td>{{ lead.orderDate|date('d.m.Y') }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
-                                    <td>{{ lead.city.name }}</td>
+                                    <td>
+                                        {% if lead.city is not empty %}
+                                            {{ lead.city.name }}
+                                        {% else %}
+                                            Не указан
+                                        {% endif %}
+                                    </td>
                                     <td>{{ lead.price|money_format }}</td>
                                     <td>
                                         {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
@@ -87,7 +93,13 @@
                                             {{ lead.phone|hidden_phone }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ lead.city.name }}</td>
+                                    <td>
+                                        {% if lead.city is not empty %}
+                                            {{ lead.city.name }}
+                                        {% else %}
+                                            Не указан
+                                        {% endif %}
+                                    </td>
                                     <td>{{ trade.amount|money_format }}</td>
                                     <td>
                                         {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}

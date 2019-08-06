@@ -25,12 +25,12 @@ class LeadManager
     /**
      * @var int
      */
-    private $leadCost;
+    private $defaultLeadCost;
 
     /**
      * @var int
      */
-    private $starCost;
+    private $defaultStarCost;
 
     /**
      * @var int
@@ -60,8 +60,8 @@ class LeadManager
     ) {
         $this->entityManager = $entityManager;
         $this->tradeManager = $tradeManager;
-        $this->leadCost = $leadCost;
-        $this->starCost = $starCost;
+        $this->defaultLeadCost = $leadCost;
+        $this->defaultStarCost = $starCost;
         $this->leadExpirationPeriod = $leadExpirationPeriod;
         $this->leadPerUser = $leadPerUser;
     }
@@ -86,11 +86,11 @@ class LeadManager
         }
 
         if (!isset($leadCost)) {
-            $leadCost = $this->leadCost;
+            $leadCost = $this->defaultLeadCost;
         }
 
         if (!isset($starCost)) {
-            $starCost = $this->starCost;
+            $starCost = $this->defaultStarCost;
         }
 
         $stars = $this->estimateStars($lead);
@@ -107,7 +107,7 @@ class LeadManager
     {
         $stars = 0;
 
-        if ($lead->getName() && $lead->getPhone() && $lead->getCity()) {
+        if ($lead->getName() && $lead->getPhone()) {
             $stars++;
         }
 

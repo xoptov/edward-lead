@@ -34,15 +34,24 @@
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
                                     <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
-                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +X(XXX)XXX-XX-XX</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
                                     <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
-                                    <input id="lead-phone" class="form__input input-mod-1" placeholder="Например: +7(900)200-30-20" autocomplete="off" type="tel" v-model.trim.lazy="$v.lead.phone.$model" :disabled="submitted">
+                                    <input
+                                            id="lead-phone"
+                                            class="form__input input-mod-1"
+                                            placeholder="Например: +7(900)000-00-00 или 8(900)000-00-00"
+                                            autocomplete="off"
+                                            type="tel"
+                                            :value="lead.phone"
+                                            @change="phoneChanged"
+                                            :disabled="submitted"
+                                            ref="phone"
+                                    >
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
                                     <div class="info-block__row-item block-mod-2">
-                                        <div v-if="$v.lead.city.$dirty && !$v.lead.city.required">Необходимо выбрать город</div>
                                         <label class="form__label text-mod-10" for="lead-city">Город</label>
-                                        <select id="lead-city" class="form__input select-field" v-model="$v.lead.city.$model" :disabled="submitted">
+                                        <select id="lead-city" class="form__input select-field" v-model="lead.city" :disabled="submitted">
                                             <option value="" selected>Выбирите город</option>
                                             <option v-for="item in cities" :value="item.id" v-text="item.name"></option>
                                         </select>
@@ -256,11 +265,13 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {% if app.environment == 'dev' %}
-        <script src="{{ asset('bundles/app/js/lib/jquery-ui.js') }}"></script>
-    {% else %}
+    {%- if app.environment == 'prod' -%}
         <script src="{{ asset('bundles/app/js/lib/jquery-ui.min.js') }}"></script>
-    {% endif %}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.min.js') }}"></script>
+    {%- else -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery-ui.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
+    {%- endif -%}
     <script src="{{ asset('bundles/app/js/lib/datepicker-ru.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>

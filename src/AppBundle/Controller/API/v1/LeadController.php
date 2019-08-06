@@ -208,7 +208,7 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/estimate", name="api_v1_lead_estimate", methods={"POST"}, defaults={"_format"="json"})
+     * @Route("/lead/estimate", name="api_v1_lead_estimate", methods={"POST"}, defaults={"_format": "json"})
      *
      * @param Request $request
      *
@@ -277,11 +277,13 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/leads", name="api_v1_leads", methods={"GET"}, defaults={"_format"="json"})
+     * @Route("/leads/{room}", name="api_v1_leads", methods={"GET"}, defaults={"_format":"json", "room": null})
+     *
+     * @param string $room
      *
      * @return JsonResponse
      */
-    public function getOffersAction(): JsonResponse
+    public function getOffersAction(?string $room = null): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();

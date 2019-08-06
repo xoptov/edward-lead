@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProfileType extends AbstractType
@@ -25,6 +26,8 @@ class ProfileType extends AbstractType
             ->add('facebook', TextType::class)
             ->add('telegram', TextType::class)
             ->add('submit', SubmitType::class);
+
+        $builder->get('phone')->addViewTransformer(new PhoneTransformer());
     }
 
     /**

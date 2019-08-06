@@ -32,7 +32,13 @@
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Город:</div>
-                            <div class="info-block__column-right">{{ lead.city.name }}</div>
+                            <div class="info-block__column-right">
+                                {% if lead.city is not empty %}
+                                    {{ lead.city.name }}
+                                {% else %}
+                                    Не указан
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="info-block__row-item">
                             <div class="info-block__column-left">Продавец:</div>

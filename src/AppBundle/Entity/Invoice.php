@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\UpdatedAtTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="invoice")
@@ -27,6 +28,11 @@ class Invoice extends Operation
 
     /**
      * @var string|null
+     *
+     * @Assert\Regex(
+     *     pattern="/^7\d{10}$/",
+     *     message="Невалидный формат телефона"
+     * )
      *
      * @ORM\Column(name="phone", type="string", length=12, nullable=true)
      */
