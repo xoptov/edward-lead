@@ -51,6 +51,12 @@ services:
             $firewallMap: '@security.firewall.map'
         tags: ['kernel.event_subscriber']
 
+    AppBundle\EventListener\LeadSubscriber:
+        arguments:
+            $fosComposer: '@fos_message.composer.default'
+            $fosSender: '@fos_message.sender.default'
+        tags: ['kernel.event_subscriber']
+
     AppBundle\Security\Voter\LeadCreateVoter:
         tags: ['security.voter']
 

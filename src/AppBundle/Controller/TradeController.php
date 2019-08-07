@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\LeadEvent;
@@ -83,9 +82,9 @@ class TradeController extends Controller
 
         try {
             $this->tradeManager->finishRejectByLeadStatus($trade, $status);
-            $eventDispatcher->dispatch(LeadEvent::BLOCK_BY_REJECT, new LeadEvent($lead));
+            $eventDispatcher->dispatch(LeadEvent::NO_TARGET, new LeadEvent($lead));
 
-            $this->addFlash('success', 'Покупка успешно отменена');
+            $this->addFlash('success', 'Покупка заморожена и передена в арбитраж');
 
         } catch(\Exception $e) {
             $this->addFlash('error', $e->getMessage());
