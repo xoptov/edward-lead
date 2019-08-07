@@ -240,10 +240,11 @@ class UserController extends Controller
      * @Route("/stay/webmaster", name="app_stay_webmaster", methods={"GET"})
      *
      * @param TokenStorageInterface $tokenStorage
+     * @param UserManager           $userManager
      *
      * @return Response
      */
-    public function stayWebmasterAction(TokenStorageInterface $tokenStorage): Response
+    public function stayWebmasterAction(TokenStorageInterface $tokenStorage, UserManager $userManager): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -252,8 +253,11 @@ class UserController extends Controller
             return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
         }
 
-        $user->switchToWebmaster()
+        $user
+            ->switchToWebmaster()
             ->makeTypeSelected();
+
+        $userManager->updateAccessToken($user);
 
         //todo: это костыль который пока не знаю как лучше изменить.
         $token = $tokenStorage->getToken();

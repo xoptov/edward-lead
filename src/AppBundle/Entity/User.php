@@ -128,6 +128,13 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $roles = [];
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="token", type="string", length=40, nullable=true)
+     */
+    private $token;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean")
@@ -511,6 +518,26 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function eraseCredentials()
     {
         $this->plainPassword = null;
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return User
+     */
+    public function setToken(string $token): self
+    {
+        $this->token = $token;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getToken(): ?string
+    {
+        return $this->token;
     }
 
     /**

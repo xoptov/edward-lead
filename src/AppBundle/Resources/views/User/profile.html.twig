@@ -32,6 +32,7 @@
                     <button class="profile-tabs__control selected">О себе</button>
                     <button class="profile-tabs__control">Безопасность</button>
                     <button class="profile-tabs__control">Аккаунт</button>
+                    <button class="profile-tabs__control">Ключ API</button>
                     <a href="{{ path('app_logout') }}" class="profile-tabs__exit">
                         <img src="{{ asset('bundles/app/img/exit.png') }}" alt="Выйти">
                     </a>
@@ -76,6 +77,18 @@
                             <p>Запрос на удаление ваше аккаунта в обработке</p>
                         {% endif %}
                     </div>
+                    <div class="profile-tabs__content profile-tabs__content_key">
+                        <h3 class="profile-tabs__head">Ключ API</h3>
+                        <p class="profile-key__text">Это Ваш уникальный ключ API - никому не сообщайте его</p>
+                        <p id="profile_token" class="profile-key__code">
+                            {% if app.user.token is not empty %}
+                                {{ app.user.token }}
+                            {% else %}
+                                Ключ не сгенерирован
+                            {% endif %}
+                        </p>
+                        <button class="profile-key__link js-renew-token">Сгенерировать новый ключ API</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,7 +103,5 @@
     {%- else -%}
         <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
     {%- endif -%}
-    <script>
-        $('#profile_phone').inputmask('(+7|8)(999)999-99-99');
-    </script>
+    <script src="{{ asset('bundles/app/js/profile.js') }}"></script>
 {% endblock %}
