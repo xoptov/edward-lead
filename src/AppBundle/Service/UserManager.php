@@ -49,10 +49,22 @@ class UserManager
         }
     }
 
+    /**
+     * @param User $user
+     */
     public function updateResetToken(User $user): void
     {
         $token = $this->generateToken();
         $user->setResetToken($token);
+    }
+
+    /**
+     * @param User $user
+     */
+    public function updateAccessToken(User $user): void
+    {
+        $token = $this->generateToken();
+        $user->setToken($token);
     }
 
     /**
