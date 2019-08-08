@@ -5,7 +5,7 @@ namespace AppBundle\Twig;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
-use AppBundle\Entity\PhoneCall;
+use AppBundle\Service\LeadManager;
 use AppBundle\Service\AccountManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -23,15 +23,23 @@ class TemplateExtension extends \Twig_Extension
     private $accountManager;
 
     /**
+     * @var LeadManager
+     */
+    private $leadManager;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
+     * @param LeadManager            $leadManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        AccountManager $accountManager
+        AccountManager $accountManager,
+        LeadManager $leadManager
     ) {
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
+        $this->leadManager = $leadManager;
     }
 
     /**
@@ -125,30 +133,10 @@ class TemplateExtension extends \Twig_Extension
      * @param User $user
      *
      * @return bool
-     *
-     * @throws NonUniqueResultException
      */
     public function canShowPhone(Lead $lead, User $user): bool
     {
-        if ($lead->isOwner($user)) {
-            return true;
-        }
-
-        $room = $lead->getRoom();
-
-        if ($room) {
-            if (!$room->isPlatformWarranty()) {
-                if ($lead->getBuyer() === $user && ($lead->isReserved() || $lead->isSold())) {
-                    return true;
-                }
-            }
-        }
-
-        if ($lead->getBuyer() === $user && $this->hasAnsweredPhoneCall($lead, $user)) {
-            return true;
-        }
-
-        return false;
+        return $this->leadManager->isCanShowPhone($lead, $user);
     }
 
     /**
@@ -173,27 +161,10 @@ class TemplateExtension extends \Twig_Extension
             }
         }
 
-        if ($this->hasAnsweredPhoneCall($lead, $user)) {
+        if ($this->leadManager->hasAnsweredPhoneCall($lead, $user)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $caller
-     *
-     * @return bool
-     *
-     * @throws NonUniqueResultException
-     */
-    private function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
-    {
-        $phoneCall = $this->entityManager
-            ->getRepository(PhoneCall::class)
-            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
-
-        return $phoneCall instanceof PhoneCall;
     }
 }

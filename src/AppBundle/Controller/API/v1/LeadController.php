@@ -292,35 +292,64 @@ class LeadController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        $company = $user->getCompany();
 
-        if ($company) {
-            $cities = $company->getCities();
+        $repository = $this->entityManager->getRepository(Lead::class);
 
-            if ($cities->isEmpty()) {
-                return new JsonResponse();
-            }
-
-            $leads = $this->entityManager->getRepository(Lead::class)
-                ->getByActiveAndCities($cities->toArray());
+        if ($room) {
+            $leads = $repository->getOffersByRooms([$room], [
+                Lead::STATUS_ACTIVE,
+                Lead::STATUS_RESERVED,
+                Lead::STATUS_SOLD,
+                Lead::STATUS_NO_TARGET,
+                Lead::STATUS_BLOCKED
+            ]);
+        } elseif ($user->isCompany() && $user->hasCompany()) {
+            $company = $user->getCompany();
+            $leads = $repository->getOffersByCities($company->getCities()->toArray(), [Lead::STATUS_ACTIVE]);
         } else {
-            $leads = $this->entityManager->getRepository(Lead::class)
-                ->getByActive();
+            $leads = $repository->getOffers([Lead::STATUS_ACTIVE]);
         }
 
         $result = [];
 
         foreach ($leads as $lead) {
-            $result[] = [
+            $leadUser = $lead->getUser();
+
+            $row = [
                 'id' => $lead->getId(),
                 'created_at' => $lead->getCreatedAtTimestamp(),
+                'phone' => $this->leadManager->getNormalizedPhone($lead, $user),
+                'user' => [
+                    'id' => $leadUser->getId(),
+                    'name' => $leadUser->getName()
+                ],
                 'stars' => $this->leadManager->estimateStars($lead),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
                 'audio_record' => $lead->hasAudioRecord(),
                 'channel' => $lead->getChannelName(),
+                'status' => $lead->getStatus(),
                 'price' => $lead->getPrice(Account::DIVISOR)
             ];
+
+            if ($lead->hasTrade()) {
+                $trade = $lead->getTrade();
+                $buyer = $trade->getBuyer();
+                $row['buyer'] = [
+                    'id' => $buyer->getId(),
+                    'name' => $buyer->getName()
+                ];
+                $company = $buyer->getCompany();
+                if ($company) {
+                    $row['buyer']['company'] = [
+                        'id' => $company->getId(),
+                        'short_name' => $company->getShortName(),
+                        'lange_name' => $company->getLargeName()
+                    ];
+                }
+            }
+
+            $result[] = $row;
         }
 
         return new JsonResponse($result);

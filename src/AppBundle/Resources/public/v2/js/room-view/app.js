@@ -7,13 +7,26 @@ const vm = new Vue({
         members: {
             webmasters: [],
             companies: []
-        }
+        },
+        leads: []
     },
     created: function() {
         this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
             response => {
                 this.members.webmasters = response.data.webmasters;
                 this.members.companies = response.data.companies;
+            }
+        );
+        this.$http.get('/api/v1/leads/' + this.roomId).then(
+            response => {
+                this.leads = response.data;
+                setInterval(() => {
+                    this.$http.get('/api/v1/leads/' + this.roomId).then(
+                        response => {
+                            this.leads = response.data;
+                        }
+                    );
+                }, 5000);
             }
         );
     },
@@ -23,9 +36,19 @@ const vm = new Vue({
         },
         companiesCount: function() {
             return this.members.companies.length;
+        },
+        leadsCount: function() {
+            return this.leads.length;
         }
     },
     methods: {
+        leadViewUrl: function(lead) {
+            return '/lead/' + lead.id;
+        },
+        dateFormat: function(value) {
+            const createdAt = new Date(value);
+            return createdAt.format('dd.mm.yyyy');
+        },
         getLogotype: function(member) {
             if (member.user.logotype) {
                 return member.user.logotype;

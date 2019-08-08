@@ -42,54 +42,34 @@
                             <td class="last"></td>
                         </tr>
                         </thead>
-                        <tbody>
-                        {% if leads|length %}
-                            {% for lead in leads %}
-                                <tr>
-                                    <td>{{ lead.createdAt|date_format('d.m.Y в H:i') }}</td>
-                                    <td>{{ lead.user.name }}</td>
-                                    {% if room.isOwner(app.user) %}
-                                        <td>{{ lead.phone|human_phone }}</td>
-                                    {% else %}
-                                        <td>{{ lead.phone|hidden_phone }}</td>
-                                    {% endif %}
-                                    <td>
-                                        {% if lead.channel is not null %}
-                                            {{ lead.channel.value }}
-                                        {% else %}
-                                            Не указано
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if lead.trade is not null and lead.trade.buyer.company %}
-                                            {{ lead.trade.buyer.company.shortName }}
-                                        {% endif %}
-                                    </td>
-                                    <td class="status">
-                                        {% if lead.status is constant('STATUS_ACTIVE', lead) %}
-                                            <span class="active">Торгуется</span>
-                                        {% elseif lead.status is constant('STATUS_RESERVED', lead) %}
-                                            <span class="reserved">Ожидает</span>
-                                        {% elseif lead.status is constant('STATUS_SOLD', lead) %}
-                                            <span class="sold">Продан</span>
-                                        {% elseif lead.status is constant('STATUS_BLOCKED', lead) %}
-                                            <span class="blocked">Арбитраж</span>
-                                        {% elseif lead.status is constant('STATUS_NO_TARGET', lead) %}
-                                            <span class="no-target">Не целевой</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if room.enabled %}
-                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" v-if="activated"><img src="{{ asset('bundles/app/v2/img/icon_9.png') }}"></a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
+                        <tbody v-if="leadsCount">
+                            <tr v-for="lead in leads">
+                                <td v-text="dateFormat(lead.created_at)"></td>
+                                <td v-text="lead.user.name"></td>
+                                <td v-text="lead.phone"></td>
+                                <td v-text="lead.channel"></td>
+                                <td>
+                                    <span v-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
+                                </td>
+                                <td class="status">
+                                    <span class="active"    v-if="lead.status == 'active'">Ожидает</span>
+                                    <span class="reserved"  v-else-if="lead.status == 'reserved'">Взят в работу</span>
+                                    <span class="sold"      v-else-if="lead.status == 'sold'">Продан</span>
+                                    <span class="blocked"   v-else-if="lead.status == 'blocked'">Арбитраж</span>
+                                    <span class="no-target" v-else-if="lead.status == 'no_target'">Не целевой</span>
+                                    <span v-else>Не известно</span>
+                                </td>
+                                <td>
+                                    <a target="_blank" :href="leadViewUrl(lead)" v-if="activated">
+                                        <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody v-else>
                             <tr>
                                 <td colspan="7">В данной комнате ещё небыло лидов на продажу</td>
                             </tr>
-                        {% endif %}
                         </tbody>
                     </table>
                     {#<a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>#}
@@ -231,6 +211,7 @@
     {{ parent() }}
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lib/date.format.js') }}"></script>
     <script>
         let roomId = null;
 
