@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserManager
@@ -32,8 +31,6 @@ class UserManager
     /**
      * @param User $user
      * @param bool $flush
-     *
-     * @throws OptimisticLockException
      */
     public function updateUser(User $user, $flush = true)
     {

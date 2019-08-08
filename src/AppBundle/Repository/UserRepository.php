@@ -6,6 +6,7 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 class UserRepository extends EntityRepository
 {
@@ -39,5 +40,24 @@ class UserRepository extends EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param string $accessToken
+     * @return null|string
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getUsernameByAccessToken(string $accessToken): ?string
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $query = $qb->select('u.email')
+            ->where('u.token = :token')
+            ->setParameter('token', $accessToken)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getSingleScalarResult();
     }
 }

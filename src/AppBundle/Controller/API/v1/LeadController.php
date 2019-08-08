@@ -216,9 +216,14 @@ class LeadController extends Controller
      */
     public function postEstimateAction(Request $request): JsonResponse
     {
+        if (!$this->isGranted('ROLE_WEBMASTER')) {
+            return new JsonResponse(['errors' => 'Вы должны быть вэбмастером для получения оценки лида'], Response::HTTP_FORBIDDEN);
+        }
+
         $form = $this->createForm(LeadType::class, null, [
             'csrf_protection' => false
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
