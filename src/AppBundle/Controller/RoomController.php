@@ -108,12 +108,10 @@ class RoomController extends Controller
 
         $now = new \DateTime();
 
-        $dailyLeads = $this->entityManager->getRepository(Lead::class)
-            ->getAddedInRoomsByDate($rooms, $now);
+        $repository = $this->entityManager->getRepository(Lead::class);
 
-
-        $reservedLeads = $this->entityManager->getRepository(Lead::class)
-            ->getReservedInRooms($rooms);
+        $dailyLeads = $repository->getAddedInRoomsByDate($rooms, $now);
+        $reservedLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_RESERVED]);
 
         for ($i = 0; $i < count($rooms); $i++) {
             /** @var Lead $dailyLead */

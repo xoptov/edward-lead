@@ -532,7 +532,7 @@ class Company implements IdentifiableInterface
     }
 
     /**
-     * @return Collection
+     * @return Collection|array
      */
     public function getCities(): Collection
     {

@@ -4,9 +4,9 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\NonUniqueResultException;
 
 class LeadRepository extends EntityRepository
@@ -16,60 +16,80 @@ class LeadRepository extends EntityRepository
      *
      * @return int
      *
-     * @throws NoResultException
      * @throws NonUniqueResultException
      */
     public function getActiveCountByUser(User $user): int
     {
         $queryBuilder = $this->createQueryBuilder('l');
 
-        $query = $queryBuilder
+        $queryBuilder
             ->select('count(l.id)')
-            ->where('l.status = :status')
-                ->setParameter('status', Lead::STATUS_ACTIVE)
-            ->andWhere('l.user = :user')
-                ->setParameter('user', $user)
-            ->getQuery();
+            ->where('l.user = :user')
+            ->setParameter('user', $user);
+
+        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_ACTIVE]);
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getSingleScalarResult();
     }
 
     /**
-     * @param array $cities
+     * @param array $rooms
+     * @param array $statuses
      *
      * @return Lead[]
      */
-    public function getByActiveAndCities(array $cities): array
+    public function getOffersByRooms(array $rooms, array $statuses): array
     {
-        $queryBuilder = $this->createQueryBuilder('l');
+        $queryBuilder = $this->createQueryBuilder('l')
+            ->orderBy('l.status', 'ASC')
+            ->addOrderBy('l.updatedAt', 'DESC')
+            ->addOrderBy('l.createdAt', 'DESC');
 
-        $query = $queryBuilder
-            ->where('l.room IS NULL')
-            ->andWhere('l.city IN (:cities) OR l.city IS NULL')
-                ->setParameter('cities', $cities)
-            ->andWhere('l.status = :status')
-                ->setParameter('status', Lead::STATUS_ACTIVE)
-            ->orderBy('l.updatedAt', 'DESC')
-            ->addOrderBy('l.createdAt', 'DESC')
-            ->getQuery();
+        $this->addRoomsCondition($queryBuilder, $rooms);
+        $this->addStatusesCondition($queryBuilder, $statuses);
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getResult();
     }
 
     /**
+     * @param array $cities
+     * @param array $statuses
+     *
      * @return Lead[]
      */
-    public function getByActive(): array
+    public function getOffersByCities(array $cities, array $statuses): array
     {
-        $queryBuilder = $this->createQueryBuilder('l');
-
-        $query = $queryBuilder
-            ->where('l.room IS NULL')
-            ->andWhere('l.status = :status')
-                ->setParameter('status', Lead::STATUS_ACTIVE)
+        $queryBuilder = $this->createQueryBuilder('l')
             ->orderBy('l.updatedAt', 'DESC')
-            ->addOrderBy('l.createdAt', 'DESC')
-            ->getQuery();
+            ->addOrderBy('l.createdAt', 'DESC');
+
+        $this->addCitiesCondition($queryBuilder, $cities);
+        $this->addStatusesCondition($queryBuilder, $statuses);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param array $statuses
+     *
+     * @return Lead[]
+     */
+    public function getOffers(array $statuses): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l')
+            ->where('l.room IS NULL')
+            ->orderBy('l.updatedAt', 'DESC')
+            ->addOrderBy('l.createdAt', 'DESC');
+
+        $this->addStatusesCondition($queryBuilder, $statuses);
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getResult();
     }
@@ -85,15 +105,16 @@ class LeadRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('l');
 
-        $query = $queryBuilder
+        $queryBuilder
             ->innerJoin('l.trade', 't')
             ->where('t.buyer = :buyer')
                 ->setParameter('buyer', $user)
-            ->andWhere('l.status = :reserved')
-                ->setParameter('reserved', Lead::STATUS_RESERVED)
             ->orderBy('l.updatedAt', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery();
+            ->setMaxResults(1);
+
+        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_RESERVED]);
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getOneOrNullResult();
     }
@@ -142,44 +163,6 @@ class LeadRepository extends EntityRepository
     }
 
     /**
-     * @param array $rooms
-     *
-     * @return array
-     */
-    public function getReservedInRooms(array $rooms): array
-    {
-        $queryBuilder = $this->createQueryBuilder('l');
-
-        $query = $queryBuilder
-            ->where('l.room IN (:rooms)')
-                ->setParameter('rooms', $rooms)
-            ->andWhere('l.status = :status')
-                ->setParameter('status', Lead::STATUS_RESERVED)
-            ->getQuery();
-
-        return $query->getResult();
-    }
-
-    /**
-     * @param array $rooms
-     *
-     * @return array
-     */
-    public function getByRoomsAndDone(array $rooms): array
-    {
-        $queryBuilder = $this->createQueryBuilder('l');
-
-        $query = $queryBuilder
-            ->where('l.room IN (:rooms)')
-                ->setParameter('rooms', $rooms)
-            ->andWhere('l.status IN (:statuses)')
-                ->setParameter('statuses', [Lead::STATUS_SOLD, Lead::STATUS_NO_TARGET])
-            ->getQuery();
-
-        return $query->getResult();
-    }
-
-    /**
      * @param string $status
      *
      * @return int
@@ -188,13 +171,48 @@ class LeadRepository extends EntityRepository
      */
     public function getCountByStatus(string $status): int
     {
-        $queryBuilder = $this->createQueryBuilder('l');
-        $query = $queryBuilder
-            ->select('count(l.id)')
-            ->where('l.status = :status')
-                ->setParameter('status', $status)
-            ->getQuery();
+        $queryBuilder = $this->createQueryBuilder('l')
+            ->select('count(l.id)');
+
+        $this->addStatusesCondition($queryBuilder, [$status]);
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getSingleScalarResult();
     }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array        $rooms
+     */
+    private function addRoomsCondition(QueryBuilder $queryBuilder, array $rooms): void
+    {
+        $queryBuilder
+            ->andWhere('l.room IN (:rooms)')
+            ->setParameter('rooms', $rooms);
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array        $cities
+     */
+    private function addCitiesCondition(QueryBuilder $queryBuilder, array $cities): void
+    {
+        $queryBuilder
+            ->andWhere('l.city IN (:cities)')
+            ->setParameter('cities', $cities);
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array        $statuses
+     */
+    private function addStatusesCondition(QueryBuilder $queryBuilder, array $statuses)
+    {
+        $queryBuilder
+            ->andWhere('l.status IN (:statuses)')
+            ->setParameter('statuses', $statuses);
+    }
+
+
 }

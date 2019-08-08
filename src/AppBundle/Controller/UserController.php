@@ -416,7 +416,7 @@ class UserController extends Controller
             ->getByRooms($rooms);
 
         $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
-        $doneLeads = $leadRepository->getByRoomsAndDone($rooms);
+        $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_SOLD, Lead::STATUS_NO_TARGET]);
 
         /** @var Room $room */
         foreach ($rooms as $room) {

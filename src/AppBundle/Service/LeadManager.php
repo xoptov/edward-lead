@@ -209,26 +209,45 @@ class LeadManager
      * @param Lead $lead
      * @param User $user
      *
+     * @return bool
+     */
+    public function isCanShowPhone(Lead $lead, User $user): bool
+    {
+        if ($lead->isOwner($user)) {
+            return true;
+        }
+
+        $room = $lead->getRoom();
+
+        if ($room) {
+            if (!$room->isPlatformWarranty()) {
+                if ($lead->getBuyer() === $user && ($lead->isReserved() || $lead->isSold())) {
+                    return true;
+                }
+            }
+        }
+
+        try {
+            if ($lead->getBuyer() === $user && $this->hasAnsweredPhoneCall($lead, $user)) {
+                return true;
+            }
+        } catch (NonUniqueResultException $e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $user
+     *
      * @return string
      */
     public function getNormalizedPhone(Lead $lead, User $user): string
     {
-        $room = $lead->getRoom();
-
-        if ($lead->isOwner($user)) {
+        if ($this->isCanShowPhone($lead, $user)) {
             return Formatter::humanizePhone($lead->getPhone());
-        }
-
-        if ($room && !$room->isPlatformWarranty()) {
-            return Formatter::humanizePhone($lead->getPhone());
-        }
-
-        try {
-            if ($this->hasAnsweredPhoneCall($lead, $user) || $this->hasAcceptedTrade($lead, $user)) {
-                return Formatter::humanizePhone($lead->getPhone());
-            }
-        } catch (\Exception $e) {
-            return 'Ошибка получения номера';
         }
 
         return Formatter::hidePhoneNumber($lead->getPhone());
