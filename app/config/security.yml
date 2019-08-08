@@ -9,7 +9,7 @@ security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        database_user_provider:
+        database_email_user_provider:
             entity:
                 class: AppBundle:User
                 property: email
@@ -21,19 +21,20 @@ security:
         ROLE_WEBMASTER:   ROLE_USER
 
     firewalls:
-        # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         main:
             anonymous: ~
             form_login:
                 login_path: app_login
                 username_parameter: login[email]
                 password_parameter: login[password]
-                provider: database_user_provider
+                provider: database_email_user_provider
                 default_target_path: app_select_type
+            guard:
+                authenticators:
+                    - AppBundle\Security\AccessTokenAuthenticator
             logout: ~
 
     access_control:

@@ -245,3 +245,13 @@ services:
 
     fos_user.user_to_username_transformer:
         alias: app.user_to_username_transformer
+
+    app.security.token_user_provider:
+        class: Symfony\Bridge\Doctrine\Security\User\EntityUserProvider
+        arguments:
+            $classOrAlias: AppBundle\Entity\User
+            $property: 'token'
+
+    AppBundle\Security\AccessTokenAuthenticator:
+        arguments:
+            $userProvider: '@app.security.token_user_provider'
