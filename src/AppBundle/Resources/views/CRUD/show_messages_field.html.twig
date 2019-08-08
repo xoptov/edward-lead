@@ -4,6 +4,9 @@
     {% for message in value %}
         <div>
             <p><span class="small">{{ message.createdAt|date_format }}</span> <b>{{ message.sender.username }}{% if message.sender.name is defined and message.sender.name is not empty %} ({{ message.sender.name }}){% endif %}</b> {{ message.body }}</p>
+            {% for image in message.images %}
+                <img src="{{ asset(image.path) }}" style="max-width: 100%; height: auto;">
+            {% endfor %}
         </div>
         {% if not loop.last %}<hr>{% endif %}
     {% else %}

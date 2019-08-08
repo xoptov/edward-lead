@@ -2,38 +2,217 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Message;
 use AppBundle\Entity\Thread;
-use AppBundle\Entity\User;
+use AppBundle\Form\Type\AdminMessageType;
+use AppBundle\Form\Type\AdminThreadType;
+use FOS\MessageBundle\Composer\Composer;
 use Sonata\AdminBundle\Controller\CRUDController;
+use Sonata\AdminBundle\Exception\LockException;
+use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\Form\FormRenderer;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
+use Twig\Error\RuntimeError;
 
 class ThreadController extends CRUDController
 {
     /**
-     * Создание тестовой ветки сообщений
-     * Этот бред удалю когда закончу задачи!
+     * @param null $id
      *
-     * ToDo удалить позднее
+     * @return Response
+     *
+     * @throws RuntimeError
      */
-    public function createAction()
+    public function replyAction($id = null)
     {
-        $sender = $this->getUser();
+        $request = $this->getRequest();
 
-        $threadBuilder = $this->get('fos_message.composer')->newThread();
+        $id = $request->get($this->admin->getIdParameter());
+        $existingObject = $this->admin->getObject($id);
 
-        $threadBuilder
-            ->addRecipient($this->getDoctrine()->getRepository(User::class)->find(2)) // Retrieved from your backend, your user manager or ...
-            ->setSender($sender)
-            ->setSubject('Stof commented on your pull request #456789')
-            ->setBody('You have a typo, : mondo instead of mongo. Also for coding standards ...');
+        if (!$existingObject) {
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+        }
 
-        $message = $threadBuilder->getMessage();
+        $this->admin->setSubject($existingObject);
+        $objectId = $this->admin->getNormalizedIdentifier($existingObject);
 
-        /** @var Thread $thread */
-        $thread = $message->getThread();
-        $thread->setStatus(Thread::STATUS_NEW);
-        $thread->setTypeAppeal(Thread::TYPE_ARBITRATION);
+        $form = $this->createForm(AdminMessageType::class);
 
-        $sender = $this->get('fos_message.sender');
-        $sender->send($message);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $isFormValid = $form->isValid();
+
+            if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
+
+                $composer = $this->get('fos_message.composer');
+                /** @var Message $newMessage */
+                $newMessage = $form->getData();
+
+                $message = $composer->reply($existingObject)
+                    ->setSender($this->getUser())
+                    ->setBody($newMessage->getBody())
+                    ->getMessage();
+
+                $em = $this->getDoctrine()->getManager();
+
+                try {
+                    $sender = $this->get('fos_message.sender');
+                    $sender->send($message);
+
+                    $this->addFlash(
+                        'sonata_flash_success',
+                        $this->trans(
+                            'flash_reply_success',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($existingObject))],
+                            'message'
+                        )
+                    );
+
+                    return $this->redirectTo($existingObject);
+                } catch (ModelManagerException $e) {
+                    $this->handleModelManagerException($e);
+
+                    $isFormValid = false;
+                } catch (LockException $e) {
+                    $this->addFlash('sonata_flash_error', $this->trans('flash_lock_error', [
+                        '%name%' => $this->escapeHtml($this->admin->toString($existingObject)),
+                        '%link_start%' => '<a href="'.$this->admin->generateObjectUrl('edit', $existingObject).'">',
+                        '%link_end%' => '</a>',
+                    ], 'SonataAdminBundle'));
+                }
+            }
+
+            if (!$isFormValid) {
+                if (!$this->isXmlHttpRequest()) {
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        $this->trans(
+                            'flash_reply_error',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($existingObject))],
+                            'message'
+                        )
+                    );
+                }
+            } elseif ($this->isPreviewRequested()) {
+                // enable the preview template if the form was valid and preview was requested
+                $templateKey = 'preview';
+                $this->admin->getShow();
+            }
+        }
+
+        $formView = $form->createView();
+        /** @var Environment $twig */
+        $twig = $this->get('twig');
+        $twig->getRuntime(FormRenderer::class)->setTheme($formView, '@SonataAdmin/Form/form_admin_fields.html.twig');
+
+        return $this->renderWithExtraParams('@App/CRUD/thread_reply.html.twig', [
+            'action' => 'edit',
+            'form' => $formView,
+            'object' => $existingObject,
+            'objectId' => $objectId,
+        ], null);
+    }
+
+    /**
+     * @param null $id
+     *
+     * @return RedirectResponse|Response
+     *
+     * @throws RuntimeError]
+     */
+    public function writeToSellerAction($id = null)
+    {
+        $request = $this->getRequest();
+
+        $id = $request->get($this->admin->getIdParameter());
+        /** @var Thread $existingObject */
+        $existingObject = $this->admin->getObject($id);
+
+        if (!$existingObject) {
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+        }
+
+        /** @var Composer $composer */
+        $composer = $this->get('fos_message.composer');
+
+        /** @var Message $message */
+        $message = $composer->newThread()
+            ->setSender($this->getUser())
+            ->addRecipient($existingObject->getLead()->getUser())
+            ->setSubject('')
+            ->setBody('')
+            ->getMessage();
+
+        /** @var Thread $newObject */
+        $newObject = $message->getThread();
+
+        $this->admin->setSubject($newObject);
+        $objectId = $this->admin->getNormalizedIdentifier($existingObject);
+
+        $form = $this->createForm(AdminThreadType::class, $newObject);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted()) {
+            $isFormValid = $form->isValid();
+
+            if ($isFormValid) {
+
+                try {
+                    $message->getThread()->setStatus(Thread::STATUS_NEW);
+                    $message->getThread()->setTypeAppeal(Thread::TYPE_ARBITRATION);
+                    $message->getThread()->setLead($existingObject->getLead());
+                    $sender = $this->get('fos_message.sender');
+                    $sender->send($message);
+
+                    $existingObject->setSellerThread($message->getThread());
+
+                    $this->getDoctrine()->getManager()->flush();
+
+                    $this->addFlash(
+                        'sonata_flash_success',
+                        $this->trans(
+                            'flash_create_success',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($newObject))],
+                            'SonataAdminBundle'
+                        )
+                    );
+
+                } catch (\Exception $e) {
+                    $isFormValid = false;
+
+                    $this->addFlash(
+                        'sonata_flash_error',
+                        $this->trans(
+                            'flash_create_error',
+                            ['%name%' => $this->escapeHtml($this->admin->toString($newObject))],
+                            'SonataAdminBundle'
+                        )
+                    );
+                }
+            }
+
+            if ($isFormValid && is_null($request->get('btn_update_and_edit'))) {
+                return $this->redirectTo($existingObject);
+            } else {
+                return $this->redirectToList();
+            }
+        }
+
+        $formView = $form->createView();
+        /** @var Environment $twig */
+        $twig = $this->get('twig');
+        $twig->getRuntime(FormRenderer::class)->setTheme($formView, '@SonataAdmin/Form/form_admin_fields.html.twig');
+
+        return $this->renderWithExtraParams('@App/CRUD/thread_create.html.twig', [
+            'action' => 'edit',
+            'form' => $formView,
+            'object' => $existingObject,
+            'objectId' => $objectId,
+        ], null);
     }
 }

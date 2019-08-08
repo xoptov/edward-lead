@@ -183,7 +183,7 @@ services:
         class: AppBundle\Admin\ThreadAdmin
         arguments: [~, AppBundle\Entity\Thread, AppBundle\Controller\Admin\ThreadController]
         tags:
-            - { name: sonata.admin, manager_type: orm, group: exchange, label: Appeals }
+            - { name: sonata.admin, manager_type: orm, group: exchange, label: Arbitration and Support }
         public: true
 
     app.admin.phone_call:
