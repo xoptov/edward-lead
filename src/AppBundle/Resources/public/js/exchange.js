@@ -89,19 +89,10 @@ $(function(){
         },
         {
             name: 'price',
-            label: 'Стоимость',
+            label: 'Стоимость руб.',
             cell: 'integer',
             editable: false,
-            sortable: false,
-            formatter: _.extend({}, Backgrid.CellFormatter.prototype, {
-                fromRaw: function(number, model) {
-                    let formattedValue = Backgrid.NumberFormatter.prototype.fromRaw(number, model);
-                    if (formattedValue !== '') {
-                        return formattedValue + ' руб.';
-                    }
-                    return formattedValue;
-                }
-            })
+            sortable: false
         },
         {
             name: '',
@@ -172,19 +163,10 @@ $(function(){
         },
         {
             name: 'price',
-            label: 'Стоимость',
+            label: 'Стоимость руб.',
             cell: 'integer',
             editable: false,
-            sortable: false,
-            formatter: _.extend({}, Backgrid.CellFormatter.prototype, {
-                fromRaw: function(number, model) {
-                    let formattedValue = Backgrid.NumberFormatter.prototype.fromRaw(number, model);
-                    if (formattedValue !== '') {
-                        return formattedValue + ' руб.';
-                    }
-                    return formattedValue;
-                }
-            })
+            sortable: false
         }
     ];
 

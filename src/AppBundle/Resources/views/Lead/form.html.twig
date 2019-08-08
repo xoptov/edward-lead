@@ -237,6 +237,9 @@
                                         <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-if="leadId">
                                             Обновить информацию
                                         </button>
+                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-else-if="lead.room">
+                                            Добавить лида в комнату
+                                        </button>
                                         <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-else>
                                             Выставить лида на биржу
                                         </button>

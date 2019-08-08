@@ -74,6 +74,14 @@ class LeadManager
      */
     public function estimateCost(Lead $lead, ?int $divisor = 1): int
     {
+        $room = $lead->getRoom();
+
+        if ($room) {
+            if ($room->getLeadPrice()) {
+                return $room->getLeadPrice() / $divisor;
+            }
+        }
+
         $city = $lead->getCity();
 
         if ($city) {
