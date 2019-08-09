@@ -46,7 +46,7 @@ class ArbitrationController extends Controller
 
         $openedThreads = array_filter($threads, function ($thread) use ($user) {
             /** @var Thread $thread */
-            if ($thread->getStatus() != Thread::STATUS_CLOSED && ! $thread->isReadByParticipant($user)) {
+            if ($thread->getStatus() != Thread::STATUS_CLOSED || ! $thread->isReadByParticipant($user)) {
                 return true;
             }
             return false;

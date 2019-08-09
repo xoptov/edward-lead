@@ -1,0 +1,17 @@
+{% if object.status == constant('AppBundle\\Entity\\Thread::STATUS_CLOSED') %}
+    {% set href = '#' %}
+    {% set class = 'disabled' %}
+    {% set toggle_label = 'Закрыто' %}
+{% elseif object.sellerThread is null and object.typeAppeal == constant('AppBundle\\Entity\\Thread::TYPE_ARBITRATION') %}
+    {% set href = '#' %}
+    {% set class = 'disabled' %}
+    {% set toggle_label = 'Закрыть' %}
+{% else %}
+    {% set href = admin.generateObjectUrl('close', object) %}
+    {% set toggle_label = 'Закрыть' %}
+    {% set class = '' %}
+{% endif %}
+
+<a class="btn btn-sm btn-default {{ class }}" href="{{ href }}">
+    <i class="fa fa-check-square"></i> {{ toggle_label }}
+</a>

@@ -19,7 +19,7 @@ use Twig\Error\RuntimeError;
 class ThreadController extends CRUDController
 {
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @return Response
      *
@@ -118,7 +118,7 @@ class ThreadController extends CRUDController
     }
 
     /**
-     * @param null $id
+     * @param int|null $id
      *
      * @return RedirectResponse|Response
      *
@@ -214,5 +214,59 @@ class ThreadController extends CRUDController
             'object' => $existingObject,
             'objectId' => $objectId,
         ], null);
+    }
+
+    /**
+     * @param int|null $id
+     *
+     * @return RedirectResponse
+     *
+     * @throws \Exception
+     */
+    public function closeAction($id = null)
+    {
+        $request = $this->getRequest();
+
+        $id = $request->get($this->admin->getIdParameter());
+        /** @var Thread $object */
+        $object = $this->admin->getObject($id);
+
+        if (!$object) {
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+        }
+
+        $this->admin->checkAccess('edit', $object);
+
+        /** @var Thread $childObject */
+        $childObject = $object->getSellerThread();
+
+        $object->setStatus(Thread::STATUS_CLOSED);
+        if ($childObject) {
+            $childObject->setStatus(Thread::STATUS_CLOSED);
+        }
+
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            $this->addFlash(
+                'sonata_flash_success',
+                $this->trans(
+                    'flash_edit_success',
+                    ['%name%' => $this->escapeHtml($this->admin->toString($object))],
+                    'SonataAdminBundle'
+                )
+            );
+        } catch (ModelManagerException $e) {
+            $this->handleModelManagerException($e);
+        } catch (LockException $e) {
+            $this->addFlash('sonata_flash_error', $this->trans('flash_lock_error', [
+                '%name%' => $this->escapeHtml($this->admin->toString($object)),
+                '%link_start%' => '<a href="'.$this->admin->generateObjectUrl('edit', $object).'">',
+                '%link_end%' => '</a>',
+            ], 'SonataAdminBundle'));
+        }
+
+        return $this->redirectToList();
     }
 }
