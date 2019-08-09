@@ -75,6 +75,13 @@ Value: Значение
 Channel: Канал
 Property List: Список свойств
 Property Create: Добавить свойство
+Lead Channel Value: Канал поступления лида
+Lead Created At: Дата создания лида
+Lead Description: Описание лида
+Lead Decision Maker: Лид лицо принимающее решение
+Lead Made Measurement: Был замер
+Lead Interest Assessment: Заинтересованность лида
+New: Новый
 
 ROLE_USER: Пользователь
 ROLE_COMPANY: Компания

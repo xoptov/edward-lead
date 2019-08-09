@@ -47,6 +47,12 @@ class TradeAdmin extends AbstractAdmin
             ->add('buyer.name')
             ->add('seller.name')
             ->add('lead.name')
+            ->add('lead.channel.value')
+            ->add('lead.createdAt')
+            ->add('lead.description')
+            ->add('lead.decisionMaker')
+            ->add('lead.madeMeasurement')
+            ->add('lead.interestAssessment')
             ->add('status', 'choice', [
                 'choices' => [
                     0 => 'New',
