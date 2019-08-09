@@ -18,10 +18,6 @@ $(function() {
         }
     });
 
-    const ErrorView = Backbone.View.extend({
-        tagName: 'li',
-    });
-
     const LogotypeUploader = Backbone.View.extend({
         initialize: function(options) {
             this.logotypeImage = this.$el.find(options.logotypeImage);
@@ -53,6 +49,7 @@ $(function() {
                 processData: false,
                 contentType: false,
                 success: function(resp) {
+                    view.errorsArea.empty();
                     if (view.logotypeImage[0] instanceof HTMLDivElement) {
                         const $newLogotypeImage = $('<img>').addClass('logo-choose__img');
                         view.logotypeImage.replaceWith($newLogotypeImage);
@@ -62,8 +59,13 @@ $(function() {
                     view.logotypeField.val(resp.path);
                 },
                 error: function(xhr) {
-                    debugger;
-                    //todo: тут короче нужно рэндерить ошибки загрузки логотипа.
+                    view.errorsArea.empty();
+                    if (413 === xhr.status) {
+                        view.errorsArea.append($('<li>Файл слишком большой для загрузки</li>'));
+                    }
+                    for (let i = 0; i < xhr.responseJSON.errors.length; i++) {
+                        view.errorsArea.append('<li>' + xhr.responseJSON.errors[i]  + '</li>');
+                    }
                 },
                 complete: function() {
                     view.button.enable();
