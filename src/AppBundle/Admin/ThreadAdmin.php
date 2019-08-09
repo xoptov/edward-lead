@@ -85,7 +85,10 @@ class ThreadAdmin extends AbstractAdmin
             ->add('createdAt')
             ->add('_action', null, [
                 'actions' => [
-                    'show' => []
+                    'show' => [],
+                    'reply' => ['template' => '@App/CRUD/list__action_reply.html.twig'],
+                    'writeToSeller' => ['template' => '@App/CRUD/list__action_write_to_seller.html.twig'],
+                    'close' => ['template' => '@App/CRUD/list__action_close.html.twig'],
                 ],
             ])
         ;
@@ -138,7 +141,12 @@ class ThreadAdmin extends AbstractAdmin
      */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept(['list', 'show']);
+        $collection
+            ->clearExcept(['list', 'show'])
+            ->add('reply',$this->getRouterIdParameter().'/reply')
+            ->add('writeToSeller',$this->getRouterIdParameter().'/write_to_seller')
+            ->add('close',$this->getRouterIdParameter().'/close')
+        ;
     }
 
     /**
