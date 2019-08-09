@@ -99,6 +99,10 @@ Thread List: Список обращений
 General: Основное
 Appeal: Обращение
 Messages: Сообщения
+Message: Сообщение
+flash_reply_success: Ответ успешно отправлен
+flash_reply_error: Во время ответа на обращение произошла ошибка.
+Arbitration and Support: Арбитраж и Техподдержка
 
 new: Новая
 accepted: Принята

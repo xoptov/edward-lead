@@ -81,6 +81,14 @@ class Thread extends BaseThread
     protected $lead;
 
     /**
+     * @var Thread|null
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Thread")
+     * @ORM\JoinColumn(name="seller_thread_id", referencedColumnName="id", nullable=true)
+     */
+    protected $sellerThread;
+
+    /**
      * @return string|null
      */
     public function getStatus(): ?string
@@ -133,6 +141,26 @@ class Thread extends BaseThread
     public function setLead(?Lead $lead): self
     {
         $this->lead = $lead;
+
+        return $this;
+    }
+
+    /**
+     * @return Thread|null
+     */
+    public function getSellerThread(): ?Thread
+    {
+        return $this->sellerThread;
+    }
+
+    /**
+     * @param Thread|null $sellerThread
+     *
+     * @return Thread
+     */
+    public function setSellerThread(?Thread $sellerThread): self
+    {
+        $this->sellerThread = $sellerThread;
 
         return $this;
     }

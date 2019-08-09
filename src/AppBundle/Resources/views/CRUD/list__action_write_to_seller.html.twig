@@ -1,0 +1,16 @@
+{% if object.sellerThread is not null %}
+    {% set href = admin.generateObjectUrl('reply', object.sellerThread) %}
+    {% set toggle_label = 'Открыть диалог с продавцом' %}
+{% elseif object.lead.user in object.participants  %}
+    {% set href = admin.generateObjectUrl('reply', object) %}
+    {% set toggle_label = 'Открыть диалог с покупателем' %}
+{% else %}
+    {% set href = admin.generateObjectUrl('writeToSeller', object) %}
+    {% set toggle_label = 'Написать продавцу' %}
+{% endif %}
+
+{% if object.typeAppeal == constant('AppBundle\\Entity\\Thread::TYPE_ARBITRATION') %}
+    <a class="btn btn-sm btn-default" href="{{ href }}">
+        <i class="fa fa-reply"></i> {{ toggle_label }}
+    </a>
+{% endif %}
