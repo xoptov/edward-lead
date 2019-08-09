@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -51,7 +52,7 @@ class TradeController extends CRUDController
         $objectName = $this->admin->toString($object);
 
         try {
-            $this->tradeManager->finishReject($object);
+            $this->tradeManager->finishRejectByLeadStatus($object, Lead::STATUS_BLOCKED);
             $this->admin->update($object);
 
             $this->addFlash(
