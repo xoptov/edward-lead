@@ -1,0 +1,125 @@
+{% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
+
+{% block show_groups %}
+    {{ parent() }}
+    {% if members|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-default">
+                    <div class="box-header">
+                        <h4 class="box-title">Участники</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                            <thead>
+                            <tr class="sonata-ba-list-field-header">
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'User Id'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'User Name'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Owner'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Membered At'|trans }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for member in members %}
+                                <tr class="sonata-ba-view-container">
+                                    <td class="sonata-ba-list-field">
+                                        {{ member.user.id }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ member.user.name }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {% if object.isOwner(member.user) %}
+                                            <span class="label label-success">Да</span>
+                                        {% else %}
+                                            <span class="label label-danger">Нет</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ member.createdAt|date('d.m.Y H:i:s') }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if leads|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-default">
+                    <div class="box-header">
+                        <h4 class="box-title">Лиды</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                            <thead>
+                            <tr class="sonata-ba-list-field-header">
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Id'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Name'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Phone'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Status'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Created At'|trans }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for lead in leads %}
+                                <tr class="sonata-ba-view-container">
+                                    <td class="sonata-ba-list-field">
+                                        <a target="_blank" href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.id }}</a>
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ lead.name }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ lead.phone|human_phone }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {% if lead.status is constant('STATUS_BLOCKED', lead) %}
+                                            <span class="label label-warning">Арбитраж</span>
+                                        {% elseif lead.status is constant('STATUS_ACTIVE', lead)%}
+                                            <span class="label label-default">Ожидает</span>
+                                        {% elseif lead.status is constant('STATUS_RESERVED', lead) %}
+                                            <span class="label label-primary">В работе</span>
+                                        {% elseif lead.status is constant('STATUS_SOLD', lead) %}
+                                            <span class="label label-success">Успех</span>
+                                        {% elseif lead.status is constant('STATUS_NO_TARGET', lead)%}
+                                            <span class="label label-danger">Не целевой</span>
+                                        {% else %}
+                                            <span class="label label-default">Неизвестный статус</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ lead.createdAt|date_format('d.m.Y H:i:s') }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
