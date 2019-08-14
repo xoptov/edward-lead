@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 
 class TradeVoter extends Voter
 {
-    const SUCCESS = 'success';
+    const ACCEPT = 'accept';
     const REJECT = 'reject';
 
     /**
@@ -34,7 +34,7 @@ class TradeVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::SUCCESS, self::REJECT])) {
+        if (!in_array($attribute, [self::ACCEPT, self::REJECT])) {
             return false;
         }
 

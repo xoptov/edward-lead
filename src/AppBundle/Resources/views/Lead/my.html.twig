@@ -1,5 +1,7 @@
 {% extends '@App/layout.html.twig' %}
 
+{% import '@App/common_macros.html.twig' as common_macros %}
+
 {% block content %}
     {% include '@App/flash_messages.html.twig' %}
     <div class="table_leads">
@@ -18,6 +20,7 @@
                             <th>Телефон</th>
                             <th>Город</th>
                             <th>Стоимость</th>
+                            <th>Продавец</th>
                             <th>Статус</th>
                             <th>&nbsp;</th>
                         </tr>
@@ -36,15 +39,10 @@
                                     </td>
                                     <td>{{ lead.price|money_format }}</td>
                                     <td>
-                                        {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
-                                            <span class="lead_arbitration">Арбитраж</span>
-                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_RESERVED') %}
-                                            <span class="lead_exchange">Проверка</span>
-                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
-                                            <span class="lead_sale">Успешно</span>
-                                        {% else %}
-                                            <span class="lead_active">Активен</span>
-                                        {% endif %}
+                                        {{ lead.user.name }}
+                                    </td>
+                                    <td>
+                                        {{ common_macros.lead_status(lead) }}
                                     </td>
                                     <td>
                                         <div class="table_link">
@@ -67,6 +65,7 @@
                             <th>Телефон</th>
                             <th>Город</th>
                             <th>Стоимость</th>
+                            <th>Продавец</th>
                             <th>Статус</th>
                             <th></th>
                         </tr>
@@ -80,7 +79,7 @@
                                         {% set show_number = false %}
                                         {% set current_call = null %}
                                         {% for call in calls %}
-                                            {% if call.lead.id == lead.id and lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
+                                            {% if call.lead.id == lead.id and lead.status is constant('STATUS_SOLD', lead) %}
                                                 {% set show_number = true %}
                                                 {% set current_call = call %}
                                             {% elseif call.lead.id == lead.id %}
@@ -102,22 +101,19 @@
                                     </td>
                                     <td>{{ trade.amount|money_format }}</td>
                                     <td>
-                                        {% if lead.status is constant('AppBundle\\Entity\\Lead::STATUS_BLOCKED') %}
-                                            <span class="lead_arbitration">Арбитраж</span>
-                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_RESERVED') %}
-                                            <span class="lead_exchange">Проверка</span>
-                                        {% elseif lead.status is constant('AppBundle\\Entity\\Lead::STATUS_SOLD') %}
-                                            <span class="lead_sale">Успешно</span>
-                                        {% endif %}
+                                        {{ lead.user.name }}
+                                    </td>
+                                    <td>
+                                        {{ common_macros.lead_status(lead) }}
                                     </td>
                                     <td>
                                         <div class="table_link">
                                             {# Тут я не знаю как сделать! #}
-                                            {% if current_call is null %}
-                                                <span class="phone_link"></span>
-                                            {% else %}
-                                                <span class="speaker"></span>
-                                            {% endif %}
+                                            {#{% if current_call is null %}#}
+                                                {#<span class="phone_link"></span>#}
+                                            {#{% else %}#}
+                                                {#<span class="speaker"></span>#}
+                                            {#{% endif %}#}
                                             <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
                                         </div>
                                     </td>

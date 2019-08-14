@@ -75,9 +75,6 @@ class TradeManager
      *
      * @throws FinancialException
      * @throws TradeException
-     * @throws OperationException
-     * @throws NoResultException
-     * @throws NonUniqueResultException
      */
     public function start(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
     {
@@ -92,14 +89,16 @@ class TradeManager
         $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
         $fee = $this->feesManager->calculateTradeFee($amount, FeesManager::TRADE_BUYER_FEE);
 
-        if ($buyerBalance < $amount + $fee) {
-            throw new InsufficientFundsException($buyer->getAccount(), $amount + $fee, 'Недостаточно средств у покупателя');
+        $costWithFee = $amount + $fee;
+
+        if ($buyerBalance < $costWithFee) {
+            throw new InsufficientFundsException($buyer->getAccount(), $costWithFee, 'Недостаточно средств у покупателя');
         }
 
         $trade = $this->create($buyer, $seller, $lead, $amount);
         $lead->setStatus(Lead::STATUS_RESERVED);
 
-        $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amount + $fee, false);
+        $hold = $this->holdManager->create($buyer->getAccount(), $trade, $costWithFee, false);
         $trade->setHold($hold);
 
         if ($flush) {
@@ -116,7 +115,7 @@ class TradeManager
      * @throws FinancialException
      * @throws OperationException
      */
-    public function finishSuccess(Trade $trade, Account $feesAccount): void
+    public function accept(Trade $trade, Account $feesAccount): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
@@ -165,14 +164,14 @@ class TradeManager
 
             $this->transactionManager->process($transactions);
 
+            $trade->setStatus(Trade::STATUS_ACCEPTED);
+            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
+
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
                 $trade->setHold(null);
                 $em->remove($hold);
             }
-
-            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
-            $trade->setStatus(Trade::STATUS_ACCEPTED);
 
             $em->flush();
         });
@@ -180,17 +179,21 @@ class TradeManager
 
     /**
      * @param Trade $trade
-     * @param string $status
      *
      * @throws OperationException
      */
-    public function finishRejectByLeadStatus(Trade $trade, string $status): void
+    public function reject(Trade $trade): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade, $status) {
+        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade) {
+
+            $lead = $trade->getLead();
+
+            $trade->setStatus(Trade::STATUS_REJECTED);
+            $lead->setStatus(Lead::STATUS_BLOCKED);
 
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
@@ -198,8 +201,26 @@ class TradeManager
                 $em->remove($hold);
             }
 
-            $trade->getLead()->setStatus($status);
-            $trade->setStatus(Trade::STATUS_REJECTED);
+            $em->flush();
+        });
+    }
+
+    /**
+     * @param Trade $trade
+     *
+     * @throws OperationException
+     */
+    public function arbitrage(Trade $trade): void
+    {
+        if ($trade->isProcessed()) {
+            throw new OperationException($trade, 'Торговая операция уже обработана');
+        }
+
+        $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade) {
+
+            $lead = $trade->getLead();
+            $trade->setStatus(Trade::STATUS_ARBITRAGE);
+            $lead->setStatus(Lead::STATUS_NO_TARGET);
 
             $em->flush();
         });

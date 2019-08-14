@@ -149,6 +149,10 @@ class TemplateExtension extends \Twig_Extension
      */
     public function mustShowCallButton(Lead $lead, User $user): bool
     {
+        if (!$lead->isReserved()) {
+            return false;
+        }
+
         if ($lead->isOwner($user)) {
             return false;
         }

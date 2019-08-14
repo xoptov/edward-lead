@@ -1,5 +1,7 @@
 {% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
 
+{% from '@App/common_macros.html.twig' import lead_status %}
+
 {% block show_groups %}
     {{ parent() }}
     {% if members|length %}
@@ -96,19 +98,15 @@
                                         {{ lead.phone|human_phone }}
                                     </td>
                                     <td class="sonata-ba-list-field">
-                                        {% if lead.status is constant('STATUS_BLOCKED', lead) %}
-                                            <span class="label label-warning">Арбитраж</span>
-                                        {% elseif lead.status is constant('STATUS_ACTIVE', lead)%}
-                                            <span class="label label-default">Ожидает</span>
-                                        {% elseif lead.status is constant('STATUS_RESERVED', lead) %}
-                                            <span class="label label-primary">В работе</span>
-                                        {% elseif lead.status is constant('STATUS_SOLD', lead) %}
-                                            <span class="label label-success">Успех</span>
-                                        {% elseif lead.status is constant('STATUS_NO_TARGET', lead)%}
-                                            <span class="label label-danger">Не целевой</span>
-                                        {% else %}
-                                            <span class="label label-default">Неизвестный статус</span>
-                                        {% endif %}
+                                        {{ lead_status(lead, {
+                                            'active': 'label-default',
+                                            'reserved': 'label-primary',
+                                            'no_target': 'label-warning',
+                                            'blocked': 'label-danger',
+                                            'sold': 'label-success',
+                                            'unkown': 'label-default',
+                                            'expired': 'label-default'
+                                        }) }}
                                     </td>
                                     <td class="sonata-ba-list-field">
                                         {{ lead.createdAt|date_format('d.m.Y H:i:s') }}

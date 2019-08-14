@@ -96,8 +96,7 @@ class AccountAdmin extends AbstractAdmin
                 'create',
                 'list',
                 'show',
-                'edit',
-                'delete'
+                'edit'
             ])
             ->add('toggle', $this->getRouterIdParameter().'/toggle');
     }

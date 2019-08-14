@@ -55,6 +55,43 @@ const vm = new Vue({
             }
             return '/bundles/app/v2/img/user.png';
         },
+        getStatusObject: function(status) {
+            const statusObj = {
+                class: null,
+                label: null
+            };
+            switch(status) {
+                case 'active':
+                    statusObj.class = 'active';
+                    statusObj.label = 'Ожидает';
+                    break;
+                case 'reserved':
+                    statusObj.class = 'reserved';
+                    statusObj.label = 'В работе';
+                    break;
+                case 'no_target':
+                    statusObj.class = 'no-target';
+                    statusObj.label = 'Не целевой';
+                    break;
+                case 'blocked':
+                    statusObj.class = 'blocked';
+                    statusObj.label = 'Арбитраж';
+                    break;
+                case 'sold':
+                    statusObj.class = 'sold';
+                    statusObj.label = 'Продан';
+                    break;
+                case 'expired':
+                    statusObj.class = 'expired';
+                    statusObj.label = 'Просрочен';
+                    break;
+                default:
+                    statusObj.class = 'unknown';
+                    statusObj.label = 'Не извесно';
+            }
+
+            return statusObj;
+        },
         onDeactivateClick: function() {
             this.$http.get('/api/v1/room/' + this.roomId + '/deactivate')
                 .then(response => {

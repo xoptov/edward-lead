@@ -2,12 +2,13 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
+use AppBundle\Event\TradeEvent;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TradeController extends CRUDController
@@ -18,11 +19,20 @@ class TradeController extends CRUDController
     private $tradeManager;
 
     /**
-     * @param TradeManager $tradeManager
+     * @var EventDispatcherInterface
      */
-    public function __construct(TradeManager $tradeManager)
-    {
+    private $eventDispatcher;
+
+    /**
+     * @param TradeManager             $tradeManager
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(
+        TradeManager $tradeManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->tradeManager = $tradeManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -52,8 +62,10 @@ class TradeController extends CRUDController
         $objectName = $this->admin->toString($object);
 
         try {
-            $this->tradeManager->finishRejectByLeadStatus($object, Lead::STATUS_BLOCKED);
+            $this->tradeManager->reject($object);
             $this->admin->update($object);
+
+            $this->eventDispatcher->dispatch(Trade::STATUS_REJECTED, new TradeEvent($object));
 
             $this->addFlash(
                 'sonata_flash_success',
