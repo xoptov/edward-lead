@@ -4151,15 +4151,9 @@ input.is-tel-correct:invalid ~ .error-note {
     width: 100%;
 }
 
-.lead_exchange,
-.lead_sale,
-.lead_arbitration,
-.lead_nottar,
-.lead_active {
+.label {
     width: 96px;
     height: 23px;
-    background-color: #00a368;
-    color: #ffffff;
     font-family: "Helvetica Neue Cyr - Roman";
     font-size: 12px;
     font-weight: 500;
@@ -4171,30 +4165,85 @@ input.is-tel-correct:invalid ~ .error-note {
     border-radius: 3px;
 }
 
-.lead_exchange {
+.label.label-active {
+    background-color: #8bf811;
+    color: #000
+}
+
+.label.label-reserved {
     background-color: #ffd964;
     color: #545454;
 }
 
-.lead_arbitration {
-    background-color: #ff7f85;
+.label.label-no-target {
+    background-color: #ffafaf;
+    color: #fff;
 }
 
-.lead_nottar {
+.label.label-blocked {
     background-color: #ff3a3a;
+    color: #fff;
 }
 
-.lead_readily {
-    color: #00a368;
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-weight: 400;
+.label.label-sold {
+    background-color: #00a368;
+    color: #fff;
 }
 
-.lead_active {
-    background-color: #8bf811;
-    color: #000;
+.lead.label-expired {
+    background-color: #979ba3;
+    color: #fff;
 }
+
+.label.label-unknown {
+    background-color: #0f0f0f;
+    color: #fff;
+}
+
+/*.lead_exchange,*/
+/*.lead_sale,*/
+/*.lead_arbitration,*/
+/*.lead_nottar,*/
+/*.lead_active {*/
+    /*width: 96px;*/
+    /*height: 23px;*/
+    /*background-color: #00a368;*/
+    /*color: #ffffff;*/
+    /*font-family: "Helvetica Neue Cyr - Roman";*/
+    /*font-size: 12px;*/
+    /*font-weight: 500;*/
+    /*margin: auto;*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*cursor: pointer;*/
+    /*border-radius: 3px;*/
+/*}*/
+
+/*.lead_exchange {*/
+    /*background-color: #ffd964;*/
+    /*color: #545454;*/
+/*}*/
+
+/*.lead_arbitration {*/
+    /*background-color: #ff7f85;*/
+/*}*/
+
+/*.lead_nottar {*/
+    /*background-color: #ff3a3a;*/
+/*}*/
+
+/*.lead_readily {*/
+    /*color: #00a368;*/
+    /*font-family: "Helvetica Neue Cyr - Roman";*/
+    /*font-size: 14px;*/
+    /*font-weight: 400;*/
+/*}*/
+
+/*.lead_active {*/
+    /*background-color: #8bf811;*/
+    /*color: #000;*/
+/*}*/
 
 .table_link {
     display: flex;

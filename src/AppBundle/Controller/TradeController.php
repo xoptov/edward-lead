@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
-use AppBundle\Event\LeadEvent;
+use AppBundle\Event\TradeEvent;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\TradeVoter;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,29 +28,30 @@ class TradeController extends Controller
     }
 
     /**
-     * @Route("/trade/success/{id}", name="app_trade_success", methods={"GET"})
+     * @Route("/trade/accept/{id}", name="app_trade_accept", methods={"GET"})
      *
      * @param Trade                    $trade
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function successBuyAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
+    public function acceptAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
         $lead = $trade->getLead();
 
-        if (!$this->isGranted(TradeVoter::SUCCESS, $trade)) {
+        if (!$this->isGranted(TradeVoter::ACCEPT, $trade)) {
             $this->addFlash('error', 'У Вас нет прав для подтверждения качества лида');
 
             return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
         }
 
         try {
+
             $feesAccount = $this->getDoctrine()->getRepository(Account::class)
                 ->getFeesAccount();
 
-            $this->tradeManager->finishSuccess($trade, $feesAccount);
-            $eventDispatcher->dispatch(LeadEvent::SOLD, new LeadEvent($trade->getLead()));
+            $this->tradeManager->accept($trade, $feesAccount);
+            $eventDispatcher->dispatch(TradeEvent::ACCEPT, new TradeEvent($trade));
 
             $this->addFlash('success', 'Покупка лида завершена');
 
@@ -62,30 +63,34 @@ class TradeController extends Controller
     }
 
     /**
-     * @Route("/trade/reject/{id}/{status}", name="app_trade_reject", methods={"GET"})
+     * @Route("/trade/reject/{id}", name="app_trade_reject", methods={"GET"})
      *
      * @param Trade                    $trade
-     * @param string                   $status
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function rejectBuyAction(Trade $trade, string $status, EventDispatcherInterface $eventDispatcher): Response
+    public function rejectAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
-        $lead = $trade->getLead();
-
         if (!$this->isGranted(TradeVoter::REJECT, $trade)) {
             $this->addFlash('error', 'У Вас нет прав для отказа от указанной сделки');
 
-            return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
+            return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
         }
 
         try {
-            $this->tradeManager->finishRejectByLeadStatus($trade, $status);
-            $eventDispatcher->dispatch(LeadEvent::NO_TARGET, new LeadEvent($lead));
 
-            $this->addFlash('success', 'Покупка заморожена и передена в арбитраж');
+            $lead = $trade->getLead();
 
+            if ($lead->hasRoom() && !$lead->getRoom()->isPlatformWarranty()) {
+                $this->tradeManager->reject($trade);
+                $eventDispatcher->dispatch(TradeEvent::REJECT, new TradeEvent($trade));
+                $this->addFlash('success', 'Покупка отклонена');
+            } else {
+                $this->tradeManager->arbitrage($trade);
+                $eventDispatcher->dispatch(TradeEvent::ARBITRAGE, new TradeEvent($trade));
+                $this->addFlash('success', 'Покупка заморожена и передена в арбитраж');
+            }
         } catch(\Exception $e) {
             $this->addFlash('error', $e->getMessage());
         }

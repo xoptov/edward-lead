@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class LeadEvent extends Event
 {
-    const NEW_PLACED = 'new.lead.placed';
+    const NEW_PLACED = 'lead.new_placed';
     const EDITED     = 'lead.edited';
     const RESERVED   = 'lead.reserved';
     const SOLD       = 'lead.sold';

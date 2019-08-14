@@ -1547,6 +1547,14 @@ header .header_top .header_main .main .balance p {
   background-color: #ff3a3a;
 }
 
+#main .main_content .content .content_box .table table tbody tr td.status span.expired {
+  background-color: #979ba3;
+}
+
+#main .main_content .content .content_box .table table tbody tr td.status span.unknown {
+  background-color: #979ba3;
+}
+
 #main .main_content .content .content_box .table a.more {
   color: #00a368;
   text-transform: uppercase;

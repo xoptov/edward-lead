@@ -13,6 +13,7 @@ class Trade extends Operation
     const STATUS_NEW = 0;
     const STATUS_ACCEPTED = 1;
     const STATUS_REJECTED = 2;
+    const STATUS_ARBITRAGE = 3;
 
     /**
      * @var User
@@ -143,6 +144,18 @@ class Trade extends Operation
     public function getLead(): Lead
     {
         return $this->lead;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLeadId(): ?int
+    {
+        if ($this->lead) {
+            return $this->lead->getId();
+        }
+
+        return null;
     }
 
     /**

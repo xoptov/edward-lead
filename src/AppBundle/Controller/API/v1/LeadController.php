@@ -344,7 +344,7 @@ class LeadController extends Controller
                     $row['buyer']['company'] = [
                         'id' => $company->getId(),
                         'short_name' => $company->getShortName(),
-                        'lange_name' => $company->getLargeName()
+                        'large_name' => $company->getLargeName()
                     ];
                 }
             }

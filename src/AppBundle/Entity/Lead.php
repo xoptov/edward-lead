@@ -25,6 +25,7 @@ class Lead implements IdentifiableInterface
     const STATUS_RESERVED  = 'reserved';
     const STATUS_SOLD      = 'sold';
     const STATUS_NO_TARGET = 'no_target';
+    const STATUS_EXPIRED   = 'expired';
 
     /**
      * @var Room|null

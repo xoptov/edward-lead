@@ -52,12 +52,7 @@
                                     <span v-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
                                 </td>
                                 <td class="status">
-                                    <span class="active"    v-if="lead.status == 'active'">Ожидает</span>
-                                    <span class="reserved"  v-else-if="lead.status == 'reserved'">Взят в работу</span>
-                                    <span class="sold"      v-else-if="lead.status == 'sold'">Продан</span>
-                                    <span class="blocked"   v-else-if="lead.status == 'blocked'">Арбитраж</span>
-                                    <span class="no-target" v-else-if="lead.status == 'no_target'">Не целевой</span>
-                                    <span v-else>Не известно</span>
+                                    <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label">
                                 </td>
                                 <td>
                                     <a target="_blank" :href="leadViewUrl(lead)" v-if="activated">
@@ -214,18 +209,15 @@
     <script src="{{ asset('bundles/app/js/lib/date.format.js') }}"></script>
     <script>
         let roomId = null;
-
-        {% if room %}
-            roomId = {{ room.id }};
-        {% endif %}
-
         let roomEnabled = false;
-
-        {% if room.enabled %}
-            roomEnabled = true;
-        {% else %}
-            roomEnabled = false;
-        {% endif %}
+        {%- if room -%}
+            roomId = {{ room.id }};
+            {%- if room.enabled -%}
+                roomEnabled = true;
+            {%- else -%}
+                roomEnabled = false;
+            {%- endif -%}
+        {%- endif -%}
     </script>
     <script src="{{ asset('bundles/app/v2/js/room-view/app.js') }}"></script>
 {% endblock %}

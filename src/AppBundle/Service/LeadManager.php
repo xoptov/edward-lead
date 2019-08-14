@@ -236,7 +236,7 @@ class LeadManager
         }
 
         try {
-            if ($lead->getBuyer() === $user && $this->hasAnsweredPhoneCall($lead, $user)) {
+            if ($lead->getBuyer() === $user && ($lead->isSold() || $this->hasAnsweredPhoneCall($lead, $user))) {
                 return true;
             }
         } catch (NonUniqueResultException $e) {

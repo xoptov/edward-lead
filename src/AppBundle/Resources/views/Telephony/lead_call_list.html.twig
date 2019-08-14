@@ -1,5 +1,7 @@
 {% extends '@App/layout.html.twig' %}
 
+{% from '@App/common_macros.html.twig' import lead_status %}
+
 {% block content %}
     <div class="table_leads">
         {% include '@App/flash_messages.html.twig' %}
@@ -39,24 +41,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% set lead_status = phoneCall.lead.status %}
-                                {% if lead_status is constant('STATUS_ACTIVE', phoneCall.lead) %}
-                                    {% set status_class = 'lead_active' %}
-                                    {% set status_label = 'Активный' %}
-                                {% elseif lead_status is constant('STATUS_RESERVED', phoneCall.lead) %}
-                                    {% set status_class = 'lead_exchange' %}
-                                    {% set status_label = 'Зарезервирован' %}
-                                {% elseif lead_status is constant('STATUS_BLOCKED', phoneCall.lead) %}
-                                    {% set status_class = 'lead_arbitration' %}
-                                    {% set status_label = 'Арбитраж' %}
-                                {% elseif lead_status is constant('STATUS_SOLD', phoneCall.lead) %}
-                                    {% set status_class = 'lead_sale' %}
-                                    {% set status_label = 'Сделка завершена' %}
-                                {% else %}
-                                    {% set status_class = 'lead_nottar' %}
-                                    {% set status_label = 'Не указано' %}
-                                {% endif %}
-                                <span class="{{ status_class }}">{{ status_label }}</span>
+                                {{ lead_status(phoneCall.lead) }}
                             </td>
                             <td>
                                 {% if phoneCall.callback is not empty and phoneCall.callback.recording %}

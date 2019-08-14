@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class InvoiceEvent extends Event
 {
-    const CREATED = 'invoice_created';
+    const CREATED = 'invoice.created';
 
     /**
      * @var Invoice

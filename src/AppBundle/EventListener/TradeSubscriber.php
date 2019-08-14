@@ -2,16 +2,16 @@
 
 namespace AppBundle\EventListener;
 
-use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
-use AppBundle\Event\LeadEvent;
+use AppBundle\Entity\Thread;
+use AppBundle\Event\TradeEvent;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
 use FOS\MessageBundle\Sender\SenderInterface;
 use FOS\MessageBundle\Composer\ComposerInterface;
+use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class LeadSubscriber implements EventSubscriberInterface
+class TradeSubscriber implements EventSubscriberInterface
 {
     /**
      * @var EntityManagerInterface
@@ -34,7 +34,9 @@ class LeadSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            LeadEvent::NO_TARGET => 'handleNoTarget'
+            TradeEvent::ARBITRAGE => 'handleArbitrage',
+            TradeEvent::ACCEPT => 'handleAccept',
+            TradeEvent::REJECT => 'handleReject'
         ];
     }
 
@@ -54,17 +56,12 @@ class LeadSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param LeadEvent $event
+     * @param TradeEvent $event
      */
-    public function handleNoTarget(LeadEvent $event)
+    public function handleArbitrage(TradeEvent $event): void
     {
-        $lead = $event->getLead();
-
-        if (!$lead->hasTrade()) {
-            return;
-        }
-
-        $buyer = $lead->getBuyer();
+        $trade = $event->getTrade();
+        $buyer = $trade->getBuyer();
 
         if (!$buyer) {
             return;
@@ -83,7 +80,7 @@ class LeadSubscriber implements EventSubscriberInterface
         $threadBuilder
             ->setSubject('Не целевой лид')
             ->setSender($buyer)
-            ->setBody(sprintf('Лид №%d не целевой, прошу Вас помочь с решением вопроса.', $lead->getId()));
+            ->setBody(sprintf('Лид №%d не целевой, прошу Вас помочь с решением вопроса.', $trade->getLead()->getId()));
 
         foreach ($admins as $admin) {
             $threadBuilder->addRecipient($admin);
@@ -94,10 +91,28 @@ class LeadSubscriber implements EventSubscriberInterface
         /** @var Thread $thread */
         $thread = $message->getThread();
         $thread
-            ->setLead($lead)
+            ->setLead($trade->getLead())
             ->setStatus(Thread::STATUS_NEW)
             ->setTypeAppeal(Thread::TYPE_ARBITRATION);
 
         $this->fosSender->send($message);
+
+        //todo: тут необходимо добавить создания нотификации для продавца.
+    }
+
+    /**
+     * @param TradeEvent $event
+     */
+    public function handleAccept(TradeEvent $event): void
+    {
+        //todo: тут необходимо добавить создание нотификации для продавца.
+    }
+
+    /**
+     * @param TradeEvent $event
+     */
+    public function handleReject(TradeEvent $event): void
+    {
+        //todo: тут необходимо добавить создание нотификации для продавца.
     }
 }
