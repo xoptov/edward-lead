@@ -121,9 +121,10 @@ var vm = new Vue({
             xhr.send(formData);
 
             promise.then((event) => {
+                this.form.errors = [];
                 this.currentThread.messages.push(event.target.response);
                 this.currentThread.status = 'wait_support';
-                let id = self.currentThread.id;
+                let id = this.currentThread.id;
                 this.openedThreads.forEach(function (thread, i) {
                     if (thread.id === id) {
                         Vue.set(vm.openedThreads, i, vm.currentThread)
@@ -131,9 +132,9 @@ var vm = new Vue({
                 });
                 this.form.children.body.data = '';
                 this.form.children.images.data = {};
-                this.form.errors = [];
             })
             .catch((event) => {
+                this.form.errors = [];
                 this.form.errors = event.target.response.errors;
             });
         },

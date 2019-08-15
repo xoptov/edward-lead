@@ -64,10 +64,15 @@ class Message extends BaseMessage
      * @var ArrayCollection|PersistentCollection
      *
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Image")
-     * @ORM\JoinTable(name="message_images",
-     *      joinColumns={@ORM\JoinColumn(name="message_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="image_id", referencedColumnName="id", unique=true)}
-     *      )
+     * @ORM\JoinTable(
+     *     name="message_images",
+     *     joinColumns={
+     *          @ORM\JoinColumn(name="message_id", referencedColumnName="id")
+     *     },
+     *     inverseJoinColumns={
+     *          @ORM\JoinColumn(name="image_id", referencedColumnName="id", unique=true)
+     *     }
+     * )
      */
     protected $images;
 
