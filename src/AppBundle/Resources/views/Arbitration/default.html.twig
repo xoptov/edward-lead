@@ -87,8 +87,8 @@
         </div>
     </script>
     <script type="text/x-template" id="component-thread-message">
-        <div class="message" v-bind:class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
-            <div class="message__img"><span v-if="logo"><img v-bind:src="logo"></span></div>
+        <div class="message" :class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
+            <img :src="logo" v-if="logo">
             <div class="message__content">
                 <p class="message__header"><b>{{ vue_var('sender') }}</b>
                     <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
