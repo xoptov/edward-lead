@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Admin;
 
-use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use AppBundle\Entity\Thread;
