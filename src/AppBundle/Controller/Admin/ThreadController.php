@@ -38,13 +38,9 @@ class ThreadController extends CRUDController
         $this->admin->setSubject($existingObject);
         $objectId = $this->admin->getNormalizedIdentifier($existingObject);
 
-        if ($request->isMethod(Request::METHOD_GET)) {
-            $message = new Message();
-            $message->setThread($existingObject);
-            $form = $this->createForm(AdminMessageType::class, $message);
-        } else {
-            $form = $this->createForm(AdminMessageType::class);
-        }
+        $message = new Message();
+        $message->setThread($existingObject);
+        $form = $this->createForm(AdminMessageType::class, $message);
 
         $form->handleRequest($request);
 

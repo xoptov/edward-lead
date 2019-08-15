@@ -9,7 +9,6 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Type\MessageType;
 use AppBundle\Service\Uploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Exception\IOException;
