@@ -46,6 +46,7 @@ class InvoiceManager
         $invoice = new Invoice();
         $invoice
             ->setUser($user)
+            ->setPhone($phone)
             ->setDescription('Пополнение баланса')
             ->setAmount($amount);
 

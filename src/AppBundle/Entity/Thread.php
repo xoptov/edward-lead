@@ -10,7 +10,7 @@ use FOS\MessageBundle\Entity\Thread as BaseThread;
 /**
  * @ORM\Entity
  */
-class Thread extends BaseThread
+class Thread extends BaseThread implements IdentifiableInterface
 {
     /**
      * @ORM\Id
