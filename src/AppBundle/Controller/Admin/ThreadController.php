@@ -2,30 +2,29 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\Message;
-use AppBundle\Entity\Thread;
-use AppBundle\Form\Type\AdminMessageType;
-use AppBundle\Form\Type\AdminThreadType;
-use FOS\MessageBundle\Composer\Composer;
-use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Exception\LockException;
-use Sonata\AdminBundle\Exception\ModelManagerException;
-use Symfony\Component\Form\FormRenderer;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
+use AppBundle\Entity\Thread;
+use AppBundle\Entity\Message;
+use AppBundle\Form\Type\AdminThreadType;
+use FOS\MessageBundle\Composer\Composer;
+use Symfony\Component\Form\FormRenderer;
+use AppBundle\Form\Type\AdminMessageType;
+use Symfony\Component\HttpFoundation\Response;
+use Sonata\AdminBundle\Exception\LockException;
+use Sonata\AdminBundle\Controller\CRUDController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Sonata\AdminBundle\Exception\ModelManagerException;
 
 class ThreadController extends CRUDController
 {
     /**
-     * @param int|null $id
-     *
      * @return Response
      *
      * @throws RuntimeError
      */
-    public function replyAction($id = null)
+    public function replyAction()
     {
         $request = $this->getRequest();
 
@@ -39,7 +38,9 @@ class ThreadController extends CRUDController
         $this->admin->setSubject($existingObject);
         $objectId = $this->admin->getNormalizedIdentifier($existingObject);
 
-        $form = $this->createForm(AdminMessageType::class);
+        $message = new Message();
+        $message->setThread($existingObject);
+        $form = $this->createForm(AdminMessageType::class, $message);
 
         $form->handleRequest($request);
 
@@ -56,8 +57,6 @@ class ThreadController extends CRUDController
                     ->setSender($this->getUser())
                     ->setBody($newMessage->getBody())
                     ->getMessage();
-
-                $em = $this->getDoctrine()->getManager();
 
                 try {
                     $sender = $this->get('fos_message.sender');

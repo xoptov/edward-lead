@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
  */
-class Message extends BaseMessage
+class Message extends BaseMessage implements IdentifiableInterface
 {
     /**
      * @ORM\Id

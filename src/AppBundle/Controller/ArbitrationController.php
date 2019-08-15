@@ -9,7 +9,6 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Type\MessageType;
 use AppBundle\Service\Uploader;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -35,7 +34,7 @@ class ArbitrationController extends Controller
         $inboxThreads = $provider->getInboxThreads();
         $sentThreads = $provider->getSentThreads();
 
-        $threads = array_merge($inboxThreads, $sentThreads);
+        $threads = array_unique(array_merge($inboxThreads, $sentThreads), SORT_REGULAR);
 
         usort($threads, function (Thread $a, Thread $b) {
             if ($a->getCreatedAt() == $b->getCreatedAt()) {
@@ -62,9 +61,7 @@ class ArbitrationController extends Controller
             return false;
         });
 
-        $form = $this->createForm(MessageType::class, null, [
-            'action' => '/arbitration'
-        ]);
+        $form = $this->createForm(MessageType::class);
 
         return $this->render("@App/Arbitration/default.html.twig", [
             'openedThreads' => $openedThreads,

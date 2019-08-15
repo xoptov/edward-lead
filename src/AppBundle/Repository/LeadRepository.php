@@ -64,6 +64,7 @@ class LeadRepository extends EntityRepository
     public function getOffersByCities(array $cities, array $statuses): array
     {
         $queryBuilder = $this->createQueryBuilder('l')
+            ->where('l.room IS NULL')
             ->orderBy('l.updatedAt', 'DESC')
             ->addOrderBy('l.createdAt', 'DESC');
 
