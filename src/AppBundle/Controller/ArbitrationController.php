@@ -8,7 +8,9 @@ use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\MessageType;
 use AppBundle\Service\Uploader;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -74,58 +76,62 @@ class ArbitrationController extends Controller
     /**
      * @Route("/arbitration/reply", name="app_arbitration_reply", methods={"POST"})
      *
-     * @param Request $request
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
+     * @param CacheManager           $cacheManager
      *
      * @return JsonResponse
      */
-    public function reply(Request $request) : JsonResponse
-    {
-        $form = $this->createForm(MessageType::class, null, [
-            'action' => '/arbitration'
-        ]);
+    public function reply(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        CacheManager $cacheManager
+    ) : JsonResponse {
 
+        $form = $this->createForm(MessageType::class);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            /** @var Message $message */
-            $message = $form->getData();
-            /** @var User $user */
-            $user = $this->getUser();
-
-            $message->setSender($user);
-            $message->getThread()->setStatus(Thread::STATUS_WAIT_SUPPORT);
-
-            try {
-                $this->getDoctrine()->getManager()->persist($message);
-                $this->getDoctrine()->getManager()->flush();
-
-                if ($company = $user->getCompany()) {
-                    /** @var Image $logotype */
-                    if ($logotype = $company->getLogotype()) {
-                        $logo = $logotype->getPath();
-                    } else {
-                        $logo = null;
-                    }
-                } else {
-                    $logo = null;
-                }
-
-
-                return new JsonResponse([
-                    'target_in' => false,
-                    'target_out' => true,
-                    'sender' => 'Ваше сообщение',
-                    'body' => $message->getBody(),
-                    'time' => date_format($message->getCreatedAt(), 'd.m.Y H:m'),
-                    'logo' => $logo
-                ]);
-            } catch (ORMException $exception) {
-                return new JsonResponse(['errors' => ['Не удалось отправить сообщение!']], Response::HTTP_BAD_REQUEST);
+        if (!$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
             }
 
+            return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(['errors' => ['Форма заполненна не верно!']], Response::HTTP_BAD_REQUEST);
+        /** @var Message $message */
+        $message = $form->getData();
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $message->setSender($user);
+        $message->getThread()->setStatus(Thread::STATUS_WAIT_SUPPORT);
+
+        $entityManager->persist($message);
+        $entityManager->flush();
+
+        $logotypePath = null;
+
+        if ($user->isCompany()) {
+
+            $company = $user->getCompany();
+            $logotype = $company->getLogotype();
+
+            if ($logotype) {
+                $logotypePath = $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_26x26');
+            }
+        }
+
+        return new JsonResponse([
+            'target_in' => false,
+            'target_out' => true,
+            'sender' => 'Ваше сообщение',
+            'body' => $message->getBody(),
+            'time' => date_format($message->getCreatedAt(), 'd.m.Y H:m'),
+            'logotype' => $logotypePath
+        ]);
     }
 
     /**

@@ -4,34 +4,23 @@ Vue.component('thread-tab', {
 });
 
 Vue.component('thread-message', {
-    props: ['sender', 'time', 'logo', 'body', 'target_in', 'target_out'],
+    props: ['sender', 'time', 'logotype', 'body', 'target_in', 'target_out'],
     template: '#component-thread-message'
 });
 
 Vue.component('message-form', {
-    props: ['children', 'thread'],
+    props: ['children', 'thread', 'errors'],
     template: '#component-message-form',
     methods: {
         openFileDialog() {
             this.$refs.file.click();
         },
         addedFiles(event) {
-            if (typeof this.fileCount === 'undefined') {
-                this.fileCount = 0;
-            }
-            let self = this;
-            $.each(event.target.files, function (key, value) {
-                self.fileCount++;
-                self.upload(value, self.children.images.uploadUrl)
-                    .then(e => {
-                        let element = {id: self.fileCount, realName: value.name, serverName: e.target.response.name};
-                        Vue.set(vm.form.children.images.data, e.target.response.id, element);
-                    })
-                    .catch(e => {
-                        console.log(e);
-                    });
+            $.each(event.target.files, (key, value) => {
+                this.upload(value, this.children.images.uploadUrl)
+                    .then(event => this.$emit('image-uploaded', {id: event.target.response.id, realName: value.name, serverName: event.target.response.name}))
+                    .catch(event => console.log(event));
             });
-
         },
         upload(file, url, method = "POST", headers = {}, additionalData = {}) {
             let xhr = new XMLHttpRequest();
@@ -101,7 +90,6 @@ Vue.component('form-image', {
     }
 });
 
-
 var vm = new Vue({
     el: '#arbitrate',
     data: data,
@@ -119,8 +107,7 @@ var vm = new Vue({
         },
         formSubmit: function () {
             let formData = new FormData(document.querySelector('form')),
-                xhr = new XMLHttpRequest(),
-                self = this;
+                xhr = new XMLHttpRequest();
 
             xhr.open('POST', this.form.action, true);
             xhr.responseType = 'json';
@@ -133,22 +120,25 @@ var vm = new Vue({
 
             xhr.send(formData);
 
-            promise
-                .then(function (e) {
-                    self.currentThread.messages.push(e.target.response);
-                    self.currentThread.status = 'wait_support';
-                    let id = self.currentThread.id;
-                    self.openedThreads.forEach(function (thread, i) {
-                        if (thread.id === id) {
-                            Vue.set(vm.openedThreads, i, vm.currentThread)
-                        }
-                    });
-                    self.form.children.body.data = '';
-                    self.form.children.images.data = {};
-                })
-                .catch(function (e) {
-                    console.log(e);
+            promise.then((event) => {
+                this.currentThread.messages.push(event.target.response);
+                this.currentThread.status = 'wait_support';
+                let id = self.currentThread.id;
+                this.openedThreads.forEach(function (thread, i) {
+                    if (thread.id === id) {
+                        Vue.set(vm.openedThreads, i, vm.currentThread)
+                    }
                 });
+                this.form.children.body.data = '';
+                this.form.children.images.data = {};
+                this.form.errors = [];
+            })
+            .catch((event) => {
+                this.form.errors = event.target.response.errors;
+            });
+        },
+        onImageUploaded: function(imageData) {
+            this.form.children.images.data.push(imageData);
         }
     }
 });
