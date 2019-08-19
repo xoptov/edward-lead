@@ -15,17 +15,26 @@ var data = {
             type: '{{ thread.typeAppeal }}',
             thread: 'open',
             messages: [
-                {% for message in thread.messages %}
-                {% set sender = message.sender %}
-                {
-                    target_in: {% if app.user == sender %}false{% else %}true{% endif %},
-                    target_out: {% if app.user == sender %}true{% else %}false{% endif %},
-                    sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
-                    body: '{{ message.body }}',
-                    time: '{{ message.createdAt|date('d.m.Y H:m') }}',
-                    logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_26x26') }}"{% else %}null{% endif %}{% else %}null{% endif %}
-                }{% if not loop.last %},{% endif %}
-                {% endfor %}
+                {%- for message in thread.messages -%}
+                    {%- set sender = message.sender -%}
+                    {
+                        target_in: {% if app.user == sender %}false{% else %}true{% endif %},
+                        target_out: {% if app.user == sender %}true{% else %}false{% endif %},
+                        sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
+                        body: '{{ message.body }}',
+                        time: '{{ message.createdAt|date('d.m.Y H:m') }}',
+                        logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_26x26') }}"{% else %}null{% endif %}{% else %}null{% endif %},
+                        images: [
+                            {%- for image in message.images -%}
+                                {
+                                    id: {{ image.id }},
+                                    filename: '{{ image.filename }}',
+                                    path: '{{ image.path }}'
+                                }{% if not loop.last %},{% endif %}
+                            {%- endfor -%}
+                        ]
+                    }{% if not loop.last %},{% endif %}
+                {%- endfor -%}
             ]
         }
         {% if not loop.last %},{% endif %}
@@ -49,7 +58,16 @@ var data = {
                     sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
                     body: '{{ message.body }}',
                     time: '{{ message.createdAt|date('d.m.Y H:m') }}',
-                    logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_26x26') }}"{% else %}null{% endif %}{% else %}null{% endif %}
+                    logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_26x26') }}"{% else %}null{% endif %}{% else %}null{% endif %},
+                    images: [
+                        {%- for image in message.images -%}
+                            {
+                                id: {{ image.id }},
+                                filename: '{{ image.filename }}',
+                                path: '{{ image.path }}'
+                            }{% if not loop.last %},{% endif %}
+                        {%- endfor -%}
+                    ]
                 }{% if not loop.last %},{% endif %}
                 {% endfor %}
             ]

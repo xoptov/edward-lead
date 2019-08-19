@@ -121,13 +121,25 @@ class ArbitrationController extends Controller
             }
         }
 
+        $images = [];
+
+        /** @var Image $image */
+        foreach ($message->getImages() as $image) {
+            $images[] = [
+                'id' => $image->getId(),
+                'filename' => $image->getFilename(),
+                'path' => $image->getPath()
+            ];
+        }
+
         return new JsonResponse([
             'target_in' => false,
             'target_out' => true,
             'sender' => 'Ваше сообщение',
             'body' => $message->getBody(),
             'time' => date_format($message->getCreatedAt(), 'd.m.Y H:m'),
-            'logotype' => $logotypePath
+            'logotype' => $logotypePath,
+            'images' => $images
         ]);
     }
 
@@ -197,7 +209,7 @@ class ArbitrationController extends Controller
 
         $image = $this->getDoctrine()->getRepository(Image::class)->find($id);
 
-        if (is_null($image)) {
+        if (!$image) {
             return new JsonResponse(['errors' => ['Такого файла не существует!']], Response::HTTP_BAD_REQUEST);
         }
 
