@@ -1,6 +1,35 @@
 Vue.component('thread-tab', {
     props: ['id', 'lead', 'date', 'status', 'type', 'item', 'thread'],
-    template: '#thread-tab'
+    template: '#thread-tab',
+    computed: {
+        label: function() {
+            if ('arbitration' === this.type) {
+                return 'Арбитраж #' + this.id;
+            }
+            return 'Обращение #' + this.id;
+        },
+        state: function() {
+            if ('arbitration' === this.type) {
+                if ('new' === this.status || 'closed' === this.status) {
+                    return 'Лид #' + this.lead;
+                }
+            } else {
+                if ('new' === this.status) {
+                    return 'Новое обращение';
+                }
+                if ('closed' === this.status) {
+                    return 'Закрыто';
+                }
+            }
+            switch (this.status) {
+                case 'wait_user':
+                    return 'Вам ответила тех. поддержка';
+                case 'wait_support':
+                    return 'Ожидаем ответа от поддержки';
+            }
+            return 'Неизвестно';
+        }
+    }
 });
 
 Vue.component('thread-message', {

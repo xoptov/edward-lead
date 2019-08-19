@@ -53,8 +53,13 @@
             <button class="btn btn-middle-green u-margin-auto">Открыть новое обращение</button>
         </div>
         <div class="arbitrate__info">
-            <span class="arbitrate__info__title" v-if="currentThread.id === null">Выберите обращение для отображения</span>
-            <span class="arbitrate__info__title" v-if="currentThread.id !== null">Арбитраж #{{ vue_var('currentThread.id') }}</span>
+            <span class="arbitrate__info__title" v-if="currentThread.id !== null && currentThread.type === 'arbitration'">
+                Арбитраж #{{ vue_var('currentThread.id') }}
+            </span>
+            <span class="arbitrate__info__title" v-else-if="currentThread.id !==null && currentThread.type === 'support'">
+                Обращение #{{ vue_var('currentThread.id') }}
+            </span>
+            <span class="arbitrate__info__title" v-else="currentThread.id === null">Выберите обращение для отображения</span>
             <thread-message
                 v-for="message in currentThread.messages"
                 :key="message.id"
@@ -87,13 +92,13 @@
     {{ parent() }}
     <script type="text/x-template" id="thread-tab">
         <div @click="$emit('change-thread', item, thread)">
-            <div class="tabs-box-arbitrate__number"v-if="type == 'arbitration'">Арбитраж #{{ vue_var('id') }}</div>
-            <div class="tabs-box-arbitrate__number"v-if="type == 'support'">Обращение #{{ vue_var('id') }}</div>
-            <div class="tabs-box-arbitrate__date">{{ vue_var('date') }}</div>
-            <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'new'">Лид #{{ vue_var('lead') }}</div>
-            <div class="tabs-box-arbitrate__state text-green" v-if="status == 'wait_user'">Вам ответила тех. поддержка</div>
-            <div class="tabs-box-arbitrate__state" v-if="status == 'wait_support'">Ожидаем ответа от поддержки</div>
-            <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'closed'">Лид #{{ vue_var('lead') }}</div>
+            <!-- Тут гриша клоун наворотил хуеты, нужно это переделать -->
+            <div class="tabs-box-arbitrate__number" v-text="label"></div>
+            <div class="tabs-box-arbitrate__date" v-text="date"></div>
+            <div class="tabs-box-arbitrate__state"
+                 :class="{'text-blue': status === 'new' || status === 'closed', 'text-green': status === 'with_user'}"
+                 v-text="state"
+            ></div>
         </div>
     </script>
     <script type="text/x-template" id="thread-message">

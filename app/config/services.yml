@@ -255,3 +255,8 @@ services:
     AppBundle\Security\AccessTokenAuthenticator:
         arguments:
             $userProvider: '@app.security.token_user_provider'
+
+    AppBundle\Controller\API\v1\SupportController:
+        arguments:
+            $fosComposer: '@fos_message.composer.default'
+            $fosSender: '@fos_message.sender.default'
