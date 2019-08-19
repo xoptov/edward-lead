@@ -10,8 +10,12 @@
             <div class="tabs tabs-arbitrate">
                 <span class="tabs__header">Арбитраж/поддержка</span>
                 <ul class="tabs-nav tabs-arbitrate__nav">
-                    <li class="tabs-arbitrate__item block-mod-11" @click="changeTabBox($event, 'open')" @class="{active: openTab}">Открытые ({{ vue_var('openedThreads.length') }})</li>
-                    <li class="tabs-arbitrate__item block-mod-12" @click="changeTabBox($event, 'archive')" @class="{active: archiveTab}">Архив ({{ vue_var('archiveThreads.length') }})</li>
+                    <li class="tabs-arbitrate__item block-mod-11" @click="changeTabBox($event, 'open')" :class="{active: openTab}">
+                        Открытые ({{ vue_var('openedThreads.length') }})
+                    </li>
+                    <li class="tabs-arbitrate__item block-mod-12" @click="changeTabBox($event, 'archive')" :class="{active: archiveTab}">
+                        Архив ({{ vue_var('archiveThreads.length') }})
+                    </li>
                 </ul>
                 <div class="tabs-box tabs-box-arbitrate">
                     <div class="tabs-box-arbitrate__item" :class="{active: openTab}">
@@ -27,7 +31,7 @@
                             :thread="tab.thread"
                             @change-thread="changeThread"
                         ></thread-tab>
-                        <p v-if="openedThreads.length === 0">У вас нет открытых обращений</p>
+                        <div v-if="openedThreads.length === 0">У вас нет открытых обращений</div>
                     </div>
                     <div class="tabs-box-arbitrate__item" :class="{active: archiveTab}">
                         <thread-tab
@@ -42,7 +46,7 @@
                             :thread="tab.thread"
                             @change-thread="changeThread"
                         ></thread-tab>
-                        <p v-if="archiveThreads.length === 0">У вас нет архивных обращений</p>
+                        <div v-if="archiveThreads.length === 0">У вас нет архивных обращений</div>
                     </div>
                 </div>
             </div>
@@ -60,6 +64,7 @@
                 :body="message.body"
                 :target_in="message.target_in"
                 :target_out="message.target_out"
+                :images="message.images"
             ></thread-message>
             <message-form
                 v-if="currentThread.id !== null"
@@ -80,7 +85,7 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/x-template" id="component-thread-tab">
+    <script type="text/x-template" id="thread-tab">
         <div @click="$emit('change-thread', item, thread)">
             <div class="tabs-box-arbitrate__number"v-if="type == 'arbitration'">Арбитраж #{{ vue_var('id') }}</div>
             <div class="tabs-box-arbitrate__number"v-if="type == 'support'">Обращение #{{ vue_var('id') }}</div>
@@ -91,51 +96,60 @@
             <div class="tabs-box-arbitrate__state text-blue" v-if="status == 'closed'">Лид #{{ vue_var('lead') }}</div>
         </div>
     </script>
-    <script type="text/x-template" id="component-thread-message">
-        <div class="message" :class="{arbitrate__message: target_in, arbitrate__comment: target_out}">
-            <img :src="logotype" v-if="logotype">
+    <script type="text/x-template" id="thread-message">
+        <div class="message" :class="{arbitrate__message: target_out, arbitrate__comment: target_in}">
+            <div class="message__img" v-if="logotype && target_out">
+                <img :src="logotype">
+            </div>
             <div class="message__content">
                 <p class="message__header"><b>{{ vue_var('sender') }}</b>
                     <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
                 </p>
                 <br>
                 <p class="message__text">{{ vue_var('body') }}</p>
+                <p class="message__images" v-if="images.length">
+                    <a class="text-green" target="_blank" v-for="image,key in images" :href="'/uploads/' + image.path">
+                        <span class="icon-clip"></span>&nbsp;<span v-text="'Изображение ' + (key + 1)"></span>
+                    </a>
+                </p>
+            </div>
+            <div class="message__img" v-if="logotype && target_in">
+                <img :src="logotype">
             </div>
         </div>
     </script>
-    <script type="text/x-template" id="component-message-form">
+    <script type="text/x-template" id="message-form">
         <form class="arbitrate-form" method="post" enctype="multipart/form-data" name="message" @open-dialog="openFileDialog" novalidate>
-            <ul v-if="errors.length">
+            <ul class="errors" v-if="errors.length">
                 <li v-for="error in errors" v-text="error"></li>
             </ul>
-            <div>
+            <div style="display: flex;">
                 <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required="" v-model="children.body.data"></textarea>
                 <div class="arbitrate-form__button-block">
                     <button type="button" class="arbitrate-form__button" @click="$emit('submit-form')"><span class="icon-submit"></span></button>
                     <button type="button" class="arbitrate-form__button" @click="openFileDialog"><span class="icon-clip"></span></button>
                 </div>
-                <div class="arbitrate-form__selected-files binded">
-                    <form-image
-                        v-for="image, key in children.images.data"
-                        :image="image"
-                        :id="key"
-                        :key="key"
-                        :url="children.images.deleteUrl"
-                        @delete-image="deleteImage"
-                    ></form-image>
-                </div>
+            </div>
+            <div class="arbitrate-form__selected-files binded">
+                <form-image
+                    v-for="image, key in children.images.data"
+                    :image="image"
+                    :id="key"
+                    :key="key"
+                    :url="children.images.deleteUrl"
+                ></form-image>
             </div>
             <input type="hidden" id="message_thread" name="message[thread]" :value="thread">
             <input type="hidden" id="message__token" name="message[_token]" :value="children._token.data">
             <input type="file" accept="image/jpeg,image/png" multiple style="display: none" ref="file" @change="addedFiles">
         </form>
     </script>
-    <script type="text/x-template" id="component-form-image">
+    <script type="text/x-template" id="form-image">
         <div class="binded__item">
             <input type="hidden" :id="'message_images_' + id" :name="'message[images][' + id + ']'" :value="image.id">
             <button class="binded__button" type="button" @click="$emit('open-dialog')"><span class="icon-clip"></span></button>
             <span class="binded__file">{{ vue_var('image.realName') }}</span>
-            <button class="button-close" type="button" @click="deleteImage(id, image.serverName)">×</button>
+            <button class="button-close" type="button" @click="onDeleteClicked(image.id, image.serverName)">×</button>
         </div>
     </script>
 

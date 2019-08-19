@@ -1,16 +1,16 @@
 Vue.component('thread-tab', {
     props: ['id', 'lead', 'date', 'status', 'type', 'item', 'thread'],
-    template: '#component-thread-tab'
+    template: '#thread-tab'
 });
 
 Vue.component('thread-message', {
-    props: ['sender', 'time', 'logotype', 'body', 'target_in', 'target_out'],
-    template: '#component-thread-message'
+    props: ['sender', 'time', 'logotype', 'body', 'target_in', 'target_out', 'images'],
+    template: '#thread-message'
 });
 
 Vue.component('message-form', {
     props: ['children', 'thread', 'errors'],
-    template: '#component-message-form',
+    template: '#message-form',
     methods: {
         openFileDialog() {
             this.$refs.file.click();
@@ -47,9 +47,6 @@ Vue.component('message-form', {
 
             return promise;
         },
-        deleteImage(e) {
-            Vue.delete(this.children.images.data, e)
-        },
         _setXhrHeaders(xhr, headers) {
             Object.keys(headers).forEach(p =>
                 xhr.setRequestHeader(p, headers[p])
@@ -60,9 +57,9 @@ Vue.component('message-form', {
 
 Vue.component('form-image', {
     props: ['image', 'id', 'url'],
-    template: '#component-form-image',
+    template: '#form-image',
     methods: {
-        deleteImage(id, name) {
+        deleteImage() {
             let xhr = new XMLHttpRequest(),
                 url = this.url + '?id=' + id + '&fileName=' + name;
 
@@ -86,6 +83,29 @@ Vue.component('form-image', {
                     console.log(e);
                 })
             ;
+        },
+        onDeleteClicked: function(id, name) {
+            let xhr = new XMLHttpRequest(),
+                url = this.url + '?id=' + id + '&fileName=' + name;
+
+            xhr.open('GET', url, true);
+            xhr.responseType = 'json';
+
+            // Events
+            let promise = new Promise((resolve, reject) => {
+                xhr.onload = e =>
+                    xhr.status >= 200 && xhr.status < 400 ? resolve(e) : reject(e);
+                xhr.onerror = e => reject(e);
+            });
+
+            xhr.send();
+
+            promise.then(e => {
+                    this.$root.$emit('image-deleted', this.id);
+                })
+                .catch(e => {
+                    console.log(e);
+                });
         }
     }
 });
@@ -131,7 +151,7 @@ var vm = new Vue({
                     }
                 });
                 this.form.children.body.data = '';
-                this.form.children.images.data = {};
+                this.form.children.images.data = [];
             })
             .catch((event) => {
                 this.form.errors = [];
@@ -140,6 +160,13 @@ var vm = new Vue({
         },
         onImageUploaded: function(imageData) {
             this.form.children.images.data.push(imageData);
+        },
+        onImageDeleted: function(id) {
+            if (this.form.children.images.data[id]) {
+                Vue.set(this.form.children.images.data, this.form.children.images.data.splice(id, 1));
+            }
         }
     }
 });
+
+vm.$on('image-deleted', vm.onImageDeleted);

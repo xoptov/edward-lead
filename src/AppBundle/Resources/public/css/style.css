@@ -1650,6 +1650,7 @@ td.table__cell {}
     -webkit-transition: all 0.3s;
     -o-transition: all 0.3s;
     transition: all 0.3s;
+    cursor: pointer;
 }
 
 .tabs-box-arbitrate__item > div:last-child {
@@ -1683,8 +1684,6 @@ td.table__cell {}
     padding-bottom: 10px;
 }
 
-.arbitrate__message {}
-
 .message {
     display: -webkit-box;
     display: -webkit-flex;
@@ -1709,11 +1708,28 @@ td.table__cell {}
     font-size: 14px;
     font-weight: 400;
     padding: 16px 14px;
-    margin-right: 34px;
-    margin-left: 15px;
+    margin-bottom: 15px;
     width: 536px;
     border: 1px solid #e7e7e7;
     background-color: #ffffff;
+}
+
+.arbitrate__message {
+    margin-left: 15px;
+}
+
+.arbitrate__comment {
+    margin-left: 45px;
+}
+
+ul.errors {
+    margin-left: 15px;
+    margin-bottom: 10px;
+}
+
+ul.errors li {
+    font-size: 14px;
+    color: #9f191f;
 }
 
 .message__img {
@@ -1736,6 +1752,15 @@ td.table__cell {}
 
 .message__text {}
 
+.message__images {
+    margin-top: 10px;
+}
+
+.message__images a {
+    font-size: 12px;
+    margin-right: 10px;
+}
+
 .message__link {
     color: #5764e4;
     text-decoration: underline;
@@ -1743,17 +1768,6 @@ td.table__cell {}
 }
 
 .arbitrate__inswer {}
-
-.arbitrate__comment {
-    -webkit-box-orient: horizontal !important;
-    -webkit-box-direction: reverse !important;
-    -webkit-flex-direction: row-reverse !important;
-    -ms-flex-direction: row-reverse !important;
-    flex-direction: row-reverse !important;
-    margin-left: 50px;
-    margin-top: 24px;
-    margin-bottom: 24px;
-}
 
 .arbitrate__info__title {
     color: #242424;
@@ -1772,7 +1786,7 @@ td.table__cell {}
 
     margin-left: 15px;
     border-radius: 5px;
-    margin-top: 22px;
+    /*margin-top: 22px;*/
     padding: 14px 18px;
     border: 1px solid #e7e7e7;
     background-color: #ffffff;
