@@ -13,7 +13,9 @@
         {% for message in object.messages %}
             <div style="padding: 5px 10px;{% if loop.index is odd %} background: rgba(0, 0, 0, 0.1){% endif %}">
                 <h4>{{ message.sender.name }} {{ message.createdAt|date('h:m d.m.Y') }}</h4>
-                {% if loop.first %}<p>Лид <a href="{{ path('app_lead_show', {'id': object.lead.id}) }}">{{ object.lead.name }} #{{ object.lead.id }}</a></p>{% endif %}
+                {% if object.lead is not empty and loop.first %}
+                    <p>Лид <a href="{{ path('app_lead_show', {'id': object.lead.id}) }}">{{ object.lead.name }} #{{ object.lead.id }}</a></p>
+                {% endif %}
                 <p>{{ message.body }}</p>
                 <div>
                     {% for image in message.images %}
