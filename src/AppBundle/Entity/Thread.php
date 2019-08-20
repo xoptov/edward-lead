@@ -57,7 +57,7 @@ class Thread extends BaseThread implements IdentifiableInterface
      *
      * @ORM\Column(name="status", type="string", length=20)
      */
-    protected $status;
+    protected $status = self::STATUS_NEW;
 
     /**
      * const of type appeal
