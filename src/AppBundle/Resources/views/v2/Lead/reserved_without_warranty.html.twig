@@ -1,0 +1,28 @@
+<div class="blocked-modal">
+    <div class="content-area">
+        <h2>Помогите нам улучшить сервис</h2>
+        <h3 style="margin:25px;">Дайте нам обратную связь, чтобы наш робот на основании данных формировал рейтинг продавца</h3>
+        <p class="text-gray">Имя лида: {{ lead.name }} Телефон: {{ lead.phone|human_phone }}</p>
+        <div class="result-choices">
+            <div class="result-case">
+                <div>
+                    <img src="{{ asset('bundles/app/img/calc.svg') }}" width="72" height="72">
+                </div>
+                <div>
+                    <p>Целевой лид, взяли в работу</p>
+                    <a class="btn green btn-green" href="{{ path('app_trade_accept', {'id': lead.trade.id}) }}">Выбрать вариант</a>
+                </div>
+            </div>
+            <div class="result-case">
+                <div>
+                    <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Отправить в арбитраж</span>
+                    <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/smile-sad.svg') }}" width="72" height="72">
+                </div>
+                <div>
+                    <p>Не целевой лид, <br>прошу вернуть за <br> него деньги</p>
+                    <a class="btn green btn-green" href="{{ path('app_trade_reject', {'id': lead.trade.id}) }}">Выбрать вариант</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
