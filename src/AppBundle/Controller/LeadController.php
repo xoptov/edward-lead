@@ -162,7 +162,7 @@ class LeadController extends Controller
             $room = $lead->getRoom();
 
             if ($room && !$room->isPlatformWarranty()) {
-                return $this->render('@App/v2/Lead/reserved_without_warranty.html.twig', ['lead' => $lead]);
+                return new Response();
             }
 
             $phoneCall = $this->getDoctrine()->getRepository(PhoneCall::class)
