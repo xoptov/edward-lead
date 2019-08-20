@@ -23,9 +23,10 @@ class TradeAdmin extends AbstractAdmin
             ->add('lead.name')
             ->add('status', 'choice', [
                 'choices' => [
-                    0 => 'New',
-                    1 => 'Accepted',
-                    2 => 'Rejected'
+                    0 => 'new',
+                    1 => 'accepted',
+                    2 => 'rejected',
+                    3 => 'arbitrage'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -55,9 +56,10 @@ class TradeAdmin extends AbstractAdmin
             ->add('lead.interestAssessment')
             ->add('status', 'choice', [
                 'choices' => [
-                    0 => 'New',
-                    1 => 'Accepted',
-                    2 => 'Rejected'
+                    0 => 'new',
+                    1 => 'accepted',
+                    2 => 'rejected',
+                    3 => 'arbitrage'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -76,14 +78,15 @@ class TradeAdmin extends AbstractAdmin
             ->add('seller.name')
             ->add('lead.name')
             ->add('status',
-                'doctrine_orm_string',
+                null,
                 [],
                 'choice',
                 [
                     'choices' => [
-                        'New' => 0,
-                        'Accepted' => 1,
-                        'Rejected' => 2
+                        'new' => 0,
+                        'accepted' => 1,
+                        'rejected' => 2,
+                        'arbitrage' => 3
                     ],
                     'choice_translation_domain' => 'messages'
                 ]
