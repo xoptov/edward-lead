@@ -4,12 +4,12 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
-use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Sender\Sender;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Composer\Composer;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

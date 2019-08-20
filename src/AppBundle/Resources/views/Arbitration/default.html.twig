@@ -10,10 +10,10 @@
             <div class="tabs tabs-arbitrate">
                 <span class="tabs__header">Арбитраж/поддержка</span>
                 <ul class="tabs-nav tabs-arbitrate__nav">
-                    <li class="tabs-arbitrate__item block-mod-11" @click="changeTabBox($event, 'open')" :class="{active: openTab}">
+                    <li class="tabs-arbitrate__item block-mod-11" @click="changeTabBox('open')" :class="{active: openTab}">
                         Открытые ({{ vue_var('openedThreads.length') }})
                     </li>
-                    <li class="tabs-arbitrate__item block-mod-12" @click="changeTabBox($event, 'archive')" :class="{active: archiveTab}">
+                    <li class="tabs-arbitrate__item block-mod-12" @click="changeTabBox('archive')" :class="{active: archiveTab}">
                         Архив ({{ vue_var('archiveThreads.length') }})
                     </li>
                 </ul>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-middle-green u-margin-auto">Открыть новое обращение</button>
+            <button class="btn btn-middle-green u-margin-auto" @click="createNewThread">Открыть новое обращение</button>
         </div>
         <div class="arbitrate__info">
             <span class="arbitrate__info__title" v-if="currentThread.id !== null && currentThread.type === 'arbitration'">
@@ -129,7 +129,7 @@
                 <li v-for="error in errors" v-text="error"></li>
             </ul>
             <div style="display: flex;">
-                <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" required="" v-model="children.body.data"></textarea>
+                <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" v-model="children.body.data" ref="messageTextarea"></textarea>
                 <div class="arbitrate-form__button-block">
                     <button type="button" class="arbitrate-form__button" @click="$emit('submit-form')"><span class="icon-submit"></span></button>
                     <button type="button" class="arbitrate-form__button" @click="openFileDialog"><span class="icon-clip"></span></button>
@@ -160,8 +160,10 @@
 
     {% if app.environment == 'prod' %}
         <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.min.js') }}"></script>
     {% else %}
         <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
     {% endif %}
     <script type="application/javascript">{{ include('@App/Arbitration/default.js.twig') }}</script>
     <script src="{{ asset('bundles/app/js/arbitration.js') }}"></script>

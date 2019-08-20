@@ -40,6 +40,9 @@ Vue.component('thread-message', {
 Vue.component('message-form', {
     props: ['children', 'thread', 'errors'],
     template: '#message-form',
+    created: function() {
+        this.$root.$on('thread-changed', this.onThreadChanged);
+    },
     methods: {
         openFileDialog() {
             this.$refs.file.click();
@@ -75,6 +78,9 @@ Vue.component('message-form', {
             xhr.send(formData);
 
             return promise;
+        },
+        onThreadChanged: function() {
+            this.$refs.messageTextarea.focus();
         },
         _setXhrHeaders(xhr, headers) {
             Object.keys(headers).forEach(p =>
@@ -143,7 +149,7 @@ var vm = new Vue({
     el: '#arbitrate',
     data: data,
     methods: {
-        changeTabBox: function (event, tab) {
+        changeTabBox: function (tab) {
             this.openTab = tab === 'open';
             this.archiveTab = tab === 'archive';
         },
@@ -153,6 +159,7 @@ var vm = new Vue({
             } else if (thread === 'archive') {
                 this.currentThread = this.archiveThreads[item];
             }
+            this.$emit('thread-changed');
         },
         formSubmit: function () {
             let formData = new FormData(document.querySelector('form')),
@@ -194,6 +201,14 @@ var vm = new Vue({
             if (this.form.children.images.data[id]) {
                 Vue.set(this.form.children.images.data, this.form.children.images.data.splice(id, 1));
             }
+        },
+        createNewThread: function() {
+            this.$http.post('/api/v1/support').then((response) => {
+                this.openedThreads.push(response.data);
+                this.currentThread.id = response.data.id;
+                this.currentThread.messages = response.data.messages;
+                this.$emit('thread-changed');
+            });
         }
     }
 });
