@@ -21,8 +21,9 @@
                             <th>Город</th>
                             <th>Стоимость</th>
                             <th>Продавец</th>
+                            <th>Покупатель</th>
                             <th>Статус</th>
-                            <th>&nbsp;</th>
+                            <th></th>
                         </tr>
                         {% if leads|length %}
                             {% for lead in leads %}
@@ -42,6 +43,18 @@
                                         {{ lead.user.name }}
                                     </td>
                                     <td>
+                                        {% if lead.buyer is not empty %}
+                                            {% set buyer = lead.buyer %}
+                                            {% if buyer.hascompany %}
+                                                {{ buyer.company.shortname }}
+                                            {% else %}
+                                                {{ buyer.name }}
+                                            {% endif %}
+                                        {% else %}
+                                            ---
+                                        {% endif %}
+                                    </td>
+                                    <td>
                                         {{ common_macros.lead_status(lead) }}
                                     </td>
                                     <td>
@@ -56,8 +69,7 @@
                                 <td colspan="7">Еще нет созданных лидов.</td>
                             </tr>
                         {% endif %}
-
-                    <!-- Лиды для -->
+                    <!-- Лиды из сделок для компании -->
                     {% elseif trades is defined %}
                         <tr>
                             <th>Дата создания</th>
@@ -108,12 +120,6 @@
                                     </td>
                                     <td>
                                         <div class="table_link">
-                                            {# Тут я не знаю как сделать! #}
-                                            {#{% if current_call is null %}#}
-                                                {#<span class="phone_link"></span>#}
-                                            {#{% else %}#}
-                                                {#<span class="speaker"></span>#}
-                                            {#{% endif %}#}
                                             <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
                                         </div>
                                     </td>
