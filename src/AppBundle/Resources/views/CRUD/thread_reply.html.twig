@@ -19,7 +19,9 @@
                 <p>{{ message.body }}</p>
                 <div>
                     {% for image in message.images %}
-                        <img src="{{ asset(image.path) }}" style="width: 100%; max-width: 1200px">
+                        <a target="_blank" href="{{ image.path|imagine_filter('preview_1280x1024') }}">
+                            <img src="{{ image.path|imagine_filter('thumbnail_128x102') }}">
+                        </a>
                     {% endfor %}
                 </div>
             </div>

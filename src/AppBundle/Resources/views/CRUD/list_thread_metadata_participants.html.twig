@@ -1,0 +1,7 @@
+{% extends get_admin_template('base_list_field', admin.code) %}
+
+{% block field %}
+    {% for user in value %}
+        {{ user.name }}{% if not loop.last %}, {% endif %}
+    {% endfor %}
+{% endblock %}

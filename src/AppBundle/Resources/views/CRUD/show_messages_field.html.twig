@@ -5,7 +5,9 @@
         <div>
             <p><span class="small">{{ message.createdAt|date_format }}</span> <b>{{ message.sender.username }}{% if message.sender.name is defined and message.sender.name is not empty %} ({{ message.sender.name }}){% endif %}</b> {{ message.body }}</p>
             {% for image in message.images %}
-                <img src="{{ asset(image.path) }}" style="max-width: 100%; height: auto;">
+                <a target="_blank" href="{{ image.path|imagine_filter('preview_1280x1024') }}">
+                    <img src="{{ image.path|imagine_filter('thumbnail_128x102') }}" style="max-width: 100%; height: auto;">
+                </a>
             {% endfor %}
         </div>
         {% if not loop.last %}<hr>{% endif %}

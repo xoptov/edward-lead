@@ -65,6 +65,9 @@ class ThreadAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->add('createdBy.username')
+            ->add('participants', null, [
+                'template' => '@App/CRUD/list_thread_metadata_participants.html.twig'
+            ])
             ->add('subject')
             ->add('status', 'choice', [
                 'choices' => [
@@ -106,6 +109,9 @@ class ThreadAdmin extends AbstractAdmin
             ])
                 ->add('id')
                 ->add('createdBy.username')
+                ->add('participants', null, [
+                    'template' => '@App/CRUD/show_thread_metadata_participants.html.twig'
+                ])
                 ->add('status', 'choice', [
                     'choices' => [
                         Thread::STATUS_NEW => 'New',
