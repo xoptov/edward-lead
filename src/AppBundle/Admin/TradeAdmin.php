@@ -47,6 +47,9 @@ class TradeAdmin extends AbstractAdmin
             ->add('id')
             ->add('buyer.name')
             ->add('seller.name')
+            ->add('lead', null, [
+                'template' => '@App/CRUD/show_lead_url_field.html.twig'
+            ])
             ->add('lead.name')
             ->add('lead.channel.value')
             ->add('lead.createdAt')

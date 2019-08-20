@@ -1,0 +1,10 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% spaceless %}
+        {% if object.lead is not empty %}
+            {% set lead = object.lead %}
+            <a class="btn btn-default btn-sm" target="_blank" href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.name }}</a>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
