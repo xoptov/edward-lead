@@ -113,7 +113,18 @@ liip_imagine:
                     size: [26, 26]
                     mode: outbound
                 ellipse_mask_filter: ~
-
+        thumbnail_128x102:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [128, 102]
+                    mode: outbound
+        preview_1280x1024:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [1280, 1024]
+                    mode: outbound
 fos_message:
     db_driver: orm
     thread_class: AppBundle\Entity\Thread
