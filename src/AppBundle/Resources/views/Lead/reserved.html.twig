@@ -6,30 +6,12 @@
         <div class="result-choices">
             <div class="result-case">
                 <div>
-                    <img src="{{ asset('bundles/app/img/pen-ruller.svg') }}" width="72" height="72">
-                </div>
-                <div>
-                    <p>Целевой лид, записали на замер</p>
-                    <a class="btn green btn-green" href="{{ path('app_trade_accept', {'id': lead.trade.id}) }}">Выбрать вариант</a>
-                </div>
-            </div>
-            <div class="result-case">
-                <div>
                     <img src="{{ asset('bundles/app/img/calc.svg') }}" width="72" height="72">
                 </div>
-                <dev>
-                    <p>Целевой лид, взяли на просчёт</p>
-                    <a class="btn green btn-green" href="{{ path('app_trade_accept', {'id': lead.trade.id}) }}">Выбрать вариант</a>
-                </dev>
-            </div>
-            <div class="result-case">
                 <div>
-                    <img src="{{ asset('bundles/app/img/pers-think.svg') }}" width="72" height="72">
-                </div>
-                <dev>
-                    <p>Целевой лид, но не смогли договориться</p>
+                    <p>Целевой лид, взяли в работу</p>
                     <a class="btn green btn-green" href="{{ path('app_trade_accept', {'id': lead.trade.id}) }}">Выбрать вариант</a>
-                </dev>
+                </div>
             </div>
             <div class="result-case">
                 <div>
@@ -37,7 +19,7 @@
                     <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/smile-sad.svg') }}" width="72" height="72">
                 </div>
                 <div>
-                    <p>Не целевой лид, окна ему не нужны</p>
+                    <p>Не целевой лид, <br>прошу вернуть за <br> него деньги</p>
                     <a class="btn green btn-green" href="{{ path('app_trade_reject', {'id': lead.trade.id}) }}">Выбрать вариант</a>
                 </div>
             </div>
