@@ -1,7 +1,7 @@
 {% if object.sellerThread is not null %}
     {% set href = admin.generateObjectUrl('reply', object.sellerThread) %}
     {% set toggle_label = 'Открыть диалог с продавцом' %}
-{% elseif object.lead.user in object.participants  %}
+{% elseif object.lead is not empty and object.lead.user in object.participants  %}
     {% set href = admin.generateObjectUrl('reply', object) %}
     {% set toggle_label = 'Открыть диалог с покупателем' %}
 {% else %}
