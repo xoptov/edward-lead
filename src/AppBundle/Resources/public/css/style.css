@@ -4175,7 +4175,6 @@ input.is-tel-correct:invalid ~ .error-note {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     border-radius: 3px;
 }
 

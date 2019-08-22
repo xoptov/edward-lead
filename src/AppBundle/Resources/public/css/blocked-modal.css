@@ -17,7 +17,6 @@
 .blocked-modal .content-area {
     display: flex;
     flex-direction: column;
-    width: 1024px;
     text-align: center;
     font-family: "Helvetica Neue Cyr - Roman";
 }

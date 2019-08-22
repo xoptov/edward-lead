@@ -69,15 +69,16 @@ class LeadController extends Controller
         $data = null;
 
         if ($this->isGranted('ROLE_WEBMASTER')) {
+
             $leads = $this->getDoctrine()
                 ->getRepository(Lead::class)
                 ->findBy(["user" => $user], ["id" => "DESC"]);
+
             $data = array(
                 'leads' => $leads
             );
-        }
+        } elseif ($this->isGranted('ROLE_COMPANY')) {
 
-        if ($this->isGranted('ROLE_COMPANY')) {
             $trades = $this->getDoctrine()
                 ->getRepository(Trade::class)
                 ->findBy(["buyer" => $user], ["id" => "DESC"]);
