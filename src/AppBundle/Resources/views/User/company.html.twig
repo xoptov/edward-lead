@@ -23,6 +23,11 @@
 
 {% form_theme form _self %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/suggestions.css') }}">
+{% endblock %}
+
 {% block content %}
     <div class="table_leads">
         <div class="table_leads_layout exposed_leads">
@@ -216,5 +221,6 @@
         <script src="{{ asset('bundles/app/js/lib/backbone.js') }}"></script>
         <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
     {% endif %}
+    <script src="{{ asset('bundles/app/js/lib/jquery.suggestions.js') }}"></script>
     <script src="{{ asset('bundles/app/js/user-company/app.js') }}"></script>
 {% endblock %}
