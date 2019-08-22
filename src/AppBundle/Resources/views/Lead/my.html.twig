@@ -4,7 +4,7 @@
 
 {% block content %}
     {% include '@App/flash_messages.html.twig' %}
-    <div class="table_leads">
+    <div class="table_leads" id="my-leads">
         <div class="table_leads_layout exposed_leads">
             <div class="exposed_leads_title">
                 <h2>Мои лиды</h2>
@@ -116,7 +116,13 @@
                                         {{ lead.user.name }}
                                     </td>
                                     <td>
-                                        {{ common_macros.lead_status(lead) }}
+                                        {% if lead.status is constant('STATUS_RESERVED', lead) and lead.room is not null and not lead.room.isplatformwarranty %}
+                                            <a href="#" class="label label-reserved" @click.prevent="openResultModal({id:{{ trade.id }}, lead: {name: '{{ lead.name }}', phone: '{{ lead.phone|human_phone }}'}})">
+                                                Ожидает <img src="{{ asset('bundles/app/v2/img/pencil.png') }}" style="margin-left:5px;">
+                                            </a>
+                                        {% else %}
+                                            {{ common_macros.lead_status(lead) }}
+                                        {% endif %}
                                     </td>
                                     <td>
                                         <div class="table_link">
@@ -136,5 +142,102 @@
             </div>
         </div>
         {% include '@App/block_copyright.html.twig' %}
+        <result-modal :trade="trade" @close-modal="closeResultModal"></result-modal>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+
+    <script type="text/x-template" id="result-modal">
+        <div class="blocked-modal" v-show="trade">
+            <div class="content-area">
+                <div style="display:flex;justify-content:right;">
+                    <span style="color:#fff;cursor:pointer;" @click="close">X</span>
+                </div>
+                <h2>Помогите нам улучшить сервис</h2>
+                <h3 style="margin:25px;">Дайте нам обратную связь, чтобы наш робот на основании данных формировал рейтинг продавца</h3>
+                <p class="text-gray">Имя лида: <span v-text="leadName"></span> Телефон: <span v-text="leadPhone"></span></p>
+                <div class="result-choices">
+                    <div class="result-case">
+                        <div>
+                            <img src="{{ asset('bundles/app/img/calc.svg') }}" width="72" height="72">
+                        </div>
+                        <div>
+                            <p>Целевой лид, взяли в работу</p>
+                            <a class="btn green btn-green" :href="acceptUrl">Выбрать вариант</a>
+                        </div>
+                    </div>
+                    <div class="result-case">
+                        <div>
+                            <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Отправить в арбитраж</span>
+                            <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/smile-sad.svg') }}" width="72" height="72">
+                        </div>
+                        <div>
+                            <p>Не целевой лид, <br>прошу вернуть за <br> него деньги</p>
+                            <a class="btn green btn-green" :href="rejectUrl">Выбрать вариант</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script>
+        $(function(){
+            const resultModal = {
+                template: '#result-modal',
+                props: ['trade'],
+                computed: {
+                    acceptUrl: function(){
+                        if (this.trade) {
+                            return '/trade/accept/' + this.trade.id;
+                        }
+                        return null;
+                    },
+                    rejectUrl: function(){
+                        if (this.trade) {
+                            return '/trade/reject/' + this.trade.id;
+                        }
+                        return null;
+                    },
+                    leadName: function() {
+                        if (this.trade) {
+                            return this.trade.lead.name;
+                        }
+                        return null;
+                    },
+                    leadPhone: function() {
+                        if (this.trade) {
+                            return this.trade.lead.phone;
+                        }
+                        return null;
+                    }
+                },
+                methods: {
+                    close: function() {
+                        this.$emit('close-modal');
+                    }
+                }
+            };
+            new Vue({
+                el: '#my-leads',
+                components: {
+                    'result-modal': resultModal
+                },
+                data: {
+                    trade: null
+                },
+                methods: {
+                    openResultModal: function(data) {
+                        this.trade = data;
+                    },
+                    closeResultModal: function() {
+                        this.trade = null;
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}
