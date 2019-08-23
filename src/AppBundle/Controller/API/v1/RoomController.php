@@ -4,6 +4,7 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
+use AppBundle\Entity\User;
 use AppBundle\Event\RoomEvent;
 use AppBundle\Security\Voter\MemberVoter;
 use AppBundle\Security\Voter\RoomVoter;
@@ -75,6 +76,7 @@ class RoomController extends Controller
         ];
 
         foreach ($members as $member) {
+            /** @var User $user */
             $user = $member->getUser();
 
             $item = [

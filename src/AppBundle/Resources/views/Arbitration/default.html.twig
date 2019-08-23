@@ -50,7 +50,9 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-middle-green u-margin-auto" @click="createNewThread">Открыть новое обращение</button>
+            {% if not is_granted('ROLE_ADMIN') %}
+                <button class="btn btn-middle-green u-margin-auto" @click="createNewThread" v-if="openTab">Открыть новое обращение</button>
+            {% endif %}
         </div>
         <div class="arbitrate__info">
             <span class="arbitrate__info__title" v-if="currentThread.id !== null && currentThread.type === 'arbitration'">
@@ -71,16 +73,18 @@
                 :target_out="message.target_out"
                 :images="message.images"
             ></thread-message>
-            <message-form
-                v-if="currentThread.id !== null"
-                :action="form.action"
-                :method="form.method"
-                :children="form.children"
-                :thread="currentThread.id"
-                :errors="form.errors"
-                @submit-form="formSubmit"
-                @image-uploaded="onImageUploaded"
-            ></message-form>
+            {% if not is_granted('ROLE_ADMIN') %}
+                <message-form
+                    v-if="isCurrentThreadOpen"
+                    :action="form.action"
+                    :method="form.method"
+                    :children="form.children"
+                    :thread="currentThread.id"
+                    :errors="form.errors"
+                    @submit-form="formSubmit"
+                    @image-uploaded="onImageUploaded"
+                ></message-form>
+            {% endif %}
         </div>
         {#<div class="block-copyright">
             © 2019 Edward - решения для бизнеса
@@ -92,7 +96,6 @@
     {{ parent() }}
     <script type="text/x-template" id="thread-tab">
         <div @click="$emit('change-thread', item, thread)">
-            <!-- Тут гриша клоун наворотил хуеты, нужно это переделать -->
             <div class="tabs-box-arbitrate__number" v-text="label"></div>
             <div class="tabs-box-arbitrate__date" v-text="date"></div>
             <div class="tabs-box-arbitrate__state"
@@ -129,7 +132,7 @@
                 <li v-for="error in errors" v-text="error"></li>
             </ul>
             <div style="display: flex;">
-                <textarea class="arbitrate-form__textarea autoExpand" id="message_body" name="message[body]" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" v-model="children.body.data" ref="messageTextarea"></textarea>
+                <textarea class="arbitrate-form__textarea autoExpand" name="body" rows="3" data-min-rows="3" placeholder="Напишите свое сообщение" v-model="children.body.data" ref="messageTextarea"></textarea>
                 <div class="arbitrate-form__button-block">
                     <button type="button" class="arbitrate-form__button" @click="$emit('submit-form')"><span class="icon-submit"></span></button>
                     <button type="button" class="arbitrate-form__button" @click="openFileDialog"><span class="icon-clip"></span></button>
@@ -144,14 +147,14 @@
                     :url="children.images.deleteUrl"
                 ></form-image>
             </div>
-            <input type="hidden" id="message_thread" name="message[thread]" :value="thread">
-            <input type="hidden" id="message__token" name="message[_token]" :value="children._token.data">
+            <input type="hidden" id="thread" name="thread" :value="thread">
+            <input type="hidden" id="_token" name="_token" :value="children._token.data">
             <input type="file" accept="image/jpeg,image/png" multiple style="display: none" ref="file" @change="addedFiles">
         </form>
     </script>
     <script type="text/x-template" id="form-image">
         <div class="binded__item">
-            <input type="hidden" :id="'message_images_' + id" :name="'message[images][' + id + ']'" :value="image.id">
+            <input type="hidden" :id="'images_' + id" :name="'images[' + id + ']'" :value="image.id">
             <button class="binded__button" type="button" @click="$emit('open-dialog')"><span class="icon-clip"></span></button>
             <span class="binded__file">{{ vue_var('image.realName') }}</span>
             <button class="button-close" type="button" @click="onDeleteClicked(image.id, image.serverName)">×</button>

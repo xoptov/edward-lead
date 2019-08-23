@@ -148,6 +148,11 @@ Vue.component('form-image', {
 var vm = new Vue({
     el: '#arbitrate',
     data: data,
+    computed: {
+        isCurrentThreadOpen: function() {
+            return this.currentThread && this.currentThread.status !== 'closed';
+        }
+    },
     methods: {
         changeTabBox: function (tab) {
             this.openTab = tab === 'open';
@@ -205,8 +210,7 @@ var vm = new Vue({
         createNewThread: function() {
             this.$http.post('/api/v1/support').then((response) => {
                 this.openedThreads.push(response.data);
-                this.currentThread.id = response.data.id;
-                this.currentThread.messages = response.data.messages;
+                this.currentThread = response.data;
                 this.$emit('thread-changed');
             });
         }

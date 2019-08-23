@@ -94,7 +94,7 @@ status_answer: 'Ответил'
 status_busy: 'Занят'
 status_no_answer: 'Не отвечает'
 
-Waiting for user response: жидает ответа пользователя
+Waiting for user response: Ожидает ответа пользователя
 Waiting for support response: Ожидает ответа техподдержки
 Closed: Закрыто
 Created By Username: Создано пользователем
