@@ -4918,3 +4918,7 @@ span.lead_exchange:hover + div.error453_block{
 .ui-datepicker.ui-widget.ui-widget-content.ui-helper-clearfix.ui-corner-all {
     font-size: 14px;
 }
+
+.office__input--item .form-input-area {
+    width: 250px;
+}

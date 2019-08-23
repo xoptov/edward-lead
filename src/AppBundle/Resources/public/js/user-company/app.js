@@ -74,6 +74,63 @@ $(function() {
         }
     });
 
+    const CompanySettingsView = Backbone.View.extend({
+        fields: null,
+        initialize: function () {
+            this.fields = {
+                inn: this.$el.find('#company_inn'),
+                shortName: this.$el.find('#company_shortName'),
+                largeName: this.$el.find('#company_largeName'),
+                ogrn: this.$el.find('#company_ogrn'),
+                address: this.$el.find('#company_address'),
+                zipcode: this.$el.find('#company_zipcode'),
+                phone: this.$el.find('#company_phone')
+            };
+
+            this.fields.phone.inputmask('(+7|8)(999)999-99-99');
+
+            this.fields.inn.suggestions({
+                token: "3fcb1201bae5ada0e1d53b5c11d5c68764084cc7",
+                type: "PARTY",
+                formatSelected: function(suggestion) {
+                    return suggestion.data.inn;
+                },
+                onSelect: (suggestion) => {
+                    this.setShortName(suggestion);
+                    this.setLargeName(suggestion);
+                    this.setOGRN(suggestion);
+                    this.setAddress(suggestion);
+                    this.setZipcode(suggestion);
+                }
+            });
+        },
+        setShortName: function(suggestion) {
+            if (suggestion.data && suggestion.data.name && suggestion.data.name.short_with_opf) {
+                this.fields.shortName.val(suggestion.data.name.short_with_opf);
+            }
+        },
+        setLargeName: function(suggestion) {
+            if (suggestion.data && suggestion.data.name && suggestion.data.name.full_with_opf) {
+                this.fields.largeName.val(suggestion.data.name.full_with_opf);
+            }
+        },
+        setOGRN: function(suggestion) {
+            if (suggestion.data && suggestion.data.ogrn) {
+                this.fields.ogrn.val(suggestion.data.ogrn);
+            }
+        },
+        setAddress: function(suggestion) {
+            if (suggestion.data && suggestion.data.address && suggestion.data.address.value) {
+                this.fields.address.val(suggestion.data.address.value);
+            }
+        },
+        setZipcode: function(suggestion) {
+            if (suggestion.data && suggestion.data.address && suggestion.data.address.data && suggestion.data.address.data.postal_code) {
+                this.fields.zipcode.val(suggestion.data.address.data.postal_code);
+            }
+        }
+    });
+
     new LogotypeUploader({
         el: '.company__logo-choose',
         logotypeImage: '.logo-choose__img',
@@ -83,5 +140,5 @@ $(function() {
         button: '.js-choice-logotype'
     });
 
-    $('#company_phone').inputmask('(+7|8)(999)999-99-99');
+    new CompanySettingsView({el: '.office-settings__left-side'});
 });
