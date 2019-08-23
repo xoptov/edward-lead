@@ -44,7 +44,7 @@ var data = {
         {% for thread in archiveThreads %}
         {
             id: {{ thread.id }},
-            lead: {{ thread.lead.id }},
+            lead: {% if thread.lead is not empty %}{{ thread.lead.id  }}{% else %}null{% endif %},
             date: '{{ thread.createdAt|date('d.m.Y') }}',
             status: '{{ thread.status }}',
             type: '{{ thread.typeAppeal }}',

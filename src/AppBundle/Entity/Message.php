@@ -76,6 +76,9 @@ class Message extends BaseMessage implements IdentifiableInterface
      */
     protected $images;
 
+    /**
+     * Message constructor.
+     */
     public function __construct()
     {
         parent::__construct();

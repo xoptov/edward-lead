@@ -256,7 +256,11 @@ services:
         arguments:
             $userProvider: '@app.security.token_user_provider'
 
+    AppBundle\Controller\ArbitrationController:
+        arguments:
+            $composer: '@fos_message.composer.default'
+            $sender: '@fos_message.sender.default'
+
     AppBundle\Controller\API\v1\SupportController:
         arguments:
-            $fosComposer: '@fos_message.composer.default'
-            $fosSender: '@fos_message.sender.default'
+            $threadManager: '@fos_message.thread_manager.default'

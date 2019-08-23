@@ -2,28 +2,51 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Image;
-use AppBundle\Entity\Message;
-use AppBundle\Entity\Thread;
 use AppBundle\Entity\User;
-use AppBundle\Form\Type\MessageType;
+use AppBundle\Entity\Image;
+use AppBundle\Entity\Thread;
+use AppBundle\Entity\Message;
 use AppBundle\Service\Uploader;
-use Doctrine\ORM\EntityManagerInterface;
-use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Filesystem\Exception\IOException;
+use AppBundle\Form\Type\ReplayType;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use FOS\MessageBundle\Composer\ComposerInterface;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Validator\Constraints\Image as ConstrainImage;
 
 class ArbitrationController extends Controller
 {
+    /**
+     * @var ComposerInterface
+     */
+    private $fosComposer;
+
+    /**
+     * @var SenderInterface
+     */
+    private $fosSender;
+
+    /**
+     * @param ComposerInterface $composer
+     * @param SenderInterface   $sender
+     */
+    public function __construct(
+        ComposerInterface $composer,
+        SenderInterface $sender
+    ) {
+        $this->fosComposer = $composer;
+        $this->fosSender = $sender;
+    }
+
     /**
      * @Route("/arbitration", name="app_arbitration", methods={"GET"})
      */
@@ -47,7 +70,7 @@ class ArbitrationController extends Controller
 
         $openedThreads = array_filter($threads, function ($thread) use ($user) {
             /** @var Thread $thread */
-            if ($thread->getStatus() != Thread::STATUS_CLOSED || ! $thread->isReadByParticipant($user)) {
+            if ($thread->getStatus() !== Thread::STATUS_CLOSED) {
                 return true;
             }
             return false;
@@ -55,13 +78,13 @@ class ArbitrationController extends Controller
 
         $archiveThreads = array_filter($threads, function ($thread) use ($user) {
             /** @var Thread $thread */
-            if ($thread->getStatus() == Thread::STATUS_CLOSED && $thread->isReadByParticipant($user)) {
+            if ($thread->getStatus() === Thread::STATUS_CLOSED) {
                 return true;
             }
             return false;
         });
 
-        $form = $this->createForm(MessageType::class);
+        $form = $this->createForm(ReplayType::class);
 
         return $this->render("@App/Arbitration/default.html.twig", [
             'openedThreads' => $openedThreads,
@@ -74,18 +97,16 @@ class ArbitrationController extends Controller
      * @Route("/arbitration/reply", name="app_arbitration_reply", methods={"POST"})
      *
      * @param Request                $request
-     * @param EntityManagerInterface $entityManager
      * @param CacheManager           $cacheManager
      *
      * @return JsonResponse
      */
     public function reply(
         Request $request,
-        EntityManagerInterface $entityManager,
         CacheManager $cacheManager
     ) : JsonResponse {
 
-        $form = $this->createForm(MessageType::class);
+        $form = $this->createForm(ReplayType::class);
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
@@ -98,16 +119,24 @@ class ArbitrationController extends Controller
         }
 
         /** @var Message $message */
-        $message = $form->getData();
+        $data = $form->getData();
 
         /** @var User $user */
         $user = $this->getUser();
 
-        $message->setSender($user);
-        $message->getThread()->setStatus(Thread::STATUS_WAIT_SUPPORT);
+        $messageBuilder = $this->fosComposer->reply($data['thread']);
+        $messageBuilder->setBody($data['body']);
+        $messageBuilder->setSender($user);
+        $message = $messageBuilder->getMessage();
+        /** @var Thread $thread */
+        $thread = $message->getThread();
+        $thread->setStatus(Thread::STATUS_WAIT_SUPPORT);
 
-        $entityManager->persist($message);
-        $entityManager->flush();
+        if (!empty($data['images'])) {
+            $message->setImages($data['images']);
+        }
+
+        $this->fosSender->send($message);
 
         $logotypePath = null;
 

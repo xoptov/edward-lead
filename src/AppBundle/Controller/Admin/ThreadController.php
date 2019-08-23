@@ -28,6 +28,7 @@ class ThreadController extends CRUDController
         $request = $this->getRequest();
 
         $id = $request->get($this->admin->getIdParameter());
+        /** @var Thread $existingObject */
         $existingObject = $this->admin->getObject($id);
 
         if (!$existingObject) {
@@ -56,6 +57,8 @@ class ThreadController extends CRUDController
                     ->setSender($this->getUser())
                     ->setBody($newMessage->getBody())
                     ->getMessage();
+
+                $existingObject->setStatus(Thread::STATUS_WAIT_USER);
 
                 try {
                     $sender = $this->get('fos_message.sender');
@@ -161,13 +164,17 @@ class ThreadController extends CRUDController
             if ($isFormValid) {
 
                 try {
-                    $message->getThread()->setStatus(Thread::STATUS_NEW);
-                    $message->getThread()->setTypeAppeal(Thread::TYPE_ARBITRATION);
-                    $message->getThread()->setLead($existingObject->getLead());
+                    /** @var Thread $thread */
+                    $thread = $message->getThread();
+
+                    $thread->setStatus(Thread::STATUS_NEW);
+                    $thread->setTypeAppeal(Thread::TYPE_ARBITRATION);
+                    $thread->setLead($existingObject->getLead());
+
                     $sender = $this->get('fos_message.sender');
                     $sender->send($message);
 
-                    $existingObject->setSellerThread($message->getThread());
+                    $existingObject->setSellerThread($thread);
 
                     $this->getDoctrine()->getManager()->flush();
 
