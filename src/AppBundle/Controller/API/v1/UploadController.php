@@ -88,8 +88,8 @@ class UploadController extends Controller
 
         $uploadedFile = $request->files->get('uploader');
         $constraint = new Image([
-            'mimeTypes' => 'image/png',
-            'mimeTypesMessage' => 'Поддерживаются только PNG изображения',
+            'mimeTypes' => ['image/png', 'image/jpeg', 'image/pjpeg'],
+            'mimeTypesMessage' => 'Поддерживаются только PNG и JPEG изображения',
             'maxSize' => $this->uploadMaxSize,
             'maxSizeMessage' => 'Максимальный размер загружаемого изображения должен быть {size}'
         ]);
@@ -102,7 +102,7 @@ class UploadController extends Controller
 
         try {
             $result = $this->uploader->store($uploadedFile, 'logotype');
-        } catch (FileException $e) {
+        } catch (\Exception $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
@@ -144,7 +144,7 @@ class UploadController extends Controller
 
         try {
             $result = $this->uploader->store($uploadedFile, 'audio');
-        } catch (FileException $e) {
+        } catch (\Exception $e) {
             return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 

@@ -9,6 +9,8 @@ class Uploader
     const DIRECTORY_AUDIO = 'audio';
     const DIRECTORY_IMAGE = 'image';
 
+    const IMAGE_FORMAT = 'png';
+
     /**
      * @var string
      */
@@ -27,13 +29,22 @@ class Uploader
      * @param string       $directory
      *
      * @return array
+     *
+     * @throws \ImagickException
      */
     public function store(UploadedFile $uploadedFile, string $directory): array
     {
-        $fileName = md5($uploadedFile->getFilename() . $uploadedFile->getSize(), false) . '.' . $uploadedFile->guessExtension();
         $storePath = $this->storePath . DIRECTORY_SEPARATOR . $directory;
 
-        $uploadedFile->move($storePath, $fileName);
+        if (in_array($uploadedFile->getMimeType(), ['image/jpeg', 'image/pjpeg'])) {
+            $fileName = md5($uploadedFile->getFilename() . $uploadedFile->getSize(), false) . '.' . self::IMAGE_FORMAT;
+            $imagick = new \Imagick($uploadedFile->getRealPath());
+            $imagick->setFormat(self::IMAGE_FORMAT);
+            $imagick->writeImage($storePath . DIRECTORY_SEPARATOR . $fileName);
+        } else {
+            $fileName = md5($uploadedFile->getFilename() . $uploadedFile->getSize(), false) . '.' . $uploadedFile->guessExtension();
+            $uploadedFile->move($storePath, $fileName);
+        }
 
         $result = [
             'filename' => $fileName,
