@@ -4779,7 +4779,7 @@ span.id_lids:hover {
     color: #f8a609;
 }
 
-.star-box__item:hover > span {
+.lead-edit .star-box__item:hover > span {
     color: #FFCC36;
     cursor: pointer;
 }
