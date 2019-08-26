@@ -11,10 +11,10 @@
                 <span class="tabs__header">Арбитраж/поддержка</span>
                 <ul class="tabs-nav tabs-arbitrate__nav">
                     <li class="tabs-arbitrate__item block-mod-11" @click="changeTabBox('open')" :class="{active: openTab}">
-                        Открытые ({{ vue_var('openedThreads.length') }})
+                        Открытые (<span v-text="openedThreads.length"></span>)
                     </li>
                     <li class="tabs-arbitrate__item block-mod-12" @click="changeTabBox('archive')" :class="{active: archiveTab}">
-                        Архив ({{ vue_var('archiveThreads.length') }})
+                        Архив (<span v-text="archiveThreads.length"></span>)
                     </li>
                 </ul>
                 <div class="tabs-box tabs-box-arbitrate">
@@ -56,10 +56,10 @@
         </div>
         <div class="arbitrate__info">
             <span class="arbitrate__info__title" v-if="currentThread.id !== null && currentThread.type === 'arbitration'">
-                Арбитраж #{{ vue_var('currentThread.id') }}
+                Арбитраж #<span v-text="currentThread.id"></span>
             </span>
             <span class="arbitrate__info__title" v-else-if="currentThread.id !==null && currentThread.type === 'support'">
-                Обращение #{{ vue_var('currentThread.id') }}
+                Обращение #<span v-text="currentThread.id"></span>
             </span>
             <span class="arbitrate__info__title" v-else="currentThread.id === null">Выберите обращение для отображения</span>
             <thread-message
@@ -111,11 +111,11 @@
                 <img src="{{asset('bundles/app/img/avatar.png') }}" v-else>
             </div>
             <div class="message__content">
-                <p class="message__header"><b>{{ vue_var('sender') }}</b>
-                    <span class="message__date">&nbsp; {{ vue_var('time') }}</span>
+                <p class="message__header"><b v-text="sender"></b>
+                    <span class="message__date" v-text="time"></span>
                 </p>
                 <br>
-                <p class="message__text">{{ vue_var('body') }}</p>
+                <p class="message__text" v-text="body"></p>
                 <p class="message__images" v-if="images.length">
                     <a class="text-green" target="_blank" v-for="image,key in images" :href="'/uploads/' + image.path">
                         <span class="icon-clip"></span>&nbsp;<span v-text="'Изображение ' + (key + 1)"></span>
@@ -158,7 +158,7 @@
         <div class="binded__item">
             <input type="hidden" :id="'images_' + id" :name="'images[' + id + ']'" :value="image.id">
             <button class="binded__button" type="button" @click="$emit('open-dialog')"><span class="icon-clip"></span></button>
-            <span class="binded__file">{{ vue_var('image.realName') }}</span>
+            <span class="binded__file" v-text="image.realName"></span>
             <button class="button-close" type="button" @click="onDeleteClicked(image.id, image.serverName)">×</button>
         </div>
     </script>
