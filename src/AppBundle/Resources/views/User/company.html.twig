@@ -168,7 +168,7 @@
                                 {#<li>Поддерживаются только PNG изображения</li>#}
                                 {#<li>Максимальный размер загружаемого изображения должен быть 1MB</li>#}
                             </ul>
-                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png'}}) }}
+                            {{ form_widget(form.uploader, {'attr': {'style': 'display:none;', 'accept': 'image/png,image/jpeg,image/pjpeg'}}) }}
                             <button class="btn-middle-green btn-middle-wide js-choice-logotype" type="button">Сменить логотип</button>
                             {{ form_widget(form.logotypePath) }}
                         </div>
