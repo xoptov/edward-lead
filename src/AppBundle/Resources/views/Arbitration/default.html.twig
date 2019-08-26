@@ -99,15 +99,16 @@
             <div class="tabs-box-arbitrate__number" v-text="label"></div>
             <div class="tabs-box-arbitrate__date" v-text="date"></div>
             <div class="tabs-box-arbitrate__state"
-                 :class="{'text-blue': status === 'new' || status === 'closed', 'text-green': status === 'with_user'}"
+                 :class="{'text-blue': status === 'new' || status === 'closed', 'text-green': status === 'wait_user'}"
                  v-text="state"
             ></div>
         </div>
     </script>
     <script type="text/x-template" id="thread-message">
         <div class="message" :class="{arbitrate__message: target_out, arbitrate__comment: target_in}">
-            <div class="message__img" v-if="logotype && target_out">
-                <img :src="logotype">
+            <div class="message__img" v-if="target_out">
+                <img :src="logotype" v-if="logotype">
+                <img src="{{asset('bundles/app/img/avatar.png') }}" v-else>
             </div>
             <div class="message__content">
                 <p class="message__header"><b>{{ vue_var('sender') }}</b>
@@ -121,8 +122,9 @@
                     </a>
                 </p>
             </div>
-            <div class="message__img" v-if="logotype && target_in">
-                <img :src="logotype">
+            <div class="message__img" v-if="target_in">
+                <img :src="logotype" v-if="logotype">
+                <img src="{{asset('bundles/app/img/avatar.png') }}" v-else>
             </div>
         </div>
     </script>
