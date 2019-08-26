@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="office-settings u-w-100">
+    <div class="lead-edit office-settings u-w-100">
         <h3 class="office-settings__title">Заполните карточку лида</h3>
         {% include '@App/flash_messages.html.twig' %}
         <div class="pos-sb">
@@ -37,15 +37,15 @@
                                     <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
                                     <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
                                     <input
-                                            id="lead-phone"
-                                            class="form__input input-mod-1"
-                                            placeholder="Например: +7(900)000-00-00 или 8(900)000-00-00"
-                                            autocomplete="off"
-                                            type="tel"
-                                            :value="lead.phone"
-                                            @change="phoneChanged"
-                                            :disabled="submitted"
-                                            ref="phone"
+                                        id="lead-phone"
+                                        class="form__input input-mod-1"
+                                        placeholder="Например: +7(900)000-00-00 или 8(900)000-00-00"
+                                        autocomplete="off"
+                                        type="tel"
+                                        :value="lead.phone"
+                                        @change="phoneChanged"
+                                        :disabled="submitted"
+                                        ref="phone"
                                     >
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
