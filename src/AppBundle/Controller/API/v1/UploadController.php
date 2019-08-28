@@ -14,7 +14,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * @Route("/api/v1")

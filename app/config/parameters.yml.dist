@@ -8,12 +8,6 @@ parameters:
     database_user: root
     database_password: 'ghjlf;b'
 
-    test_database_host: ~
-    test_database_port: ~
-    test_database_name: ~
-    test_database_user: ~
-    test_database_password: ~
-
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: ~
