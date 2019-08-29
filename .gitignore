@@ -1,6 +1,7 @@
 .gitkeep
 /.web-server-pid
 /app/config/parameters.yml
+/app/config/parameters_test.yml
 /build/
 /bin/dep
 /bin/phpunit

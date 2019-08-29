@@ -2,13 +2,13 @@
 
 namespace AppBundle\Form\Type;
 
-use AppBundle\Entity\Message;
 use AppBundle\Entity\Thread;
-use AppBundle\Form\DataTransformer\EntityToIdTransformer;
+use AppBundle\Entity\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use AppBundle\Form\DataTransformer\EntityToIdTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 

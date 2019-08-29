@@ -146,3 +146,12 @@ Room: Комната
 Owner: Владелец
 Room Create: Создание комнаты
 Membered At: Членство от
+
+lead:
+    status:
+        expect: 'ожидает'
+        in_work: 'в работе'
+        target: 'целевой'
+        arbitration: 'арбитраж'
+        not_target: 'не целевой'
+        archive: 'архив'

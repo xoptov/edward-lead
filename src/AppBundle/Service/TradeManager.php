@@ -6,10 +6,8 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
-use Doctrine\ORM\NoResultException;
 use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Exception\FinancialException;
 use AppBundle\Exception\OperationException;
 use AppBundle\Exception\InsufficientFundsException;
@@ -78,7 +76,7 @@ class TradeManager
      */
     public function start(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
     {
-        if (!$lead->isActive()) {
+        if ($lead->getStatus() !== Lead::STATUS_EXPECT) {
             throw new TradeException($lead, $buyer, $seller, 'У лида должен быть статус активный для совершения сделки');
         }
 
@@ -96,7 +94,7 @@ class TradeManager
         }
 
         $trade = $this->create($buyer, $seller, $lead, $amount);
-        $lead->setStatus(Lead::STATUS_RESERVED);
+        $lead->setStatus(Lead::STATUS_IN_WORK);
 
         $hold = $this->holdManager->create($buyer->getAccount(), $trade, $costWithFee, false);
         $trade->setHold($hold);
@@ -165,7 +163,7 @@ class TradeManager
             $this->transactionManager->process($transactions);
 
             $trade->setStatus(Trade::STATUS_ACCEPTED);
-            $trade->getLead()->setStatus(Lead::STATUS_SOLD);
+            $trade->getLead()->setStatus(Lead::STATUS_TARGET);
 
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
@@ -193,7 +191,7 @@ class TradeManager
             $lead = $trade->getLead();
 
             $trade->setStatus(Trade::STATUS_REJECTED);
-            $lead->setStatus(Lead::STATUS_BLOCKED);
+            $lead->setStatus(Lead::STATUS_NOT_TARGET);
 
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
@@ -219,8 +217,8 @@ class TradeManager
         $this->entityManager->transactional(function (EntityManagerInterface $em) use ($trade) {
 
             $lead = $trade->getLead();
-            $trade->setStatus(Trade::STATUS_ARBITRAGE);
-            $lead->setStatus(Lead::STATUS_NO_TARGET);
+            $trade->setStatus(Trade::STATUS_PROCEEDING);
+            $lead->setStatus(Lead::STATUS_ARBITRATION);
 
             $em->flush();
         });

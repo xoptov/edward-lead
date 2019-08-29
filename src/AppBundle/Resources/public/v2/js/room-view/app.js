@@ -61,29 +61,29 @@ const vm = new Vue({
                 label: null
             };
             switch(status) {
-                case 'active':
-                    statusObj.class = 'active';
+                case 'expect':
+                    statusObj.class = 'expect';
                     statusObj.label = 'Ожидает';
                     break;
-                case 'reserved':
-                    statusObj.class = 'reserved';
+                case 'in_work':
+                    statusObj.class = 'in-work';
                     statusObj.label = 'В работе';
                     break;
-                case 'no_target':
-                    statusObj.class = 'no-target';
+                case 'not_target':
+                    statusObj.class = 'not-target';
                     statusObj.label = 'Не целевой';
                     break;
-                case 'blocked':
-                    statusObj.class = 'blocked';
+                case 'arbitration':
+                    statusObj.class = 'arbitration';
                     statusObj.label = 'Арбитраж';
                     break;
-                case 'sold':
-                    statusObj.class = 'sold';
-                    statusObj.label = 'Продан';
+                case 'target':
+                    statusObj.class = 'target';
+                    statusObj.label = 'Целевой';
                     break;
-                case 'expired':
-                    statusObj.class = 'expired';
-                    statusObj.label = 'Просрочен';
+                case 'archive':
+                    statusObj.class = 'archive';
+                    statusObj.label = 'Архив';
                     break;
                 default:
                     statusObj.class = 'unknown';

@@ -4178,33 +4178,33 @@ input.is-tel-correct:invalid ~ .error-note {
     border-radius: 3px;
 }
 
-.label.label-active {
-    background-color: #8bf811;
-    color: #000
+.label.label-expect {
+    background-color: #999999;
+    color: #fff
 }
 
-.label.label-reserved {
+.label.label-in-work {
     background-color: #ffd964;
     color: #545454;
 }
 
-.label.label-no-target {
-    background-color: #ffafaf;
+.label.label-arbitration {
+    background-color: #ff7f85;
     color: #fff;
 }
 
-.label.label-blocked {
+.label.label-not-target {
     background-color: #ff3a3a;
     color: #fff;
 }
 
-.label.label-sold {
+.label.label-target {
     background-color: #00a368;
     color: #fff;
 }
 
-.lead.label-expired {
-    background-color: #979ba3;
+.lead.label-archive {
+    background-color: #5d5d5d;
     color: #fff;
 }
 

@@ -6,9 +6,9 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
-use AppBundle\Security\Voter\RoomVoter;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
+use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -100,7 +100,7 @@ class RoomController extends Controller
             return [
                 'room' => $room,
                 'daily' => 0,
-                'reserved' => 0,
+                'in_work' => 0,
                 'webmasters' => 0,
                 'companies' => 0
             ];
@@ -111,7 +111,7 @@ class RoomController extends Controller
         $repository = $this->entityManager->getRepository(Lead::class);
 
         $dailyLeads = $repository->getAddedInRoomsByDate($rooms, $now);
-        $reservedLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_RESERVED]);
+        $inWorkLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_IN_WORK]);
 
         for ($i = 0; $i < count($rooms); $i++) {
             /** @var Lead $dailyLead */
@@ -121,10 +121,10 @@ class RoomController extends Controller
                 }
             }
 
-            /** @var Lead $reservedLead */
-            foreach ($reservedLeads as $reservedLead) {
-                if ($reservedLead->getRoom() === $rooms[$i]['room']) {
-                    $rooms[$i]['reserved']++;
+            /** @var Lead $inWorkLead */
+            foreach ($inWorkLeads as $inWorkLead) {
+                if ($inWorkLead->getRoom() === $rooms[$i]['room']) {
+                    $rooms[$i]['in_work']++;
                 }
             }
 

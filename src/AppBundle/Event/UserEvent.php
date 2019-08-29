@@ -7,9 +7,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 class UserEvent extends Event
 {
-    const NEW_USER_REGISTERED = 'new_user_registered';
-
-    const RESET_TOKEN_UPDATED = 'reset_token_updated';
+    const NEW_REGISTERED      = 'user.new_registered';
+    const RESET_TOKEN_UPDATED = 'user.reset_token_updated';
 
     /**
      * @var User

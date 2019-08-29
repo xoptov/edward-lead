@@ -2,8 +2,8 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Entity\Invoice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Invoice;
 use Doctrine\ORM\EntityRepository;
 
 class InvoiceRepository extends EntityRepository

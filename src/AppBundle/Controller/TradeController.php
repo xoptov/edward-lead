@@ -51,7 +51,7 @@ class TradeController extends Controller
                 ->getFeesAccount();
 
             $this->tradeManager->accept($trade, $feesAccount);
-            $eventDispatcher->dispatch(TradeEvent::ACCEPT, new TradeEvent($trade));
+            $eventDispatcher->dispatch(TradeEvent::ACCEPTED, new TradeEvent($trade));
 
             $this->addFlash('success', 'Покупка лида завершена');
 
@@ -84,11 +84,11 @@ class TradeController extends Controller
 
             if ($lead->hasRoom() && !$lead->getRoom()->isPlatformWarranty()) {
                 $this->tradeManager->reject($trade);
-                $eventDispatcher->dispatch(TradeEvent::REJECT, new TradeEvent($trade));
+                $eventDispatcher->dispatch(TradeEvent::REJECTED, new TradeEvent($trade));
                 $this->addFlash('success', 'Покупка отклонена');
             } else {
                 $this->tradeManager->arbitrage($trade);
-                $eventDispatcher->dispatch(TradeEvent::ARBITRAGE, new TradeEvent($trade));
+                $eventDispatcher->dispatch(TradeEvent::PROCEEDING, new TradeEvent($trade));
                 $this->addFlash('success', 'Покупка заморожена и передена в арбитраж');
             }
         } catch(\Exception $e) {

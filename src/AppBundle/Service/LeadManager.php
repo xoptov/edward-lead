@@ -161,7 +161,7 @@ class LeadManager
         try {
             $activeLeadsCount = $this->entityManager
                 ->getRepository(Lead::class)
-                ->getActiveCountByUser($user);
+                ->getOwnCount($user);
         } catch(\Exception $e) {
             return false;
         }
@@ -229,14 +229,14 @@ class LeadManager
 
         if ($room) {
             if (!$room->isPlatformWarranty()) {
-                if ($lead->getBuyer() === $user && ($lead->isReserved() || $lead->isSold())) {
+                if ($lead->getBuyer() === $user && ($lead->getStatus() === Lead::STATUS_IN_WORK || $lead->getStatus() === Lead::STATUS_TARGET)) {
                     return true;
                 }
             }
         }
 
         try {
-            if ($lead->getBuyer() === $user && ($lead->isSold() || $this->hasAnsweredPhoneCall($lead, $user))) {
+            if ($lead->getBuyer() === $user && ($lead->getStatus() === Lead::STATUS_TARGET || $this->hasAnsweredPhoneCall($lead, $user))) {
                 return true;
             }
         } catch (NonUniqueResultException $e) {

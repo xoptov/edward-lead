@@ -3,16 +3,13 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\PBXCallback;
-use AppBundle\Entity\PhoneCall;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
+use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\PBXCallback;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\Query\Expr\Join;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Validator\Constraints\Callback;
 
 class PhoneCallRepository extends EntityRepository
 {

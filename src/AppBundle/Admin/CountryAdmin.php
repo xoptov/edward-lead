@@ -2,14 +2,12 @@
 
 namespace AppBundle\Admin;
 
-
 use AppBundle\Entity\Country;
-use Sonata\AdminBundle\Admin\AbstractAdmin;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
-use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
 
 class CountryAdmin extends AbstractAdmin
 {

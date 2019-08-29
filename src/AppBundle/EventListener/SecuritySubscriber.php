@@ -2,9 +2,9 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Entity\User;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\HistoryAction;
-use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\SecurityEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

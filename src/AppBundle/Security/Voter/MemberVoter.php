@@ -2,10 +2,10 @@
 
 namespace AppBundle\Security\Voter;
 
-use AppBundle\Entity\Member;
 use AppBundle\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use AppBundle\Entity\Member;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class MemberVoter extends Voter
 {
