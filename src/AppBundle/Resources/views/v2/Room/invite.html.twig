@@ -6,7 +6,7 @@
             <div class="col-12 content_box">
                 <div class="content_title">
                     <div class="main_title">
-                        <h1>Пригласить компанию в комнату #{{ room.id }} - {{ room.name }}</h1>
+                        <h1>Пригласить в комнату #{{ room.id }} - {{ room.name }}</h1>
                     </div>
                 </div>
                 <div class="row">
@@ -21,21 +21,6 @@
                             </div>
                         </div>
                         <p>Вы можете отправить партнеру прямую ссылку, чтобы пригласить присоедениться его к своей комнате</p>
-                    </div>
-                    <div class="col-xl-7 invite_webmaster">
-                        <div class="web_title">
-                            Отправьте приглашение на эл. почту
-                        </div>
-                        <div class="form">
-                            <form id="invite">
-                                <div class="fields">
-                                    <input name="email" id="email" placeholder="Введите E-mail" type="text">
-                                </div>
-                                <button type="submit">Отправить</button>
-                                <input type="hidden" id="token" value="{{ room.inviteToken }}">
-                            </form>
-                        </div>
-                        <p>Партнёру придёт письмо с приглашением присоедениться <br> к закрытой комнате</p>
                     </div>
                 </div>
             </div>
