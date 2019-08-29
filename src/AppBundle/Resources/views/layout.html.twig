@@ -14,7 +14,13 @@
     <div class="header-bg">
         <header class="header header__lead-exchange-page">
             <div class="header__content">
-                <div class="header__logo"><img src="{{ asset('bundles/app/img/logo.png') }}"></div>
+                <div class="header__logo">
+                    {% if is_granted('ROLE_WEBMASTER') %}
+                        <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
+                    {% else %}
+                        <img src="{{ asset('bundles/app/img/logo.png') }}">
+                    {% endif %}
+                </div>
                 <div class="header__balance-box">
                     <span class="header__text text-white" id="balance">Баланс: {{ app.user.humanbalance() }} руб.</span>
                 </div>
