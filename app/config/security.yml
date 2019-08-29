@@ -44,4 +44,8 @@ security:
         - { path: ^/api/v1/confirm/links, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/v1/telephony/callback, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/dashboard, roles: ROLE_WEBMASTER }
+        - { path: ^/telephony/calls, roles: ROLE_COMPANY }
+        - { path: ^/company/update, roles: ROLE_COMPANY }
+        - { path: ^/office/update, roles: ROLE_COMPANY }
         - { path: ^/, roles: ROLE_USER}

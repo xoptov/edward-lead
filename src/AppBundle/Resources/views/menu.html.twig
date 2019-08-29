@@ -8,11 +8,6 @@
     {% endif %}
     <li>
         <div class="sidebar__item">
-            <i class="sprite-3 sprite-ico1"></i><a href="{{ path("app_exchange") }}" class="sidebar__link">Биржа лидов</a>
-        </div>
-    </li>
-    <li>
-        <div class="sidebar__item">
             <i class="sprite-3 sprite-ico1"></i><a href="{{ path("app_room_list") }}" class="sidebar__link">Комнаты</a>
         </div>
     </li>
@@ -40,34 +35,20 @@
             <li class="sidebar__sub-item">
                 <a href="{{ path('app_financial_invoices') }}" class="sidebar__link">Счета</a>
             </li>
-            <li class="sidebar__sub-item"><a href="#" class="sidebar__link">Акты</a></li>
         </ul>
     </li>
-    {#<li>#}
-        {#<div class="sidebar__item">#}
-            {#<i class="sprite-3 sprite-ico5"></i><a href="#" class="sidebar__link">Реферальная программа</a>#}
-        {#</div>#}
-    {#</li>#}
-    {#<li>#}
-        {#<div class="sidebar__item dropdownlink">#}
-            {#<i class="sprite-3 sprite-ico6"></i><a href="#" class="sidebar__link">Интеграции</a>#}
-        {#</div>#}
-        {#<ul class="sidebar__sub-item-box submenuItems">#}
-            {#<li class="sidebar__sub-item"><a href="#" class="sidebar__link">1</a></li>#}
-            {#<li class="sidebar__sub-item"><a href="#" class="sidebar__link">2</a></li>#}
-            {#<li class="sidebar__sub-item"><a href="#" class="sidebar__link">3</a></li>#}
-        {#</ul>#}
-    {#</li>#}
-    <li>
-        <div class="sidebar__item">
-            <i class="sprite-3 sprite-ico7"></i><a href="{{ path('app_telephony_calls') }}" class="sidebar__link">Телефония</a>
-        </div>
-    </li>
-    {% if is_granted('ROLE_COMPANY') and app.user.company %}
+    {% if is_granted('ROLE_COMPANY') %}
         <li>
-            <div class="sidebar__item dropdownlink">
-                <i class="sprite-3 sprite-ico8"></i><a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}" class="sidebar__link">Кабинет компании</a>
+            <div class="sidebar__item">
+                <i class="sprite-3 sprite-ico7"></i><a href="{{ path('app_telephony_calls') }}" class="sidebar__link">Телефония</a>
             </div>
         </li>
+        {% if app.user.company is not empty %}
+            <li>
+                <div class="sidebar__item dropdownlink">
+                    <i class="sprite-3 sprite-ico8"></i><a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}" class="sidebar__link">Кабинет компании</a>
+                </div>
+            </li>
+        {% endif %}
     {% endif %}
 </ul>
