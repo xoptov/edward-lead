@@ -20,3 +20,13 @@ security:
     firewalls:
         main:
             http_basic: ~
+            logout_on_user_change: true
+
+services:
+    AppBundle\Service\UserManager:
+        public: true
+        autowire: true
+
+    AppBundle\Service\RoomManager:
+        public: true
+        autowire: true

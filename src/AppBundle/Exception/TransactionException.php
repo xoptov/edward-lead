@@ -2,8 +2,8 @@
 
 namespace AppBundle\Exception;
 
-use AppBundle\Entity\MonetaryTransaction;
 use Throwable;
+use AppBundle\Entity\MonetaryTransaction;
 
 class TransactionException extends FinancialException
 {

@@ -297,17 +297,14 @@ class LeadController extends Controller
 
         if ($room) {
             $leads = $repository->getOffersByRooms([$room], [
-                Lead::STATUS_ACTIVE,
-                Lead::STATUS_RESERVED,
-                Lead::STATUS_SOLD,
-                Lead::STATUS_NO_TARGET,
-                Lead::STATUS_BLOCKED
+                Lead::STATUS_EXPECT,
+                Lead::STATUS_IN_WORK
             ]);
         } elseif ($user->isCompany() && $user->hasCompany()) {
             $company = $user->getCompany();
-            $leads = $repository->getOffersByCities($company->getCities()->toArray(), [Lead::STATUS_ACTIVE]);
+            $leads = $repository->getOffersByCities($company->getCities()->toArray(), [Lead::STATUS_EXPECT]);
         } else {
-            $leads = $repository->getOffers([Lead::STATUS_ACTIVE]);
+            $leads = $repository->getOffers([Lead::STATUS_EXPECT]);
         }
 
         $result = [];

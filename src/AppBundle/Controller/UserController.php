@@ -400,12 +400,12 @@ class UserController extends Controller
 
         $result['addedLeadsToday'] = $leadRepository->getCountAddedByDate($now);
 
-        $totalSoldCount = $leadRepository->getCountByStatus(Lead::STATUS_SOLD);
-        $totalNoTargetCount = $leadRepository->getCountByStatus(Lead::STATUS_NO_TARGET);
+        $totalTarget = $leadRepository->getCountByStatus(Lead::STATUS_TARGET);
+        $totalNotTarget = $leadRepository->getCountByStatus(Lead::STATUS_NOT_TARGET);
 
-        if ($totalSoldCount && $totalNoTargetCount) {
-            $result['averageTarget'] = $totalSoldCount / (($totalSoldCount + $totalNoTargetCount) / 100);
-        } elseif ($totalSoldCount) {
+        if ($totalTarget && $totalNotTarget) {
+            $result['averageTarget'] = $totalTarget / (($totalTarget + $totalNotTarget) / 100);
+        } elseif ($totalTarget) {
             $result['averageTarget'] = 100;
         }
 
@@ -416,15 +416,15 @@ class UserController extends Controller
             ->getByRooms($rooms);
 
         $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
-        $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_SOLD, Lead::STATUS_NO_TARGET]);
+        $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_TARGET, Lead::STATUS_NOT_TARGET]);
 
         /** @var Room $room */
         foreach ($rooms as $room) {
             $row = [
                 'room' => $room,
                 'daily' => 0,
-                'sold' => 0,
-                'noTarget' => 0,
+                'target' => 0,
+                'notTarget' => 0,
                 'averageTarget' => 0,
                 'webmasters' => 0,
                 'companies' => 0
@@ -440,18 +440,18 @@ class UserController extends Controller
             /** @var Lead $doneLead */
             foreach ($doneLeads as $doneLead) {
                 if ($doneLead->getRoom() === $room) {
-                    if ($doneLead->isSold()) {
-                        $row['sold']++;
+                    if ($doneLead->getStatus() === Lead::STATUS_TARGET) {
+                        $row['target']++;
                     }
-                    if ($doneLead->isNoTarget()) {
-                        $row['noTarget']++;
+                    if ($doneLead->getStatus() === Lead::STATUS_NOT_TARGET) {
+                        $row['notTarget']++;
                     }
                 }
             }
 
-            if ($row['noTarget'] && $row['sold']) {
-                $row['averageTarget'] = $row['sold'] / (($row['sold'] + $row['noTarget']) / 100);
-            } elseif ($row['sold']) {
+            if ($row['notTarget'] && $row['target']) {
+                $row['averageTarget'] = $row['target'] / (($row['target'] + $row['notTarget']) / 100);
+            } elseif ($row['target']) {
                 $row['averageTarget'] = 100;
             }
 
@@ -478,7 +478,7 @@ class UserController extends Controller
             ->getIncoming($user->getAccount());
         $result['lastIncomes'] = $lastIncomes;
 
-        $result['lastLeads'] = $leadRepository->findBy(['status' => Lead::STATUS_ACTIVE], ['createdAt' => 'DESC'], 5);
+        $result['lastLeads'] = $leadRepository->findBy(['status' => Lead::STATUS_EXPECT], ['createdAt' => 'DESC'], 5);
 
         return $this->render('@App/User/dashboard.html.twig', ['data' => $result]);
     }

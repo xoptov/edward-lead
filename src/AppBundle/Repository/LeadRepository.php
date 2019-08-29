@@ -13,12 +13,13 @@ class LeadRepository extends EntityRepository
 {
     /**
      * @param User $user
+     * @param string $status
      *
      * @return int
      *
      * @throws NonUniqueResultException
      */
-    public function getActiveCountByUser(User $user): int
+    public function getOwnCount(User $user): int
     {
         $queryBuilder = $this->createQueryBuilder('l');
 
@@ -27,7 +28,7 @@ class LeadRepository extends EntityRepository
             ->where('l.user = :user')
             ->setParameter('user', $user);
 
-        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_ACTIVE]);
+        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_EXPECT]);
 
         $query = $queryBuilder->getQuery();
 
@@ -96,24 +97,24 @@ class LeadRepository extends EntityRepository
     }
 
     /**
-     * @param User $user
+     * @param User $buyer
      *
      * @return Lead|null
      *
      * @throws NonUniqueResultException
      */
-    public function getByUserAndReserved(User $user): ?Lead
+    public function getInWorkByBuyer(User $buyer): ?Lead
     {
         $queryBuilder = $this->createQueryBuilder('l');
 
         $queryBuilder
             ->innerJoin('l.trade', 't')
             ->where('t.buyer = :buyer')
-                ->setParameter('buyer', $user)
+                ->setParameter('buyer', $buyer)
             ->orderBy('l.updatedAt', 'DESC')
             ->setMaxResults(1);
 
-        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_RESERVED]);
+        $this->addStatusesCondition($queryBuilder, [Lead::STATUS_IN_WORK]);
 
         $query = $queryBuilder->getQuery();
 

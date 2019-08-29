@@ -26,7 +26,7 @@ class LeadFirstCallVoter extends LeadVoter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
-        if ($subject->isReserved() && $subject->getBuyer() === $token->getUser()) {
+        if ($subject->getStatus() === Lead::STATUS_IN_WORK && $subject->getBuyer() === $token->getUser()) {
             return true;
         }
 

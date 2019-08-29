@@ -6,14 +6,19 @@ use AppBundle\Entity\Image;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use AppBundle\Form\DataTransformer\EntityToIdTransformer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ImageType extends HiddenType
 {
-    /** @var EntityManager */
+    /**
+     * @var EntityManager
+     */
     private $em;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->em = $entityManager;

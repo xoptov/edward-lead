@@ -91,7 +91,7 @@
                                         {% set show_number = false %}
                                         {% set current_call = null %}
                                         {% for call in calls %}
-                                            {% if call.lead.id == lead.id and lead.status is constant('STATUS_SOLD', lead) %}
+                                            {% if call.lead.id == lead.id and lead.status is constant('STATUS_TARGET', lead) %}
                                                 {% set show_number = true %}
                                                 {% set current_call = call %}
                                             {% elseif call.lead.id == lead.id %}
@@ -116,8 +116,8 @@
                                         {{ lead.user.name }}
                                     </td>
                                     <td>
-                                        {% if lead.status is constant('STATUS_RESERVED', lead) and lead.room is not null and not lead.room.isplatformwarranty %}
-                                            <a href="#" class="label label-reserved" @click.prevent="openResultModal({id:{{ trade.id }}, lead: {name: '{{ lead.name }}', phone: '{{ lead.phone|human_phone }}'}})">
+                                        {% if lead.status is constant('STATUS_IN_WORK', lead) and lead.room is not null and not lead.room.isplatformwarranty %}
+                                            <a href="#" class="label label-in-work" @click.prevent="openResultModal({id:{{ trade.id }}, lead: {name: '{{ lead.name }}', phone: '{{ lead.phone|human_phone }}'}})">
                                                 Ожидает <img src="{{ asset('bundles/app/v2/img/pencil.png') }}" style="margin-left:5px;">
                                             </a>
                                         {% else %}

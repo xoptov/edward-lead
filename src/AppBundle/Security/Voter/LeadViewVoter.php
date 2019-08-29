@@ -49,11 +49,11 @@ class LeadViewVoter extends LeadVoter
             $user = $token->getUser();
 
             // Если пользователь состоит в комнате и лид активен тогда пользователю можно получать информацию о лиде.
-            if ($this->roomManager->isMember($subject->getRoom(), $user) && $subject->isActive()) {
+            if ($this->roomManager->isMember($subject->getRoom(), $user) && $subject->getStatus() === Lead::STATUS_EXPECT) {
                 return true;
             }
 
-        } elseif ($subject->isActive()) {
+        } elseif ($subject->getStatus() === Lead::STATUS_EXPECT) {
             return true;
         }
 

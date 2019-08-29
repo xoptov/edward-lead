@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Trade extends Operation
 {
-    const STATUS_NEW = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REJECTED = 2;
-    const STATUS_ARBITRAGE = 3;
+    const STATUS_NEW        = 0;
+    const STATUS_ACCEPTED   = 1;
+    const STATUS_REJECTED   = 2;
+    const STATUS_PROCEEDING = 3;
 
     /**
      * @var User

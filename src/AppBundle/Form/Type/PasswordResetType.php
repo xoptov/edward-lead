@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class PasswordResetType extends AbstractType
 {
-    const STEP_FIRST = 'step_1';
+    const STEP_FIRST  = 'step_1';
     const STEP_SECOND = 'step_2';
 
     /**

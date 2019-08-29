@@ -7,9 +7,9 @@ use Symfony\Component\EventDispatcher\Event;
 
 class TradeEvent extends Event
 {
-    const ARBITRAGE = 'trade.arbitrage';
-    const ACCEPT    = 'trade.accept';
-    const REJECT    = 'trade.reject';
+    const PROCEEDING = 'trade.proceeding';
+    const ACCEPTED   = 'trade.accepted';
+    const REJECTED   = 'trade.rejected';
 
     /**
      * @var Trade

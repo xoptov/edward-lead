@@ -1,18 +1,16 @@
 {% macro lead_status(lead, classMap = {}) %}
-    {%- if lead.status is constant('STATUS_ACTIVE', lead) -%}
-        {% set label, class = 'Ожидает', classMap[lead.status]|default('label-active') %}
-    {%- elseif lead.status is constant('STATUS_BLOCKED', lead) -%}
-        {% set label, class = 'Заблокирован',classMap[lead.status]|default('label-blocked') %}
-    {%- elseif lead.status is constant('STATUS_RESERVED', lead) -%}
-        {% set label, class = 'В работе', classMap[lead.status]|default('label-reserved') %}
-    {%- elseif lead.status is constant('STATUS_SOLD', lead) -%}
-        {% set label, class = 'Продан', classMap[lead.status]|default('label-sold') %}
-    {%- elseif lead.status in constant('STATUS_NO_TARGET', lead) -%}
-        {% set label, class = 'Не целевой', classMap[lead.status]|default('label-no-target') %}
-    {%- elseif lead.status is constant('STATUS_EXPIRED', lead)-%}
-        {% set label, class = 'Просрочен', classMap[lead.status]|default('label-expired') %}
-    {%- else -%}
-        {% set label, class = 'Не известно', classMap.unknown|default('label-unknown') %}
+    {%- if lead.status is constant('STATUS_EXPECT', lead) -%}
+        {% set class = classMap[lead.status]|default('label-expect') %}
+    {%- elseif lead.status is constant('STATUS_ARBITRATION', lead) -%}
+        {% set class = classMap[lead.status]|default('label-arbitration') %}
+    {%- elseif lead.status is constant('STATUS_IN_WORK', lead) -%}
+        {% set class = classMap[lead.status]|default('label-in-work') %}
+    {%- elseif lead.status is constant('STATUS_TARGET', lead) -%}
+        {% set class = classMap[lead.status]|default('label-target') %}
+    {%- elseif lead.status in constant('STATUS_NOT_TARGET', lead) -%}
+        {% set class = classMap[lead.status]|default('label-not-target') %}
+    {%- elseif lead.status is constant('STATUS_ARCHIVE', lead)-%}
+        {% set class = classMap[lead.status]|default('label-archive') %}
     {%- endif -%}
-    <span class="label {{ class }}">{{ label }}</span>
+    <span class="label {{ class is defined ? class : '' }}">{{ ('lead.status.' ~ lead.status)|trans|capitalize }}</span>
 {% endmacro %}

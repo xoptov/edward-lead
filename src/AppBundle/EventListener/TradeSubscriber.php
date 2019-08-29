@@ -34,9 +34,9 @@ class TradeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            TradeEvent::ARBITRAGE => 'handleArbitrage',
-            TradeEvent::ACCEPT => 'handleAccept',
-            TradeEvent::REJECT => 'handleReject'
+            TradeEvent::PROCEEDING => 'handleProceeding',
+            TradeEvent::ACCEPTED   => 'handleAccept',
+            TradeEvent::REJECTED   => 'handleReject'
         ];
     }
 
@@ -58,7 +58,7 @@ class TradeSubscriber implements EventSubscriberInterface
     /**
      * @param TradeEvent $event
      */
-    public function handleArbitrage(TradeEvent $event): void
+    public function handleProceeding(TradeEvent $event): void
     {
         $trade = $event->getTrade();
         $buyer = $trade->getBuyer();

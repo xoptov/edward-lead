@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TradeControllerTest extends WebTestCase
 {
-    public function testRejectAction_withLeadReservedInRoomWithoutWarranty()
+    public function testRejectAction_withLeadBuyInRoomWithoutWarranty()
     {
         $client = $this->createClient([], [
             'PHP_AUTH_USER' => 'company@test.ru',
@@ -95,7 +95,7 @@ class TradeControllerTest extends WebTestCase
             ->setPhone('79000000002')
             ->setExpirationDate(new \DateTime('+2 day'))
             ->setPrice(10000)
-            ->setStatus(Lead::STATUS_RESERVED);
+            ->setStatus(Lead::STATUS_IN_WORK);
 
         $entityManager->persist($lead);
 
@@ -131,12 +131,12 @@ class TradeControllerTest extends WebTestCase
 
         $this->assertTrue($trade->isProcessed());
         $this->assertEquals(Trade::STATUS_REJECTED, $trade->getStatus());
-        $this->assertEquals(Lead::STATUS_BLOCKED, $lead->getStatus());
+        $this->assertEquals(Lead::STATUS_NOT_TARGET, $lead->getStatus());
 
         $entityManager->rollback();
     }
 
-    public function testRejectAction_withLeadReservedInRoomWithWarranty()
+    public function testRejectAction_withLeadBuyInRoomWithWarranty()
     {
         $client = $this->createClient([], [
             'PHP_AUTH_USER' => 'company@test.ru',
@@ -215,7 +215,7 @@ class TradeControllerTest extends WebTestCase
             ->setPhone('79000000002')
             ->setExpirationDate(new \DateTime('+2 day'))
             ->setPrice(10000)
-            ->setStatus(Lead::STATUS_RESERVED);
+            ->setStatus(Lead::STATUS_IN_WORK);
 
         $entityManager->persist($lead);
 
@@ -250,8 +250,8 @@ class TradeControllerTest extends WebTestCase
         $this->assertTrue($response->isRedirect($redirectTargetUrl));
 
         $this->assertFalse($trade->isProcessed());
-        $this->assertEquals(Trade::STATUS_ARBITRAGE, $trade->getStatus());
-        $this->assertEquals(Lead::STATUS_NO_TARGET, $lead->getStatus());
+        $this->assertEquals(Trade::STATUS_PROCEEDING, $trade->getStatus());
+        $this->assertEquals(Lead::STATUS_ARBITRATION, $lead->getStatus());
 
         $entityManager->rollback();
     }

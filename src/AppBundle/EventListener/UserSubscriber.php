@@ -26,7 +26,9 @@ class UserSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return [UserEvent::NEW_USER_REGISTERED => 'onRegistered'];
+        return [
+            UserEvent::NEW_REGISTERED => 'onRegistered'
+        ];
     }
 
     /**

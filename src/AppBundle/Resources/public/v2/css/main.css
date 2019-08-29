@@ -1525,30 +1525,29 @@ header .header_top .header_main .main .balance p {
   display: block;
   margin: 0 auto; }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.active {
-  color: #fff;
-  background-color: #979ba3;
+#main .main_content .content .content_box .table table tbody tr td.status span.expect {
+  background-color: #999;
 }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.sold {
+#main .main_content .content .content_box .table table tbody tr td.status span.target {
   background-color: #00a368;
 }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.reserved {
+#main .main_content .content .content_box .table table tbody tr td.status span.in-work {
   color: #545454;
   background-color: #ffd964;
 }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.blocked {
+#main .main_content .content .content_box .table table tbody tr td.status span.arbitration {
   background-color: #ff7f85;
 }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.no-target {
+#main .main_content .content .content_box .table table tbody tr td.status span.not-target {
   background-color: #ff3a3a;
 }
 
-#main .main_content .content .content_box .table table tbody tr td.status span.expired {
-  background-color: #979ba3;
+#main .main_content .content .content_box .table table tbody tr td.status span.archive {
+  background-color: #5d5d5d;
 }
 
 #main .main_content .content .content_box .table table tbody tr td.status span.unknown {

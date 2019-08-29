@@ -20,7 +20,6 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Validator\Constraints\Image as ConstrainImage;
 
 class ArbitrationController extends Controller
@@ -208,7 +207,7 @@ class ArbitrationController extends Controller
 
         try {
             $file = $uploader->store($file, Uploader::DIRECTORY_IMAGE);
-        } catch (FileException $e) {
+        } catch (\Exception $e) {
             $errors[] = $e->getMessage();
             return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }

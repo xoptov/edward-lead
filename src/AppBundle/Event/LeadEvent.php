@@ -9,9 +9,9 @@ class LeadEvent extends Event
 {
     const NEW_PLACED = 'lead.new_placed';
     const EDITED     = 'lead.edited';
-    const RESERVED   = 'lead.reserved';
-    const SOLD       = 'lead.sold';
-    const NO_TARGET  = 'lead.no_target';
+    const IN_WORK    = 'lead.in_work';
+    const TARGET     = 'lead.target';
+    const NOT_TARGET = 'lead.not_target';
 
     /**
      * @var Lead

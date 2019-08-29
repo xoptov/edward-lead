@@ -157,7 +157,7 @@ class LeadController extends Controller
         $user = $this->getUser();
 
         $lead = $this->getDoctrine()->getRepository('AppBundle:Lead')
-            ->getByUserAndReserved($user);
+            ->getInWorkByBuyer($user);
 
         if ($lead) {
             $room = $lead->getRoom();

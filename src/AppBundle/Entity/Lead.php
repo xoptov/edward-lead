@@ -20,12 +20,12 @@ class Lead implements IdentifiableInterface
 
     use TimeTrackableTrait;
 
-    const STATUS_BLOCKED   = 'blocked';
-    const STATUS_ACTIVE    = 'active';
-    const STATUS_RESERVED  = 'reserved';
-    const STATUS_SOLD      = 'sold';
-    const STATUS_NO_TARGET = 'no_target';
-    const STATUS_EXPIRED   = 'expired';
+    const STATUS_EXPECT      = 'expect';      // "ожидает", ранее "active"
+    const STATUS_IN_WORK     = 'in_work';     // "в работе", ранее "reserved"
+    const STATUS_TARGET      = 'target';      // "целевой", ранее "sold"
+    const STATUS_ARBITRATION = 'arbitration'; // "арбитраж", ранее "no_target"
+    const STATUS_NOT_TARGET  = 'not_target';  // "не целевой", ранее "blocked"
+    const STATUS_ARCHIVE     = 'archive';     // "архив", ранее "expired"
 
     /**
      * @var Room|null
@@ -147,7 +147,7 @@ class Lead implements IdentifiableInterface
      *
      * @ORM\Column(name="status", type="string")
      */
-    private $status = self::STATUS_ACTIVE;
+    private $status = self::STATUS_EXPECT;
 
     /**
      * @var int
@@ -576,38 +576,6 @@ class Lead implements IdentifiableInterface
         }
 
         return $this->price;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isActive(): bool
-    {
-        return self::STATUS_ACTIVE === $this->status;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReserved(): bool
-    {
-        return self::STATUS_RESERVED === $this->status;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSold(): bool
-    {
-        return self::STATUS_SOLD === $this->status;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNoTarget(): bool
-    {
-        return self::STATUS_NO_TARGET === $this->status;
     }
 
     /**

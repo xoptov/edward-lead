@@ -3,11 +3,11 @@
 namespace AppBundle\Admin;
 
 use AppBundle\Entity\Trade;
+use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
-use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
 
 class TradeAdmin extends AbstractAdmin
 {
@@ -26,7 +26,7 @@ class TradeAdmin extends AbstractAdmin
                     0 => 'new',
                     1 => 'accepted',
                     2 => 'rejected',
-                    3 => 'arbitrage'
+                    3 => 'proceeding'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -62,7 +62,7 @@ class TradeAdmin extends AbstractAdmin
                     0 => 'new',
                     1 => 'accepted',
                     2 => 'rejected',
-                    3 => 'arbitrage'
+                    3 => 'proceeding'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -89,7 +89,7 @@ class TradeAdmin extends AbstractAdmin
                         'new' => 0,
                         'accepted' => 1,
                         'rejected' => 2,
-                        'arbitrage' => 3
+                        'proceeding' => 3
                     ],
                     'choice_translation_domain' => 'messages'
                 ]
