@@ -142,7 +142,7 @@ class LeadController extends Controller
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->redirectToRoute('app_leads_my');
+        return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
     }
 
 
