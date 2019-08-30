@@ -8,9 +8,15 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FeesManager
 {
-    const TRADE_BUYER_FEE = 10;
+    /**
+     * @var float
+     */
+    private $tradeBuyerFee;
 
-    const TRADE_SELLER_FEE = 0;
+    /**
+     * @var float
+     */
+    private $tradeSellerFee;
 
     /**
      * @var EntityManagerInterface
@@ -19,10 +25,33 @@ class FeesManager
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param float                  $tradeBuyerFee
+     * @param float                  $tradeSellerFee
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        float $tradeBuyerFee,
+        float $tradeSellerFee
+    ) {
         $this->entityManager = $entityManager;
+        $this->tradeBuyerFee = $tradeBuyerFee;
+        $this->tradeSellerFee = $tradeSellerFee;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTradeBuyerFee(): float
+    {
+        return $this->tradeBuyerFee;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTradeSellerFee(): float
+    {
+        return $this->tradeSellerFee;
     }
 
     /**
@@ -46,7 +75,15 @@ class FeesManager
     {
         $fees = [];
 
-        $feeAmount = $this->calculateTradeFee($trade->getAmount(), self::TRADE_BUYER_FEE);
+        $tradeBuyerFee = $this->tradeBuyerFee;
+
+        $lead = $trade->getLead();
+
+        if ($lead->hasRoom() && $lead->getRoom()->getBuyerFee()) {
+            $tradeBuyerFee = $lead->getRoom()->getBuyerFee();
+        }
+
+        $feeAmount = $this->calculateTradeFee($trade->getAmount(), $tradeBuyerFee);
 
         if ($feeAmount > 0) {
             $fee = new Fee();
@@ -60,7 +97,7 @@ class FeesManager
             $fees[] = $fee;
         }
 
-        $feeAmount = $this->calculateTradeFee($trade->getAmount(), self::TRADE_SELLER_FEE);
+        $feeAmount = $this->calculateTradeFee($trade->getAmount(), $this->tradeSellerFee);
 
         if ($feeAmount > 0) {
             $fee = new Fee();

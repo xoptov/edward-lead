@@ -224,6 +224,11 @@ services:
             $costPerSecond: '%cost_per_second%'
             $firstCallTimeout: '%first_call_timeout%'
 
+    AppBundle\Service\FeesManager:
+        arguments:
+            $tradeBuyerFee: '%trade_buyer_fee%'
+            $tradeSellerFee: '%trade_seller_fee%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'

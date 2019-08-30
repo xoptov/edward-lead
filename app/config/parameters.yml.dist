@@ -29,8 +29,12 @@ parameters:
 
     # Telephony
     pbx_call_url: 'http://159.253.123.139:81/make.php'
-    cost_per_second: 5.84
+    cost_per_second: 2.0
     first_call_timeout: 300
 
     audio_allowed_types: ['audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/wave', 'audio/wav', 'audio/flac']
     audio_max_size: 2097152
+
+    # Fees in percent
+    trade_buyer_fee: 10.0
+    trade_seller_fee: 0.0
