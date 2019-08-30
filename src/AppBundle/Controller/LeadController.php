@@ -7,6 +7,7 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Service\FeesManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\LeadBuyVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
@@ -99,11 +100,12 @@ class LeadController extends Controller
     /**
      * @Route("/lead/{id}", name="app_lead_show", methods={"GET"}, requirements={"id"="\d+"})
      *
-     * @param Lead $lead
+     * @param Lead        $lead
+     * @param FeesManager $feesManager
      *
      * @return Response
      */
-    public function showLeadAction(Lead $lead): Response
+    public function showLeadAction(Lead $lead, FeesManager $feesManager): Response
     {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
@@ -112,11 +114,19 @@ class LeadController extends Controller
         }
 
         if ($lead->getUser() === $this->getUser()) {
-            return $this->render('@App/Lead/show_before_buy.html.twig', ['lead' => $lead]);
+            return $this->render('@App/Lead/show_before_buy.html.twig', [
+                'lead' => $lead,
+                'priceWithFee' => $feesManager->getLeadPriceWithBuyerFee($lead),
+                'fee' => $feesManager->getCommissionForBuyingLead($lead)
+            ]);
         } elseif ($lead->getBuyer() === $this->getUser()) {
             return $this->render('@App/Lead/show_after_buy.html.twig', ['lead' => $lead]);
         } else {
-            return $this->render("@App/Lead/show_before_buy.html.twig", ["lead" => $lead]);
+            return $this->render("@App/Lead/show_before_buy.html.twig", [
+                'lead' => $lead,
+                'priceWithFee' => $feesManager->getLeadPriceWithBuyerFee($lead),
+                'fee' => $feesManager->getCommissionForBuyingLead($lead)
+            ]);
         }
     }
 

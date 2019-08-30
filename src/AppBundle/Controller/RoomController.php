@@ -6,6 +6,7 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
+use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Security\Voter\RoomVoter;
@@ -149,11 +150,15 @@ class RoomController extends Controller
      *
      * @param Room           $room
      * @param AccountManager $accountManager
+     * @param FeesManager    $feesManager
      *
      * @return Response
      */
-    public function viewAction(Room $room, AccountManager $accountManager): Response
-    {
+    public function viewAction(
+        Room $room,
+        AccountManager $accountManager,
+        FeesManager $feesManager
+    ): Response {
         if (!$this->isGranted(RoomVoter::VIEW, $room)) {
             $this->addFlash('error', 'У вас нет прав на просмотр комнаты');
 
@@ -171,7 +176,8 @@ class RoomController extends Controller
         return $this->render('@App/v2/Room/view.html.twig', [
             'room' => $room,
             'leads' => $leads,
-            'countCanBuy' => $countCanBy
+            'countCanBuy' => $countCanBy,
+            'fee' => $feesManager->getCommissionForBuyerInRoom($room)
         ]);
     }
 

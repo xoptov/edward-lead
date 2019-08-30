@@ -52,7 +52,7 @@
                                     <span v-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
                                 </td>
                                 <td class="status">
-                                    <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label">
+                                    <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label"></span>
                                 </td>
                                 <td>
                                     <a target="_blank" :href="leadViewUrl(lead)" v-if="activated">
@@ -95,6 +95,7 @@
                             {% else %}
                                 Зависит от населенного пункта
                             {% endif %}
+                            <div class="fee">{{ fee }}% комиссия</div>
                         </span>
                         <div class="box_title proc">Ср. % целевых:</div>
                         <span>Ещё не расчитан</span>
