@@ -58,13 +58,13 @@ class CompanyType extends AbstractType
             $builder
                 ->add('officeName', TextType::class)
                 ->add('officeAddress', TextType::class)
-                ->add('officePhone', TelType::class)
-                ->add('cities', EntityType::class, [
-                    'class' => City::class,
-                    'choice_label' => 'name',
-                    'expanded' => true,
-                    'multiple' => true
-                ]);
+                ->add('officePhone', TelType::class);
+//                ->add('cities', EntityType::class, [
+//                    'class' => City::class,
+//                    'choice_label' => 'name',
+//                    'expanded' => true,
+//                    'multiple' => true
+//                ]);
 
             $builder->get('officePhone')
                 ->addViewTransformer(new PhoneTransformer());
