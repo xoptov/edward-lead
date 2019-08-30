@@ -58,7 +58,7 @@ class Room implements IdentifiableInterface
      *
      * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="999900", maxMessage="Максимальная стоимость 9999")
      *
-     * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned"="true"})
+     * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
      */
     private $leadPrice;
 
@@ -70,6 +70,15 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
     private $platformWarranty = false;
+
+    /**
+     * @var float|null
+     *
+     * @Assert\GreaterThan(value="0", message="Комиссия должна быть положительной")
+     *
+     * @ORM\Column(name="buyer_fee", type="float", nullable=true, options={"unsigned":"true"})
+     */
+    private $buyerFee;
 
     /**
      * @var string
@@ -207,6 +216,27 @@ class Room implements IdentifiableInterface
 
         return $this;
     }
+
+    /**
+     * @param float|null $buyerFee
+     *
+     * @return Room
+     */
+    public function setBuyerFee(?float $buyerFee): self
+    {
+        $this->buyerFee = $buyerFee;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getBuyerFee(): ?float
+    {
+        return $this->buyerFee;
+    }
+
 
     /**
      * @param string $inviteToken

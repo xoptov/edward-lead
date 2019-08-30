@@ -75,6 +75,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('leadCriteria')
             ->add('platformWarranty')
             ->add($leadPrice)
+            ->add('buyerFee', null, ['label' => '% комиссии'])
             ->add('enabled')
             ->add('_action', null, [
                 'actions' => [
@@ -107,6 +108,7 @@ class RoomAdmin extends AbstractAdmin
                 'currency' => 'RUB',
                 'divisor' => Account::DIVISOR
             ])
+            ->add('buyerFee', null, ['label' => '% комиссии'])
             ->add('enabled');
     }
 
@@ -125,6 +127,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('leadCriteria')
             ->add('platformWarranty')
             ->add($leadPrice)
+            ->add('buyerFee', null, ['label' => '% комиссии'])
             ->add('enabled');
     }
 
