@@ -153,10 +153,15 @@
             </div>
         </div>
         <div class="card-lead__offer">
-            <div class="plain__text text-mod-6">Стоимость лида на бирже:</div>
-            <div class="text-green">{{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</div>
+            <div class="plain__text text-mod-6">Стоимость лида:</div>
+            <div class="text-green">
+                {{ priceWithFee|money_format }}<br/>
+                <span class="fee">С учётом комиссии {{ fee }}%</span>
+            </div>
             {% if app.user != lead.user %}
-                <a class="btn btn-green btn-buy-lead" href="{{ path('app_lead_buy', {'id': lead.id}) }}">Купить лида за {{ lead.price // 100 }} руб.{% if lead.price % 100 > 0 %} {{ lead.price % 100 }} коп.{% endif %}</a>
+                <a class="btn btn-green btn-buy-lead" href="{{ path('app_lead_buy', {'id': lead.id}) }}">
+                    Купить лида за {{ priceWithFee|money_format }}
+                </a>
             {% endif %}
         </div>
         {% include '@App/block_copyright.html.twig' %}

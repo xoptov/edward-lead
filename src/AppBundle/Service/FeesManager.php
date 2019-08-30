@@ -3,6 +3,8 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Fee;
+use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\Trade;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -75,15 +77,10 @@ class FeesManager
     {
         $fees = [];
 
-        $tradeBuyerFee = $this->tradeBuyerFee;
-
-        $lead = $trade->getLead();
-
-        if ($lead->hasRoom() && $lead->getRoom()->getBuyerFee()) {
-            $tradeBuyerFee = $lead->getRoom()->getBuyerFee();
-        }
-
-        $feeAmount = $this->calculateTradeFee($trade->getAmount(), $tradeBuyerFee);
+        $feeAmount = $this->calculateTradeFee(
+            $trade->getAmount(),
+            $this->getCommissionForBuyingLead($trade->getLead())
+        );
 
         if ($feeAmount > 0) {
             $fee = new Fee();
@@ -116,5 +113,43 @@ class FeesManager
         }
 
         return $fees;
+    }
+
+    /**
+     * @param Room $room
+     *
+     * @return float
+     */
+    public function getCommissionForBuyerInRoom(Room $room): float
+    {
+        if ($room->getBuyerFee()) {
+            return $room->getBuyerFee();
+        }
+
+        return $this->tradeBuyerFee;
+    }
+
+    /**
+     * @param Lead $lead
+     *
+     * @return float
+     */
+    public function getCommissionForBuyingLead(Lead $lead): float
+    {
+        if ($lead->hasRoom()) {
+            return $this->getCommissionForBuyerInRoom($lead->getRoom());
+        }
+
+        return $this->tradeBuyerFee;
+    }
+
+    /**
+     * @param Lead $lead
+     *
+     * @return int
+     */
+    public function getLeadPriceWithBuyerFee(Lead $lead): int
+    {
+        return (int)ceil($lead->getPrice() + $lead->getPrice() * $this->getCommissionForBuyingLead($lead) / 100);
     }
 }

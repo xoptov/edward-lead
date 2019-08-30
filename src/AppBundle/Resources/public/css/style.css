@@ -2512,6 +2512,10 @@ textarea:-ms-input-placeholder {
     margin-bottom: 60px;
 }
 
+.card-lead__offer .fee {
+    font-size: 12px;
+}
+
 .text-mod-6 {
     max-width: 170px;
 }

@@ -130,4 +130,93 @@ class FeesManagerTest extends TestCase
         $this->assertEquals(1500, $fee->getAmount());
         $this->assertEquals($trade, $fee->getOperation());
     }
+
+    public function testGetCommissionForBuyerInRoom()
+    {
+        $roomWithCustomFee = new Room();
+        $roomWithCustomFee->setBuyerFee(15);
+
+        $entityManager = $this->createMock(EntityManager::class);
+
+        /** @var EntityManager $entityManager */
+        $feesManager = new FeesManager($entityManager, 10, 0);
+
+        $interest = $feesManager->getCommissionForBuyerInRoom($roomWithCustomFee);
+
+        $this->assertEquals(15, $interest);
+
+        $roomWithoutCustomFee = new Room();
+
+        $interest = $feesManager->getCommissionForBuyerInRoom($roomWithoutCustomFee);
+
+        $this->assertEquals(10, $interest);
+    }
+
+    public function testGetFeeInterestForBuyingLead()
+    {
+        $entityManager = $this->createMock(EntityManager::class);
+
+        /** @var EntityManager $entityManager */
+        $feesManager = new FeesManager($entityManager, 10, 0);
+
+        $lead1 = new Lead();
+
+        $interest =  $feesManager->getCommissionForBuyingLead($lead1);
+
+        $this->assertEquals(10, $interest);
+
+        $room1 = new Room();
+        $lead2 = new Lead();
+        $lead2->setRoom($room1);
+
+        $interest =  $feesManager->getCommissionForBuyingLead($lead2);
+
+        $this->assertEquals(10, $interest);
+
+        $room2 = new Room();
+        $room2->setBuyerFee(15);
+
+        $lead3 = new Lead();
+        $lead3->setRoom($room2);
+
+        $interest =  $feesManager->getCommissionForBuyingLead($lead3);
+
+        $this->assertEquals(15, $interest);
+    }
+
+    public function testGetLeadPriceWithBuyerFee()
+    {
+        $entityManager = $this->createMock(EntityManager::class);
+
+        /** @var EntityManager $entityManager */
+        $feesManager = new FeesManager($entityManager, 10, 0);
+
+        $lead1 = new Lead();
+        $lead1->setPrice(10000);
+
+        $priceWithFee1 =  $feesManager->getLeadPriceWithBuyerFee($lead1);
+
+        $this->assertEquals(11000, $priceWithFee1);
+
+        $room1 = new Room();
+
+        $lead2 = new Lead();
+        $lead2->setRoom($room1)
+            ->setPrice(10000);
+
+        $priceWithFee2 =  $feesManager->getLeadPriceWithBuyerFee($lead2);
+
+        $this->assertEquals(11000, $priceWithFee2);
+
+        $room2 = new Room();
+        $room2->setBuyerFee(15);
+
+        $lead3 = new Lead();
+        $lead3->setRoom($room2)
+            ->setPrice(10000);
+
+        $interest =  $feesManager->getLeadPriceWithBuyerFee($lead3);
+
+        $this->assertEquals(11500, $interest);
+    }
 }
