@@ -2,6 +2,8 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\City;
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Thread;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -66,7 +68,7 @@ class ThreadAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->add('createdBy.username')
             ->add('participants', null, [
-                'template' => '@App/CRUD/list_thread_metadata_participants.html.twig'
+                'template' => '@App/CRUD/list_thread_participants_field.html.twig'
             ])
             ->add('subject')
             ->add('status', 'choice', [
@@ -104,42 +106,80 @@ class ThreadAdmin extends AbstractAdmin
     {
         $showMapper
             ->with('General', [
-                'class' => 'col-xs-12 col-sm-4 col-md-3',
+                'class' => 'col-xs-3 col-sm-3 col-md-3',
                 'box_class' => 'box box-solid box-default'
             ])
-                ->add('id')
-                ->add('createdBy.username')
-                ->add('participants', null, [
-                    'template' => '@App/CRUD/show_thread_metadata_participants.html.twig'
+            ->add('id')
+            ->add('createdBy.username')
+            ->add('participants', null, [
+                'template' => '@App/CRUD/show_thread_participants_field.html.twig'
+            ])
+            ->add('status', 'choice', [
+                'choices' => [
+                    Thread::STATUS_NEW => 'New',
+                    Thread::STATUS_WAIT_USER => 'Waiting for user response',
+                    Thread::STATUS_WAIT_SUPPORT => 'Waiting for support response',
+                    Thread::STATUS_CLOSED => 'Closed'
+                ],
+                'catalogue' => 'messages'
+            ])
+            ->add('typeAppeal', 'choice', [
+                'choices' => [
+                    Thread::TYPE_ARBITRATION => 'Arbitration',
+                    Thread::TYPE_SUPPORT => 'Support'
+                ],
+                'catalogue' => 'messages'
+            ])
+            ->add('createdAt')
+            ->end();
+
+        if ($this->subject->hasLead()) {
+            $showMapper
+                ->with('Lead', [
+                    'class' => 'col-xs-4 col-sm-4 col-md-4',
+                    'box_class' => 'box box-solid box-default'
                 ])
-                ->add('status', 'choice', [
-                    'choices' => [
-                        Thread::STATUS_NEW => 'New',
-                        Thread::STATUS_WAIT_USER => 'Waiting for user response',
-                        Thread::STATUS_WAIT_SUPPORT => 'Waiting for support response',
-                        Thread::STATUS_CLOSED => 'Closed'
-                    ],
-                    'catalogue' => 'messages'
+                ->add('lead.id')
+                ->add('lead.trade.buyer.name', null, [
+                    'label' => 'Lead Buyer'
                 ])
-                ->add('typeAppeal', 'choice', [
-                    'choices' => [
-                        Thread::TYPE_ARBITRATION => 'Arbitration',
-                        Thread::TYPE_SUPPORT => 'Support'
-                    ],
-                    'catalogue' => 'messages'
+                ->add('lead.trade.seller.name', null, [
+                    'label' => 'Lead Seller'
                 ])
-                ->add('createdAt')
-            ->end()
+                ->add('lead.trade.createdAt', 'datetime', [
+                    'label' => 'Trade CreatedAt',
+                    'format' => 'd.m.Y H:i:s'
+                ])
+                ->add('lead.name')
+                ->add('lead.phone', null, [
+                    'template' => '@App/CRUD/show_phone_field.html.twig'
+                ])
+                ->add('lead.orderDate', 'date', [
+                    'label' => 'Order Date',
+                    'format' => 'd.m.Y'
+                ])
+                ->add('lead.channel.value', null, [
+                    'label' => 'Lead Channel'
+                ])
+                ->add('lead.decisionMaker')
+                ->add('lead.interestAssessment')
+                ->add('lead.description')
+                ->add('lead.audioRecord', null, [
+                    'template' => '@App/CRUD/show_audio_record_field.html.twig'
+                ])
+                ->end();
+        }
+
+        $showMapper
             ->with('Appeal', [
-                'class' => 'col-xs-12 col-sm-8 col-md-9',
+                'class' => 'col-xs-5 col-sm-5 col-md-5',
                 'box_class' => 'box box-solid box-default'
             ])
-                ->add('subject')
-                ->add('messages', 'collection', [
-                    'template' => '@App/CRUD/show_messages_field.html.twig'
-                ])
-            ->end()
-        ;
+            ->add('subject')
+            ->add('messages', 'collection', [
+                'template' => '@App/CRUD/show_messages_field.html.twig'
+            ])
+            ->end();
     }
 
     /**

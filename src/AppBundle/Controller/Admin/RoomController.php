@@ -64,7 +64,7 @@ class RoomController extends CRUDController
         $leads = $this->entityManager->getRepository(Lead::class)
             ->findBy(['room' => $object], ['createdAt' => 'DESC', 'updatedAt' => 'DESC']);
 
-        return $this->renderWithExtraParams('@App/CRUD/room_show.html.twig', [
+        return $this->renderWithExtraParams('@App/CRUD/show_room.html.twig', [
             'action' => 'show',
             'object' => $object,
             'elements' => $fields,

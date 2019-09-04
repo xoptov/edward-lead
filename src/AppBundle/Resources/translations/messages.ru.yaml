@@ -67,7 +67,10 @@ Buyer Name: Имя покупателя
 Seller Name: Имя продавца
 Lead: Лид
 Lead Name: Имя лида
+Lead Buyer: Покупатель лида
+Lead Seller: Продачец лида
 Trade List: Список сделок
+Trade CreatedAt: Время и дата сделки
 Trades: Сделки
 Sale Lead Limit: Лимит продаваемых лидов
 Lead Audio Record: Запись разговора
@@ -141,11 +144,15 @@ Sphere: Сфера
 Lead Criteria: Критерии лида
 Platform Warranty: Гарантия платформы
 Owner Name: Имя владельца
+Room ID: ID комнаты
 Room List: Список комнат
+Room Name: Название комнаты
 Room: Комната
 Owner: Владелец
 Room Create: Создание комнаты
 Membered At: Членство от
+Order Date: Дата поступления заявки
+Lead Channel: Рекламный источник
 
 lead:
     status:

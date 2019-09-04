@@ -129,7 +129,7 @@ class AccountController extends CRUDController
                 ->findBy(['account' => $object]);
         }
 
-        return $this->renderWithExtraParams('@App/CRUD/account_show.html.twig', [
+        return $this->renderWithExtraParams('@App/CRUD/show_account.html.twig', [
             'action' => 'show',
             'object' => $object,
             'elements' => $fields,
