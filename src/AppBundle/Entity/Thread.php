@@ -146,6 +146,14 @@ class Thread extends BaseThread implements IdentifiableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasLead(): bool
+    {
+        return $this->lead instanceof Lead;
+    }
+
+    /**
      * @return Thread|null
      */
     public function getSellerThread(): ?Thread
