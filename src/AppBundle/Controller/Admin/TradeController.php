@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Account;
 use AppBundle\Entity\Trade;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Exception\OperationException;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,6 +35,66 @@ class TradeController extends CRUDController
     ) {
         $this->tradeManager = $tradeManager;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return RedirectResponse
+     *
+     * @throws \Exception
+     */
+    public function acceptAction(int $id)
+    {
+        /** @var Trade $object */
+        $object = $this->admin->getSubject();
+
+        if (!$object) {
+            throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
+        }
+
+        if (!$object instanceof Trade) {
+            throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
+        }
+
+        if ($object->isProcessed()) {
+            throw new \Exception('Сделка уже обработана');
+        }
+
+        $objectName = $this->admin->toString($object);
+
+        try {
+
+            $feesAccount = $this->getDoctrine()->getRepository(Account::class)
+                ->getFeesAccount();
+
+            $this->tradeManager->accept($object, $feesAccount);
+            $this->admin->update($object);
+
+            $this->eventDispatcher->dispatch(Trade::STATUS_ACCEPTED, new TradeEvent($object));
+
+            $this->addFlash(
+                'sonata_flash_success',
+                $this->trans(
+                    'flash_accept_success',
+                    ['%name%' => $this->escapeHtml($objectName)],
+                    'SonataAdminBundle'
+                )
+            );
+        } catch (\Exception $e) {
+            $this->handleModelManagerException($e);
+
+            $this->addFlash(
+                'sonata_flash_error',
+                $this->trans(
+                    'flash_accept_error',
+                    ['%name%' => $this->escapeHtml($objectName)],
+                    'SonataAdminBundle'
+                )
+            );
+        }
+
+        return new RedirectResponse($this->admin->generateUrl('list'));
     }
 
     /**
@@ -75,7 +137,7 @@ class TradeController extends CRUDController
                     'SonataAdminBundle'
                 )
             );
-        } catch (ModelManagerException $e) {
+        } catch (\Exception $e) {
             $this->handleModelManagerException($e);
 
             $this->addFlash(

@@ -153,6 +153,8 @@ Room Create: Создание комнаты
 Membered At: Членство от
 Order Date: Дата поступления заявки
 Lead Channel: Рекламный источник
+Lead Status: Статус лида
+Chat With Buyer: Открыть диалог с покупателем
 
 lead:
     status:

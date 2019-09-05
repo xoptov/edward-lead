@@ -1,0 +1,14 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% from '@App/common_macros.html.twig' import lead_status %}
+
+{% block field %}
+    {{ lead_status(value, {
+        'expect': 'label-default',
+        'in_work': 'label-primary',
+        'target': 'label-success',
+        'arbitration': 'label-warning',
+        'not_target': 'label-danger',
+        'archive': 'label-default'
+    }) }}
+{% endblock %}

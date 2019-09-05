@@ -103,7 +103,8 @@ class TradeAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollection $collection)
     {
         $collection->clearExcept(['list', 'show'])
-            ->add('reject', $this->getRouterIdParameter().'/reject');
+            ->add('accept', $this->getRouterIdParameter() . '/accept')
+            ->add('reject', $this->getRouterIdParameter() . '/reject');
     }
 
     /**
