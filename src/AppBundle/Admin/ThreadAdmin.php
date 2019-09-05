@@ -2,8 +2,6 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Entity\City;
-use AppBundle\Entity\Lead;
 use AppBundle\Entity\Thread;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -130,7 +128,12 @@ class ThreadAdmin extends AbstractAdmin
                 ],
                 'catalogue' => 'messages'
             ])
-            ->add('createdAt')
+            ->add('createdAt', 'date', [
+                'format' => 'd.m.Y'
+            ])
+            ->add('lead.trade', null, [
+                'template' => '@App/CRUD/show_thread_trade_control_field.html.twig'
+            ])
             ->end();
 
         if ($this->subject->hasLead()) {
@@ -140,6 +143,10 @@ class ThreadAdmin extends AbstractAdmin
                     'box_class' => 'box box-solid box-default'
                 ])
                 ->add('lead.id')
+                ->add('lead', null, [
+                    'label' => 'Lead Status',
+                    'template' => '@App/CRUD/show_lead_status_field.html.twig'
+                ])
                 ->add('lead.trade.buyer.name', null, [
                     'label' => 'Lead Buyer'
                 ])

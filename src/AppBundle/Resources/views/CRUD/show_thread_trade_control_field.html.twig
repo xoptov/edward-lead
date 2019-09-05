@@ -1,0 +1,6 @@
+{% if value is not empty and not value.isProcessed() %}
+    <td colspan="2" style="text-align: center">
+        <a href="{{ path('admin_app_trade_accept', {'id': value.id}) }}" class="btn btn-success">Целевой</a>
+        <a href="{{ path('admin_app_trade_reject', {'id': value.id}) }}" class="btn btn-danger">Не целевой</a>
+    </td>
+{% endif %}
