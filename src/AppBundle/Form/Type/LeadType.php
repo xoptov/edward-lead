@@ -53,7 +53,6 @@ class LeadType extends AbstractType
                 'required' => false
             ])
             ->add('decisionMaker', HiddenType::class)
-            ->add('madeMeasurement', HiddenType::class)
             ->add('interestAssessment', HiddenType::class)
             ->add('description', TextareaType::class, [
                 'required' => false
@@ -85,14 +84,6 @@ class LeadType extends AbstractType
         );
 
         $builder->get('phone')->addViewTransformer(new PhoneTransformer());
-
-        $builder->get('decisionMaker')->addViewTransformer(
-            new NumberToBooleanTransformer()
-        );
-
-        $builder->get('madeMeasurement')->addViewTransformer(
-            new NumberToBooleanTransformer()
-        );
     }
 
     /**

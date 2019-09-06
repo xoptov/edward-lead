@@ -73,7 +73,6 @@ class LeadController extends Controller
             'name' => $lead->getName(),
             'orderDate' => $lead->getOrderDateFormatted('c'),
             'decisionMaker' => $numToBoolTransformer->transform($lead->isDecisionMaker()),
-            'madeMeasurement' => $numToBoolTransformer->transform($lead->isMadeMeasurement()),
             'interestAssessment' => $lead->getInterestAssessment(),
             'description' => $lead->getDescription(),
             'audioRecord' => $lead->getAudioRecord(),

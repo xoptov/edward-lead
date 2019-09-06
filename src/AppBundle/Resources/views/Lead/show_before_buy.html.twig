@@ -73,17 +73,22 @@
             </div>
             <div class="hr-line">&nbsp;</div>
             <div class="info-block__item">
-                <div class="info-block__img"><span class="icon-star-new span-mod-3 {% if lead.decisionMaker is null or lead.madeMeasurement is null %}text-gray{% else %}text-yellow{% endif %}"></span>
+                <div class="info-block__img"><span class="icon-star-new span-mod-3 {% if lead.decisionMaker is null %}text-gray{% else %}text-yellow{% endif %}"></span>
                 </div>
                 <div class="info-block__row-box">
                     <div class="info-block__row-item">
                         <div class="info-block__column-left">Лицо принемающее решение?</div>
-                        <div class="info-block__column-right">{% if lead.decisionMaker is null %}Не указано{% elseif lead.decisionMaker %}Да{% else %}Нет{% endif %}</div>
-
-                    </div>
-                    <div class="info-block__row-item">
-                        <div class="info-block__column-left">Делали замер на адресе?</div>
-                        <div class="info-block__column-right">{% if lead.madeMeasurement is null %}Не указано{% elseif lead.madeMeasurement %}Да{% else %}Нет{% endif %}</div>
+                        <div class="info-block__column-right">
+                            {% if lead.decisionMaker is constant('DECISION_MAKER_UNKNOWN', lead) %}
+                                Неизвестно
+                            {% elseif lead.decisionMaker is constant('DECISION_MAKER_YES', lead) %}
+                                Да
+                            {% elseif lead.decisionMaker is constant('DECISION_MAKER_NO', lead) %}
+                                Нет
+                            {% else %}
+                                Не указано
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

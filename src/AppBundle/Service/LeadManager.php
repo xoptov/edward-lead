@@ -123,7 +123,7 @@ class LeadManager
             $stars++;
         }
 
-        if ($lead->isDecisionMaker() !== null && $lead->isMadeMeasurement() !== null) {
+        if ($lead->isDecisionMaker() !== null) {
             $stars++;
         }
 

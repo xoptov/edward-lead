@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -23,10 +24,10 @@ class TradeAdmin extends AbstractAdmin
             ->add('lead.name')
             ->add('status', 'choice', [
                 'choices' => [
-                    0 => 'new',
-                    1 => 'accepted',
-                    2 => 'rejected',
-                    3 => 'proceeding'
+                    Trade::STATUS_NEW => 'new',
+                    Trade::STATUS_ACCEPTED => 'accepted',
+                    Trade::STATUS_REJECTED => 'rejected',
+                    Trade::STATUS_PROCEEDING => 'proceeding'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -54,15 +55,20 @@ class TradeAdmin extends AbstractAdmin
             ->add('lead.channel.value')
             ->add('lead.createdAt')
             ->add('lead.description')
-            ->add('lead.decisionMaker')
-            ->add('lead.madeMeasurement')
+            ->add('lead.decisionMaker', 'choice', [
+                'choices' => [
+                    Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
+                    Lead::DECISION_MAKER_YES => 'Да',
+                    Lead::DECISION_MAKER_NO => 'Нет'
+                ]
+            ])
             ->add('lead.interestAssessment')
             ->add('status', 'choice', [
                 'choices' => [
-                    0 => 'new',
-                    1 => 'accepted',
-                    2 => 'rejected',
-                    3 => 'proceeding'
+                    Trade::STATUS_NEW => 'new',
+                    Trade::STATUS_ACCEPTED => 'accepted',
+                    Trade::STATUS_REJECTED => 'rejected',
+                    Trade::STATUS_PROCEEDING => 'proceeding'
                 ],
                 'catalogue' => 'messages'
             ])
@@ -86,10 +92,10 @@ class TradeAdmin extends AbstractAdmin
                 'choice',
                 [
                     'choices' => [
-                        'new' => 0,
-                        'accepted' => 1,
-                        'rejected' => 2,
-                        'proceeding' => 3
+                        'new' => Trade::STATUS_NEW,
+                        'accepted' => Trade::STATUS_ACCEPTED,
+                        'rejected' => Trade::STATUS_REJECTED,
+                        'proceeding' => Trade::STATUS_PROCEEDING
                     ],
                     'choice_translation_domain' => 'messages'
                 ]

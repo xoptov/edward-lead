@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Thread;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -168,7 +169,13 @@ class ThreadAdmin extends AbstractAdmin
                 ->add('lead.channel.value', null, [
                     'label' => 'Lead Channel'
                 ])
-                ->add('lead.decisionMaker')
+                ->add('lead.decisionMaker', 'choice', [
+                    'choices' => [
+                        Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
+                        Lead::DECISION_MAKER_YES => 'Да',
+                        Lead::DECISION_MAKER_NO => 'Нет'
+                    ]
+                ])
                 ->add('lead.interestAssessment')
                 ->add('lead.description')
                 ->add('lead.audioRecord', null, [
