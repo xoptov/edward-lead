@@ -30,7 +30,7 @@ class InvoiceRepository extends EntityRepository
      *
      * @return Invoice|null
      */
-    public function getByHash(?string $hash) : ?Invoice
+    public function getByHash(?string $hash)
     {
         $qb = $this->createQueryBuilder('i');
         $query = $qb->where('i.hash = :hash')
