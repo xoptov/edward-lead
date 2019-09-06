@@ -2,10 +2,13 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\NonUniqueResultException;
 
 class RoomRepository extends EntityRepository
 {
@@ -26,5 +29,25 @@ class RoomRepository extends EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param string $inviteTokenSuffix
+     *
+     * @return Room
+     *
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function getByInviteShortToken(string $inviteTokenSuffix): Room
+    {
+        $qb = $this->createQueryBuilder('r');
+        $query = $qb
+            ->where('r.inviteToken LIKE :invite_token_suffix')
+                ->setParameter('invite_token_suffix', '%' . $inviteTokenSuffix)
+            ->setMaxResults(1)
+            ->getQuery();
+
+        return $query->getSingleResult();
     }
 }

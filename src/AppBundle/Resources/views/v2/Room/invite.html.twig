@@ -17,7 +17,7 @@
                                 <img src="{{ asset('bundles/app/v2/img/link.png') }}">
                             </div>
                             <div class="text">
-                                {{ absolute_url(path('app_room_invite_confirm', {'token': room.inviteToken})) }}
+                                {{ absolute_url(path('app_index', {'i': room.inviteToken[26:]})) }}
                             </div>
                         </div>
                         <p>Вы можете отправить партнеру прямую ссылку, чтобы пригласить присоедениться его к своей комнате</p>
