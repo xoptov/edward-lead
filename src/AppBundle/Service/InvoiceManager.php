@@ -45,6 +45,7 @@ class InvoiceManager
     {
         $invoice = new Invoice();
         $invoice
+            ->setHash(md5(microtime()))
             ->setUser($user)
             ->setPhone($phone)
             ->setDescription('Пополнение баланса')
