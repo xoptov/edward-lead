@@ -22,7 +22,8 @@
                     {% endif %}
                 </div>
                 <div class="header__balance-box">
-                    <span class="header__text text-white" id="balance">Баланс: {{ app.user.humanbalance() }} руб.</span>
+                    <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>
+                    <div class="header__text text-white">Холд: {{ balance_hold(app.user)|money_format }}</div>
                 </div>
                 {% include '@App/top_menu.html.twig' %}
             </div>
