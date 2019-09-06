@@ -87,7 +87,7 @@ class SecurityController extends Controller
 
                 $this->entityManager->persist($account);
 
-                $this->eventDispatcher->dispatch(UserEvent::NEW_USER_REGISTERED, new UserEvent($user));
+                $this->eventDispatcher->dispatch(UserEvent::NEW_REGISTERED, new UserEvent($user));
 
                 return $this->redirectToRoute('app_registered');
             }
