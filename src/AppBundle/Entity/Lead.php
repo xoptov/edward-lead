@@ -27,6 +27,10 @@ class Lead implements IdentifiableInterface
     const STATUS_NOT_TARGET  = 'not_target';  // "не целевой", ранее "blocked"
     const STATUS_ARCHIVE     = 'archive';     // "архив", ранее "expired"
 
+    const DECISION_MAKER_UNKNOWN = 0;
+    const DECISION_MAKER_YES     = 1;
+    const DECISION_MAKER_NO      = 2;
+
     /**
      * @var Room|null
      *
@@ -101,18 +105,11 @@ class Lead implements IdentifiableInterface
     private $orderDate;
 
     /**
-     * @var bool|null
+     * @var int|null
      *
-     * @ORM\Column(name="decision_maker", type="boolean", nullable=true)
+     * @ORM\Column(name="decision_maker", type="smallint", nullable=true)
      */
     private $decisionMaker;
-
-    /**
-     * @var bool|null
-     *
-     * @ORM\Column(name="made_measurement", type="boolean", nullable=true)
-     */
-    private $madeMeasurement;
 
     /**
      * @var int|null
@@ -395,11 +392,11 @@ class Lead implements IdentifiableInterface
     }
 
     /**
-     * @param bool|null $decisionMaker
+     * @param int|null $decisionMaker
      *
      * @return Lead
      */
-    public function setDecisionMaker(?bool $decisionMaker): self
+    public function setDecisionMaker(?int $decisionMaker): self
     {
         $this->decisionMaker = $decisionMaker;
 
@@ -407,31 +404,11 @@ class Lead implements IdentifiableInterface
     }
 
     /**
-     * @return bool|null
+     * @return int|null
      */
-    public function isDecisionMaker(): ?bool
+    public function isDecisionMaker(): ?int
     {
         return $this->decisionMaker;
-    }
-
-    /**
-     * @param bool|null $madeMeasurement
-     *
-     * @return Lead
-     */
-    public function setMadeMeasurement(?bool $madeMeasurement): self
-    {
-        $this->madeMeasurement = $madeMeasurement;
-
-        return $this;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function isMadeMeasurement(): ?bool
-    {
-        return $this->madeMeasurement;
     }
 
     /**

@@ -45,7 +45,6 @@ const vm = new Vue({
             channel: '',
             orderDate: null,
             decisionMaker: null,
-            madeMeasurement: null,
             interestAssessment: null,
             description: null,
             audioRecord: null,
@@ -104,11 +103,6 @@ const vm = new Vue({
                 this.makeEstimation();
             }
         },
-        'lead.madeMeasurement': function(oldValue, newValue) {
-            if (oldValue !== newValue && this.isThirdStepFilled) {
-                this.makeEstimation();
-            }
-        },
         'lead.interestAssessment': function() {
             this.makeEstimation();
         },
@@ -150,7 +144,7 @@ const vm = new Vue({
             return this.lead.channel && this.lead.orderDate;
         },
         isThirdStepFilled: function() {
-            return this.lead.decisionMaker && this.lead.madeMeasurement;
+            return this.lead.decisionMaker !== null;
         },
         isFoursStepFilled: function() {
             return this.lead.interestAssessment;

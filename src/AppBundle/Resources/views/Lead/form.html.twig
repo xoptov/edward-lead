@@ -83,11 +83,15 @@
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
                                 </div>
-                                <div class="info-block__row-box block-mod-7">
-                                    <div class="info-block__row-item block-mod-7">
+                                <div class="info-block__row-box block-mod-12">
+                                    <div class="info-block__row-item block-mod-12">
                                         <div class="info-block__column-left">Лицо принемающее решение</div>
                                         <div class="info-block__column-right">
                                             <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-unknown" name="decisionMaker" class="info-block__radio checkbox" value="0" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
+                                                    <label for="lead-decision-maker-unknown">Неизвестно</label>
+                                                </div>
                                                 <div class="info-block__radio-box">
                                                     <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
                                                     <label for="lead-decision-maker-yes">Да</label>
@@ -95,21 +99,6 @@
                                                 <div class="info-block__radio-box">
                                                     <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
                                                     <label for="lead-decision-maker-no">Нет</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="info-block__row-item block-mod-7">
-                                        <div class="info-block__column-left ">Делали замер на адресе</div>
-                                        <div class="info-block__column-right">
-                                            <div class="info-block__radio-list">
-                                                <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
-                                                    <label for="lead-made-measurement-yes">Да</label>
-                                                </div>
-                                                <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
-                                                    <label for="lead-made-measurement-no">Нет</label>
                                                 </div>
                                             </div>
                                         </div>
