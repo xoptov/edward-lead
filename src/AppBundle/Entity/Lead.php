@@ -70,8 +70,6 @@ class Lead implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\NotBlank(message="Необходимо указать имя")
-     *
      * @ORM\Column(name="name", type="string", length=30, nullable=true)
      */
     private $name;

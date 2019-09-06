@@ -19,7 +19,6 @@ use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use AppBundle\Form\DataTransformer\NumberToBooleanTransformer;
 
 class LeadType extends AbstractType
 {

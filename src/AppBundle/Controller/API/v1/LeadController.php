@@ -70,7 +70,7 @@ class LeadController extends Controller
         $result = [
             'id' => $lead->getId(),
             'phone' => $this->leadManager->getNormalizedPhone($lead, $this->getUser()),
-            'name' => $lead->getName(),
+            'name' => $lead->getName() ? $lead->getName() : 'Неизвестно',
             'orderDate' => $lead->getOrderDateFormatted('c'),
             'decisionMaker' => $numToBoolTransformer->transform($lead->isDecisionMaker()),
             'interestAssessment' => $lead->getInterestAssessment(),
