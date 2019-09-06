@@ -4,6 +4,7 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
+use AppBundle\Entity\User;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -13,7 +14,7 @@ class UserRepository extends EntityRepository
     /**
      * @param Room $room
      *
-     * @return array
+     * @return User[]
      */
     public function getUsersInRoom(Room $room): array
     {
@@ -24,6 +25,27 @@ class UserRepository extends EntityRepository
                 ->setParameter('room', $room)
             ->where('u.typeSelected = :type_selected')
                 ->setParameter('type_selected', true)
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param Room $room
+     *
+     * @return User[]
+     */
+    public function getBuyersInRoom(Room $room): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        $query = $queryBuilder
+            ->innerJoin(Member::class, 'm', Join::WITH, 'u = m.user AND m.room = :room')
+                ->setParameter('room', $room)
+            ->where('u.typeSelected = :type_selected')
+                ->setParameter('type_selected', true)
+            ->andWhere('u.roles LIKE :role_company')
+                ->setParameter('role_company', '%ROLE_COMPANY%')
             ->getQuery();
 
         return $query->getResult();
