@@ -18,7 +18,13 @@
                     <div class="info-block__row-box">
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Имя лида:</div>
-                            <div class="info-block__column-right">{{ lead.name }}</div>
+                            <div class="info-block__column-right">
+                                {% if lead.name is not empty %}
+                                    {{ lead.name }}
+                                {% else %}
+                                    Неизвестно
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="info-block__row-item block-mod-6">
                             <div class="info-block__column-left">Телефон:</div>

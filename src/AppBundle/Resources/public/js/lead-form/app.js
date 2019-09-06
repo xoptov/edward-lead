@@ -63,9 +63,6 @@ const vm = new Vue({
     },
     validations: {
         lead: {
-            name: {
-                required: validators.required
-            },
             phone: {
                 required: validators.required,
                 phoneNumber: phoneNumberValidator
@@ -134,11 +131,15 @@ const vm = new Vue({
             maxDate: 'today',
             onSelect: this.orderDateChanged
         });
-        $(this.$refs.phone).inputmask({mask: '(+7|8)(999)999-99-99', oncomplete: this.phoneChanged});
+        $(this.$refs.phone).inputmask({
+            mask: '(+7|8)(999)999-99-99',
+            oncomplete: this.phoneChanged,
+            oncleared: this.phoneCleared
+        });
     },
     computed: {
         isFirstStepFilled: function() {
-            return this.lead.name && this.lead.phone;
+            return this.lead.phone;
         },
         isSecondStepFilled: function() {
             return this.lead.channel && this.lead.orderDate;
@@ -194,7 +195,10 @@ const vm = new Vue({
             this.lead.orderDate = newOrderDate;
         },
         phoneChanged: function(event) {
-            this.lead.phone = event.target.value;
+            this.$v.lead.phone.$model = event.target.value;
+        },
+        phoneCleared: function(event) {
+            this.$v.lead.phone.$model = null;
         },
         interestAssessmentChanged: function(star) {
             if (this.submitted) {

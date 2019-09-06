@@ -28,13 +28,12 @@
                             <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
                             <div class="info-block__row-box block-mod-3">
                                 <div class="info-block__row-item block-mod-2">
-                                    <span v-if="$v.lead.name.$dirty && !$v.lead.name.required">Необходимо указать имя</span>
                                     <label class="form__label text-mod-10" for="lead-name">Имя Лида</label>
-                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="$v.lead.name.$model" :disabled="submitted">
+                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="lead.name" :disabled="submitted">
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
-                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
-                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required" class="violation">Необходимо указать телефон</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber" class="violation">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
                                     <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
                                     <input
                                         id="lead-phone"
@@ -42,8 +41,8 @@
                                         placeholder="Например: +7(900)000-00-00 или 8(900)000-00-00"
                                         autocomplete="off"
                                         type="tel"
-                                        :value="lead.phone"
-                                        @change="phoneChanged"
+                                        :value="$v.lead.phone.$model"
+                                        {#@change="phoneChanged"#}
                                         :disabled="submitted"
                                         ref="phone"
                                     >
