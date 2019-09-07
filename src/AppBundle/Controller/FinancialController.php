@@ -105,14 +105,14 @@ class FinancialController extends Controller
             if ($form->isValid()) {
                 $data = $form->getData();
 
-                $invoice = $this->invoiceManager->create($user, $data['amount'], $data['phone'], false);
-                $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
-
-                $this->entityManager->flush();
-
-                $this->addFlash('success', 'Запрос на пополнение баланса принят');
-
-                return $this->redirectToRoute('app_financial_billing');
+                // Перенаправляем в payment пользователя для завершения формирования инвойса и переходу к оплате.
+                return $this->redirect('http://payment.edward-lead.ru/#/invoice/create/' . $user->getId() . '/' . $data['amount'] . '/' . $data['phone']);
+// TODO: Над перенести будет код в API
+//                $invoice = $this->invoiceManager->create($user, $data['amount'], $data['phone'], false);
+//                $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
+//                $this->entityManager->flush();
+//                $this->addFlash('success', 'Запрос на пополнение баланса принят');
+//                return $this->redirectToRoute('app_financial_billing');
             }
         }
 
