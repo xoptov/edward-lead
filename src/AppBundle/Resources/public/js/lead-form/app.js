@@ -45,7 +45,6 @@ const vm = new Vue({
             channel: '',
             orderDate: null,
             decisionMaker: null,
-            madeMeasurement: null,
             interestAssessment: null,
             description: null,
             audioRecord: null,
@@ -64,9 +63,6 @@ const vm = new Vue({
     },
     validations: {
         lead: {
-            name: {
-                required: validators.required
-            },
             phone: {
                 required: validators.required,
                 phoneNumber: phoneNumberValidator
@@ -104,11 +100,6 @@ const vm = new Vue({
                 this.makeEstimation();
             }
         },
-        'lead.madeMeasurement': function(oldValue, newValue) {
-            if (oldValue !== newValue && this.isThirdStepFilled) {
-                this.makeEstimation();
-            }
-        },
         'lead.interestAssessment': function() {
             this.makeEstimation();
         },
@@ -140,17 +131,21 @@ const vm = new Vue({
             maxDate: 'today',
             onSelect: this.orderDateChanged
         });
-        $(this.$refs.phone).inputmask({mask: '(+7|8)(999)999-99-99', oncomplete: this.phoneChanged});
+        $(this.$refs.phone).inputmask({
+            mask: '(+7|8)(999)999-99-99',
+            oncomplete: this.phoneChanged,
+            oncleared: this.phoneCleared
+        });
     },
     computed: {
         isFirstStepFilled: function() {
-            return this.lead.name && this.lead.phone;
+            return this.lead.phone;
         },
         isSecondStepFilled: function() {
             return this.lead.channel && this.lead.orderDate;
         },
         isThirdStepFilled: function() {
-            return this.lead.decisionMaker && this.lead.madeMeasurement;
+            return this.lead.decisionMaker !== null;
         },
         isFoursStepFilled: function() {
             return this.lead.interestAssessment;
@@ -200,7 +195,10 @@ const vm = new Vue({
             this.lead.orderDate = newOrderDate;
         },
         phoneChanged: function(event) {
-            this.lead.phone = event.target.value;
+            this.$v.lead.phone.$model = event.target.value;
+        },
+        phoneCleared: function(event) {
+            this.$v.lead.phone.$model = null;
         },
         interestAssessmentChanged: function(star) {
             if (this.submitted) {

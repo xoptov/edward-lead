@@ -168,15 +168,24 @@ class RoomController extends Controller
         $leads = $this->entityManager->getRepository(Lead::class)
             ->findBy(['room' => $room], ['createdAt' => 'DESC']);
 
-        /** @var User $user */
-        $user = $this->getUser();
-        $availableBalance = $accountManager->getAvailableBalance($user->getAccount());
-        $countCanBy = (int)($availableBalance / $room->getLeadPrice());
+        $buyers = $this->entityManager->getRepository(User::class)->getBuyersInRoom($room);
+
+        $totalAvailableMoney = 0.0;
+
+        foreach ($buyers as $buyer) {
+            $totalAvailableMoney += $accountManager->getAvailableBalance($buyer->getAccount());
+        }
+
+        $countCanBy = 0;
+
+        if ($totalAvailableMoney > 0) {
+            $countCanBy = floor($totalAvailableMoney / $room->getLeadPrice());
+        }
 
         return $this->render('@App/v2/Room/view.html.twig', [
             'room' => $room,
             'leads' => $leads,
-            'countCanBuy' => $countCanBy,
+            'countCanBuy' => (int)$countCanBy,
             'fee' => $feesManager->getCommissionForBuyerInRoom($room)
         ]);
     }

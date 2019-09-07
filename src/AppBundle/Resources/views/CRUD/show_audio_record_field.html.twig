@@ -1,0 +1,7 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field%}
+    <audio controls src="{{ asset('uploads/' ~ value) }}">
+        Ваш браузер не позволяет прослушивавать аудио записи.
+    </audio>
+{% endblock %}

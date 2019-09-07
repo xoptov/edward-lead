@@ -28,13 +28,12 @@
                             <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
                             <div class="info-block__row-box block-mod-3">
                                 <div class="info-block__row-item block-mod-2">
-                                    <span v-if="$v.lead.name.$dirty && !$v.lead.name.required">Необходимо указать имя</span>
                                     <label class="form__label text-mod-10" for="lead-name">Имя Лида</label>
-                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="$v.lead.name.$model" :disabled="submitted">
+                                    <input id="lead-name" class="form__input" placeholder="Например: Василий" autocomplete="off" type="text" v-model.trim="lead.name" :disabled="submitted">
                                 </div>
                                 <div class="info-block__row-item block-mod-2">
-                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required">Необходимо указать телефон</span>
-                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.required" class="violation">Необходимо указать телефон</span>
+                                    <span v-if="$v.lead.phone.$dirty && !$v.lead.phone.phoneNumber" class="violation">Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX</span>
                                     <label class="form__label text-mod-10" for="lead-phone">Телефон</label>
                                     <input
                                         id="lead-phone"
@@ -42,8 +41,8 @@
                                         placeholder="Например: +7(900)000-00-00 или 8(900)000-00-00"
                                         autocomplete="off"
                                         type="tel"
-                                        :value="lead.phone"
-                                        @change="phoneChanged"
+                                        :value="$v.lead.phone.$model"
+                                        {#@change="phoneChanged"#}
                                         :disabled="submitted"
                                         ref="phone"
                                     >
@@ -83,11 +82,15 @@
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
                                 </div>
-                                <div class="info-block__row-box block-mod-7">
-                                    <div class="info-block__row-item block-mod-7">
+                                <div class="info-block__row-box block-mod-12">
+                                    <div class="info-block__row-item block-mod-12">
                                         <div class="info-block__column-left">Лицо принемающее решение</div>
                                         <div class="info-block__column-right">
                                             <div class="info-block__radio-list">
+                                                <div class="info-block__radio-box">
+                                                    <input id="lead-decision-maker-unknown" name="decisionMaker" class="info-block__radio checkbox" value="0" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
+                                                    <label for="lead-decision-maker-unknown">Неизвестно</label>
+                                                </div>
                                                 <div class="info-block__radio-box">
                                                     <input id="lead-decision-maker-yes" name="decisionMaker" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
                                                     <label for="lead-decision-maker-yes">Да</label>
@@ -95,21 +98,6 @@
                                                 <div class="info-block__radio-box">
                                                     <input id="lead-decision-maker-no" name="decisionMaker" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.decisionMaker" :disabled="submitted">
                                                     <label for="lead-decision-maker-no">Нет</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="info-block__row-item block-mod-7">
-                                        <div class="info-block__column-left ">Делали замер на адресе</div>
-                                        <div class="info-block__column-right">
-                                            <div class="info-block__radio-list">
-                                                <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-yes" name="madeMeasurement" class="info-block__radio checkbox" value="1" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
-                                                    <label for="lead-made-measurement-yes">Да</label>
-                                                </div>
-                                                <div class="info-block__radio-box">
-                                                    <input id="lead-made-measurement-no" name="madeMeasurement" class="info-block__radio checkbox" value="2" type="radio" v-model.number="lead.madeMeasurement" :disabled="submitted">
-                                                    <label for="lead-made-measurement-no">Нет</label>
                                                 </div>
                                             </div>
                                         </div>

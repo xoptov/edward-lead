@@ -1,10 +1,41 @@
-{% extends '@App/Security/login.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200">
+    <title>Выбор типа пользователя</title>
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/modal_select_type.css') }}">
+</head>
+<body>
+    <div class="overlay">
+        <div class="modal">
+            <ul class="modal__list">
+                <li class="modal__item modal__item_hello modal-item">
+                    <div class="modal-item__wrap">
+                        <img src="{{ asset('bundles/app/img/modal-guy.png') }}" alt="Hello" class="modal-item__image">
+                        <div class="modal-item__info">
+                            <p class="modal-item__text">Привет.</p>
+                            <p class="modal-item__text">Меня зовут Эдвард. Сейчас я познакомлю тебя с основными возможностями платформы
+                                Edward Lead.</p>
+                            <p class="modal-item__text">Здесь Вы сможете получать дополнительных потенциальный покупателей или продать
+                                лидов, которых не смогли обслужить, тем самым возвращая деньги в рекламный бюджет.</p>
+                            <p class="modal-item__lead">Как вы планируете работать на платформе?</p>
 
-{% block content %}
-    <div class="form_sign-in form">
-        <p class="form__header">Выбирите тип пользователя.</p>
-        <p class="form__text">Выбирите один из двух типов пользователя.</p>
-        <div><a href="{{ path('app_creating_company') }}">Компания</a></div>
-        <div><a href="{{ path('app_stay_webmaster') }}">Вебмастер</a></div>
+                            <div class="modal_row">
+                                <div class="modal_row_item">
+                                    <a class="btn btn_green" href="{{ path('app_creating_company') }}">Как компания</a>
+                                    <span>я планирую покупать и продавать лиды</span>
+                                </div>
+                                <div class="modal_row_item">
+                                    <a class="btn btn_green" href="{{ path('app_stay_webmaster') }}">Как вемастер</a>
+                                    <span>я буду только продавать лиды</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-{% endblock %}
+</body>
+</html>

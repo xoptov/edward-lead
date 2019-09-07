@@ -1,4 +1,17 @@
 $(function() {
+
+    const btnList = document.querySelectorAll('.profile-tabs__control');
+    const contentList = document.querySelectorAll('.profile-tabs__content');
+
+    for (let i = 0; i < btnList.length; i++) {
+        btnList[i].addEventListener('click', function () {
+            contentList.forEach(element => element.classList.remove('selected'));
+            btnList.forEach(element => element.classList.remove('selected'));
+            contentList[i].classList.add('selected');
+            btnList[i].classList.add('selected');
+        })
+    }
+
     $('#profile_phone').inputmask('(+7|8)(999)999-99-99');
 
     const $tokenField = $('#profile_token');

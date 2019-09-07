@@ -11,6 +11,9 @@
             {% endfor %}
         </div>
         {% if not loop.last %}<hr>{% endif %}
+        {% if object.typeAppeal is constant('TYPE_ARBITRATION', object) %}
+            <a href="{{ admin.generateObjectUrl('reply', object) }}" class="btn btn-default icon-prev">Открыть диалог с покупателем</a>
+        {% endif %}
     {% else %}
         <div class="col-xs-12">Сообщений нет!</div>
     {% endfor %}

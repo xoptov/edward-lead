@@ -18,7 +18,7 @@ class PhoneCall extends Operation
     /**
      * @var string|null
      *
-     * @ORM\Column(name="external_id", type="string", length=16)
+     * @ORM\Column(name="external_id", type="string", length=16, nullable=true)
      */
     private $externalId;
 
