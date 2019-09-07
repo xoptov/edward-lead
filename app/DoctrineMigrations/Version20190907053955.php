@@ -15,7 +15,7 @@ final class Version20190907053955 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE invoice CHANGE hash hash VARCHAR(32) DEFAULT NULL');
+        $this->addSql('ALTER TABLE invoice ADD hash VARCHAR(32) DEFAULT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -23,6 +23,6 @@ final class Version20190907053955 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE invoice CHANGE hash hash VARCHAR(32) NOT NULL COLLATE utf8_unicode_ci');
+        $this->addSql('ALTER TABLE invoice DROP hash');
     }
 }
