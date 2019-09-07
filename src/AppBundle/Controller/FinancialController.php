@@ -97,13 +97,13 @@ class FinancialController extends Controller
 
         $formBuilder->get('phone')->addViewTransformer(new PhoneTransformer());
         $form = $formBuilder->getForm();
+        $user = $this->getUser();
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $user = $this->getUser();
 
                 $invoice = $this->invoiceManager->create($user, $data['amount'], $data['phone'], false);
                 $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
@@ -117,7 +117,8 @@ class FinancialController extends Controller
         }
 
         return $this->render('@App/Financial/deposit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'currentPhone' => '+' . $user->getPhone()
         ]);
     }
 
