@@ -155,4 +155,24 @@ class Invoice extends Operation
     {
         return !$this->isNotProcessed();
     }
+
+    /**
+     * @return array
+     */
+    public function getPaymentInfoArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'hash' => $this->getHash(),
+            'amount' => $this->getAmount(),
+            'status' => $this->getStatus(),
+            'user' => [
+                'id' => $this->getUser()->getId(),
+                'name' => $this->getUser()->getName(),
+                'email' => $this->getUser()->getEmail(),
+                'phone' => $this->getUser()->getPhone(),
+                'enabled' => $this->getUser()->isEnabled()
+            ]
+        ];
+    }
 }
