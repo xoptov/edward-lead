@@ -167,7 +167,7 @@ class LeadController extends Controller
     ): Response {
 
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['errors' => 'Вы должны быть вэбмастером для того чтобы создавать лидов'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['errors' => ['Вы должны быть вэбмастером для того чтобы создавать лидов']], Response::HTTP_FORBIDDEN);
         }
 
         $form = $this->createForm(LeadType::class, null, ['csrf_protection' => false]);
@@ -182,7 +182,7 @@ class LeadController extends Controller
 
         if (!$this->leadManager->checkActiveLeadPerUser($user)) {
             return new JsonResponse([
-                'errors' => 'Привышено количество активных лидов для пользователя'
+                'errors' => ['Привышено количество активных лидов для пользователя']
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -195,7 +195,7 @@ class LeadController extends Controller
         $this->leadManager->setExpirationDate($newLead);
 
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
-            return new JsonResponse(['errors' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['errors' => ['Вы не имеете прав создавать нового лида']], Response::HTTP_FORBIDDEN);
         }
 
         $this->entityManager->persist($newLead);

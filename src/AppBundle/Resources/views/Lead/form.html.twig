@@ -224,7 +224,7 @@
                                         </label>
                                     </div>
                                     <div v-if="isReadyForSubmit && !submitted">
-                                        <ul v-if="submitErrors">
+                                        <ul v-if="submitErrors" class="violation mt-15">
                                             <li v-for="error in submitErrors" v-text="error"></li>
                                         </ul>
                                         <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-if="leadId">
