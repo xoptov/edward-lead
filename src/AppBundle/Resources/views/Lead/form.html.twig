@@ -24,6 +24,7 @@
             <form novalidate @submit.prevent="onSubmit">
                 <div class="info-block">
                     <div class="info-block__list">
+                        {# Шаг 1 #}
                         <div class="info-block__item">
                             <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFirstStepFilled, 'text-gray': !isFirstStepFilled}"></span>
                             <div class="info-block__row-box block-mod-3">
@@ -42,7 +43,6 @@
                                         autocomplete="off"
                                         type="tel"
                                         :value="$v.lead.phone.$model"
-                                        {#@change="phoneChanged"#}
                                         :disabled="submitted"
                                         ref="phone"
                                     >
@@ -58,6 +58,7 @@
                                 </div>
                             </div>
                         </div>
+                        {# Шаг 2 #}
                         <div v-show="canShowSecondStep || debugMode">
                             <div class="info-block__item">
                                 <span class="icon-star-new span-mod-3" :class="{'text-yellow': isSecondStepFilled, 'text-gray': !isSecondStepFilled}"></span>
@@ -77,10 +78,35 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
+                        {# Шаг 3 #}
                         <div v-show="canShowThirdStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
                                     <span class="icon-star-new span-mod-3" :class="{'text-yellow': isThirdStepFilled, 'text-gray': !isThirdStepFilled}"></span>
+                                </div>
+                                <div class="info-block__row-box block-mod-8">
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right block-mod-1">
+                                            <br>Расскажите подробнее про лида <br>
+                                            <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
+                                        </div>
+                                    </div>
+                                    <div class="info-block__row-item">
+                                        <div></div>
+                                        <div class="info-block__column-right">
+                                            <textarea class="arbitrate-form__textarea autoExpand textarea-mod-1" rows="3" data-min-rows="3" placeholder="Напишите здесь в свободной форме" autocomplete="off" v-model="lead.description" @change="onDescriptionChanged" :disabled="submitted"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line">&nbsp;</div>
+                        </div>
+                        {# Шаг 4 #}
+                        <div v-show="canShowFoursStep || debugMode">
+                            <div class="info-block__item">
+                                <div class="info-block__img">
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFoursStepFilled, 'text-gray': !isFoursStepFilled}"></span>
                                 </div>
                                 <div class="info-block__row-box block-mod-12">
                                     <div class="info-block__row-item block-mod-12">
@@ -106,10 +132,11 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-                        <div v-show="canShowFoursStep || debugMode">
+                        {# Шаг 5 #}
+                        <div v-show="canShowFifthStep || debugMode">
                             <div class="info-block__item">
                                 <div class="info-block__img">
-                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFoursStepFilled, 'text-gray': !isFoursStepFilled}"></span>
+                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFifthStepFilled, 'text-gray': !isFifthStepFilled}"></span>
                                 </div>
                                 <div class="info-block__row-box">
                                     <div class="info-block__row-item">
@@ -131,29 +158,7 @@
                             </div>
                             <div class="hr-line">&nbsp;</div>
                         </div>
-                        <div v-show="canShowFifthStep || debugMode">
-                            <div class="info-block__item">
-                                <div class="info-block__img">
-                                    <span class="icon-star-new span-mod-3" :class="{'text-yellow': isFifthStepFilled, 'text-gray': !isFifthStepFilled}"></span>
-                                </div>
-                                <div class="info-block__row-box block-mod-8">
-                                    <div class="info-block__row-item">
-                                        <div></div>
-                                        <div class="info-block__column-right block-mod-1">
-                                            <br>Расскажите подробнее про лида <br>
-                                            <span class="span-mod-17">(его приоритеты в покупке и почему Вы выставляете его на биржу)</span>
-                                        </div>
-                                    </div>
-                                    <div class="info-block__row-item">
-                                        <div></div>
-                                        <div class="info-block__column-right">
-                                            <textarea class="arbitrate-form__textarea autoExpand textarea-mod-1" rows="3" data-min-rows="3" placeholder="Напишите здесь в свободной форме" autocomplete="off" v-model="lead.description" @change="onDescriptionChanged" :disabled="submitted"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="hr-line">&nbsp;</div>
-                        </div>
+                        {# Шаг 6 #}
                         <div class="info-block__item" v-show="canShowSixthStep || debugMode">
                             <div class="info-block__img">
                                 <span class="plain-text gold-label span-mod-6" :class="{'text-yellow': isSixthStepFilled, 'text-gray': !isSixthStepFilled}">gold</span>

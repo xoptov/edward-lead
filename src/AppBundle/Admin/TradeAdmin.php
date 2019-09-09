@@ -53,8 +53,8 @@ class TradeAdmin extends AbstractAdmin
             ])
             ->add('lead.name')
             ->add('lead.channel.value')
-            ->add('lead.createdAt')
             ->add('lead.description')
+            ->add('lead.createdAt')
             ->add('lead.decisionMaker', 'choice', [
                 'choices' => [
                     Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
