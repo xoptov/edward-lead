@@ -9,10 +9,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Table(name="lead")
+ * @ORM\Table(name="lead",uniqueConstraints={
+ *   @ORM\UniqueConstraint(name="UNIQ_LEAD", columns={"room_id", "phone", "status"})
+ * })
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
- * @UniqueEntity(fields={"phone", "status"}, message="Лид с таким номером телефона и с таким же статусом уже существует")
+ * @UniqueEntity(fields={"room", "phone", "status"}, message="Лид с таким номером телефона и с таким же статусом уже существует")
  */
 class Lead implements IdentifiableInterface
 {

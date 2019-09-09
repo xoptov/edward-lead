@@ -115,7 +115,7 @@ class LeadManager
     {
         $stars = 0;
 
-        if ($lead->getName() && $lead->getPhone()) {
+        if ($lead->getPhone()) {
             $stars++;
         }
 
