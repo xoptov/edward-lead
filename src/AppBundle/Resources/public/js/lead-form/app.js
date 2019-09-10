@@ -96,7 +96,7 @@ const vm = new Vue({
             }
         },
         'lead.decisionMaker': function(oldValue, newValue) {
-            if (oldValue !== newValue && this.isThirdStepFilled) {
+            if (oldValue !== newValue && this.isFoursStepFilled) {
                 this.makeEstimation();
             }
         },
@@ -145,13 +145,13 @@ const vm = new Vue({
             return this.lead.channel && this.lead.orderDate;
         },
         isThirdStepFilled: function() {
-            return this.lead.decisionMaker !== null;
+            return this.lead.description;
         },
         isFoursStepFilled: function() {
-            return this.lead.interestAssessment;
+            return this.lead.decisionMaker !== null;
         },
         isFifthStepFilled: function() {
-            return this.lead.description;
+            return this.lead.interestAssessment;
         },
         isSixthStepFilled: function() {
             return this.lead.audioRecord;

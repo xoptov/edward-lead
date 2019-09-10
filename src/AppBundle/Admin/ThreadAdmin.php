@@ -169,6 +169,7 @@ class ThreadAdmin extends AbstractAdmin
                 ->add('lead.channel.value', null, [
                     'label' => 'Lead Channel'
                 ])
+                ->add('lead.description')
                 ->add('lead.decisionMaker', 'choice', [
                     'choices' => [
                         Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
@@ -177,7 +178,6 @@ class ThreadAdmin extends AbstractAdmin
                     ]
                 ])
                 ->add('lead.interestAssessment')
-                ->add('lead.description')
                 ->add('lead.audioRecord', null, [
                     'template' => '@App/CRUD/show_audio_record_field.html.twig'
                 ])

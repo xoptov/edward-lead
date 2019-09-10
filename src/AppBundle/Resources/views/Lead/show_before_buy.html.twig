@@ -79,6 +79,22 @@
             </div>
             <div class="hr-line">&nbsp;</div>
             <div class="info-block__item">
+                <div class="info-block__img"><span class="icon-star-new span-mod-3 {% if lead.description is empty %}text-gray{% else %}text-yellow{% endif %}"></span></div>
+                <div class="info-block__row-box">
+                    <div class="info-block__row-item">
+                        <div></div>
+                        <div class="info-block__column-right block-mod-1">Подробнее про лида <br> <span class="span-mod-22">(его приоритеты в покупке и прочую полезную информацию)</span></div>
+                    </div>
+                    <div class="info-block__row-item">
+                        <div></div>
+                        <div class="info-block__column-right text-mod-2">
+                            {% if lead.description is empty %}Не указано{% else %}{{ lead.description }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hr-line">&nbsp;</div>
+            <div class="info-block__item">
                 <div class="info-block__img"><span class="icon-star-new span-mod-3 {% if lead.decisionMaker is null %}text-gray{% else %}text-yellow{% endif %}"></span>
                 </div>
                 <div class="info-block__row-box">
@@ -122,23 +138,6 @@
                 </div>
             </div>
             <div class="hr-line">&nbsp;</div>
-            <div class="info-block__item">
-                <div class="info-block__img"><span class="icon-star-new span-mod-3 {% if lead.description is empty %}text-gray{% else %}text-yellow{% endif %}"></span></div>
-                <div class="info-block__row-box">
-                    <div class="info-block__row-item">
-                        <div></div>
-                        <div class="info-block__column-right block-mod-1">Подробнее про лида <br> <span class="span-mod-22">(его приоритеты в покупке и прочую полезную информацию)</span></div>
-                    </div>
-                    <div class="info-block__row-item">
-                        <div></div>
-                        <div class="info-block__column-right text-mod-2">
-                            {% if lead.description is empty %}Не указано{% else %}{{ lead.description }}{% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hr-line">&nbsp;</div>
-
             <div class="info-block__item">
                 <div class="info-block__img"><span class="plain-text {% if lead.audioRecord is empty %}text-gray{% else %}text-yellow{% endif %} span-mod-6">gold</span></div>
                 <div class="info-block__row-box block-mod-19">
