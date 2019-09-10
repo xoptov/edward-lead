@@ -156,4 +156,36 @@ class PaymentController extends Controller
             return new JsonResponse(['code' => 500, 'response' => 'server-error', 'result' => null], 500);
         }
     }
+
+    /**
+     * @Route("/api/payment/getcompanyfromuser/{id_user}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
+     *
+     * @param null|int $id_user
+     *
+     * @return JsonResponse
+     */
+    public function getCompanyFromUser(?int $id_user): JsonResponse
+    {
+        $user = $this->entityManager
+            ->getRepository(User::class)
+            ->findBy(['id' => $id_user]);
+
+        if (count($user) == 0 || $user[0] == null)
+            return new JsonResponse(['code' => 1, 'response' => 'not-found-user', 'result' => null]);
+
+        $company = $user[0]->getCompany();
+
+        if ($company == null)
+            return new JsonResponse(['code' => 2, 'response' => 'not-found-company', 'result' => null]);
+
+        $result = [
+            'id' => $company->getId(),
+            'name' => $company->getLargeName(),
+            'inn' => $company->getInn(),
+            'kpp' => $company->getKpp(),
+            'address' => $company->getAddress()
+        ];
+
+        return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $result]);
+    }
 }
