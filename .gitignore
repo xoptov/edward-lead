@@ -23,3 +23,5 @@
 /web/media/
 .htaccess
 /.idea
+/nbproject/private/
+/nbproject/

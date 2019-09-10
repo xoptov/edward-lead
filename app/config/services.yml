@@ -269,3 +269,7 @@ services:
     AppBundle\Controller\API\v1\SupportController:
         arguments:
             $threadManager: '@fos_message.thread_manager.default'
+
+    AppBundle\Controller\API\v1\PaymentController:
+        arguments:
+            $paymentGatewayToken: '%payment_gateway_token%'

@@ -97,27 +97,28 @@ class FinancialController extends Controller
 
         $formBuilder->get('phone')->addViewTransformer(new PhoneTransformer());
         $form = $formBuilder->getForm();
+        $user = $this->getUser();
 
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
 
             if ($form->isValid()) {
                 $data = $form->getData();
-                $user = $this->getUser();
 
-                $invoice = $this->invoiceManager->create($user, $data['amount'], $data['phone'], false);
-                $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
-
-                $this->entityManager->flush();
-
-                $this->addFlash('success', 'Запрос на пополнение баланса принят');
-
-                return $this->redirectToRoute('app_financial_billing');
+                // Перенаправляем в payment пользователя для завершения формирования инвойса и переходу к оплате.
+                return $this->redirect('http://payment.edward-lead.ru/#/invoice/create/' . $user->getId() . '/' . $data['amount'] . '/' . $data['phone']);
+// TODO: Над перенести будет код в API
+//                $invoice = $this->invoiceManager->create($user, $data['amount'], $data['phone'], false);
+//                $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
+//                $this->entityManager->flush();
+//                $this->addFlash('success', 'Запрос на пополнение баланса принят');
+//                return $this->redirectToRoute('app_financial_billing');
             }
         }
 
         return $this->render('@App/Financial/deposit.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'currentPhone' => '+' . $user->getPhone()
         ]);
     }
 

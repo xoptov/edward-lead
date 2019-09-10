@@ -24,4 +24,34 @@ class InvoiceRepository extends EntityRepository
 
         return $query->getResult();
     }
+
+    /**
+     * @param null|string $hash
+     *
+     * @return Invoice[]|null
+     */
+    public function getByHash(?string $hash)
+    {
+        $qb = $this->createQueryBuilder('i');
+        $query = $qb->where('i.hash = :hash')
+            ->setParameter('hash', $hash)
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param null|int $id_invoice
+     *
+     * @return Invoice[]|null
+     */
+    public function getById(?int $id_invoice)
+    {
+        $qb = $this->createQueryBuilder('i');
+        $query = $qb->where('i.id = :id')
+            ->setParameter('id', $id_invoice)
+            ->getQuery();
+
+        return $query->getResult();
+    }
 }

@@ -46,6 +46,33 @@ class Invoice extends Operation
     private $status = self::STATUS_NEW;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="hash", type="string", length=32, nullable=true)
+     */
+    private $hash;
+
+    /**
+     * @param null|string $hash
+     *
+     * @return Invoice
+     */
+    public function setHash(?string $hash): self
+    {
+        $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    /**
      * @param User $user
      *
      * @return Invoice
@@ -127,5 +154,25 @@ class Invoice extends Operation
     public function isProcessed(): bool
     {
         return !$this->isNotProcessed();
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentInfoArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'hash' => $this->getHash(),
+            'amount' => $this->getAmount(),
+            'status' => $this->getStatus(),
+            'user' => [
+                'id' => $this->getUser()->getId(),
+                'name' => $this->getUser()->getName(),
+                'email' => $this->getUser()->getEmail(),
+                'phone' => $this->getUser()->getPhone(),
+                'enabled' => $this->getUser()->isEnabled()
+            ]
+        ];
     }
 }
