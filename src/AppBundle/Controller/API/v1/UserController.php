@@ -10,10 +10,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @Route("/api/v1")
+ */
 class UserController extends Controller
 {
     /**
-     * @Route("/api/user/renew-token", name="api_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/user/renew-token", name="api_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param UserManager $userManager
      *

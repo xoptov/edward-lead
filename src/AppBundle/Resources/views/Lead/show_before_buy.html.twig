@@ -116,7 +116,8 @@
             </div>
             <div class="hr-line">&nbsp;</div>
             <div class="info-block__item">
-                <div class="info-block__img"><span class="icon-star-new span-mod-3 text-yellow"></span>
+                <div class="info-block__img">
+                    <span class="icon-star-new span-mod-3 {% if lead.interestAssessment > 0 %}text-yellow{% else %}text-gray{% endif %}"></span>
                 </div>
                 <div class="info-block__row-box">
                     <div class="info-block__row-item">
