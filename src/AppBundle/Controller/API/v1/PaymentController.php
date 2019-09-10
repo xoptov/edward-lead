@@ -54,7 +54,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/api/v1/app/status", name="api_app_status", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/app/status", name="api_app_status", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param Request $request
      *
@@ -71,7 +71,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/api/v1/payment/getinvoice/{hash}", name="api_payment_getinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/getinvoice/{hash}", name="api_payment_getinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param null|string $hash
      *
@@ -95,7 +95,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/api/v1/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param null|int $id_user
      * @param null|int $sum
@@ -124,7 +124,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/api/v1/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param null|int $id_invoice
      * @param null|string $description_name_account
@@ -161,7 +161,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/api/v1/payment/getcompanyfromuser/{id_user}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/getcompanyfromuser/{id_user}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param null|int $id_user
      *
