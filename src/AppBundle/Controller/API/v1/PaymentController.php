@@ -6,8 +6,6 @@ use AppBundle\Entity\IncomeAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\User;
 use AppBundle\Event\InvoiceEvent;
-use AppBundle\Exception\AccountException;
-use AppBundle\Exception\OperationException;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -38,19 +36,27 @@ class PaymentController extends Controller
     private $eventDispatcher;
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param InvoiceManager $invoiceManager
+     * @var string
+     */
+    private $paymentGatewayToken;
+
+    /**
+     * @param EntityManagerInterface   $entityManager
+     * @param InvoiceManager           $invoiceManager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param string                   $paymentGatewayToken
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         InvoiceManager $invoiceManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        string $paymentGatewayToken
     )
     {
         $this->entityManager = $entityManager;
         $this->invoiceManager = $invoiceManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->paymentGatewayToken = $paymentGatewayToken;
     }
 
     /**
@@ -75,6 +81,8 @@ class PaymentController extends Controller
      *
      * @param null|string $hash
      *
+     * @todo: Потом лучше использовать ParamConverter для загрузки Invoice из БД.
+     *
      * @return JsonResponse
      */
     public function getInvoiceAction(?string $hash): JsonResponse
@@ -97,13 +105,25 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
+     * @param Request  $request
      * @param null|int $id_user
      * @param null|int $sum
      *
+     * @todo: потом лучше доставать id_user и sum из объекта Request.
+     *
      * @return JsonResponse
      */
-    public function createInvoiceAction(?int $id_user, ?int $sum): JsonResponse
+    public function createInvoiceAction(Request $request, ?int $id_user, ?int $sum): JsonResponse
     {
+        if (!$request->query->has('paymentGatewayToken')
+            || $request->query->get('paymentGatewayToken') !== $this->paymentGatewayToken
+        ) {
+            return new JsonResponse(
+                ['code' => 403, 'response' => 'forbidden', 'result' => null],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         try {
             $user = $this->entityManager
                 ->getRepository(User::class)
@@ -126,13 +146,25 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param null|int $id_invoice
+     * @param Request     $request
+     * @param null|int    $id_invoice
      * @param null|string $description_name_account
+     *
+     * @todo: потом лучше доставать id_user и description_name_account из объекта Request.
      *
      * @return JsonResponse
      */
-    public function successInvoiceAction(?int $id_invoice, ?string $description_name_account): JsonResponse
+    public function successInvoiceAction(Request $request, ?int $id_invoice, ?string $description_name_account): JsonResponse
     {
+        if (!$request->query->has('paymentGatewayToken')
+            || $request->query->get('paymentGatewayToken') !== $this->paymentGatewayToken
+        ) {
+            return new JsonResponse(
+                ['code' => 403, 'response' => 'forbidden', 'result' => null],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
         try {
             $invoice = $this->entityManager
                 ->getRepository(Invoice::class)
@@ -164,6 +196,8 @@ class PaymentController extends Controller
      * @Route("/payment/getcompanyfromuser/{id_user}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param null|int $id_user
+     *
+     * @todo: Потом лучше использовать ParamConverter для загрузки юзера.
      *
      * @return JsonResponse
      */
