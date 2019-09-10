@@ -11,6 +11,9 @@ use FOS\MessageBundle\EntityManager\ThreadManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @Route("/api/v1")
+ */
 class SupportController extends Controller
 {
     /**
@@ -27,7 +30,7 @@ class SupportController extends Controller
     }
 
     /**
-     * @Route("/api/v1/support", name="api_v1_support_create", methods={"POST"})
+     * @Route("/support", name="api_v1_support_create", methods={"POST"})
      *
      * @param EntityManagerInterface $entityManager
      *
