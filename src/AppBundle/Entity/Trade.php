@@ -175,6 +175,18 @@ class Trade extends Operation
     }
 
     /**
+     * @return null|string
+     */
+    public function getLeadPhone(): ?string
+    {
+        if ($this->lead) {
+            return $this->lead->getPhone();
+        }
+
+        return null;
+    }
+
+    /**
      * @param int $status
      *
      * @return Trade

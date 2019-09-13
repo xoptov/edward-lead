@@ -9,8 +9,9 @@ use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface
 
 class TradeVoter extends Voter
 {
-    const ACCEPT = 'accept';
-    const REJECT = 'reject';
+    const ACCEPT    = 'accept';
+    const REJECT    = 'reject';
+    const MAKE_CALL = 'make_call';
 
     /**
      * @var AccessDecisionManagerInterface
@@ -34,7 +35,7 @@ class TradeVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::ACCEPT, self::REJECT])) {
+        if (!in_array($attribute, [self::ACCEPT, self::REJECT, self::MAKE_CALL])) {
             return false;
         }
 

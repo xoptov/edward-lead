@@ -124,7 +124,7 @@ class PhoneCall extends Operation
     /**
      * @return Trade
      */
-    public function getLead(): Trade
+    public function getTrade(): Trade
     {
         return $this->trade;
     }
@@ -155,5 +155,17 @@ class PhoneCall extends Operation
     public function isProcessed(): bool
     {
         return self::STATUS_PROCESSED === $this->status;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLeadPhone(): ?string
+    {
+        if ($this->trade) {
+            return $this->trade->getLeadPhone();
+        }
+
+        return null;
     }
 }

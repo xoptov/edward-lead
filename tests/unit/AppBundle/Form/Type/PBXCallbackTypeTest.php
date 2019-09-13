@@ -3,16 +3,16 @@
 namespace Tests\unit\AppBundle\Form\Type;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
+use AppBundle\Entity\PhoneCall;
+use AppBundle\Service\UserManager;
 use AppBundle\Entity\PBX\Callback;
 use AppBundle\Entity\PBX\Shoulder;
-use AppBundle\Entity\PhoneCall;
-use AppBundle\Entity\Trade;
-use AppBundle\Entity\User;
 use AppBundle\Form\Type\PBXCallbackType;
-use AppBundle\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PBXCallbackTypeTest extends KernelTestCase
 {
@@ -57,8 +57,6 @@ class PBXCallbackTypeTest extends KernelTestCase
 
     public function testHandleRequest_withCallbackForFirstCase()
     {
-        $this->markTestSkipped();
-
         $userManager = static::$kernel->getContainer()->get(UserManager::class);
 
         $buyer = new User();

@@ -3,8 +3,8 @@
 namespace AppBundle\Exception;
 
 use Throwable;
-use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
 
 class PhoneCallException extends \Exception
 {
@@ -14,23 +14,23 @@ class PhoneCallException extends \Exception
     private $caller;
 
     /**
-     * @var Lead
+     * @var Trade
      */
-    private $lead;
+    private $trade;
 
     /**
      * @param User           $caller
-     * @param Lead           $lead
+     * @param Trade          $trade
      * @param string         $message
      * @param int            $code
      * @param Throwable|null $previous
      */
-    public function __construct(User $caller, Lead $lead, string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(User $caller, Trade $trade, string $message = "", int $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
         $this->caller = $caller;
-        $this->lead = $lead;
+        $this->trade = $trade;
     }
 
     /**
@@ -42,10 +42,10 @@ class PhoneCallException extends \Exception
     }
 
     /**
-     * @return Lead
+     * @return Trade
      */
-    public function getLead(): Lead
+    public function getTrade(): Trade
     {
-        return $this->lead;
+        return $this->trade;
     }
 }

@@ -3,6 +3,8 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Trade;
+use AppBundle\Security\Voter\TradeVoter;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -48,23 +50,23 @@ class TelephonyController extends Controller
 
 
     /**
-     * @Route("/telephony/request-call/{lead}", name="api_v1_telephony_make_call", methods={"GET"}, defaults={"_format": "json"})
+     * @Route("/telephony/call/{trade}", name="api_v1_telephony_make_call", methods={"GET"}, defaults={"_format": "json"})
      *
-     * @param Lead $lead
+     * @param Trade $trade
      *
      * @return JsonResponse
      */
-    public function getRequestCallAction(Lead $lead): JsonResponse
+    public function getCallAction(Trade $trade): JsonResponse
     {
-        if (!$this->isGranted(LeadFirstCallVoter::OPERATION, $lead)) {
+        if (!$this->isGranted(TradeVoter::MAKE_CALL, $trade)) {
             return new JsonResponse(
-                ['message' => 'Для звонка лиду вы должны его сначала зарезервировать'],
+                ['message' => 'Для звонка лиду вы должны его сначала купить'],
                 Response::HTTP_FORBIDDEN
             );
         }
 
         try {
-            $phoneCall = $this->phoneCallManager->create($this->getUser(), $lead, false);
+            $phoneCall = $this->phoneCallManager->create($this->getUser(), $trade, false);
             $this->phoneCallManager->requestConnection($phoneCall);
         } catch (PhoneCallException $e) {
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);

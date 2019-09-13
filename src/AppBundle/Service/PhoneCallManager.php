@@ -2,12 +2,13 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\PBX\Callback;
+use AppBundle\Entity\Trade;
 use GuzzleHttp\Client;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
-use AppBundle\Entity\PBXCallback;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -93,7 +94,7 @@ class PhoneCallManager
 
     /**
      * @param User      $caller
-     * @param Lead      $lead
+     * @param Trade     $trade
      * @param bool|null $flush
      *
      * @return PhoneCall
@@ -101,18 +102,18 @@ class PhoneCallManager
      * @throws PhoneCallException
      * @throws InsufficientFundsException
      */
-    public function create(User $caller, Lead $lead, ?bool $flush = true): PhoneCall
+    public function create(User $caller, Trade $trade, ?bool $flush = true): PhoneCall
     {
         $company = $caller->getCompany();
 
         if (!$company) {
-            throw new PhoneCallException($caller, $lead, 'Пользователь должен быть представителем компании');
+            throw new PhoneCallException($caller, $trade, 'Пользователь должен быть представителем компании');
         }
 
         $officePhone = $company->getOfficePhone();
 
         if (!$officePhone) {
-            throw new PhoneCallException($caller, $lead, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
+            throw new PhoneCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
         }
 
         $holdCallCost = $this->firstCallTimeout * $this->costPerSecond;
@@ -125,7 +126,7 @@ class PhoneCallManager
         $phoneCall = new PhoneCall();
         $phoneCall
             ->setCaller($caller)
-            ->setLead($lead)
+            ->setTrade($trade)
             ->setDescription('Звонок лиду');
 
         $this->entityManager->persist($phoneCall);
@@ -179,24 +180,20 @@ class PhoneCallManager
     }
 
     /**
-     * @param PBXCallback $pbxCallback
+     * @param Callback $pbxCallback
      *
      * @throws NoResultException
      * @throws NonUniqueResultException
      * @throws AccountException
      */
-    public function process(PBXCallback $pbxCallback): void
+    public function process(Callback $pbxCallback): void
     {
-        if ($pbxCallback->hasPhoneCall()) {
-            $phoneCall = $pbxCallback->getPhoneCall();
+        $phoneCall = $pbxCallback->getPhoneCall();
 
-            if ($pbxCallback->isAnswered()) {
-                $this->processAnsweredPhoneCall($phoneCall);
-            } else {
-                $this->processOtherPhoneCall($phoneCall);
-            }
+        if ($pbxCallback->isAnswered()) {
+            $this->processAnsweredPhoneCall($phoneCall);
         } else {
-            $this->entityManager->flush();
+            $this->processOtherPhoneCall($phoneCall);
         }
     }
 
