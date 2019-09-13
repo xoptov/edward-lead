@@ -40,3 +40,5 @@ parameters:
     trade_seller_fee: 0.0
 
     payment_gateway_token: e807f1fcf82d132f9bb018ca6738a19f
+
+    stale_after_hours: 48
