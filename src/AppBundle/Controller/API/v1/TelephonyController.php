@@ -107,10 +107,9 @@ class TelephonyController extends Controller
      */
     public function postCallbackAction(Request $request, LoggerInterface $logger): JsonResponse
     {
-//        if ('dev' === $this->getParameter('kernel.environment')) {
-//            $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
-//            return new JsonResponse(['message' => 'Callback received']);
-//        }
+        if ('dev' === $this->getParameter('kernel.environment')) {
+            $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
+        }
 
         $form = $this->createForm(PBXCallbackType::class);
         $form->handleRequest($request);
