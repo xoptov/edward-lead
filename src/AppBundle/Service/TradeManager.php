@@ -225,6 +225,14 @@ class TradeManager
     }
 
     /**
+     * @param Trade $trade
+     */
+    public function autoFinish(Trade $trade): void
+    {
+        //todo: этот метод будет обрабатывать подвисшие сделки.
+    }
+
+    /**
      * @param User $buyer
      * @param User $seller
      * @param Lead $lead
