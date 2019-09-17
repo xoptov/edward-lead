@@ -2,13 +2,12 @@
 
 namespace AppBundle\Controller\API\v1;
 
-use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
-use AppBundle\Security\Voter\TradeVoter;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Service\PhoneCallManager;
+use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Form\Type\PBXCallbackType;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\OperationException;
@@ -16,7 +15,6 @@ use AppBundle\Exception\PhoneCallException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use AppBundle\Security\Voter\LeadFirstCallVoter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Exception\InsufficientFundsException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -109,6 +107,7 @@ class TelephonyController extends Controller
     {
         if ('dev' === $this->getParameter('kernel.environment')) {
             $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
+//            return new JsonResponse(['message' => 'Callback received']);
         }
 
         $form = $this->createForm(PBXCallbackType::class);
