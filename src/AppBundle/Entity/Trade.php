@@ -14,6 +14,7 @@ class Trade extends Operation
     const STATUS_ACCEPTED   = 1;
     const STATUS_REJECTED   = 2;
     const STATUS_PROCEEDING = 3;
+    const STATUS_CALL_BACK  = 4;
 
     /**
      * @var User

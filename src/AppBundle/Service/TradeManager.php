@@ -226,6 +226,21 @@ class TradeManager
 
     /**
      * @param Trade $trade
+     *
+     * @throws OperationException
+     */
+    public function askCallback(Trade $trade): void
+    {
+        if ($trade->isProcessed()) {
+            throw new OperationException($trade, 'Торговая операция уже обработана');
+        }
+
+        $trade->setStatus(Trade::STATUS_CALL_BACK);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param Trade $trade
      */
     public function autoFinish(Trade $trade): void
     {
