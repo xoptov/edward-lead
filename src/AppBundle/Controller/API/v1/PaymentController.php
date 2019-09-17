@@ -144,7 +144,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_successinvoice_fixed", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_invoice_success", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param Request     $request
      * @param null|int    $id_invoice
@@ -154,7 +154,7 @@ class PaymentController extends Controller
      *
      * @return JsonResponse
      */
-    public function successInvoiceFixedAction(Request $request, ?int $id_invoice, ?string $description_name_account): JsonResponse
+    public function successInvoiceAction(Request $request, ?int $id_invoice, ?string $description_name_account): JsonResponse
     {
         if (!$request->query->has('paymentGatewayToken')
             || $request->query->get('paymentGatewayToken') !== $this->paymentGatewayToken
