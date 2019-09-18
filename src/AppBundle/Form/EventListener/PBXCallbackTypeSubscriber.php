@@ -4,8 +4,8 @@ namespace AppBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PBXCallbackTypeSubscriber implements EventSubscriberInterface
 {
@@ -53,7 +53,11 @@ class PBXCallbackTypeSubscriber implements EventSubscriberInterface
                 continue;
             }
             $value = $this->propertyAccessor->getValue($data, $source);
-            $this->propertyAccessor->setValue($mappedData, $target, $value);
+            if (!empty($value)) {
+                $this->propertyAccessor->setValue($mappedData, $target, $value);
+            } else {
+                $this->propertyAccessor->setValue($mappedData, $target, null);
+            }
         }
 
         $event->setData($mappedData);

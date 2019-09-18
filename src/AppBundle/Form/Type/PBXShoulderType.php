@@ -7,8 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToTimestampTransformer;
 
 class PBXShoulderType extends AbstractType
@@ -19,7 +20,7 @@ class PBXShoulderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('phone', TextType::class)
+            ->add('phone')
             ->add('tariff', ChoiceType::class, [
                 'choices' => [
                     Shoulder::TARIFF_LOCAL,
@@ -27,10 +28,19 @@ class PBXShoulderType extends AbstractType
                     Shoulder::TARIFF_MOBILE
                 ]
             ])
-            ->add('startAt', TextType::class)
-            ->add('answerAt', TextType::class)
-            ->add('hangupAt', TextType::class)
-            ->add('billSec', NumberType::class)
+            ->add('startAt', TextType::class, [
+                'required' => false,
+                'empty_data' => null
+            ])
+            ->add('answerAt', TextType::class, [
+                'required' => false,
+                'empty_data' => null
+            ])
+            ->add('hangupAt', TextType::class, [
+                'required' => false,
+                'empty_data' => null
+            ])
+            ->add('billSec', IntegerType::class)
             ->add('status', ChoiceType::class, [
                 'choices' => [
                     Shoulder::STATUS_ANSWER,
@@ -38,6 +48,9 @@ class PBXShoulderType extends AbstractType
                     Shoulder::STATUS_CANCEL
                 ]
             ]);
+
+        $builder->get('phone')
+            ->addViewTransformer(new PhoneTransformer());
 
         $builder->get('startAt')
             ->addViewTransformer(new DateTimeToTimestampTransformer());

@@ -193,4 +193,20 @@ class Callback implements IdentifiableInterface
     {
         return $this->status;
     }
+
+    /**
+     * @return bool
+     */
+    public function isSuccess(): bool
+    {
+        return self::STATUS_SUCCESS === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFail(): bool
+    {
+        return self::STATUS_FAIL === $this->status;
+    }
 }

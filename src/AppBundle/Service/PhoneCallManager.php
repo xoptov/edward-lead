@@ -2,21 +2,21 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\PBX\Callback;
-use AppBundle\Entity\Trade;
+use AppBundle\Exception\PhoneCallException;
 use GuzzleHttp\Client;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Lead;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\PBX\Callback;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use AppBundle\Exception\AccountException;
 use Doctrine\ORM\NonUniqueResultException;
-use AppBundle\Exception\PhoneCallException;
 use AppBundle\Exception\OperationException;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Exception\RequestCallException;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Exception\InsufficientFundsException;
 
@@ -95,25 +95,24 @@ class PhoneCallManager
     /**
      * @param User      $caller
      * @param Trade     $trade
-     * @param bool|null $flush
      *
      * @return PhoneCall
      *
-     * @throws PhoneCallException
+     * @throws RequestCallException
      * @throws InsufficientFundsException
      */
-    public function create(User $caller, Trade $trade, ?bool $flush = true): PhoneCall
+    public function create(User $caller, Trade $trade): PhoneCall
     {
         $company = $caller->getCompany();
 
         if (!$company) {
-            throw new PhoneCallException($caller, $trade, 'Пользователь должен быть представителем компании');
+            throw new RequestCallException($caller, $trade, 'Пользователь должен быть представителем компании');
         }
 
         $officePhone = $company->getOfficePhone();
 
         if (!$officePhone) {
-            throw new PhoneCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
+            throw new RequestCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
         }
 
         $holdCallCost = $this->firstCallTimeout * $this->costPerSecond;
@@ -133,10 +132,6 @@ class PhoneCallManager
 
         $hold = $this->holdManager->create($caller->getAccount(), $phoneCall, $holdCallCost, false);
         $phoneCall->setHold($hold);
-
-        if ($flush) {
-            $this->entityManager->flush();
-        }
 
         return $phoneCall;
     }
@@ -180,20 +175,24 @@ class PhoneCallManager
     }
 
     /**
-     * @param Callback $pbxCallback
+     * @param PhoneCall $phoneCall
+     * @param Callback  $pbxCallback
      *
      * @throws NoResultException
      * @throws NonUniqueResultException
      * @throws AccountException
+     * @throws PhoneCallException
      */
-    public function process(Callback $pbxCallback): void
+    public function process(PhoneCall $phoneCall, Callback $pbxCallback): void
     {
-        $phoneCall = $pbxCallback->getPhoneCall();
+        if ($phoneCall->isProcessed()) {
+            throw new PhoneCallException($phoneCall, 'Телефонный звонок уже обработан');
+        }
 
-        if ($pbxCallback->isAnswered()) {
-            $this->processAnsweredPhoneCall($phoneCall);
+        if ($pbxCallback->isSuccess()) {
+            $this->processSuccessfulPhoneCall($phoneCall);
         } else {
-            $this->processOtherPhoneCall($phoneCall);
+            $this->processFailedPhoneCall($phoneCall);
         }
     }
 
@@ -204,7 +203,7 @@ class PhoneCallManager
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    public function processAnsweredPhoneCall(PhoneCall $phoneCall): void
+    private function processSuccessfulPhoneCall(PhoneCall $phoneCall): void
     {
         $caller  = $phoneCall->getCaller();
 
@@ -225,6 +224,7 @@ class PhoneCallManager
                 $em->remove($hold);
             }
 
+            $phoneCall->setResult(PhoneCall::RESULT_SUCCESS);
             $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
 
             $em->flush();
@@ -234,13 +234,14 @@ class PhoneCallManager
     /**
      * @param PhoneCall $phoneCall
      */
-    public function processOtherPhoneCall(PhoneCall $phoneCall): void
+    private function processFailedPhoneCall(PhoneCall $phoneCall): void
     {
         if ($phoneCall->hasHold()) {
             $hold = $phoneCall->takeHold();
             $this->entityManager->remove($hold);
         }
 
+        $phoneCall->setResult(PhoneCall::RESULT_FAIL);
         $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
 
         $this->entityManager->flush();

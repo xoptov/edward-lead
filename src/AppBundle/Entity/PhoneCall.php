@@ -16,6 +16,9 @@ class PhoneCall extends Operation
     const STATUS_PROCESSED = 'processed';
     const STATUS_ERROR     = 'error';
 
+    const RESULT_SUCCESS = 1;
+    const RESULT_FAIL    = 2;
+
     /**
      * @var string|null
      *
@@ -54,6 +57,13 @@ class PhoneCall extends Operation
     private $status = self::STATUS_NEW;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="result", type="smallint", nullable=true, options={"unsigned":"true"})
+     */
+    private $result;
+
+    /**
      * PhoneCall constructor.
      */
     public function __construct()
@@ -79,6 +89,14 @@ class PhoneCall extends Operation
     public function getExternalId(): ?string
     {
         return $this->externalId;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCallbacks()
+    {
+        return $this->callbacks;
     }
 
     /**
@@ -147,6 +165,26 @@ class PhoneCall extends Operation
     public function getStatus(): ?string
     {
         return $this->status;
+    }
+
+    /**
+     * @param int|null $result
+     *
+     * @return PhoneCall
+     */
+    public function setResult(?int $result): self
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getResult(): ?int
+    {
+        return $this->result;
     }
 
     /**

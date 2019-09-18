@@ -3,15 +3,18 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Trade;
+use AppBundle\Exception\PhoneCallException;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\PBX\Callback;
 use AppBundle\Service\PhoneCallManager;
 use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Form\Type\PBXCallbackType;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Service\PBXCallbackManager;
 use AppBundle\Exception\OperationException;
-use AppBundle\Exception\PhoneCallException;
+use AppBundle\Exception\RequestCallException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,19 +33,27 @@ class TelephonyController extends Controller
     private $entityManager;
 
     /**
+     * @var PBXCallbackManager
+     */
+    private $pbxCallbackManager;
+
+    /**
      * @var PhoneCallManager
      */
     private $phoneCallManager;
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param PBXCallbackManager     $pbxCallbackManager
      * @param PhoneCallManager       $phoneCallManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
+        PBXCallbackManager $pbxCallbackManager,
         PhoneCallManager $phoneCallManager
     ) {
         $this->entityManager = $entityManager;
+        $this->pbxCallbackManager = $pbxCallbackManager;
         $this->phoneCallManager = $phoneCallManager;
     }
 
@@ -64,9 +75,9 @@ class TelephonyController extends Controller
         }
 
         try {
-            $phoneCall = $this->phoneCallManager->create($this->getUser(), $trade, false);
+            $phoneCall = $this->phoneCallManager->create($this->getUser(), $trade);
             $this->phoneCallManager->requestConnection($phoneCall);
-        } catch (PhoneCallException $e) {
+        } catch (RequestCallException $e) {
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (OperationException $e) {
             /** @var PhoneCall $phoneCall */
@@ -107,20 +118,49 @@ class TelephonyController extends Controller
     {
         if ('dev' === $this->getParameter('kernel.environment')) {
             $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
-//            return new JsonResponse(['message' => 'Callback received']);
         }
 
-        $form = $this->createForm(PBXCallbackType::class);
+        $options = [
+            'fields_map' => [
+                '[call_id]'         => '[phoneCall]',
+                '[event]'           => '[event]',
+                '[recording]'       => '[audioRecord]',
+                '[call1_phone]'     => '[firstShoulder][phone]',
+                '[call1_billsec]'   => '[firstShoulder][billSec]',
+                '[call1_tarif]'     => '[firstShoulder][tariff]',
+                '[call1_start_at]'  => '[firstShoulder][startAt]',
+                '[call1_answer_at]' => '[firstShoulder][answerAt]',
+                '[call1_hangup_at]' => '[firstShoulder][hangupAt]',
+                '[call1_status]'    => '[firstShoulder][status]',
+                '[call2_phone]'     => '[secondShoulder][phone]',
+                '[call2_billsec]'   => '[secondShoulder][billSec]',
+                '[call2_tarif]'     => '[secondShoulder][tariff]',
+                '[call2_start_at]'  => '[secondShoulder][startAt]',
+                '[call2_answer_at]' => '[secondShoulder][answerAt]',
+                '[call2_hangup_at]' => '[secondShoulder][hangupAt]',
+                '[call2_status]'    => '[secondShoulder][status]'
+            ]
+        ];
+
+        $form = $this->createForm(PBXCallbackType::class, null, $options);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             try {
+                /** @var Callback $pbxCallback */
                 $pbxCallback = $form->getData();
                 $this->entityManager->persist($pbxCallback);
-                $this->phoneCallManager->process($pbxCallback);
+
+                $this->pbxCallbackManager->process($pbxCallback);
+                $this->phoneCallManager->process($pbxCallback->getPhoneCall(), $pbxCallback);
+
+            } catch (PhoneCallException $e) {
+                $this->entityManager->flush();
+
+                return new JsonResponse('Ошибка обработки телефонного вызова', ['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+
             } catch (\Exception $e) {
                 $logger->error('Ошибка обработки callback от PBX', ['message' => $e->getMessage()]);
-
                 return new JsonResponse(['message' => 'Ошибка обработки callback запроса'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 

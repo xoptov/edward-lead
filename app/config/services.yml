@@ -221,6 +221,10 @@ services:
             $costPerSecond: '%cost_per_second%'
             $firstCallTimeout: '%first_call_timeout%'
 
+    AppBundle\Service\PBXCallbackManager:
+        arguments:
+            $minimumTalkDuration: '%minimum_talk_duration%'
+
     AppBundle\Service\FeesManager:
         arguments:
             $tradeBuyerFee: '%trade_buyer_fee%'

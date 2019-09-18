@@ -38,6 +38,7 @@ class PBXCallbackType extends AbstractType
     {
         $resolver
             ->setDefault('data_class', Callback::class)
+            ->setDefault('csrf_protection', false)
             ->setDefined('fields_map')
             ->setRequired('fields_map')
             ->setAllowedTypes('fields_map', ['array']);
