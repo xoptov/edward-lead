@@ -41,10 +41,10 @@ class PaymentController extends Controller
     private $paymentGatewayToken;
 
     /**
-     * @param EntityManagerInterface   $entityManager
-     * @param InvoiceManager           $invoiceManager
+     * @param EntityManagerInterface $entityManager
+     * @param InvoiceManager $invoiceManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string                   $paymentGatewayToken
+     * @param string $paymentGatewayToken
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -81,9 +81,9 @@ class PaymentController extends Controller
      *
      * @param null|string $hash
      *
+     * @return JsonResponse
      * @todo: Потом лучше использовать ParamConverter для загрузки Invoice из БД.
      *
-     * @return JsonResponse
      */
     public function getInvoiceAction(?string $hash): JsonResponse
     {
@@ -105,13 +105,13 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param Request  $request
+     * @param Request $request
      * @param null|int $id_user
      * @param null|int $sum
      *
+     * @return JsonResponse
      * @todo: потом лучше доставать id_user и sum из объекта Request.
      *
-     * @return JsonResponse
      */
     public function createInvoiceAction(Request $request, ?int $id_user, ?int $sum): JsonResponse
     {
@@ -146,13 +146,13 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_invoice_success", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param Request     $request
-     * @param null|int    $id_invoice
+     * @param Request $request
+     * @param null|int $id_invoice
      * @param null|string $description_name_account
      *
+     * @return JsonResponse
      * @todo: потом лучше доставать id_user и description_name_account из объекта Request.
      *
-     * @return JsonResponse
      */
     public function successInvoiceAction(Request $request, ?int $id_invoice, ?string $description_name_account): JsonResponse
     {
@@ -185,19 +185,24 @@ class PaymentController extends Controller
 
             $this->invoiceManager->process($invoice[0], $incomeAccount[0]);
 
+            $userOwner = null;
+            if ($invoice[0]->getUser()) {
+                $userOwner = [
+                    'id' => $invoice[0]->getUser()->getId(),
+                    'name' => $invoice[0]->getUser()->getName(),
+                    'email' => $invoice[0]->getUser()->getEmail(),
+                    'phone' => $invoice[0]->getUser()->getPhone(),
+                    'enabled' => $invoice[0]->getUser()->isEnabled()
+                ];
+            }
+
             $infoArray = [
-                'id' =>  $invoice[0]->getId(),
-                'hash' =>  $invoice[0]->getHash(),
-                'amount' =>  $invoice[0]->getAmount(),
-                'status' =>  $invoice[0]->getStatus(),
-                'created_at' =>  $invoice[0]->getCreatedAt()->format('Y-m-d'),
-                'user' => [
-                    'id' =>  $invoice[0]->getUser()->getId(),
-                    'name' =>  $invoice[0]->getUser()->getName(),
-                    'email' =>  $invoice[0]->getUser()->getEmail(),
-                    'phone' =>  $invoice[0]->getUser()->getPhone(),
-                    'enabled' =>  $invoice[0]->getUser()->isEnabled()
-                ]
+                'id' => $invoice[0]->getId(),
+                'hash' => $invoice[0]->getHash(),
+                'amount' => $invoice[0]->getAmount(),
+                'status' => $invoice[0]->getStatus(),
+                'created_at' => $invoice[0]->getCreatedAt()->format('Y-m-d'),
+                'user' => $userOwner
             ];
 
             return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $infoArray]);
@@ -212,9 +217,9 @@ class PaymentController extends Controller
      *
      * @param null|int $id_user
      *
+     * @return JsonResponse
      * @todo: Потом лучше использовать ParamConverter для загрузки юзера.
      *
-     * @return JsonResponse
      */
     public function getCompanyFromUser(?int $id_user): JsonResponse
     {
