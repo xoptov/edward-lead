@@ -223,12 +223,16 @@ services:
 
     AppBundle\Service\PBXCallbackManager:
         arguments:
-            $minimumTalkDuration: '%minimum_talk_duration%'
+            $minTalkDuration: '%min_talk_duration%'
 
     AppBundle\Service\FeesManager:
         arguments:
             $tradeBuyerFee: '%trade_buyer_fee%'
             $tradeSellerFee: '%trade_seller_fee%'
+
+    AppBundle\Service\TradeManager:
+        arguments:
+            $maxAsksCallback: '%max_asks_callback%'
 
     AppBundle\Service\Uploader:
         arguments:
@@ -278,3 +282,7 @@ services:
     AppBundle\Command\ArchiveStaledLeadsCommand:
         arguments:
             $ttl: '%stale_after_hours%'
+
+    AppBundle\Command\AutoFinishTradesCommand:
+        arguments:
+            $staleAfterHours: '%stale_after_hours%'

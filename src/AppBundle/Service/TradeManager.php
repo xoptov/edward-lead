@@ -5,7 +5,9 @@ namespace AppBundle\Service;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
+use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\FinancialException;
@@ -15,6 +17,11 @@ use AppBundle\Exception\InsufficientFundsException;
 class TradeManager
 {
     const START_TRADE_DESCRIPTION = 'Сделка по приобритению лида';
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @var EntityManagerInterface
@@ -42,24 +49,35 @@ class TradeManager
     private $transactionManager;
 
     /**
+     * @var int
+     */
+    private $maxAsksCallback;
+
+    /**
+     * @param LoggerInterface        $logger
      * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
      * @param HoldManager            $holdManager
      * @param FeesManager            $feesManager
      * @param TransactionManager     $transactionManager
+     * @param int                    $maxAsksCallback
      */
     public function __construct(
+        LoggerInterface $logger,
         EntityManagerInterface $entityManager,
         AccountManager $accountManager,
         HoldManager $holdManager,
         FeesManager $feesManager,
-        TransactionManager $transactionManager
+        TransactionManager $transactionManager,
+        int $maxAsksCallback
     ) {
+        $this->logger = $logger;
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
         $this->holdManager = $holdManager;
         $this->feesManager = $feesManager;
         $this->transactionManager = $transactionManager;
+        $this->maxAsksCallback = $maxAsksCallback;
     }
 
     /**
@@ -226,25 +244,90 @@ class TradeManager
 
     /**
      * @param Trade $trade
+     * @param bool  $flush
      *
      * @throws OperationException
      */
-    public function askCallback(Trade $trade): void
+    public function askCallback(Trade $trade, bool $flush = true): void
     {
         if ($trade->isProcessed()) {
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
+        if ($trade->getAskCallbackCount() >= $this->maxAsksCallback) {
+            throw new OperationException($trade, 'Нельзя более 2-х раз указывать "просил перезвонить" для одного лида');
+        }
+
+        $phoneCall = $trade->getLastPhoneCall();
+
+        if (!$trade->addAskCallbackPhoneCall($phoneCall)) {
+            throw new OperationException($trade, 'Последний телефонный звонок лиду уже отмечен как "просил перезвонить"');
+        }
+
         $trade->setStatus(Trade::STATUS_CALL_BACK);
-        $this->entityManager->flush();
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     /**
-     * @param Trade $trade
+     * @param Account   $feesAccount
+     * @param Trade     $trade
+     * @param \DateTime $staleTimeBound
      */
-    public function autoFinish(Trade $trade): void
+    public function autoFinish(Trade $trade, Account $feesAccount, \DateTime $staleTimeBound): void
     {
-        //todo: этот метод будет обрабатывать подвисшие сделки.
+        $phoneCall = $trade->getLastPhoneCall();
+
+        if (!$phoneCall) {
+            if ($trade->getCreatedAt() < $staleTimeBound) {
+                try {
+                    $this->accept($trade, $feesAccount);
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+            return;
+        }
+
+        if ($trade->getStatus() === Trade::STATUS_CALL_BACK) {
+            if ($phoneCall->getCreatedAt() < $staleTimeBound) {
+                try {
+                    $this->accept($trade, $feesAccount);
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+                return;
+            }
+            if ($trade->getAskCallbackCount() >= $this->maxAsksCallback) {
+                try {
+                    $this->reject($trade);
+                } catch (OperationException $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+            return;
+        }
+
+        if ($phoneCall->getResult() === PhoneCall::RESULT_SUCCESS) {
+            if ($trade->getCreatedAt() < $staleTimeBound) {
+                try {
+                    $this->accept($trade, $feesAccount);
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+            return;
+        }
+
+        if ($trade->getCreatedAt() < $staleTimeBound) {
+            try {
+                $this->reject($trade);
+            } catch (OperationException $e) {
+                $this->logger->error($e->getMessage());
+            }
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
@@ -15,7 +16,7 @@ class TradeRepository extends EntityRepository
      * @param int    $status
      * @param string $order
      *
-     * @return array
+     * @return Trade[]
      */
     public function getByCitiesAndStatus(array $cities, int $status, string $order = 'DESC'): array
     {
@@ -36,11 +37,11 @@ class TradeRepository extends EntityRepository
      * @param User    $buyer
      * @param integer $status
      *
-     * @return mixed
+     * @return Trade|null
      *
      * @throws NonUniqueResultException
      */
-    public function getByLeadAndBuyerAndStatus(Lead $lead, User $buyer, int $status)
+    public function getByLeadAndBuyerAndStatus(Lead $lead, User $buyer, int $status): ?Trade
     {
         $qb = $this->createQueryBuilder('t');
         $query = $qb
@@ -54,5 +55,22 @@ class TradeRepository extends EntityRepository
             ->getQuery();
 
         return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @return Trade[]
+     */
+    public function getWithWarrantyAndIncomplete(): array
+    {
+        $qb = $this->createQueryBuilder('t');
+        $query = $qb
+            ->leftJoin('t.room', 'r')
+            ->where('r IS NULL OR r.platformWarranty = :warranty')
+                ->setParameter('warranty', true)
+            ->andWhere('t.status IN :statuses')
+                ->setParameter('statuses', [Trade::STATUS_NEW, Trade::STATUS_CALL_BACK])
+            ->getQuery();
+
+        return $query->getResult();
     }
 }

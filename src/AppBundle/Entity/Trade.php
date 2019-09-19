@@ -49,6 +49,22 @@ class Trade extends Operation
     private $phoneCalls;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\PhoneCall")
+     * @ORM\JoinTable(
+     *     name="trades_ask_callback_phone_calls",
+     *     joinColumns={
+     *          @ORM\JoinColumn(name="trade_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     *     },
+     *     inverseJoinColumns={
+     *          @ORM\JoinColumn(name="phone_call_id", referencedColumnName="id", unique=true, nullable=false, onDelete="CASCADE")
+     *     }
+     * )
+     */
+    private $askCallbackPhoneCalls;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
@@ -61,6 +77,7 @@ class Trade extends Operation
     public function __construct()
     {
         $this->phoneCalls = new ArrayCollection();
+        $this->askCallbackPhoneCalls = new ArrayCollection();
     }
 
     /**
@@ -185,6 +202,46 @@ class Trade extends Operation
         }
 
         return null;
+    }
+
+    /**
+     * @param PhoneCall $phoneCall
+     *
+     * @return bool
+     */
+    public function addPhoneCall(PhoneCall $phoneCall): bool
+    {
+        return $this->phoneCalls->add($phoneCall);
+    }
+
+    /**
+     * @return PhoneCall|false
+     */
+    public function getLastPhoneCall()
+    {
+        return $this->phoneCalls->last();
+    }
+
+    /**
+     * @return int
+     */
+    public function getAskCallbackCount(): int
+    {
+        return $this->askCallbackPhoneCalls->count();
+    }
+
+    /**
+     * @param PhoneCall $phoneCall
+     *
+     * @return bool
+     */
+    public function addAskCallbackPhoneCall(PhoneCall $phoneCall): bool
+    {
+        if ($this->askCallbackPhoneCalls->contains($phoneCall)) {
+            return false;
+        }
+
+        return $this->askCallbackPhoneCalls->add($phoneCall);
     }
 
     /**

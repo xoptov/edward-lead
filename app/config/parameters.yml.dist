@@ -31,7 +31,7 @@ parameters:
     pbx_call_url: 'http://159.253.123.139:81/make.php'
     cost_per_second: 2.0
     first_call_timeout: 300
-    minimum_talk_duration: 5
+    min_talk_duration: 5
 
     audio_allowed_types: ['audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/wave', 'audio/wav', 'audio/flac']
     audio_max_size: 2097152
@@ -43,3 +43,4 @@ parameters:
     payment_gateway_token: e807f1fcf82d132f9bb018ca6738a19f
 
     stale_after_hours: 48
+    max_asks_callback: 2

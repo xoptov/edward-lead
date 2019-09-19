@@ -37,7 +37,7 @@ class ArchiveStaledLeadsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:leads:archive')
+            ->setName('app:lead:archive')
             ->setDescription('Команда для отправки лидов в архив если они со статусом expect и старше 48 часов');
     }
 

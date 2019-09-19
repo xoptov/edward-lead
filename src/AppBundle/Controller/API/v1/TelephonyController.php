@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Trade;
-use AppBundle\Exception\PhoneCallException;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -13,6 +12,7 @@ use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Form\Type\PBXCallbackType;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Service\PBXCallbackManager;
+use AppBundle\Exception\PhoneCallException;
 use AppBundle\Exception\OperationException;
 use AppBundle\Exception\RequestCallException;
 use Symfony\Component\HttpFoundation\Request;

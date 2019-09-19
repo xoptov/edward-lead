@@ -8,9 +8,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class TradeVoter extends Voter
 {
-    const ACCEPT    = 'accept';
-    const REJECT    = 'reject';
-    const MAKE_CALL = 'make_call';
+    const ACCEPT       = 'accept';
+    const REJECT       = 'reject';
+    const MAKE_CALL    = 'make_call';
+    const ASK_CALLBACK = 'ask_callback';
 
     /**
      * @inheritdoc
@@ -21,7 +22,7 @@ class TradeVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::ACCEPT, self::REJECT, self::MAKE_CALL])) {
+        if (!in_array($attribute, [self::ACCEPT, self::REJECT, self::MAKE_CALL, self::ASK_CALLBACK])) {
             return false;
         }
 

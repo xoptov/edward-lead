@@ -22,6 +22,18 @@ trait CreatedAtTrait
     }
 
     /**
+     * @param \DateTime $createdAt
+     *
+     * @return self
+     */
+    public function setCreatedAt(\DateTime $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function prePersist()
