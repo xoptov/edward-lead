@@ -45,7 +45,7 @@ class PhoneCall extends Operation
      * @var Trade
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Trade", inversedBy="phoneCalls")
-     * @ORM\JoinColumn(name="trade_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="trade_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $trade;
 
