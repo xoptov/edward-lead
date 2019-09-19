@@ -69,10 +69,10 @@ class PBXCallbackTypeSubscriberTest extends TestCase
         $this->assertArraySubset(
             [
                 'phone'    => '79883310019',
-                'billSec'  => '0',
+                'billSec'  => null,
                 'tariff'   => 'mobile',
                 'startAt'  => '1567240573',
-                'answerAt' => '',
+                'answerAt' => null,
                 'hangupAt' => '1567240603',
                 'status'   => 'cancel'
             ],
@@ -160,10 +160,10 @@ class PBXCallbackTypeSubscriberTest extends TestCase
         $this->assertArraySubset(
             [
                 'phone'    => '79892969151',
-                'billSec'  => '0',
+                'billSec'  => null,
                 'tariff'   => 'mobile',
                 'startAt'  => '1567241926',
-                'answerAt' => '',
+                'answerAt' => null,
                 'hangupAt' => '1567241934',
                 'status'   => 'cancel'
             ],

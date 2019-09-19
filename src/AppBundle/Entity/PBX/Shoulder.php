@@ -205,4 +205,28 @@ class Shoulder
     {
         return $this->status;
     }
+
+    /**
+     * @return int
+     */
+    public function getDurationInSecond(): int
+    {
+        $total = 0;
+
+        if ($this->answerAt && $this->hangupAt) {
+
+            $diff = $this->answerAt->diff($this->hangupAt);
+            $total += $diff->s;
+
+            if ($diff->i) {
+                $total += $diff->i * 60;
+            }
+
+            if ($diff->h) {
+                $total += $diff->h * 3600;
+            }
+        }
+
+        return $total;
+    }
 }

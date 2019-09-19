@@ -71,9 +71,6 @@ class PhoneCallManagerTest extends TestCase
         $entityManager
             ->expects($this->once())
             ->method('persist');
-        $entityManager
-            ->expects($this->once())
-            ->method('flush');
 
         $accountManager = $this->createMock(AccountManager::class);
         $accountManager

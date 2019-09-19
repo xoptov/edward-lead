@@ -4,6 +4,7 @@ namespace Tests\functional\AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Account;
 use AppBundle\Entity\Company;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\PBX\Callback;
@@ -88,8 +89,6 @@ class TelephonyControllerTest extends WebTestCase
 
     public function testPostCallbackAction_withCase_1()
     {
-//        $this->markTestSkipped();
-
         $this->prepareTestEnvironment('0000000000.0001');
 
         $requestData = [
@@ -101,7 +100,7 @@ class TelephonyControllerTest extends WebTestCase
             'call1_answer_at' => '',
             'call1_hangup_at' => '1568714610',
             'call1_status' => 'cancel',
-            'recording' => 'http://159.253.123.139:82/2019/09/17/force-79883310019-unknown-20190917-140300-1568714580.3180.wav',
+            'recording' => 'some_url',
             'call_id' => '0000000000.0001'
         ];
 
@@ -137,8 +136,6 @@ class TelephonyControllerTest extends WebTestCase
 
     public function testPostCallbackAction_withCase_2()
     {
-//        $this->markTestSkipped();
-
         $this->prepareTestEnvironment('0000000000.0002');
 
         $requestData = [
@@ -150,7 +147,7 @@ class TelephonyControllerTest extends WebTestCase
             'call1_answer_at' => '',
             'call1_hangup_at' => '1568714849',
             'call1_status' => 'busy',
-            'recording' => 'http://159.253.123.139:82/2019/09/17/force-79883310019-unknown-20190917-140719-1568714839.3183.wav',
+            'recording' => 'some_url',
             'call_id' => '0000000000.0002'
         ];
 
@@ -186,8 +183,6 @@ class TelephonyControllerTest extends WebTestCase
 
     public function testPostCallbackAction_withCase_3()
     {
-//        $this->markTestSkipped();
-
         $this->prepareTestEnvironment('0000000000.0003');
 
         $requestData = [
@@ -206,7 +201,7 @@ class TelephonyControllerTest extends WebTestCase
             'call2_answer_at' => '1568715413',
             'call2_hangup_at' => '1568715414',
             'call2_status' => 'answer',
-            'recording' => 'http://159.253.123.139:82/2019/09/17/force-79883310019-unknown-20190917-141606-1568715366.3192',
+            'recording' => 'some_url',
             'call_id' => '0000000000.0003'
         ];
 
@@ -249,6 +244,195 @@ class TelephonyControllerTest extends WebTestCase
         $this->assertEquals(\DateTime::createFromFormat('U', '1568715414'), $secondShoulder->getHangupAt());
     }
 
+    public function testPostCallbackAction_withCase_4()
+    {
+        $this->prepareTestEnvironment('0000000000.0004');
+
+        $requestData = [
+            'event' => 'hangup',
+            'call1_phone' => '79000000004',
+            'call1_billsec' => '11',
+            'call1_tarif' => 'mobile',
+            'call1_start_at' => '1568715664',
+            'call1_answer_at' => '1568715672',
+            'call1_hangup_at' => '1568715683',
+            'call1_status' => 'answer',
+            'call2_phone' => '79000000003',
+            'call2_billsec' => '3',
+            'call2_tarif' => 'mobile',
+            'call2_start_at' => '1568715672',
+            'call2_answer_at' => '1568715680',
+            'call2_hangup_at' => '1568715683',
+            'call2_status' => 'answer',
+            'recording' => 'some_url',
+            'call_id' => '0000000000.0004'
+        ];
+
+        $response = $this->makeRequestToAction($requestData);
+
+        $this->assertTrue($response->isSuccessful());
+
+        /** @var PhoneCall $phoneCall */
+        $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
+            ->findOneBy([
+                'externalId' => '0000000000.0004'
+            ]);
+
+
+        $this->assertEquals(PhoneCall::STATUS_PROCESSED, $phoneCall->getStatus());
+        $this->assertCount(1, $phoneCall->getCallbacks());
+        $this->assertEquals(PhoneCall::RESULT_FAIL, $phoneCall->getResult());
+        $callback = $phoneCall->getCallbacks()->first();
+
+        $this->assertEquals(Callback::STATUS_FAIL, $callback->getStatus());
+
+        $this->assertInstanceOf(Shoulder::class, $callback->getFirstShoulder());
+
+        /** @var Shoulder $firstShoulder */
+        $firstShoulder = $callback->getFirstShoulder();
+        $this->assertEquals('79000000004', $firstShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $firstShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $firstShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715664'), $firstShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715672'), $firstShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715683'), $firstShoulder->getHangupAt());
+
+        /** @var Shoulder $secondShoulder */
+        $secondShoulder = $callback->getSecondShoulder();
+        $this->assertEquals('79000000003', $secondShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $secondShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $secondShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715672'), $secondShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715680'), $secondShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568715683'), $secondShoulder->getHangupAt());
+    }
+
+    public function testPostCallbackAction_withCase_5()
+    {
+        $this->prepareTestEnvironment('0000000000.0005');
+
+        $requestData = [
+            'event' => 'hangup',
+            'call1_phone' => '79000000004',
+            'call1_billsec' => '24',
+            'call1_tarif' => 'mobile',
+            'call1_start_at' => '1568780744',
+            'call1_answer_at' => '1568780752',
+            'call1_hangup_at' => '1568780776',
+            'call1_status' => 'answer',
+            'call2_phone' => '79000000003',
+            'call2_billsec' => '15',
+            'call2_tarif' => 'mobile',
+            'call2_start_at' => '1568780752',
+            'call2_answer_at' => '1568780761',
+            'call2_hangup_at' => '1568780776',
+            'call2_status' => 'answer',
+            'recording' => 'some_url',
+            'call_id' => '0000000000.0005'
+        ];
+
+        $response = $this->makeRequestToAction($requestData);
+
+        $this->assertTrue($response->isSuccessful());
+
+        /** @var PhoneCall $phoneCall */
+        $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
+            ->findOneBy([
+                'externalId' => '0000000000.0005'
+            ]);
+
+
+        $this->assertEquals(PhoneCall::STATUS_PROCESSED, $phoneCall->getStatus());
+        $this->assertCount(1, $phoneCall->getCallbacks());
+        $this->assertEquals(PhoneCall::RESULT_SUCCESS, $phoneCall->getResult());
+        $callback = $phoneCall->getCallbacks()->first();
+
+        $this->assertEquals(Callback::STATUS_SUCCESS, $callback->getStatus());
+
+        $this->assertInstanceOf(Shoulder::class, $callback->getFirstShoulder());
+
+        /** @var Shoulder $firstShoulder */
+        $firstShoulder = $callback->getFirstShoulder();
+        $this->assertEquals('79000000004', $firstShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $firstShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $firstShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780744'), $firstShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780752'), $firstShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780776'), $firstShoulder->getHangupAt());
+
+        /** @var Shoulder $secondShoulder */
+        $secondShoulder = $callback->getSecondShoulder();
+        $this->assertEquals('79000000003', $secondShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $secondShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $secondShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780752'), $secondShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780761'), $secondShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568780776'), $secondShoulder->getHangupAt());
+    }
+
+    public function testPostCallbackAction_withCase_6()
+    {
+        $this->prepareTestEnvironment('0000000000.0006');
+
+        $requestData = [
+            'event' => 'hangup',
+            'call1_phone' => '79000000004',
+            'call1_billsec' => '67',
+            'call1_tarif' => 'mobile',
+            'call1_start_at' => '1568781338',
+            'call1_answer_at' => '1568781348',
+            'call1_hangup_at' => '1568781415',
+            'call1_status' => 'answer',
+            'call2_phone' => '79000000003',
+            'call2_billsec' => '60',
+            'call2_tarif' => 'mobile',
+            'call2_start_at' => '1568781348',
+            'call2_answer_at' => '1568781355',
+            'call2_hangup_at' => '1568781415',
+            'call2_status' => 'answer',
+            'recording' => 'some_url',
+            'call_id' => '0000000000.0006'
+        ];
+
+        $response = $this->makeRequestToAction($requestData);
+
+        $this->assertTrue($response->isSuccessful());
+
+        /** @var PhoneCall $phoneCall */
+        $phoneCall = $this->entityManager->getRepository(PhoneCall::class)
+            ->findOneBy([
+                'externalId' => '0000000000.0006'
+            ]);
+
+
+        $this->assertEquals(PhoneCall::STATUS_PROCESSED, $phoneCall->getStatus());
+        $this->assertCount(1, $phoneCall->getCallbacks());
+        $this->assertEquals(PhoneCall::RESULT_SUCCESS, $phoneCall->getResult());
+        $callback = $phoneCall->getCallbacks()->first();
+
+        $this->assertEquals(Callback::STATUS_SUCCESS, $callback->getStatus());
+
+        $this->assertInstanceOf(Shoulder::class, $callback->getFirstShoulder());
+
+        /** @var Shoulder $firstShoulder */
+        $firstShoulder = $callback->getFirstShoulder();
+        $this->assertEquals('79000000004', $firstShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $firstShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $firstShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781338'), $firstShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781348'), $firstShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781415'), $firstShoulder->getHangupAt());
+
+        /** @var Shoulder $secondShoulder */
+        $secondShoulder = $callback->getSecondShoulder();
+        $this->assertEquals('79000000003', $secondShoulder->getPhone());
+        $this->assertEquals(Shoulder::TARIFF_MOBILE, $secondShoulder->getTariff());
+        $this->assertEquals(Shoulder::STATUS_ANSWER, $secondShoulder->getStatus());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781348'), $secondShoulder->getStartAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781355'), $secondShoulder->getAnswerAt());
+        $this->assertEquals(\DateTime::createFromFormat('U', '1568781415'), $secondShoulder->getHangupAt());
+    }
+
     private function prepareTestEnvironment(string $callId): void
     {
         $buyer = $this->createBuyerWithAccountAndCompany();
@@ -261,6 +445,13 @@ class TelephonyControllerTest extends WebTestCase
         $phoneCall
             ->setExternalId($callId)
             ->setStatus(PhoneCall::STATUS_REQUESTED);
+
+        $telephonyAccount = new Account();
+        $telephonyAccount
+            ->setDescription('для телефонии')
+            ->setEnabled(true);
+
+        $this->entityManager->persist($telephonyAccount);
 
         $this->entityManager->flush();
 

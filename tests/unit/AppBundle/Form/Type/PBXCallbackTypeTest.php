@@ -11,107 +11,68 @@ use AppBundle\Entity\PBX\Callback;
 use AppBundle\Entity\PBX\Shoulder;
 use AppBundle\Form\Type\PBXCallbackType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PBXCallbackTypeTest extends KernelTestCase
 {
     /**
-     * @var EntityManagerInterface
+     * @var ContainerInterface
      */
-    private static $entityManager;
+    private $container;
 
     /**
-     * @inheritdoc
+     * @var EntityManagerInterface
      */
-    public static function setUpBeforeClass()
-    {
-        static::bootKernel();
-        static::$entityManager = static::$kernel->getContainer()->get('doctrine.orm.default_entity_manager');
-    }
+    private $entityManager;
+
+    /**
+     * @var UserManager
+     */
+    private $userManager;
+
+    /**
+     * @var FormFactoryInterface
+     */
+    private $formFactory;
 
     /**
      * @inheritdoc
      */
     public function setUp()
     {
-        static::$entityManager->beginTransaction();
+        static::bootKernel();
+
+        $this->container = static::$kernel->getContainer();
+        $this->entityManager = $this->container->get('doctrine.orm.default_entity_manager');
+        $this->userManager = $this->container->get(UserManager::class);
+        $this->formFactory = $this->container->get('form.factory');
+
+        $this->entityManager->beginTransaction();
     }
 
     /**
      * @inheritdoc
+     *
+     * @todo: вообщем нужно разобраться почему не работаю транзакции, раньше то работали без выгрузки ядра!!! - Может кэш???
      */
     public function tearDown()
     {
-        static::$entityManager->rollback();
-        static::$entityManager->clear();
-    }
+        $connection = $this->entityManager->getConnection();
+        $transactionLevel = $connection->getTransactionNestingLevel();
 
-    /**
-     * @inheritdoc
-     */
-    public static function tearDownAfterClass()
-    {
+        for ($x = 0; $x < $transactionLevel; $x++) {
+            $this->entityManager->rollback();
+        }
+
         static::ensureKernelShutdown();
     }
 
     public function testHandleRequest_withCallbackForFirstCase()
     {
-        $userManager = static::$kernel->getContainer()->get(UserManager::class);
-
-        $buyer = new User();
-        $buyer
-            ->setName('Buyer')
-            ->setEmail('buyer@xoptov.ru')
-            ->setPhone('79883310019')
-            ->setPlainPassword(123456)
-            ->setEnabled(true)
-            ->switchToCompany();
-
-        static::$entityManager->persist($buyer);
-
-        $userManager->updateUser($buyer, false);
-
-        $seller = new User();
-        $seller
-            ->setName('Seller')
-            ->setEmail('seller@xoptov.ru')
-            ->setPhone('79000000002')
-            ->setPlainPassword(123456)
-            ->setEnabled(true)
-            ->switchToWebmaster();
-
-        static::$entityManager->persist($seller);
-
-        $userManager->updateUser($seller, false);
-
-        $lead = new Lead();
-        $lead
-            ->setPhone('79000000003')
-            ->setExpirationDate(new \DateTime('+2 days'))
-            ->setPrice(10000);
-
-        static::$entityManager->persist($lead);
-
-        $trade = new Trade();
-        $trade
-            ->setBuyer($buyer)
-            ->setSeller($seller)
-            ->setLead($lead);
-
-        static::$entityManager->persist($trade);
-
-        $phoneCall = new PhoneCall();
-        $phoneCall
-            ->setExternalId('1567240573.2939')
-            ->setCaller($buyer)
-            ->setTrade($trade)
-            ->setStatus(PhoneCall::STATUS_REQUESTED);
-
-        static::$entityManager->persist($phoneCall);
-        static::$entityManager->flush();
-
-        $formFactory = static::$kernel->getContainer()->get('form.factory');
+        $phoneCall = $this->prepareTestEnvironment('0000000000.0001');
 
         $fieldsMap = [
             '[call_id]'         => '[phoneCall]',
@@ -133,7 +94,7 @@ class PBXCallbackTypeTest extends KernelTestCase
             '[call2_status]'    => '[secondShoulder][status]'
         ];
 
-        $form = $formFactory->create(PBXCallbackType::class, null, ['fields_map' => $fieldsMap]);
+        $form = $this->formFactory->create(PBXCallbackType::class, null, ['fields_map' => $fieldsMap]);
         
         $data = [
             'event' => 'hangup',
@@ -144,8 +105,8 @@ class PBXCallbackTypeTest extends KernelTestCase
             'call1_answer_at' => '',
             'call1_hangup_at' => '1567240603',
             'call1_status' => 'cancel',
-            'recording' => 'http://159.253.123.139:82/2019/08/31/force-79883310019-unknown-20190831-123613-1567240573.2940.wav',
-            'call_id' => '1567240573.2939'
+            'recording' => 'some_url',
+            'call_id' => '0000000000.0001'
         ];
 
         $request = new Request([], $data);
@@ -159,7 +120,7 @@ class PBXCallbackTypeTest extends KernelTestCase
         /** @var Callback $result */
         $this->assertEquals('hangup', $result->getEvent());
         $this->assertEquals($phoneCall, $result->getPhoneCall());
-        $this->assertEquals('http://159.253.123.139:82/2019/08/31/force-79883310019-unknown-20190831-123613-1567240573.2940.wav', $result->getAudioRecord());
+        $this->assertEquals('some_url', $result->getAudioRecord());
 
         $this->assertInstanceOf(Shoulder::class, $result->getFirstShoulder());
         $firstShoulder = $result->getFirstShoulder();
@@ -186,61 +147,7 @@ class PBXCallbackTypeTest extends KernelTestCase
 
     public function testHandleRequest_withCallbackForThirdCase()
     {
-        $userManager = static::$kernel->getContainer()->get(UserManager::class);
-
-        $buyer = new User();
-        $buyer
-            ->setName('Buyer')
-            ->setEmail('buyer@xoptov.ru')
-            ->setPhone('79883310019')
-            ->setPlainPassword(123456)
-            ->setEnabled(true)
-            ->switchToCompany();
-
-        static::$entityManager->persist($buyer);
-
-        $userManager->updateUser($buyer, false);
-
-        $seller = new User();
-        $seller
-            ->setName('Seller')
-            ->setEmail('seller@xoptov.ru')
-            ->setPhone('79000000002')
-            ->setPlainPassword(123456)
-            ->setEnabled(true)
-            ->switchToWebmaster();
-
-        static::$entityManager->persist($seller);
-
-        $userManager->updateUser($seller, false);
-
-        $lead = new Lead();
-        $lead
-            ->setPhone('79000000003')
-            ->setExpirationDate(new \DateTime('+2 days'))
-            ->setPrice(10000);
-
-        static::$entityManager->persist($lead);
-
-        $trade = new Trade();
-        $trade
-            ->setBuyer($buyer)
-            ->setSeller($seller)
-            ->setLead($lead);
-
-        static::$entityManager->persist($trade);
-
-        $phoneCall = new PhoneCall();
-        $phoneCall
-            ->setExternalId('1567241474.2951')
-            ->setCaller($buyer)
-            ->setTrade($trade)
-            ->setStatus(PhoneCall::STATUS_REQUESTED);
-
-        static::$entityManager->persist($phoneCall);
-        static::$entityManager->flush();
-
-        $formFactory = static::$kernel->getContainer()->get('form.factory');
+        $phoneCall = $this->prepareTestEnvironment('0000000000.0002');
 
         $fieldsMap = [
             '[call_id]'         => '[phoneCall]',
@@ -262,7 +169,7 @@ class PBXCallbackTypeTest extends KernelTestCase
             '[call2_status]'    => '[secondShoulder][status]'
         ];
 
-        $form = $formFactory->create(PBXCallbackType::class, null, ['fields_map' => $fieldsMap]);
+        $form = $this->formFactory->create(PBXCallbackType::class, null, ['fields_map' => $fieldsMap]);
 
         $data = [
             'event' => 'hangup',
@@ -280,8 +187,8 @@ class PBXCallbackTypeTest extends KernelTestCase
             'call2_answer_at' => '',
             'call2_hangup_at' => '1567241934',
             'call2_status' => 'cancel',
-            'recording' => 'http://159.253.123.139:82/2019/08/31/force-79883310019-unknown-20190831-125114-1567241474.2952',
-            'call_id' => '1567241474.2951'
+            'recording' => 'some_url',
+            'call_id' => '0000000000.0002'
         ];
 
         $request = new Request([], $data);
@@ -295,7 +202,7 @@ class PBXCallbackTypeTest extends KernelTestCase
         /** @var Callback $result */
         $this->assertEquals('hangup', $result->getEvent());
         $this->assertEquals($phoneCall, $result->getPhoneCall());
-        $this->assertEquals('http://159.253.123.139:82/2019/08/31/force-79883310019-unknown-20190831-125114-1567241474.2952', $result->getAudioRecord());
+        $this->assertEquals('some_url', $result->getAudioRecord());
 
         $this->assertInstanceOf(Shoulder::class, $result->getFirstShoulder());
         $firstShoulder = $result->getFirstShoulder();
@@ -318,5 +225,122 @@ class PBXCallbackTypeTest extends KernelTestCase
         $this->assertNull($secondShoulder->getAnswerAt());
         $this->assertInstanceOf(\DateTime::class, $secondShoulder->getHangupAt());
         $this->assertEquals('cancel', $secondShoulder->getStatus());
+    }
+
+    /**
+     * @param string $callId
+     *
+     * @return PhoneCall
+     */
+    private function prepareTestEnvironment(string $callId): PhoneCall
+    {
+        $buyer = $this->createBuyer();
+        $seller = $this->createSeller();
+        $lead = $this->createLead($seller);
+        $trade = $this->createTrade($buyer, $seller, $lead);
+        $phoneCall = $this->createPhoneCall($callId, $buyer, $trade);
+
+        $this->entityManager->flush();
+
+        return $phoneCall;
+    }
+
+    /**
+     * @return User
+     */
+    private function createBuyer(): User
+    {
+        $buyer = new User();
+        $buyer
+            ->setName('Buyer')
+            ->setEmail('buyer@xoptov.ru')
+            ->setPhone('79883310019')
+            ->setPlainPassword(123456)
+            ->setEnabled(true)
+            ->switchToCompany();
+
+        $this->entityManager->persist($buyer);
+        $this->userManager->updateUser($buyer, false);
+
+        return $buyer;
+    }
+
+    /**
+     * @return User
+     */
+    private function createSeller(): User
+    {
+        $seller = new User();
+        $seller
+            ->setName('Seller')
+            ->setEmail('seller@xoptov.ru')
+            ->setPhone('79000000002')
+            ->setPlainPassword(123456)
+            ->setEnabled(true)
+            ->switchToWebmaster();
+
+        $this->entityManager->persist($seller);
+        $this->userManager->updateUser($seller, false);
+
+        return $seller;
+    }
+
+    /**
+     * @param User $seller
+     *
+     * @return Lead
+     */
+    private function createLead(User $seller): Lead
+    {
+        $lead = new Lead();
+        $lead
+            ->setPhone('79000000003')
+            ->setExpirationDate(new \DateTime('+2 days'))
+            ->setPrice(10000)
+            ->setUser($seller);
+
+        $this->entityManager->persist($lead);
+
+        return $lead;
+    }
+
+    /**
+     * @param User $buyer
+     * @param User $seller
+     * @param Lead $lead
+     *
+     * @return Trade
+     */
+    private function createTrade(User $buyer, User $seller, Lead $lead): Trade
+    {
+        $trade = new Trade();
+        $trade
+            ->setBuyer($buyer)
+            ->setSeller($seller)
+            ->setLead($lead);
+
+        $this->entityManager->persist($trade);
+
+        return $trade;
+    }
+
+    /**
+     * @param User $caller
+     * @param Trade $trade
+     *
+     * @return PhoneCall
+     */
+    private function createPhoneCall(string $callId, User $caller, Trade $trade): PhoneCall
+    {
+        $phoneCall = new PhoneCall();
+        $phoneCall
+            ->setExternalId($callId)
+            ->setCaller($caller)
+            ->setTrade($trade)
+            ->setStatus(PhoneCall::STATUS_REQUESTED);
+
+        $this->entityManager->persist($phoneCall);
+
+        return $phoneCall;
     }
 }

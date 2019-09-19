@@ -26,23 +26,11 @@ class PBXCallbackManager
     public function process(Callback $pbxCallback): void
     {
         $secondShoulder = $pbxCallback->getSecondShoulder();
-        $intervalInSeconds = 0;
-
-        if (
-            $secondShoulder->getAnswerAt() instanceof \DateTime
-            && $secondShoulder->getHangupAt() instanceof \DateTime
-        ) {
-            $answerAt = $secondShoulder->getAnswerAt();
-            $hangupAt = $secondShoulder->getHangupAt();
-
-            $diff = $answerAt->diff($hangupAt);
-
-            $intervalInSeconds = $diff->s * $diff->i * $diff->h;
-        }
+        $durationInSecond = $secondShoulder->getDurationInSecond();
 
         if (
             $secondShoulder->getStatus() === Shoulder::STATUS_ANSWER
-            && $intervalInSeconds > $this->minimumTalkDuration
+            && $durationInSecond > $this->minimumTalkDuration
         ) {
             $pbxCallback->setStatus(Callback::STATUS_SUCCESS);
         } else {
