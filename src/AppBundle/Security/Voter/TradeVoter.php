@@ -5,25 +5,12 @@ namespace AppBundle\Security\Voter;
 use AppBundle\Entity\Trade;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 
 class TradeVoter extends Voter
 {
-    const ACCEPT = 'accept';
-    const REJECT = 'reject';
-
-    /**
-     * @var AccessDecisionManagerInterface
-     */
-    private $decisionManager;
-
-    /**
-     * @param AccessDecisionManagerInterface $decisionManager
-     */
-    public function __construct(AccessDecisionManagerInterface $decisionManager)
-    {
-        $this->decisionManager = $decisionManager;
-    }
+    const ACCEPT    = 'accept';
+    const REJECT    = 'reject';
+    const MAKE_CALL = 'make_call';
 
     /**
      * @inheritdoc
@@ -34,7 +21,7 @@ class TradeVoter extends Voter
             return false;
         }
 
-        if (!in_array($attribute, [self::ACCEPT, self::REJECT])) {
+        if (!in_array($attribute, [self::ACCEPT, self::REJECT, self::MAKE_CALL])) {
             return false;
         }
 
@@ -50,10 +37,6 @@ class TradeVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
-            return true;
-        }
-
         if ($subject->getBuyer() === $token->getUser()) {
             return true;
         }

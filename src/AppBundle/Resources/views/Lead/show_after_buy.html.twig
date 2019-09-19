@@ -194,10 +194,10 @@
                 requestCallResult: null
             },
             methods: {
-                requestCall(id, e) {
+                requestCall(tradeId, e) {
                     e.target.disabled = true;
                     jQuery.ajax({
-                        url: '/api/v1/telephony/request-call/' + id,
+                        url: '/api/v1/telephony/call/' + tradeId,
                         method: 'GET',
                         context: this,
                         success: function() {

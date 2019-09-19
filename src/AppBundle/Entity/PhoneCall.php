@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Table(name="phone_call")
@@ -15,35 +16,38 @@ class PhoneCall extends Operation
     const STATUS_PROCESSED = 'processed';
     const STATUS_ERROR     = 'error';
 
+    const RESULT_SUCCESS = 1;
+    const RESULT_FAIL    = 2;
+
     /**
      * @var string|null
      *
-     * @ORM\Column(name="external_id", type="string", length=16, nullable=true)
+     * @ORM\Column(name="external_id", type="string", length=16)
      */
     private $externalId;
 
     /**
-     * @var PBXCallback|null
+     * @var ArrayCollection
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\PBXCallback", mappedBy="phoneCall")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\PBX\Callback", mappedBy="phoneCall")
      */
-    private $callback;
+    private $callbacks;
 
     /**
      * @var User|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="caller_id", referencedColumnName="id", nullable=false)
      */
     private $caller;
 
     /**
-     * @var Lead|null
+     * @var Trade
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Lead")
-     * @ORM\JoinColumn(name="lead_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Trade", inversedBy="phoneCalls")
+     * @ORM\JoinColumn(name="trade_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
-    private $lead;
+    private $trade;
 
     /**
      * @var string
@@ -51,6 +55,21 @@ class PhoneCall extends Operation
      * @ORM\Column(name="status", type="string", length=9, nullable=true)
      */
     private $status = self::STATUS_NEW;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="result", type="smallint", nullable=true, options={"unsigned":"true"})
+     */
+    private $result;
+
+    /**
+     * PhoneCall constructor.
+     */
+    public function __construct()
+    {
+        $this->callbacks = new ArrayCollection();
+    }
 
     /**
      * @param null|string $externalId
@@ -73,23 +92,11 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @param PBXCallback|null $callback
-     *
-     * @return PhoneCall
+     * @return ArrayCollection
      */
-    public function setCallback(?PBXCallback $callback): self
+    public function getCallbacks()
     {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * @return PBXCallback|null
-     */
-    public function getCallback(): ?PBXCallback
-    {
-        return $this->callback;
+        return $this->callbacks;
     }
 
     /**
@@ -121,31 +128,23 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @param Lead $lead
+     * @param Trade $trade
      *
      * @return PhoneCall
      */
-    public function setLead(Lead $lead): self
+    public function setTrade(Trade $trade): self
     {
-        $this->lead = $lead;
+        $this->trade = $trade;
 
         return $this;
     }
 
     /**
-     * @return Lead|null
+     * @return Trade
      */
-    public function getLead(): ?Lead
+    public function getTrade(): Trade
     {
-        return $this->lead;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLeadPhone(): string
-    {
-        return $this->lead->getPhone();
+        return $this->trade;
     }
 
     /**
@@ -169,10 +168,42 @@ class PhoneCall extends Operation
     }
 
     /**
+     * @param int|null $result
+     *
+     * @return PhoneCall
+     */
+    public function setResult(?int $result): self
+    {
+        $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getResult(): ?int
+    {
+        return $this->result;
+    }
+
+    /**
      * @return bool
      */
     public function isProcessed(): bool
     {
         return self::STATUS_PROCESSED === $this->status;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLeadPhone(): ?string
+    {
+        if ($this->trade) {
+            return $this->trade->getLeadPhone();
+        }
+
+        return null;
     }
 }
