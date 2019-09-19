@@ -10,14 +10,14 @@ class PBXCallbackManager
     /**
      * @var int
      */
-    private $minimumTalkDuration;
+    private $minTalkDuration;
 
     /**
-     * @param int $minimumTalkDuration
+     * @param int $minTalkDuration
      */
-    public function __construct(int $minimumTalkDuration)
+    public function __construct(int $minTalkDuration)
     {
-        $this->minimumTalkDuration = $minimumTalkDuration;
+        $this->minTalkDuration = $minTalkDuration;
     }
 
     /**
@@ -30,7 +30,7 @@ class PBXCallbackManager
 
         if (
             $secondShoulder->getStatus() === Shoulder::STATUS_ANSWER
-            && $durationInSecond > $this->minimumTalkDuration
+            && $durationInSecond > $this->minTalkDuration
         ) {
             $pbxCallback->setStatus(Callback::STATUS_SUCCESS);
         } else {

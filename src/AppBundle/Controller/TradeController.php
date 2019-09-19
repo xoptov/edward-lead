@@ -2,11 +2,15 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Exception\FinancialException;
+use AppBundle\Exception\OperationException;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\TradeVoter;
+use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,12 +41,10 @@ class TradeController extends Controller
      */
     public function acceptAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
-        $lead = $trade->getLead();
-
         if (!$this->isGranted(TradeVoter::ACCEPT, $trade)) {
             $this->addFlash('error', 'У Вас нет прав для подтверждения качества лида');
 
-            return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
+            return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
         }
 
         try {
@@ -53,13 +55,16 @@ class TradeController extends Controller
             $this->tradeManager->accept($trade, $feesAccount);
             $eventDispatcher->dispatch(TradeEvent::ACCEPTED, new TradeEvent($trade));
 
-            $this->addFlash('success', 'Покупка лида завершена');
-
-        } catch (\Exception $e) {
+            $this->addFlash('success', 'Статус у лида назначен как "целевой"');
+        } catch (FinancialException $e) {
             $this->addFlash('error', $e->getMessage());
+        } catch (OperationException $e) {
+            $this->addFlash('error', $e->getMessage());
+        } catch (UnexpectedResultException $e) {
+            $this->addFlash('error', 'Система поломалась');
         }
 
-        return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
+        return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
     }
 
     /**
@@ -85,16 +90,43 @@ class TradeController extends Controller
             if ($lead->hasRoom() && !$lead->getRoom()->isPlatformWarranty()) {
                 $this->tradeManager->reject($trade);
                 $eventDispatcher->dispatch(TradeEvent::REJECTED, new TradeEvent($trade));
-                $this->addFlash('success', 'Покупка отклонена');
+                $this->addFlash('success', 'Статус у лида назначен как "не целевой"');
             } else {
                 $this->tradeManager->arbitrage($trade);
                 $eventDispatcher->dispatch(TradeEvent::PROCEEDING, new TradeEvent($trade));
-                $this->addFlash('success', 'Покупка заморожена и передена в арбитраж');
+                $this->addFlash('success', 'Лид заморожен и переден в арбитраж. Ожидайте ответа поддержки');
             }
-        } catch(\Exception $e) {
+        } catch(OperationException $e) {
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
+        return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
+    }
+
+    /**
+     * @Route("/trade/ask-callback/{trade}", name="app_trade_ask_callback", methods={"GET"})
+     *
+     * @param Trade                    $trade
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return Response
+     */
+    public function askCallbackAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
+    {
+        if ($this->isGranted(TradeVoter::ASK_CALLBACK, $trade)) {
+            $this->addFlash('error', 'У Вас нет прав на указание того что лид просил перезвонить');
+
+            return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
+        }
+
+        try {
+            $this->tradeManager->askCallback($trade);
+            $eventDispatcher->dispatch(TradeEvent::ASK_CALLBACK, new TradeEvent($trade));
+            $this->addFlash('success', 'Не забудьте перезвонить в течении 48 часов. Иначе лид будет засчитан как "целевой"');
+        } catch (OperationException $e) {
+            $this->addFlash('error', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
     }
 }
