@@ -30,3 +30,11 @@ services:
     AppBundle\Service\RoomManager:
         public: true
         autowire: true
+
+    AppBundle\Service\PhoneCallManager:
+        public: true
+        autowire: true
+        arguments:
+            $pbxCallUrl: '%pbx_call_url%'
+            $costPerSecond: '%cost_per_second%'
+            $firstCallTimeout: '%first_call_timeout%'

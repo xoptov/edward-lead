@@ -15,7 +15,7 @@
                             <th>Сумма</th>
                             <th>Способ оплаты</th>
                             <th>Статус</th>
-                            <th>Акт</th>
+                            <th>Информация</th>
                         </tr>
                         {% for invoice in invoices %}
                             <tr>
@@ -34,7 +34,9 @@
                                     {% set status_label = 'Отменен' %}
                                 {% endif %}
                                 <td><span class="lead_{{ status_class }}">{{ status_label }}</span></td>
-                                <td>нет</td>
+                                <td>
+                                    <a href="http://payment.edward-lead.ru/#/invoice/history/{{ invoice.hash }}" target="_blank">Подробнее</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </table>

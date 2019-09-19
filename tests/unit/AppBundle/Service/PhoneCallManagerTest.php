@@ -2,22 +2,21 @@
 
 namespace Unit\AppBundle\Service;
 
-use AppBundle\Entity\Account;
-use AppBundle\Repository\AccountRepository;
-use AppBundle\Service\TransactionManager;
 use GuzzleHttp\Client;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\Company;
-use AppBundle\Entity\PhoneCall;
-use Doctrine\ORM\EntityManager;
 use GuzzleHttp\Psr7\Response;
+use Doctrine\ORM\EntityManager;
+use AppBundle\Entity\PhoneCall;
 use PHPUnit\Framework\TestCase;
 use AppBundle\Entity\MonetaryHold;
 use AppBundle\Service\HoldManager;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\PhoneCallManager;
+use AppBundle\Service\TransactionManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class PhoneCallManagerTest extends TestCase
@@ -27,30 +26,40 @@ class PhoneCallManagerTest extends TestCase
         $company = new Company();
         $company->setOfficePhone('101');
 
-        $callerAvailableBalance = 200000;
+        $buyerAvailableBalance = 200000;
 
         $account = new ClientAccount();
         $account
-            ->setBalance($callerAvailableBalance)
+            ->setBalance($buyerAvailableBalance)
             ->setEnabled(1);
 
-        $caller = new User();
-        $caller
+        $buyer = new User();
+        $buyer
             ->setAccount($account)
             ->setCompany($company)
             ->addRole('ROLE_COMPANY');
 
+
+        $seller = new User();
+
         $lead = new Lead();
+        $lead->setUser($seller);
+
+        $trade = new Trade();
+        $trade
+            ->setLead($lead)
+            ->setBuyer($buyer)
+            ->setSeller($seller);
+
+        $phoneCall = new PhoneCall();
+        $phoneCall
+            ->setCaller($buyer)
+            ->setTrade($trade);
 
         $firstCallTimeout = 300; // сукунды
         $costPerSecond = 350; // копейки
 
         $holdAmount = $firstCallTimeout * $costPerSecond;
-
-        $phoneCall = new PhoneCall();
-        $phoneCall
-            ->setCaller($caller)
-            ->setLead($lead);
 
         $hold = new MonetaryHold();
         $hold
@@ -62,28 +71,32 @@ class PhoneCallManagerTest extends TestCase
         $entityManager
             ->expects($this->once())
             ->method('persist');
-        $entityManager
-            ->expects($this->once())
-            ->method('flush');
 
         $accountManager = $this->createMock(AccountManager::class);
         $accountManager
             ->expects($this->once())
             ->method('getAvailableBalance')
             ->with($account)
-            ->willReturn($callerAvailableBalance);
+            ->willReturn($buyerAvailableBalance);
 
         $holdManager = $this->createMock(HoldManager::class);
         $holdManager
             ->expects($this->once())
             ->method('create')
-            ->with($account, $phoneCall, $holdAmount)
+            ->withAnyParameters()
             ->willReturn($hold);
 
         $transactionManager = $this->createMock(TransactionManager::class);
 
         $client = $this->createMock(Client::class);
 
+        /**
+         * @var EntityManager      $entityManager
+         * @var AccountManager     $accountManager
+         * @var HoldManager        $holdManager
+         * @var TransactionManager $transactionManager
+         * @var Client             $client
+         */
         $phoneCallManager = new PhoneCallManager(
             $entityManager,
             $accountManager,
@@ -95,11 +108,11 @@ class PhoneCallManagerTest extends TestCase
             $firstCallTimeout
         );
 
-        $result = $phoneCallManager->create($caller, $lead);
+        $result = $phoneCallManager->create($buyer, $trade);
 
         $this->assertInstanceOf(PhoneCall::class, $result);
-        $this->assertSame($caller, $result->getCaller());
-        $this->assertSame($lead, $result->getLead());
+        $this->assertSame($buyer, $result->getCaller());
+        $this->assertSame($trade, $result->getTrade());
         $this->assertSame($hold, $result->getHold());
     }
 
@@ -110,18 +123,26 @@ class PhoneCallManagerTest extends TestCase
         $company = new Company();
         $company->setOfficePhone($officePhone);
 
-        $caller = new User();
-        $caller->setCompany($company);
+        $buyer = new User();
+        $buyer->setCompany($company);
 
         $leadPhone = '102';
 
         $lead = new Lead();
         $lead->setPhone($leadPhone);
 
+        $seller = new User();
+
+        $trade = new Trade();
+        $trade
+            ->setBuyer($buyer)
+            ->setSeller($seller)
+            ->setLead($lead);
+
         $phoneCall = new PhoneCall();
         $phoneCall
-            ->setCaller($caller)
-            ->setLead($lead);
+            ->setCaller($buyer)
+            ->setTrade($trade);
 
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager->expects($this->once())
@@ -138,7 +159,7 @@ class PhoneCallManagerTest extends TestCase
             'query' => [
                 'ext' => $officePhone,
                 'num' => $leadPhone,
-                'timeout' => $firstCallTimeout
+                'dur' => $firstCallTimeout
             ]
         ];
 
@@ -164,6 +185,13 @@ class PhoneCallManagerTest extends TestCase
 
         $costPerSecond = 350;
 
+        /**
+         * @var EntityManager      $entityManager
+         * @var AccountManager     $accountManager
+         * @var HoldManager        $holdManager
+         * @var TransactionManager $transactionManager
+         * @var Client             $client
+         */
         $phoneCallManager = new PhoneCallManager(
             $entityManager,
             $accountManager,

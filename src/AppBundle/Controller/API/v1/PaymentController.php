@@ -144,7 +144,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_invoice_success", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param Request     $request
      * @param null|int    $id_invoice

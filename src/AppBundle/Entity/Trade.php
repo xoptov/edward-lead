@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,11 +42,26 @@ class Trade extends Operation
     private $lead;
 
     /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\PhoneCall", mappedBy="trade")
+     */
+    private $phoneCalls;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
      */
     private $status = self::STATUS_NEW;
+
+    /**
+     * Trade constructor.
+     */
+    public function __construct()
+    {
+        $this->phoneCalls = new ArrayCollection();
+    }
 
     /**
      * @param User $buyer
@@ -154,6 +170,18 @@ class Trade extends Operation
     {
         if ($this->lead) {
             return $this->lead->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLeadPhone(): ?string
+    {
+        if ($this->lead) {
+            return $this->lead->getPhone();
         }
 
         return null;
