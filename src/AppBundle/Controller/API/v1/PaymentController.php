@@ -185,7 +185,22 @@ class PaymentController extends Controller
 
             $this->invoiceManager->process($invoice[0], $incomeAccount[0]);
 
-            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $invoice[0]->getPaymentInfoArray()]);
+            $infoArray = [
+                'id' =>  $invoice[0]->getId(),
+                'hash' =>  $invoice[0]->getHash(),
+                'amount' =>  $invoice[0]->getAmount(),
+                'status' =>  $invoice[0]->getStatus(),
+                'created_at' =>  $invoice[0]->getCreatedAt()->format('Y-m-d'),
+                'user' => [
+                    'id' =>  $invoice[0]->getUser()->getId(),
+                    'name' =>  $invoice[0]->getUser()->getName(),
+                    'email' =>  $invoice[0]->getUser()->getEmail(),
+                    'phone' =>  $invoice[0]->getUser()->getPhone(),
+                    'enabled' =>  $invoice[0]->getUser()->isEnabled()
+                ]
+            ];
+
+            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $infoArray]);
         } catch (\Exception $ex) {
             // TODO: Какая то ошибка....
             return new JsonResponse(['code' => 500, 'response' => 'server-error', 'result' => null], 500);
