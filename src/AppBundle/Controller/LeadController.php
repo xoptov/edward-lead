@@ -154,36 +154,4 @@ class LeadController extends Controller
 
         return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
     }
-
-
-
-    /**
-     * @return Response
-     *
-     * @throws \Exception
-     */
-    public function unsetReserveModal(): Response
-    {
-        $user = $this->getUser();
-
-        $lead = $this->getDoctrine()->getRepository('AppBundle:Lead')
-            ->getInWorkByBuyer($user);
-
-        if ($lead) {
-            $room = $lead->getRoom();
-
-            if ($room && !$room->isPlatformWarranty()) {
-                return new Response();
-            }
-
-            $phoneCall = $this->getDoctrine()->getRepository(PhoneCall::class)
-                ->getAnsweredPhoneCallByLeadAndCaller($lead, $user);
-
-            if ($phoneCall) {
-                return $this->render('@App/Lead/reserved.html.twig', ['lead' => $lead]);
-            }
-        }
-
-        return new Response();
-    }
 }

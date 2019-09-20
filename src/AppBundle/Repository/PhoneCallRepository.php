@@ -6,8 +6,8 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\PhoneCall;
-use AppBundle\Entity\PBXCallback;
 use Doctrine\ORM\Query\Expr\Join;
+use AppBundle\Entity\PBX\Callback;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 
@@ -71,10 +71,10 @@ class PhoneCallRepository extends EntityRepository
         $qb = $this->createQueryBuilder('pc');
 
         $query = $qb
-            ->join('pc.callback', 'cb', Join::WITH, 'cb.status = :answered')
-                ->setParameter('answered', PBXCallback::STATUS_ANSWER)
-            ->where('pc.lead = :lead')
-                ->setParameter('lead', $lead)
+            ->join('pc.callbacks', 'cb', Join::WITH, 'cb.status = :success')
+                ->setParameter('success', Callback::STATUS_SUCCESS)
+            ->where('pc.trade = :trade')
+                ->setParameter('trade', $lead->getTrade())
             ->andWhere('pc.caller = :caller')
                 ->setParameter('caller', $caller)
             ->andWhere('pc.status = :processed')

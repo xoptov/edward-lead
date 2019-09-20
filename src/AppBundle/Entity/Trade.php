@@ -195,6 +195,18 @@ class Trade extends Operation
     /**
      * @return null|string
      */
+    public function getLeadName(): ?string
+    {
+        if ($this->lead) {
+            return $this->lead->getName();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|string
+     */
     public function getLeadPhone(): ?string
     {
         if ($this->lead) {
@@ -228,6 +240,16 @@ class Trade extends Operation
     public function getAskCallbackCount(): int
     {
         return $this->askCallbackPhoneCalls->count();
+    }
+
+    /**
+     * @param PhoneCall $phoneCall
+     *
+     * @return bool
+     */
+    public function hasAskCallbackPhoneCall(PhoneCall $phoneCall): bool
+    {
+        return $this->askCallbackPhoneCalls->contains($phoneCall);
     }
 
     /**
