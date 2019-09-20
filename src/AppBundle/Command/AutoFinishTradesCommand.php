@@ -62,7 +62,7 @@ class AutoFinishTradesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $trades = $this->entityManager->getRepository(Trade::class)
-            ->getWithWarrantyAndIncomplete();
+            ->getByWarrantyAndIncomplete();
 
         if (empty($trades)) {
             $output->writeln('Нет подвисших сделок');

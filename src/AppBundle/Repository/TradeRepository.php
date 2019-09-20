@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 
 class TradeRepository extends EntityRepository
 {
@@ -60,17 +61,50 @@ class TradeRepository extends EntityRepository
     /**
      * @return Trade[]
      */
-    public function getWithWarrantyAndIncomplete(): array
+    public function getByWarrantyAndIncomplete(): array
     {
-        $qb = $this->createQueryBuilder('t');
-        $query = $qb
-            ->leftJoin('t.room', 'r')
-            ->where('r IS NULL OR r.platformWarranty = :warranty')
-                ->setParameter('warranty', true)
-            ->andWhere('t.status IN :statuses')
-                ->setParameter('statuses', [Trade::STATUS_NEW, Trade::STATUS_CALL_BACK])
-            ->getQuery();
+        $qb = $this->createWarrantyAndStatusesQueryBuilder([Trade::STATUS_NEW, Trade::STATUS_CALL_BACK]);
+        $query = $qb->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param User $buyer
+     *
+     * @return Trade|null
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getByBuyerAndWarrantyAndIncomplete(User $buyer): ?Trade
+    {
+        $qb = $this->createWarrantyAndStatusesQueryBuilder([Trade::STATUS_NEW, Trade::STATUS_CALL_BACK]);
+        $query = $qb
+            ->andWhere('t.buyer = :buyer')
+                ->setParameter('buyer', $buyer)
+            ->setMaxResults(1)
+            ->orderBy('t.createdAt', 'ASC')
+            ->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $statuses
+     *
+     * @return QueryBuilder
+     */
+    private function createWarrantyAndStatusesQueryBuilder(array $statuses): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('t');
+
+        $qb->join('t.lead', 'l')
+            ->leftJoin('l.room', 'r')
+            ->where('r IS NULL OR r.platformWarranty = :warranty')
+                ->setParameter('warranty', true)
+            ->andWhere('t.status IN (:statuses)')
+                ->setParameter('statuses', $statuses);
+
+        return $qb;
     }
 }

@@ -37,7 +37,7 @@
             {% block content %}{% endblock %}
         </main>
     </div>
-    {{ render(controller('AppBundle\\Controller\\LeadController::unsetReserveModal')) }}
+    {{ render(controller('AppBundle\\Controller\\TradeController::showResultModal')) }}
     {% block javascripts %}
         {%- if app.environment == 'prod' -%}
             <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.min.js') }}"></script>

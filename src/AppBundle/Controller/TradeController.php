@@ -2,14 +2,13 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
-use AppBundle\Exception\FinancialException;
-use AppBundle\Exception\OperationException;
 use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\TradeVoter;
+use AppBundle\Exception\FinancialException;
+use AppBundle\Exception\OperationException;
 use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -104,7 +103,7 @@ class TradeController extends Controller
     }
 
     /**
-     * @Route("/trade/ask-callback/{trade}", name="app_trade_ask_callback", methods={"GET"})
+     * @Route("/trade/ask-callback/{id}", name="app_trade_ask_callback", methods={"GET"})
      *
      * @param Trade                    $trade
      * @param EventDispatcherInterface $eventDispatcher
@@ -128,5 +127,34 @@ class TradeController extends Controller
         }
 
         return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
+    }
+
+    /**
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function showResultModal(): Response
+    {
+        $user = $this->getUser();
+
+        $trade = $this->getDoctrine()->getRepository(Trade::class)
+            ->getByBuyerAndWarrantyAndIncomplete($user);
+
+        if (!$trade) {
+            return new Response();
+        }
+
+        $lastPhoneCall = $trade->getLastPhoneCall();
+
+        if (!$lastPhoneCall) {
+            return new Response();
+        }
+
+        if ($trade->getStatus() === Trade::STATUS_CALL_BACK && $trade->hasAskCallbackPhoneCall($lastPhoneCall)) {
+            return new Response();
+        }
+
+        return $this->render('@App/Trade/select_result_modal.html.twig', ['trade' => $trade]);
     }
 }
