@@ -170,13 +170,9 @@ class TemplateExtension extends \Twig_Extension
 
         $lastPhoneCall = $trade->getLastPhoneCall();
 
-        if (!$lastPhoneCall) {
-            return true;
-        }
-
-        if (
-            $trade->getStatus() === Trade::STATUS_CALL_BACK
-            && $trade->hasAskCallbackPhoneCall($lastPhoneCall)
+        if (!$lastPhoneCall
+            || ($trade->getStatus() === Trade::STATUS_CALL_BACK
+                && $trade->hasAskCallbackPhoneCall($lastPhoneCall))
         ) {
             return true;
         }
