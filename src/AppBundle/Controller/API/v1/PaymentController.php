@@ -2,18 +2,18 @@
 
 namespace AppBundle\Controller\API\v1;
 
-use AppBundle\Entity\IncomeAccount;
-use AppBundle\Entity\Invoice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Invoice;
 use AppBundle\Event\InvoiceEvent;
+use AppBundle\Entity\IncomeAccount;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/api/v1")
@@ -41,10 +41,10 @@ class PaymentController extends Controller
     private $paymentGatewayToken;
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param InvoiceManager $invoiceManager
+     * @param EntityManagerInterface   $entityManager
+     * @param InvoiceManager           $invoiceManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param string $paymentGatewayToken
+     * @param string                   $paymentGatewayToken
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -105,7 +105,7 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param Request $request
+     * @param Request  $request
      * @param null|int $id_user
      * @param null|int $sum
      *
@@ -146,8 +146,8 @@ class PaymentController extends Controller
     /**
      * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_invoice_success", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param Request $request
-     * @param null|int $id_invoice
+     * @param Request     $request
+     * @param null|int    $id_invoice
      * @param null|string $description_name_account
      *
      * @return JsonResponse
