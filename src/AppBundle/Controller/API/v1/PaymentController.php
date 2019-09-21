@@ -2,18 +2,18 @@
 
 namespace AppBundle\Controller\API\v1;
 
-use AppBundle\Entity\IncomeAccount;
-use AppBundle\Entity\Invoice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Invoice;
 use AppBundle\Event\InvoiceEvent;
+use AppBundle\Entity\IncomeAccount;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/api/v1")
@@ -81,9 +81,9 @@ class PaymentController extends Controller
      *
      * @param null|string $hash
      *
+     * @return JsonResponse
      * @todo: Потом лучше использовать ParamConverter для загрузки Invoice из БД.
      *
-     * @return JsonResponse
      */
     public function getInvoiceAction(?string $hash): JsonResponse
     {
@@ -109,9 +109,9 @@ class PaymentController extends Controller
      * @param null|int $id_user
      * @param null|int $sum
      *
+     * @return JsonResponse
      * @todo: потом лучше доставать id_user и sum из объекта Request.
      *
-     * @return JsonResponse
      */
     public function createInvoiceAction(Request $request, ?int $id_user, ?int $sum): JsonResponse
     {
@@ -150,9 +150,9 @@ class PaymentController extends Controller
      * @param null|int    $id_invoice
      * @param null|string $description_name_account
      *
+     * @return JsonResponse
      * @todo: потом лучше доставать id_user и description_name_account из объекта Request.
      *
-     * @return JsonResponse
      */
     public function successInvoiceAction(Request $request, ?int $id_invoice, ?string $description_name_account): JsonResponse
     {
@@ -185,7 +185,27 @@ class PaymentController extends Controller
 
             $this->invoiceManager->process($invoice[0], $incomeAccount[0]);
 
-            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $invoice[0]->getPaymentInfoArray()]);
+            $userOwner = null;
+            if ($invoice[0]->getUser()) {
+                $userOwner = [
+                    'id' => $invoice[0]->getUser()->getId(),
+                    'name' => $invoice[0]->getUser()->getName(),
+                    'email' => $invoice[0]->getUser()->getEmail(),
+                    'phone' => $invoice[0]->getUser()->getPhone(),
+                    'enabled' => $invoice[0]->getUser()->isEnabled()
+                ];
+            }
+
+            $infoArray = [
+                'id' => $invoice[0]->getId(),
+                'hash' => $invoice[0]->getHash(),
+                'amount' => $invoice[0]->getAmount(),
+                'status' => $invoice[0]->getStatus(),
+                'created_at' => $invoice[0]->getCreatedAt()->format('Y-m-d'),
+                'user' => $userOwner
+            ];
+
+            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $infoArray]);
         } catch (\Exception $ex) {
             // TODO: Какая то ошибка....
             return new JsonResponse(['code' => 500, 'response' => 'server-error', 'result' => null], 500);
@@ -197,9 +217,9 @@ class PaymentController extends Controller
      *
      * @param null|int $id_user
      *
+     * @return JsonResponse
      * @todo: Потом лучше использовать ParamConverter для загрузки юзера.
      *
-     * @return JsonResponse
      */
     public function getCompanyFromUser(?int $id_user): JsonResponse
     {
