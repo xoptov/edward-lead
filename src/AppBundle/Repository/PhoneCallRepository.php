@@ -14,43 +14,26 @@ use Doctrine\ORM\NonUniqueResultException;
 class PhoneCallRepository extends EntityRepository
 {
     /**
-     * @param User $user
-     * @param $trades
+     * @param User  $user
+     * @param array $trades
+     *
      * @return array|null
      */
-    public function getCallsWithTrades(User $user, $trades): ?array
+    public function getCallsWithTrades(User $user, array $trades): ?array
     {
-        if ( ! is_array($trades)) {
+        if (empty($trades)) {
             return null;
         }
 
-        if ( ! sizeof($trades)) {
-            return null;
-        }
-
-        /**
-         * @var Trade $trade
-         * @return int
-         */
-        $leadId = function ($trade) {
-            return $trade->getLead()->getId();
-        };
-
-        $leadsId = [];
-
-        foreach ($trades as $trade) {
-            $leadsId[] = $leadId($trade);
-        }
-
-        if (sizeof($leadsId) == 0) {
-            return null;
-        }
+        $ids = array_map(function(Trade $trade){
+            return $trade->getId();
+        }, $trades);
 
         $queryBuilder = $this->createQueryBuilder('pc');
 
         $query = $queryBuilder
-            ->where("pc.lead IN (:ids)")
-                ->setParameter("ids", $leadsId)
+            ->where("pc.trade IN (:ids)")
+                ->setParameter("ids", $ids)
             ->andWhere("pc.caller = :user")
                 ->setParameter("user", $user)
             ->getQuery();

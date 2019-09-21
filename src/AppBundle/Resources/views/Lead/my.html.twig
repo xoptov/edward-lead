@@ -91,10 +91,10 @@
                                         {% set show_number = false %}
                                         {% set current_call = null %}
                                         {% for call in calls %}
-                                            {% if call.lead.id == lead.id and lead.status is constant('STATUS_TARGET', lead) %}
+                                            {% if call.trade.leadId == lead.id and lead.status is constant('STATUS_TARGET', lead) %}
                                                 {% set show_number = true %}
                                                 {% set current_call = call %}
-                                            {% elseif call.lead.id == lead.id %}
+                                            {% elseif call.trade.leadId == lead.id %}
                                                 {% set current_call = call %}
                                             {% endif %}
                                         {% endfor %}

@@ -73,7 +73,7 @@ class LeadController extends Controller
 
             $leads = $this->getDoctrine()
                 ->getRepository(Lead::class)
-                ->findBy(["user" => $user], ["id" => "DESC"]);
+                ->findBy(["user" => $user], ['id' => 'DESC']);
 
             $data = array(
                 'leads' => $leads
@@ -82,7 +82,7 @@ class LeadController extends Controller
 
             $trades = $this->getDoctrine()
                 ->getRepository(Trade::class)
-                ->findBy(["buyer" => $user], ["id" => "DESC"]);
+                ->findBy(['buyer' => $user], ['id' => 'DESC']);
 
             $phoneCalls = $this->getDoctrine()
                 ->getRepository(PhoneCall::class)
