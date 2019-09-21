@@ -25,12 +25,12 @@
                         <tr>
                             <td>{{ phoneCall.createdAt|date_format('d.m.Y в H:i:s') }}</td>
                             <td>
-                                <a class="id_lids" target="_blank" href="{{ path('app_lead_show', {'id': phoneCall.lead.id}) }}">#{{ phoneCall.lead.id }}</a>
+                                <a class="id_lids" target="_blank" href="{{ path('app_lead_show', {'id': phoneCall.trade.leadId}) }}">#{{ phoneCall.trade.leadId }}</a>
                             </td>
-                            <td>{{ phoneCall.lead.phone|human_phone }}</td>
+                            <td>{{ phoneCall.trade.leadPhone|human_phone }}</td>
                             <td>
-                                {% if phoneCall.callback is not empty %}
-                                    {{ phoneCall.callback.duration }}сек
+                                {% if phoneCall.callbacks is not empty %}
+                                    {{ phoneCall.talkDuration }} сек
                                 {% else %}
                                     нет
                                 {% endif %}
@@ -41,11 +41,12 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {{ lead_status(phoneCall.lead) }}
+                                {{ lead_status(phoneCall.trade.lead) }}
                             </td>
                             <td>
-                                {% if phoneCall.callback is not empty and phoneCall.callback.recording %}
-                                    <audio controls src="{{ phoneCall.callback.recording }}">
+                                {% set lastCallback = phoneCall.lastCallback %}
+                                {% if lastCallback is not empty and lastCallback.audioRecord %}
+                                    <audio controls src="{{ lastCallback.audioRecord }}">
                                         Ваш браузер не позволяет прослушивавать аудио записи.
                                     </audio>
                                 {% else %}

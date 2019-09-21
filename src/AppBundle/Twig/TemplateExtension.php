@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
@@ -64,7 +65,7 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
-            new \Twig_SimpleFunction('must_show_call_button', [$this, 'mustShowCallButton'])
+            new \Twig_SimpleFunction('can_show_call_button', [$this, 'canShowCallButton'])
         ];
     }
 
@@ -147,7 +148,7 @@ class TemplateExtension extends \Twig_Extension
      *
      * @throws NonUniqueResultException
      */
-    public function mustShowCallButton(Lead $lead, User $user): bool
+    public function canShowCallButton(Lead $lead, User $user): bool
     {
         if ($lead->getStatus() !== Lead::STATUS_IN_WORK || $lead->isOwner($user)) {
             return false;
@@ -161,10 +162,25 @@ class TemplateExtension extends \Twig_Extension
             }
         }
 
-        if ($this->leadManager->hasAnsweredPhoneCall($lead, $user)) {
+        $trade = $lead->getTrade();
+
+        if ($trade->getBuyer() !== $user) {
             return false;
         }
 
-        return true;
+        $lastPhoneCall = $trade->getLastPhoneCall();
+
+        if (!$lastPhoneCall) {
+            return true;
+        }
+
+        if (
+            $trade->getStatus() === Trade::STATUS_CALL_BACK
+            && $trade->hasAskCallbackPhoneCall($lastPhoneCall)
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

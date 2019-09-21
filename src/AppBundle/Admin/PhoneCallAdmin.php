@@ -21,7 +21,7 @@ class PhoneCallAdmin extends AbstractAdmin
 
         $filter
             ->add('externalId')
-            ->add('lead.phone')
+            ->add('trade.lead.phone')
             ->add('status',null, [], 'choice', [
                 'choices' => [
                     PhoneCall::STATUS_NEW => 'Новый',
@@ -49,9 +49,9 @@ class PhoneCallAdmin extends AbstractAdmin
             ->add('caller.company.officePhone', null, [
                 'label' => 'Caller Phone'
             ])
-            ->add('lead.id')
-            ->add('lead.name')
-            ->add('lead.phone')
+            ->add('trade.lead.id')
+            ->add('trade.lead.name')
+            ->add('trade.lead.phone')
             ->add('status', 'choice', [
                 'choices' => [
                     PhoneCall::STATUS_NEW => 'Новый',

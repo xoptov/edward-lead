@@ -112,7 +112,7 @@ class TradeController extends Controller
      */
     public function askCallbackAction(Trade $trade, EventDispatcherInterface $eventDispatcher): Response
     {
-        if ($this->isGranted(TradeVoter::ASK_CALLBACK, $trade)) {
+        if (!$this->isGranted(TradeVoter::ASK_CALLBACK, $trade)) {
             $this->addFlash('error', 'У Вас нет прав на указание того что лид просил перезвонить');
 
             return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);

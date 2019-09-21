@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\PBX\Callback;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -205,5 +206,29 @@ class PhoneCall extends Operation
         }
 
         return null;
+    }
+
+    /**
+     * @return Callback|null
+     */
+    public function getLastCallback(): ?Callback
+    {
+        return $this->callbacks->last();
+    }
+
+    /**
+     * @return int
+     */
+    public function getTalkDuration()
+    {
+        $duration = 0;
+
+        /** @var Callback $callback */
+        foreach ($this->callbacks as $callback)
+        {
+            $duration += $callback->getFirstShoulder()->getDurationInSecond();
+        }
+
+        return $duration;
     }
 }
