@@ -136,7 +136,27 @@ class PaymentController extends Controller
             $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
             $this->entityManager->flush();
 
-            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $invoice->getPaymentInfoArray()]);
+            $userOwner = null;
+            if ($invoice->getUser()) {
+                $userOwner = [
+                    'id' => $invoice->getUser()->getId(),
+                    'name' => $invoice->getUser()->getName(),
+                    'email' => $invoice->getUser()->getEmail(),
+                    'phone' => $invoice->getUser()->getPhone(),
+                    'enabled' => $invoice->getUser()->isEnabled()
+                ];
+            }
+
+            $infoArray = [
+                'id' => $invoice->getId(),
+                'hash' => $invoice->getHash(),
+                'amount' => $invoice->getAmount(),
+                'status' => $invoice->getStatus(),
+                'created_at' => $invoice->getCreatedAt()->format('Y-m-d'),
+                'user' => $userOwner
+            ];
+
+            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $infoArray]);
         } catch (\Exception $ex) {
             // TODO: Какая то ошибка....
             return new JsonResponse(['code' => 500, 'response' => 'server-error', 'result' => null], 500);
