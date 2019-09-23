@@ -145,8 +145,6 @@ class TemplateExtension extends \Twig_Extension
      * @param User $user
      *
      * @return bool
-     *
-     * @throws NonUniqueResultException
      */
     public function canShowCallButton(Lead $lead, User $user): bool
     {
@@ -164,7 +162,7 @@ class TemplateExtension extends \Twig_Extension
 
         $trade = $lead->getTrade();
 
-        if ($trade->getBuyer() !== $user) {
+        if (empty($trade) || $trade->getBuyer() !== $user) {
             return false;
         }
 
