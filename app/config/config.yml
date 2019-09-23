@@ -27,7 +27,8 @@ framework:
         save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
     fragments: ~
     http_method_override: true
-    assets: ~
+    assets:
+        version: '20190923'
     php_errors:
         log: true
 
