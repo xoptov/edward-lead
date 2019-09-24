@@ -33,6 +33,7 @@ class Room implements IdentifiableInterface
      * @var string|null
      *
      * @Assert\NotBlank(message="Название комнаты должно быть указано")
+     *
      * @ORM\Column(name="name", type="string")
      */
     private $name;
@@ -41,6 +42,7 @@ class Room implements IdentifiableInterface
      * @var string|null
      *
      * @Assert\NotBlank(message="Сфера должна быть указана")
+     *
      * @ORM\Column(name="sphere", type="string")
      */
     private $sphere;
@@ -49,6 +51,8 @@ class Room implements IdentifiableInterface
      * @var string|null
      *
      * @Assert\NotBlank(message="Необходимо указать критерии")
+     * @Assert\Length(max=1000, maxMessage="Максимальное количество символов 1000")
+     *
      * @ORM\Column(name="lead_criteria", type="text", nullable=true)
      */
     private $leadCriteria;
