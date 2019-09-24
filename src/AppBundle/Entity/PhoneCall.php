@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\PBX\Callback;
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\PBX\Callback;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**

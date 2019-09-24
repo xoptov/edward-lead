@@ -2,6 +2,8 @@
 
 namespace Unit\AppBundle\Service;
 
+use AppBundle\Entity\PBX\Callback;
+use AppBundle\Entity\PBX\Shoulder;
 use GuzzleHttp\Client;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
@@ -207,5 +209,121 @@ class PhoneCallManagerTest extends TestCase
 
         $this->assertEquals(PhoneCall::STATUS_REQUESTED, $phoneCall->getStatus());
         $this->assertEquals($callId, $phoneCall->getExternalId());
+    }
+
+    public function testProcess_successPhoneCall()
+    {
+        $phoneCall = new PhoneCall();
+
+        $phoneCall
+            ->setResult(PhoneCall::RESULT_SUCCESS);
+
+        $entityManager = $this->createMock(EntityManager::class);
+        $accountManager = $this->createMock(AccountManager::class);
+        $holdManager = $this->createMock(HoldManager::class);
+        $transactionManager = $this->createMock(TransactionManager::class);
+        $client = $this->createMock(Client::class);
+        $pbxCallUrl = 'some_url';
+        $costPerSecond = 1;
+        $firstCallTimeOut = 60;
+
+        $phoneCallManager = $this
+            ->getMockBuilder(PhoneCallManager::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([
+                $entityManager,
+                $accountManager,
+                $holdManager,
+                $transactionManager,
+                $client,
+                $pbxCallUrl,
+                $costPerSecond,
+                $firstCallTimeOut
+            ])
+            ->setMethodsExcept(['process'])
+            ->getMock();
+
+        $phoneCallManager
+            ->expects($this->once())
+            ->method('processSuccessfulPhoneCall');
+
+        $firstShoulder = new Shoulder();
+        $firstShoulder
+            ->setStatus(Shoulder::STATUS_ANSWER)
+            ->setBillSec(15);
+
+        $secondShoulder = new Shoulder();
+        $secondShoulder
+            ->setStatus(Shoulder::STATUS_ANSWER)
+            ->setBillSec(10);
+
+        $pbxCallback = new Callback();
+        $pbxCallback
+            ->setFirstShoulder($firstShoulder)
+            ->setSecondShoulder($secondShoulder)
+            ->setStatus(Callback::STATUS_SUCCESS);
+
+        /** @var PhoneCallManager $phoneCallManager */
+        $phoneCallManager->process($phoneCall, $pbxCallback);
+
+        $this->assertEquals(25, $phoneCall->getAmount());
+    }
+
+    public function testProcess_failPhoneCall()
+    {
+        $phoneCall = new PhoneCall();
+
+        $phoneCall
+            ->setResult(PhoneCall::RESULT_FAIL);
+
+        $entityManager = $this->createMock(EntityManager::class);
+        $accountManager = $this->createMock(AccountManager::class);
+        $holdManager = $this->createMock(HoldManager::class);
+        $transactionManager = $this->createMock(TransactionManager::class);
+        $client = $this->createMock(Client::class);
+        $pbxCallUrl = 'some_url';
+        $costPerSecond = 1;
+        $firstCallTimeOut = 60;
+
+        $phoneCallManager = $this
+            ->getMockBuilder(PhoneCallManager::class)
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([
+                $entityManager,
+                $accountManager,
+                $holdManager,
+                $transactionManager,
+                $client,
+                $pbxCallUrl,
+                $costPerSecond,
+                $firstCallTimeOut
+            ])
+            ->setMethodsExcept(['process'])
+            ->getMock();
+
+        $phoneCallManager
+            ->expects($this->once())
+            ->method('processFailedPhoneCall');
+
+        $firstShoulder = new Shoulder();
+        $firstShoulder
+            ->setStatus(Shoulder::STATUS_ANSWER)
+            ->setBillSec(10);
+
+        $secondShoulder = new Shoulder();
+        $secondShoulder
+            ->setStatus(Shoulder::STATUS_ANSWER)
+            ->setBillSec(3);
+
+        $pbxCallback = new Callback();
+        $pbxCallback
+            ->setFirstShoulder($firstShoulder)
+            ->setSecondShoulder($secondShoulder)
+            ->setStatus(Callback::STATUS_FAIL);
+
+        /** @var PhoneCallManager $phoneCallManager */
+        $phoneCallManager->process($phoneCall, $pbxCallback);
+
+        $this->assertEquals(13, $phoneCall->getAmount());
     }
 }

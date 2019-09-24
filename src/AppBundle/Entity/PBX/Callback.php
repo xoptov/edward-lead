@@ -209,4 +209,17 @@ class Callback implements IdentifiableInterface
     {
         return self::STATUS_FAIL === $this->status;
     }
+
+    /**
+     * @return int
+     */
+    public function getTotalBillSec(): int
+    {
+        $total = 0;
+
+        $total += $this->firstShoulder->getBillSec();
+        $total += $this->secondShoulder->getBillSec();
+
+        return $total;
+    }
 }
