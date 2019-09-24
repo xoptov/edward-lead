@@ -43,10 +43,11 @@
                                         </span>
                                     </div>
                                     <div class="form_item">
-                                        {{ form_label(form.leadCriteria, 'Критерий целевого лида: Опишите как можно подробнее. Чем отвественее Вы отнесетесь к этому вопросу, тем быстрее и проще будут решаться вопросы в арбитраже<') }}
+                                        {{ form_label(form.leadCriteria, 'Критерий целевого лида: Опишите как можно подробнее. Чем отвественее Вы отнесетесь к этому вопросу, тем быстрее и проще будут решаться вопросы в арбитраже') }}
                                         <span class="message {% if form.leadCriteria.vars.errors|length %}error{% endif %}">
                                             {{ form_widget(form.leadCriteria, {'attr': {
-                                                'placeholder':'пример: 1. Окна нужны не более чем через 30 дней 2. Хочет минимум 2 окна 3. Регион Москвоская область'
+                                                'placeholder':'пример: 1. Окна нужны не более чем через 30 дней 2. Хочет минимум 2 окна 3. Регион Москвоская область',
+                                                'maxlength': 1000
                                             }}) }}
                                             {% if form.leadCriteria.vars.errors|length %}
                                                 <span class="text-error">{{ form.leadCriteria.vars.errors[0].message }}</span>
