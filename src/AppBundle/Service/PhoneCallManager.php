@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Exception\PhoneCallException;
 use GuzzleHttp\Client;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
@@ -14,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use AppBundle\Exception\AccountException;
 use Doctrine\ORM\NonUniqueResultException;
+use AppBundle\Exception\PhoneCallException;
 use AppBundle\Exception\OperationException;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Exception\RequestCallException;
@@ -115,11 +115,11 @@ class PhoneCallManager
             throw new RequestCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
         }
 
-        $holdCallCost = $this->firstCallTimeout * $this->costPerSecond;
+        $callCost = $this->firstCallTimeout * $this->costPerSecond;
         $callerBalance = $this->accountManager->getAvailableBalance($caller->getAccount());
 
-        if ($holdCallCost > $callerBalance) {
-            throw new InsufficientFundsException($caller->getAccount(), $holdCallCost, 'Недостаточно средств для совершения звонка');
+        if ($callCost > $callerBalance) {
+            throw new InsufficientFundsException($caller->getAccount(), $callCost, 'Недостаточно средств для совершения звонка');
         }
 
         $phoneCall = new PhoneCall();
@@ -130,7 +130,7 @@ class PhoneCallManager
 
         $this->entityManager->persist($phoneCall);
 
-        $hold = $this->holdManager->create($caller->getAccount(), $phoneCall, $holdCallCost, false);
+        $hold = $this->holdManager->create($caller->getAccount(), $phoneCall, $callCost, false);
         $phoneCall->setHold($hold);
 
         return $phoneCall;
@@ -189,6 +189,8 @@ class PhoneCallManager
             throw new PhoneCallException($phoneCall, 'Телефонный звонок уже обработан');
         }
 
+        $phoneCall->setAmount($pbxCallback->getTotalBillSec());
+
         if ($pbxCallback->isSuccess()) {
             $this->processSuccessfulPhoneCall($phoneCall);
         } else {
@@ -203,7 +205,7 @@ class PhoneCallManager
      * @throws NoResultException
      * @throws NonUniqueResultException
      */
-    private function processSuccessfulPhoneCall(PhoneCall $phoneCall): void
+    public function processSuccessfulPhoneCall(PhoneCall $phoneCall): void
     {
         $caller  = $phoneCall->getCaller();
 
@@ -224,8 +226,9 @@ class PhoneCallManager
                 $em->remove($hold);
             }
 
-            $phoneCall->setResult(PhoneCall::RESULT_SUCCESS);
-            $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
+            $phoneCall
+                ->setResult(PhoneCall::RESULT_SUCCESS)
+                ->setStatus(PhoneCall::STATUS_PROCESSED);
 
             $em->flush();
         });
@@ -233,17 +236,37 @@ class PhoneCallManager
 
     /**
      * @param PhoneCall $phoneCall
+     *
+     * @throws AccountException
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
-    private function processFailedPhoneCall(PhoneCall $phoneCall): void
+    public function processFailedPhoneCall(PhoneCall $phoneCall): void
     {
-        if ($phoneCall->hasHold()) {
-            $hold = $phoneCall->takeHold();
-            $this->entityManager->remove($hold);
-        }
+        $caller  = $phoneCall->getCaller();
 
-        $phoneCall->setResult(PhoneCall::RESULT_FAIL);
-        $phoneCall->setStatus(PhoneCall::STATUS_PROCESSED);
+        $telephonyAccount = $this->entityManager
+            ->getRepository(Account::class)
+            ->getTelephonyAccount();
 
-        $this->entityManager->flush();
+        $transactions = $this->transactionManager->create($caller->getAccount(), $telephonyAccount, $phoneCall, false);
+
+        $this->entityManager->transactional(function(EntityManagerInterface $em) use ($phoneCall, $transactions) {
+
+            if (!empty($transactions)) {
+                $this->transactionManager->process($transactions);
+            }
+
+            if ($phoneCall->hasHold()) {
+                $hold = $phoneCall->takeHold();
+                $em->remove($hold);
+            }
+
+            $phoneCall
+                ->setResult(PhoneCall::RESULT_FAIL)
+                ->setStatus(PhoneCall::STATUS_PROCESSED);
+
+            $em->flush();
+        });
     }
 }
