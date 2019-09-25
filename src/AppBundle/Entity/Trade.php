@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -224,6 +225,14 @@ class Trade extends Operation
     public function addPhoneCall(PhoneCall $phoneCall): bool
     {
         return $this->phoneCalls->add($phoneCall);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPhoneCalls(): Collection
+    {
+        return $this->phoneCalls;
     }
 
     /**

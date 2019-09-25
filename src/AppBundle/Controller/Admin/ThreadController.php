@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Admin;
 
+use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use AppBundle\Entity\Thread;
@@ -273,5 +275,28 @@ class ThreadController extends CRUDController
         }
 
         return $this->redirectToList();
+    }
+
+    public function preShow(Request $request, $object)
+    {
+        $this->admin->setSubject($object);
+
+        $fields = $this->admin->getShow();
+        \assert($fields instanceof FieldDescriptionCollection);
+
+        if (!\is_array($fields->getElements()) || 0 === $fields->count()) {
+            @trigger_error(
+                'Calling this method without implementing "configureShowFields"'
+                .' is not supported since 3.40.0'
+                .' and will no longer be possible in 4.0',
+                E_USER_DEPRECATED
+            );
+        }
+
+        return $this->renderWithExtraParams('@App/CRUD/show_thread.html.twig', [
+            'action' => 'show',
+            'object' => $object,
+            'elements' => $fields,
+        ], null);
     }
 }

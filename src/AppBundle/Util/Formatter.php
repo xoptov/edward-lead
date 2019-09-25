@@ -121,4 +121,22 @@ abstract class Formatter
 
         return $result;
     }
+
+    /**
+     * @param int $second
+     *
+     * @return string
+     */
+    public static function humanDuration(int $second): string
+    {
+        $remainSeconds = $second % 60;
+
+        $minutes = (int)floor($second / 60);
+
+        $remainMinutes = $minutes % 60;
+
+        $hours = (int)floor($minutes / 60);
+
+        return sprintf('%02d:%02d:%02d', $hours, $remainMinutes, $remainSeconds);
+    }
 }

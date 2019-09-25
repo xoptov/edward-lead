@@ -1,0 +1,74 @@
+{% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
+
+{% block show_groups %}
+    {{ parent() }}
+    {% if object.lead is not empty and object.lead.trade is not empty %}
+        {% set trade = object.lead.trade %}
+        {% if trade.phoneCalls|length %}
+            <div class="row">
+                <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                    <div class="box box-default">
+                        <div class="box-header">
+                            <h4 class="box-title">Список звонков лиду</h4>
+                        </div>
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                                <thead>
+                                <tr class="sonata-ba-list-field-header">
+                                    <th class="sonata-ba-list-field-header-text">
+                                        Дата и время
+                                    </th>
+                                    <th class="sonata-ba-list-field-header-text">
+                                        Статус звонка(покупатель)
+                                    </th>
+                                    <th class="sonata-ba-list-field-header-text">
+                                        Статус звонка(лид)
+                                    </th>
+                                    <th class="sonata-ba-list-field-header-text">
+                                        Длительность разговора
+                                    </th>
+                                    <th class="sonata-ba-list-field-header-text">
+                                        Запись разговора
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for phoneCall in trade.phoneCalls %}
+                                    {% set lastCallback = phoneCall.lastCallback %}
+                                    <tr class="sonata-ba-view-container">
+                                        <td class="sonata-ba-list-field">
+                                            {{ phoneCall.createdAt|date('d.m.Y H:i:s') }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if lastCallback is not empty %}
+                                                {{ lastCallback.firstShoulder.status }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if lastCallback is not empty %}
+                                                {{ lastCallback.secondShoulder.status }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ phoneCall.talkDuration|human_duration }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if lastCallback.audioRecord is empty %}
+                                                Аудио запись отсутствует
+                                            {% else %}
+                                                <audio controls src="{{ lastCallback.audioRecord }}">
+                                                    Ваш браузер не позволяет прослушивавать аудио записи.
+                                                </audio>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

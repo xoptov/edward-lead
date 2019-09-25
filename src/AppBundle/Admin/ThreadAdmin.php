@@ -170,13 +170,14 @@ class ThreadAdmin extends AbstractAdmin
                     'label' => 'Lead Channel'
                 ])
                 ->add('lead.description')
-                ->add('lead.decisionMaker', 'choice', [
-                    'choices' => [
-                        Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
-                        Lead::DECISION_MAKER_YES => 'Да',
-                        Lead::DECISION_MAKER_NO => 'Нет'
-                    ]
-                ])
+                // todo: тут короче нужно потом разобраться как сделать, если decisionMaker == null то 500 ошибка.
+//                ->add('lead.decisionMaker', 'choice', [
+//                    'choices' => [
+//                        Lead::DECISION_MAKER_UNKNOWN => 'Неизвестно',
+//                        Lead::DECISION_MAKER_YES => 'Да',
+//                        Lead::DECISION_MAKER_NO => 'Нет'
+//                    ]
+//                ])
                 ->add('lead.interestAssessment')
                 ->add('lead.audioRecord', null, [
                     'template' => '@App/CRUD/show_audio_record_field.html.twig'
