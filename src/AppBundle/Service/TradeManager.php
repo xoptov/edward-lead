@@ -331,6 +331,26 @@ class TradeManager
     }
 
     /**
+     * @param Trade $trade
+     *
+     * @return bool
+     */
+    public function isCanShowResultModal(Trade $trade): bool
+    {
+        $lastPhoneCall = $trade->getLastPhoneCall();
+
+        if ($lastPhoneCall) {
+            if ($lastPhoneCall->getResult() === PhoneCall::RESULT_SUCCESS
+                && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param User $buyer
      * @param User $seller
      * @param Lead $lead

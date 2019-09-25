@@ -5,7 +5,14 @@ namespace Tests\unit\AppBundle\Service;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\User;
+use AppBundle\Service\AccountManager;
+use AppBundle\Service\FeesManager;
+use AppBundle\Service\HoldManager;
 use AppBundle\Service\TradeManager;
+use AppBundle\Service\TransactionManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 class TradeManagerTest extends TestCase
@@ -148,5 +155,101 @@ class TradeManagerTest extends TestCase
 
         /** @var TradeManager $tradeManager */
         $tradeManager->autoFinish($trade, $feesAccount, $staleTimeBound);
+    }
+
+    public function testIsCanShowResultModal_withTradeStatusNew_withoutPhoneCall()
+    {
+        $trade = new Trade();
+
+        $tradeManager = $this->createTradeManager();
+
+        $this->assertFalse($tradeManager->isCanShowResultModal($trade));
+    }
+
+    public function testIsCanShowResultModal_withTradeStatusNew_andPhoneCallResultSuccess()
+    {
+        $trade = new Trade();
+
+        $phoneCall = new PhoneCall();
+        $phoneCall->setResult(PhoneCall::RESULT_SUCCESS);
+
+        $trade->addPhoneCall($phoneCall);
+
+        $tradeManager = $this->createTradeManager();
+
+        $this->assertTrue($tradeManager->isCanShowResultModal($trade));
+    }
+
+    public function testIsCanShowResultModal_withTradeStatusNew_andPhoneCallResultFail()
+    {
+        $trade = new Trade();
+
+        $phoneCall = new PhoneCall();
+        $phoneCall->setResult(PhoneCall::RESULT_FAIL);
+
+        $trade->addPhoneCall($phoneCall);
+
+        $tradeManager = $this->createTradeManager();
+
+        $this->assertFalse($tradeManager->isCanShowResultModal($trade));
+    }
+
+    public function testIsCanShowResultModal_withTradeStatusCallback_andLastPhoneCallSuccess_andResulted()
+    {
+        $trade = new Trade();
+        $trade->setStatus(Trade::STATUS_CALL_BACK);
+
+        $phoneCall = new PhoneCall();
+        $phoneCall->setResult(PhoneCall::RESULT_SUCCESS);
+
+        $trade->addPhoneCall($phoneCall);
+        $trade->addAskCallbackPhoneCall($phoneCall);
+
+        $tradeManager = $this->createTradeManager();
+
+        $this->assertFalse($tradeManager->isCanShowResultModal($trade));
+    }
+
+    public function testIsCanShowResultModal_withTradeStatusCallback_andLastPhoneCallSuccess_andNotResulted()
+    {
+        $trade = new Trade();
+        $trade->setStatus(Trade::STATUS_CALL_BACK);
+
+        $phoneCall = new PhoneCall();
+        $phoneCall->setResult(PhoneCall::RESULT_SUCCESS);
+
+        $trade->addPhoneCall($phoneCall);
+
+        $tradeManager = $this->createTradeManager();
+
+        $this->assertTrue($tradeManager->isCanShowResultModal($trade));
+    }
+
+    /**
+     * @return TradeManager
+     *
+     * @throws \ReflectionException
+     */
+    private function createTradeManager(): TradeManager
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+
+        /** @var AccountManager $accountManager */
+        $accountManager = $this->createMock(AccountManager::class);
+
+        /** @var HoldManager $holdManager */
+        $holdManager = $this->createMock(HoldManager::class);
+
+        /** @var FeesManager $feesManager */
+        $feesManager = $this->createMock(FeesManager::class);
+
+        /** @var TransactionManager $transactionManager */
+        $transactionManager = $this->createMock(TransactionManager::class);
+
+        return new TradeManager($logger, $entityManager, $accountManager, $holdManager, $feesManager, $transactionManager, 2);
     }
 }
