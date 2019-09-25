@@ -9,7 +9,6 @@ use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\AccountManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -29,18 +28,26 @@ class TemplateExtension extends \Twig_Extension
     private $leadManager;
 
     /**
+     * @var int
+     */
+    private $maxAsksCallback;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
      * @param LeadManager            $leadManager
+     * @param int                    $maxAsksCallback
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         AccountManager $accountManager,
-        LeadManager $leadManager
+        LeadManager $leadManager,
+        int $maxAsksCallback
     ) {
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
         $this->leadManager = $leadManager;
+        $this->maxAsksCallback = $maxAsksCallback;
     }
 
     /**
@@ -148,31 +155,23 @@ class TemplateExtension extends \Twig_Extension
      */
     public function canShowCallButton(Lead $lead, User $user): bool
     {
-        if ($lead->getStatus() !== Lead::STATUS_IN_WORK || $lead->isOwner($user)) {
-            return false;
-        }
-
-        $room = $lead->getRoom();
-
-        if ($room) {
-            if (!$room->isPlatformWarranty()) {
-                return false;
-            }
-        }
-
         $trade = $lead->getTrade();
 
-        if (empty($trade) || $trade->getBuyer() !== $user) {
-            return false;
-        }
+        if ($trade && $trade->getBuyer() === $user) {
 
-        $lastPhoneCall = $trade->getLastPhoneCall();
+            $lastPhoneCall = $trade->getLastPhoneCall();
 
-        if (!$lastPhoneCall
-            || ($trade->getStatus() === Trade::STATUS_CALL_BACK
-                && $trade->hasAskCallbackPhoneCall($lastPhoneCall))
-        ) {
-            return true;
+            if ($trade->getStatus() === Trade::STATUS_NEW && !$lastPhoneCall) {
+                return true;
+            }
+
+            if ($trade->getStatus() === Trade::STATUS_CALL_BACK
+                && $lastPhoneCall
+                && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
+                && $trade->getAskCallbackCount() < $this->maxAsksCallback
+            ){
+                return true;
+            }
         }
 
         return false;
