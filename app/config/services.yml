@@ -243,6 +243,8 @@ services:
     AppBundle\Twig\TemplateExtension:
         public: false
         tags: ['twig.extension']
+        arguments:
+            $maxAsksCallback: '%max_asks_callback%'
 
     AppBundle\Imagine\Filter\Loader\EllipseMaskFilter:
         tags:
