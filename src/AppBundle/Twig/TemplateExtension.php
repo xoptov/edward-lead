@@ -59,7 +59,8 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFilter("hidden_phone", [$this, "hiddenPhone"]),
             new \Twig_SimpleFilter("date_format", [$this, "dateFormat"]),
             new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"]),
-            new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone'])
+            new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone']),
+            new \Twig_SimpleFilter('human_duration', [$this, 'humanDuration'])
         ];
     }
 
@@ -104,6 +105,16 @@ class TemplateExtension extends \Twig_Extension
     public function humanPhone(?string $phone): string
     {
         return Formatter::humanizePhone($phone);
+    }
+
+    /**
+     * @param int $seconds
+     *
+     * @return string
+     */
+    public function humanDuration(int $seconds): string
+    {
+        return Formatter::humanDuration($seconds);
     }
 
     /**

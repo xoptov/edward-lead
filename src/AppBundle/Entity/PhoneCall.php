@@ -231,4 +231,18 @@ class PhoneCall extends Operation
 
         return $duration;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getLastAudioRecord(): ?string
+    {
+        $lastCallback = $this->getLastCallback();
+
+        if ($lastCallback) {
+            return $lastCallback->getAudioRecord();
+        }
+
+        return null;
+    }
 }
