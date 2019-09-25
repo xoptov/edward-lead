@@ -136,25 +136,14 @@ class TradeController extends Controller
      */
     public function showResultModal(): Response
     {
-        $user = $this->getUser();
+        $trade = $this->getDoctrine()
+            ->getRepository(Trade::class)
+            ->getByBuyerAndWarrantyAndIncomplete($this->getUser());
 
-        $trade = $this->getDoctrine()->getRepository(Trade::class)
-            ->getByBuyerAndWarrantyAndIncomplete($user);
-
-        if (!$trade) {
-            return new Response();
+        if ($trade && $this->tradeManager->isCanShowResultModal($trade)) {
+            return $this->render('@App/Trade/select_result_modal.html.twig', ['trade' => $trade]);
         }
 
-        $lastPhoneCall = $trade->getLastPhoneCall();
-
-        if (!$lastPhoneCall) {
-            return new Response();
-        }
-
-        if ($trade->getStatus() === Trade::STATUS_CALL_BACK && $trade->hasAskCallbackPhoneCall($lastPhoneCall)) {
-            return new Response();
-        }
-
-        return $this->render('@App/Trade/select_result_modal.html.twig', ['trade' => $trade]);
+        return new Response();
     }
 }
