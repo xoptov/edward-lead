@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Util\Formatter;
@@ -227,20 +228,14 @@ class LeadManager
 
         $room = $lead->getRoom();
 
-        if ($room) {
-            if (!$room->isPlatformWarranty()) {
-                if ($lead->getBuyer() === $user && ($lead->getStatus() === Lead::STATUS_IN_WORK || $lead->getStatus() === Lead::STATUS_TARGET)) {
-                    return true;
-                }
+        if ($room instanceof Room && !$room->isPlatformWarranty()) {
+            if ($lead->getBuyer() === $user && in_array($lead->getStatus(), [Lead::STATUS_IN_WORK,  Lead::STATUS_TARGET])) {
+                return true;
             }
         }
 
-        try {
-            if ($lead->getBuyer() === $user && ($lead->getStatus() === Lead::STATUS_TARGET || $this->hasAnsweredPhoneCall($lead, $user))) {
-                return true;
-            }
-        } catch (NonUniqueResultException $e) {
-            return false;
+        if ($lead->getBuyer() === $user && $lead->getStatus() === Lead::STATUS_TARGET) {
+            return true;
         }
 
         return false;
