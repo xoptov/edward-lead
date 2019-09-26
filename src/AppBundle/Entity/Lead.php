@@ -5,14 +5,14 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Validator\Constraints\UniqueLead;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Table(name="lead")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
- * @UniqueEntity(fields={"room", "phone", "status"}, message="Лид с таким номером телефона и с таким же статусом уже существует")
+ * @UniqueLead
  */
 class Lead implements IdentifiableInterface
 {
