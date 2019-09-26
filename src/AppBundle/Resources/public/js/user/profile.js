@@ -22,7 +22,7 @@ $(function() {
         $tokenRenewButton.attr('disabled', true);
         $tokenField.text('Новый ключ API генерируется');
         $.ajax({
-            url: '/api/user/renew-token',
+            url: '/api/v1/user/renew-token',
             processData: false,
             contentType: false,
             success: function(resp) {
