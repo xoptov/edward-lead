@@ -27,13 +27,6 @@
             </div>
         </div>
         <div class="form__input--item">
-            {{ form_label(form.name, 'Имя', {'label_attr': {'class': 'form__label'}}) }}
-            <div class="form__input--widget">
-                {{ form_errors(form.name) }}
-                {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваше имя', 'autocomplete': 'off'}}) }}
-            </div>
-        </div>
-        <div class="form__input--item">
             {{ form_label(form.plainPassword.first, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.plainPassword.first) }}
@@ -41,7 +34,14 @@
             </div>
         </div>
         <div class="form__input--item">
-            {{ form_label(form.plainPassword.second, 'Пароль', {'label_attr': {'class': 'form__label'}}) }}
+            {{ form_label(form.name, 'Имя', {'label_attr': {'class': 'form__label'}}) }}
+            <div class="form__input--widget">
+                {{ form_errors(form.name) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form__input', 'placeholder': 'Введите Ваше имя', 'autocomplete': 'off'}}) }}
+            </div>
+        </div>
+        <div class="form__input--item">
+            {{ form_label(form.plainPassword.second, 'Пароль ещё раз', {'label_attr': {'class': 'form__label'}}) }}
             <div class="form__input--widget">
                 {{ form_errors(form.plainPassword.second) }}
                 {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form__input', 'placeholder': 'Введите пароль ещё раз', 'autocomplete': 'off'}}) }}
@@ -54,8 +54,9 @@
     <div class="row">
         {{ form_errors(form.agree) }}
         {{ form_widget(form.agree) }}
-        {{ form_label(form.agree, 'Отправляя сведения через электронную форму, вы соглашаетесь с условиями оферты, даете согласие на обработку персональных данных, их сбор, хранение и передачу третьим лицам представленной вами информации на условиях.', {'label_attr': {'class': 'form__label-reg'}}) }}
-        <a href="#" class="label__link" style="padding:5px 0;font-size:12px;">Политики конфиденциальности</a>
+        <label class="form__label-reg" for="{{ form.agree.vars.id }}">
+            Отправляя сведения через электронную форму, вы соглашаетесь с условиями <a class="label__link" href="http://wiki.edward-lead.ru/?anchor=Polyzovatelyskoe%20soglashenie">Пользовательского соглашения</a>, даете согласие на обработку персональных данных, их сбор, хранение и передачу третьим лицам представленной вами информации на условиях. <a class="label__link" href="http://wiki.edward-lead.ru/?anchor=Politika%20konfidentsialynosti">Политики конфиденциальности</a>.
+        </label>
     </div>
     {{ form_end(form) }}
 </div>
