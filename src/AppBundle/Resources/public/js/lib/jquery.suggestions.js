@@ -3558,8 +3558,8 @@ var methods$4 = {
                 that.buildSuggestionHtml(suggestion, i, html);
             });
         }
-
-        html.push('<div class="' + CLASSES.promo + '"></div>');
+        // todo: топорно конечно выпиливаем промо DaData ну а что поделать???
+        // html.push('<div class="' + CLASSES.promo + '"></div>');
         html.push("</div>");
 
         that.$container.html(html.join(""));
