@@ -53,7 +53,7 @@ const vm = new Vue({
             if (member.user.logotype) {
                 return member.user.logotype;
             }
-            return '/bundles/app/v2/img/user.png';
+            return '/bundles/app/v2/img/icon_2.png';
         },
         getStatusObject: function(status) {
             const statusObj = {
