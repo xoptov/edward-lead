@@ -4,13 +4,13 @@
     <div class="content">
         <div id="app" class="row align-items-center">
             <div class="col-12 content_box">
-                <div class="content_title">
-                    <div class="main_title">
+                <div class="content_title" style="margin-bottom:0;">
+                    <div class="main_title" style="width:100%;">
                         <h1>Комната #{{ room.id }} - {{ room.name }}</h1>
-                        <div v-if="activated">
+                        <div v-if="activated" style="width:100%;justify-content:space-between;">
                             {% if room.isOwner(app.user) %}
                                 <span v-if="deactivationError" v-text="deactivationError"></span>
-                                <button @click.prevent="onDeactivateClick">Деактивировать комнату</button>
+                                <a href="#" @click.prevent="onDeactivateClick">Деактивировать комнату</a>
                             {% endif %}
                             {% if app.user.company %}
                                 <p class="balance">
