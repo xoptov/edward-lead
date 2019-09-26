@@ -94,7 +94,7 @@ class Lead implements IdentifiableInterface
      * @var \DateTime|null
      *
      * @Assert\LessThanOrEqual(
-     *     value="today",
+     *     value="+1 day",
      *     message="Дата не может быть в будущем"
      * )
      *
