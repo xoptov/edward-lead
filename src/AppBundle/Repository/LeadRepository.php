@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
@@ -184,6 +185,32 @@ class LeadRepository extends EntityRepository
     }
 
     /**
+     * @param string    $phone
+     * @param Room|null $room
+     *
+     * @return array
+     */
+    public function getByPhoneAndWithNoFinishStatus(string $phone, ?Room $room = null): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $queryBuilder
+            ->where('l.phone = :phone')
+                ->setParameter('phone', $phone)
+            ->andWhere('l.status IN (:statuses)')
+                ->setParameter('statuses', [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK, Lead::STATUS_ARBITRATION]);
+
+        if ($room) {
+            $queryBuilder->andWhere('l.room = :room')
+                ->setParameter('room', $room);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
      * @param QueryBuilder $queryBuilder
      * @param array        $rooms
      */
@@ -215,6 +242,4 @@ class LeadRepository extends EntityRepository
             ->andWhere('l.status IN (:statuses)')
             ->setParameter('statuses', $statuses);
     }
-
-
 }

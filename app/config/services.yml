@@ -288,3 +288,7 @@ services:
     AppBundle\Command\AutoFinishTradesCommand:
         arguments:
             $staleAfterHours: '%stale_after_hours%'
+
+    AppBundle\Validator\Constraints\UniqueLeadValidator:
+        tags:
+            - { name: validator.constraint_validator }
