@@ -2,17 +2,14 @@
 
 namespace AppBundle\Form\Type;
 
-use AppBundle\Entity\City;
 use AppBundle\Entity\Company;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Form\EventListener\CompanyTypeSubscriber;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -33,8 +30,6 @@ class CompanyType extends AbstractType
             $builder
                 ->add('shortName', TextType::class)
                 ->add('largeName', TextType::class)
-                ->add('phone', TelType::class)
-                ->add('email', EmailType::class)
                 ->add('inn', TextType::class)
                 ->add('ogrn', TextType::class)
                 ->add('kpp', TextType::class)
@@ -50,9 +45,6 @@ class CompanyType extends AbstractType
                     'required' => false
                 ])
                 ->addEventSubscriber(new CompanyTypeSubscriber());
-
-            $builder->get('phone')
-                ->addViewTransformer(new PhoneTransformer());
 
         } else {
             $builder
