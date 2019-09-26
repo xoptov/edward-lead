@@ -82,6 +82,7 @@ $(function() {
                 shortName: this.$el.find('#company_shortName'),
                 largeName: this.$el.find('#company_largeName'),
                 ogrn: this.$el.find('#company_ogrn'),
+                kpp: this.$el.find('#company_kpp'),
                 address: this.$el.find('#company_address'),
                 zipcode: this.$el.find('#company_zipcode'),
                 phone: this.$el.find('#company_phone')
@@ -99,6 +100,7 @@ $(function() {
                     this.setShortName(suggestion);
                     this.setLargeName(suggestion);
                     this.setOGRN(suggestion);
+                    this.setKPP(suggestion);
                     this.setAddress(suggestion);
                     this.setZipcode(suggestion);
                 }
@@ -117,6 +119,11 @@ $(function() {
         setOGRN: function(suggestion) {
             if (suggestion.data && suggestion.data.ogrn) {
                 this.fields.ogrn.val(suggestion.data.ogrn);
+            }
+        },
+        setKPP: function(suggestion) {
+            if (suggestion.data && suggestion.data.kpp) {
+                this.fields.kpp.val(suggestion.data.kpp);
             }
         },
         setAddress: function(suggestion) {
