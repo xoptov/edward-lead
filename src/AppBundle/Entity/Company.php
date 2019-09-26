@@ -70,36 +70,6 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Regex(
-     *     pattern="/^7\d{10}$/",
-     *     message="Невалидный формат телефона"
-     * )
-     * @Assert\NotBlank(
-     *     message="Необходимо указать номер телефона",
-     *     groups={"Company"}
-     * )
-     *
-     * @ORM\Column(name="phone", type="string", length=32)
-     */
-    private $phone;
-
-    /**
-     * @var string|null
-     *
-     * @Assert\Length(max=30)
-     * @Assert\Email(message="Невалидное значение поля")
-     * @Assert\NotBlank(
-     *     message="Необходимо указать email",
-     *     groups={"Company"}
-     * )
-     *
-     * @ORM\Column(name="email", type="string", length=30)
-     */
-    private $email;
-
-    /**
-     * @var string|null
-     *
      * @Assert\Length(min=10, max=12)
      * @Assert\NotBlank(
      *     message="Необходимо указать ИНН",
@@ -337,46 +307,6 @@ class Company implements IdentifiableInterface
     public function getLargeName(): ?string
     {
         return $this->largeName;
-    }
-
-    /**
-     * @param string|null $phone
-     *
-     * @return Company
-     */
-    public function setPhone(?string $phone): self
-    {
-        $this->phone = $phone;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    /**
-     * @param string|null $email
-     *
-     * @return Company
-     */
-    public function setEmail(?string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getEmail(): ?string
-    {
-        return $this->email;
     }
 
     /**

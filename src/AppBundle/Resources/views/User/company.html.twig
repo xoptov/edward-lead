@@ -93,26 +93,6 @@
                                     'placeholder': 'Например: 307235211300011'
                                 }
                             }) }}
-                            {{ form_row(form.phone, {
-                                'label': 'Телефон для входящих звонков',
-                                'label_attr': {
-                                    'class': 'office__label'
-                                },
-                                'attr': {
-                                    'class': 'form__input office__input',
-                                    'placeholder': 'Например: 8 800 000 00 00'
-                                }
-                            }) }}
-                            {{ form_row(form.email, {
-                                'label': 'Эл. почта',
-                                'label_attr': {
-                                    'class': 'office__label'
-                                },
-                                'attr': {
-                                    'class': 'form__input office__input',
-                                    'placeholder': 'Например: example@edward-lead.ru'
-                                }
-                            }) }}
                             {{ form_row(form.address, {
                                 'label': 'Юридический адрес',
                                 'label_attr': {
@@ -134,23 +114,13 @@
                                     'placeholder': 'Например: 353445'
                                 }
                             }) }}
-                            {% if form.publicationAgree is defined or form.storeAgree is defined %}
+                            {% if form.storeAgree is defined %}
                                 <div class="office__input--item row block-mod-15">
-                                    {% if form.publicationAgree is defined %}
-                                        {{ form_row(form.publicationAgree, {
-                                            'label': 'Я прочитал(а) и согласен с правилами публикации лида на платформу Edward Lead',
-                                            'label_attr': {'class': 'form__label-reg'},
-                                            'attr': {'class': 'checkbox'}
-                                        }) }}
-                                        <a href="#publication-rules" class="text-blue" style="font-size: 12px;margin-left: 26px;">Посмотреть правила публикации</a>
-                                    {% endif %}
-                                    {% if form.storeAgree is defined %}
-                                        {{ form_row(form.storeAgree, {
-                                            'label': 'Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам',
-                                            'label_attr': {'class': 'form__label-reg'},
-                                            'attr': {'class': 'checkbox'}
-                                        }) }}
-                                    {% endif %}
+                                    {{ form_row(form.storeAgree, {
+                                        'label': 'Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам',
+                                        'label_attr': {'class': 'form__label-reg'},
+                                        'attr': {'class': 'checkbox'}
+                                    }) }}
                                 </div>
                             {% endif %}
                         </div>

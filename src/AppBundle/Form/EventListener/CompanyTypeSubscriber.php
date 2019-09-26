@@ -26,14 +26,10 @@ class CompanyTypeSubscriber implements EventSubscriberInterface
     public function preSetData(FormEvent $event)
     {
         if (!$event->getData()) {
+
             $form = $event->getForm();
-            $form->add('publicationAgree', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue(['message' => 'Вы должны дать согласие на публикацию'])
-                ]
-            ])
-            ->add('storeAgree', CheckboxType::class, [
+
+            $form->add('storeAgree', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue(['message' => 'Вы должны дать согласие на хранение'])
