@@ -48,7 +48,6 @@ const vm = new Vue({
             interestAssessment: null,
             description: null,
             audioRecord: null,
-            publicationRule: null,
             hasAgreement: null,
         },
         channels: null,
@@ -66,9 +65,6 @@ const vm = new Vue({
             phone: {
                 required: validators.required,
                 phoneNumber: phoneNumberValidator
-            },
-            publicationRule: {
-                required: validators.required
             },
             hasAgreement: {
                 required: validators.required
@@ -187,7 +183,7 @@ const vm = new Vue({
             if (this.$v.lead.$invalid) {
                 return false;
             }
-            return this.lead.hasAgreement && this.lead.publicationRule;
+            return this.lead.hasAgreement;
         }
     },
     methods: {

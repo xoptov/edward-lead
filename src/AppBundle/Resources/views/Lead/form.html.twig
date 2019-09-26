@@ -194,7 +194,7 @@
                                     <div class="info-block__content-list">
                                         <div class="info-block__line">
                                             <div class="info-block__line-left text-mod-12">Рейтинг лида
-                                                <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                                <br>на бирже:
                                             </div>
                                             <div class="js-points info-block__line-right">
                                                 <span class="icon-star-new span-mod-16" v-for="star in 6" :class="{'text-yellow': star <= estimate.stars, 'text-gray': star > estimate.stars}"></span>
@@ -202,7 +202,7 @@
                                         </div>
                                         <div class="info-block__line block-mode-5">
                                             <div class="info-block__line-left text-mod-12">Стоимость лида
-                                                <br>на бирже: <a href="#" class="label__link link-mode-3">Как увеличить?</a>
+                                                <br>на бирже:
                                             </div>
                                             <div class="info-block__line-right text-mod-11">
                                                 <span v-if="estimate.cost" v-text="estimate.cost"></span>
@@ -214,27 +214,19 @@
                                 </div>
                                 <div class="info-block__row-item block-mod-4">
                                     <div class="row">
-                                        <input id="publication-rule" type="checkbox" class="checkbox" v-model="lead.publicationRule" :disabled="submitted">
-                                        <label for="publication-rule" class="form__label-reg">
-                                            Я прочитал(а) и согласен с <a href="#" class="label__link">правилами публикации лида</a> на платформу Edward Lead
-                                        </label>
                                         <input id="has-agreement" type="checkbox" class="checkbox" v-model="lead.hasAgreement" :disabled="submitted">
                                         <label for="has-agreement" class="form__label-reg">
                                             Я подтверждаю что контакт дал своё согласие на передачу данных третим лицам
                                         </label>
                                     </div>
-                                    <div v-if="isReadyForSubmit && !submitted">
+                                    <div>
                                         <ul v-if="submitErrors" class="violation mt-15">
                                             <li v-for="error in submitErrors" v-text="error"></li>
                                         </ul>
-                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-if="leadId">
-                                            Обновить информацию
-                                        </button>
-                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-else-if="lead.room">
-                                            Добавить лида в комнату
-                                        </button>
-                                        <button type="submit" class="btn btn-buy-lead btn-green btn-pressed btn-mod-6" v-else>
-                                            Выставить лида на биржу
+                                        <button type="submit" class="btn btn-buy-lead btn-pressed btn-mod-6" :class="{'btn-green': isReadyForSubmit, 'btn--grey': !isReadyForSubmit}" :disabled="!isReadyForSubmit">
+                                            <span v-if="leadId">Обновить информацию</span>
+                                            <span v-else-if="lead.room">Добавить лида в комнату</span>
+                                            <span v-else>Выставить лида на биржу</span>
                                         </button>
                                     </div>
                                     <div v-else-if="submitted">

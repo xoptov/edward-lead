@@ -21,11 +21,11 @@
                                     {% endif %}
                                 </p>
                             {% endif %}
+                            {% if app.user.webmaster and room.enabled %}
+                                <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn_room green" v-if="activated">Добавить лида</a>
+                            {% endif %}
                         </div>
                     </div>
-                    {% if app.user.webmaster and room.enabled %}
-                        <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn_room green" v-if="activated">Добавить лида</a>
-                    {% endif %}
                 </div>
             </div>
             <div class="col-12 content_box room_list">
