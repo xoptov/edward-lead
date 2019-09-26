@@ -189,31 +189,32 @@
 }
 /**
  * Промо-блок
+ * @todo: это лишняя хрень связанная с DaData promo.
  */
-.suggestions-promo {
-  font-size: 85%;
-  display: none;
-  color: #777;
-  padding: 4px;
-  text-align: center;
-}
-.suggestions-promo a {
-  color: #777;
-  display: block;
-  filter: grayscale(100%);
-  line-height: 20px;
-  text-decoration: none;
-}
-.suggestions-promo a:hover {
-  filter: grayscale(0);
-}
-.suggestions-promo svg {
-  height: 20px;
-  vertical-align: bottom;
-}
-.suggestions-promo-desktop {
-  position: absolute;
-  top: 0;
-  right: 0;
-  text-align: left;
-}
+/*.suggestions-promo {*/
+  /*font-size: 85%;*/
+  /*display: none;*/
+  /*color: #777;*/
+  /*padding: 4px;*/
+  /*text-align: center;*/
+/*}*/
+/*.suggestions-promo a {*/
+  /*color: #777;*/
+  /*display: block;*/
+  /*filter: grayscale(100%);*/
+  /*line-height: 20px;*/
+  /*text-decoration: none;*/
+/*}*/
+/*.suggestions-promo a:hover {*/
+  /*filter: grayscale(0);*/
+/*}*/
+/*.suggestions-promo svg {*/
+  /*height: 20px;*/
+  /*vertical-align: bottom;*/
+/*}*/
+/*.suggestions-promo-desktop {*/
+  /*position: absolute;*/
+  /*top: 0;*/
+  /*right: 0;*/
+  /*text-align: left;*/
+/*}*/
