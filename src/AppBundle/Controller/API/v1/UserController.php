@@ -16,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class UserController extends Controller
 {
     /**
-     * @Route("/user/renew-token", name="api_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
+     * @Route("/user/renew-token", name="api_v1_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
      *
      * @param UserManager $userManager
      *
