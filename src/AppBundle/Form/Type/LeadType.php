@@ -57,12 +57,6 @@ class LeadType extends AbstractType
                 'required' => false
             ])
             ->add('audioRecord', HiddenType::class)
-            ->add('publicationRule', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new NotBlank(['message' => 'Необходимо согласиться с правилами публикации'])
-                ]
-            ])
             ->add('hasAgreement', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
