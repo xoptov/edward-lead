@@ -20,7 +20,7 @@ class TelephonyController extends Controller
 
         $phoneCalls = $this->getDoctrine()
             ->getRepository(PhoneCall::class)
-            ->findBy(['caller' => $user]);
+            ->findBy(['caller' => $user], ['createdAt' => 'DESC']);
 
         return $this->render('@App/Telephony/lead_call_list.html.twig', [
             'phoneCalls' => $phoneCalls
