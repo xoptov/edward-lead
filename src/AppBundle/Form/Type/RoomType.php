@@ -29,6 +29,7 @@ class RoomType extends AbstractType
                 'divisor' => Account::DIVISOR
             ])
             ->add('platformWarranty', ChoiceType::class, [
+                'data' => true,
                 'choices' => [
                     'Да' => true,
                     'Нет' => false
