@@ -189,7 +189,7 @@ class PhoneCallManager
             throw new PhoneCallException($phoneCall, 'Телефонный звонок уже обработан');
         }
 
-        $phoneCall->setAmount($pbxCallback->getTotalBillSec());
+        $phoneCall->setAmount($pbxCallback->getTotalBillSec() * $this->costPerSecond);
 
         if ($pbxCallback->isSuccess()) {
             $this->processSuccessfulPhoneCall($phoneCall);
