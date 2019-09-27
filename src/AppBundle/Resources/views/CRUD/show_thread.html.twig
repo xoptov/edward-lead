@@ -40,20 +40,24 @@
                                             {{ phoneCall.createdAt|date('d.m.Y H:i:s') }}
                                         </td>
                                         <td class="sonata-ba-list-field">
-                                            {% if lastCallback is not empty %}
+                                            {% if lastCallback is not empty and lastCallback.firstShoulder.status is not empty %}
                                                 {{ lastCallback.firstShoulder.status }}
+                                            {% else %}
+                                                Неизвестно
                                             {% endif %}
                                         </td>
                                         <td class="sonata-ba-list-field">
-                                            {% if lastCallback is not empty %}
+                                            {% if lastCallback is not empty and lastCallback.secondShoulder.status is not empty %}
                                                 {{ lastCallback.secondShoulder.status }}
+                                            {% else %}
+                                                Неизвестно
                                             {% endif %}
                                         </td>
                                         <td class="sonata-ba-list-field">
                                             {{ phoneCall.talkDuration|human_duration }}
                                         </td>
                                         <td class="sonata-ba-list-field">
-                                            {% if lastCallback.audioRecord is empty %}
+                                            {% if lastCallback is empty or lastCallback.audioRecord is empty %}
                                                 Аудио запись отсутствует
                                             {% else %}
                                                 <audio controls src="{{ lastCallback.audioRecord }}">
