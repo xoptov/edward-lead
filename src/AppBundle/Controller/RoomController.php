@@ -75,7 +75,7 @@ class RoomController extends Controller
 
             $this->addFlash('success', 'Новая комната успешно создана');
 
-            return $this->redirectToRoute('app_room_list');
+            return $this->redirectToRoute('app_room_view', ['id' => $data->getId()]);
         }
 
         return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
