@@ -43,10 +43,13 @@
                                         </span>
                                     </div>
                                     <div class="form_item">
-                                        {{ form_label(form.leadCriteria, 'Критерий целевого лида: Опишите как можно подробнее. Чем отвественее Вы отнесетесь к этому вопросу, тем быстрее и проще будут решаться вопросы в арбитраже') }}
+                                        <label for="{{ form.leadCriteria.vars.id }}">
+                                            Индивидуальные правила целевого лида<br>
+                                            <small>Основываясь на этих правилах, служба поддержки будет выносить решение о возврате средств если он им не соответствует</small>
+                                        </label>
                                         <span class="message {% if form.leadCriteria.vars.errors|length %}error{% endif %}">
                                             {{ form_widget(form.leadCriteria, {'attr': {
-                                                'placeholder':'пример: 1. Окна нужны не более чем через 30 дней 2. Хочет минимум 2 окна 3. Регион Москвоская область',
+                                                'placeholder':'1. Регион работы – Москва\n2. Лиду нужны пластиковые окна\n3. Он хочет установить окна в течении 30 дней\n4. …..',
                                                 'maxlength': 1000
                                             }}) }}
                                             {% if form.leadCriteria.vars.errors|length %}
@@ -57,7 +60,7 @@
                                     <div class="form_item">
                                         {{ form_label(form.leadPrice, 'Стоимость лида:') }}
                                         <span {% if form.leadPrice.vars.errors|length %}class="error"{% endif %}>
-                                            {{ form_widget(form.leadPrice, {'attr': {'class': 'price', 'placeholder': 'пример: 500'}}) }}
+                                            {{ form_widget(form.leadPrice, {'attr': {'class': 'price', 'placeholder': 'пример: 500', 'style': 'width:94%;'}}) }}
                                             {% if form.leadPrice.vars.errors|length %}
                                                 <span class="text-error">{{ form.leadPrice.vars.errors[0].message }}</span>
                                             {% endif %}
