@@ -6,11 +6,13 @@
     <h3 class="office-settings__title">Биллинг</h3>
     <div class="billing__header">
         <div class="billing__side-left">
-            <div class="plain__text text-mod-2">Баланс личного счёта: {{ availableBalance }} руб.</div>
+            <div class="plain__text text-mod-2">Доступных средств на балансе: {{ availableBalance }} руб.</div>
             <div class="plain__text text-mod-2">Блокированно по операциям: {{ holdBalance }} руб.</div>
         </div>
         <div class="billing__side-right">
-            <a class="btn btn-green btn-billig--mod" href="{{ path('app_financial_deposit') }}">Пополнить баланс ЛС</a>
+            {% if is_granted('ROLE_COMPANY') %}
+                <a class="btn btn-green btn-billig--mod" href="{{ path('app_financial_deposit') }}">Пополнить баланс ЛС</a>
+            {% endif %}
             <a href="{{ path('app_financial_withdraw') }}" class="billing__link link-mod-1">Создать заявку на вывод средств</a>
         </div>
     </div>
