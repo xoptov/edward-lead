@@ -31,7 +31,7 @@
                             {% if rooms is defined and rooms is not null -%}
                                 {%- for row in rooms -%}
                                     {%- set room = row.room -%}
-                                    <tr>
+                                    <tr class="room-reference" data-room="{{ room.id }}">
                                         <td class="id">#{{ room.id }}</td>
                                         <td>{{ room.name }}</td>
                                         <td>{{ row.daily }}</td>
@@ -53,4 +53,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/v2/js/room/list.js') }}"></script>
 {% endblock %}

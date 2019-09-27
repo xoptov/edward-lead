@@ -1932,3 +1932,7 @@ main.body_invite {
 @media all and (max-width: 575px) {
   .modal .box_btn a.cancel {
     max-width: 100px; } }
+
+.room_list table tr:hover {
+  cursor: pointer;
+}
