@@ -18,7 +18,6 @@
                             <th>Дата создания</th>
                             <th>Имя</th>
                             <th>Телефон</th>
-                            <th>Город</th>
                             <th>Стоимость</th>
                             <th>Продавец</th>
                             <th>Покупатель</th>
@@ -31,13 +30,6 @@
                                     <td>{{ lead.orderDate|date('d.m.Y') }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
-                                    <td>
-                                        {% if lead.city is not empty %}
-                                            {{ lead.city.name }}
-                                        {% else %}
-                                            Не указан
-                                        {% endif %}
-                                    </td>
                                     <td>{{ lead.price|money_format }}</td>
                                     <td>
                                         {{ lead.user.name }}
@@ -75,7 +67,6 @@
                             <th>Дата создания</th>
                             <th>Имя</th>
                             <th>Телефон</th>
-                            <th>Город</th>
                             <th>Стоимость</th>
                             <th>Продавец</th>
                             <th>Статус</th>
@@ -102,13 +93,6 @@
                                             {{ lead.phone|human_phone }}
                                         {% else %}
                                             {{ lead.phone|hidden_phone }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if lead.city is not empty %}
-                                            {{ lead.city.name }}
-                                        {% else %}
-                                            Не указан
                                         {% endif %}
                                     </td>
                                     <td>{{ trade.amount|money_format }}</td>
@@ -184,60 +168,5 @@
         </div>
     </script>
 
-    <script>
-        $(function(){
-            const resultModal = {
-                template: '#result-modal',
-                props: ['trade'],
-                computed: {
-                    acceptUrl: function(){
-                        if (this.trade) {
-                            return '/trade/accept/' + this.trade.id;
-                        }
-                        return null;
-                    },
-                    rejectUrl: function(){
-                        if (this.trade) {
-                            return '/trade/reject/' + this.trade.id;
-                        }
-                        return null;
-                    },
-                    leadName: function() {
-                        if (this.trade) {
-                            return this.trade.lead.name;
-                        }
-                        return null;
-                    },
-                    leadPhone: function() {
-                        if (this.trade) {
-                            return this.trade.lead.phone;
-                        }
-                        return null;
-                    }
-                },
-                methods: {
-                    close: function() {
-                        this.$emit('close-modal');
-                    }
-                }
-            };
-            new Vue({
-                el: '#my-leads',
-                components: {
-                    'result-modal': resultModal
-                },
-                data: {
-                    trade: null
-                },
-                methods: {
-                    openResultModal: function(data) {
-                        this.trade = data;
-                    },
-                    closeResultModal: function() {
-                        this.trade = null;
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="{{ asset('bundles/app/js/lead/my.js') }}"></script>
 {% endblock %}
