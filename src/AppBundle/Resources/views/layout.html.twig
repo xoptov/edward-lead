@@ -16,9 +16,13 @@
             <div class="header__content">
                 <div class="header__logo">
                     {% if is_granted('ROLE_WEBMASTER') %}
-                        <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
+                        <a href="{{ path('app_dashboard') }}">
+                            <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
+                        </a>
                     {% else %}
-                        <img src="{{ asset('bundles/app/img/logo.png') }}">
+                        <a href="{{ path('app_room_list') }}">
+                            <img src="{{ asset('bundles/app/img/logo.png') }}">
+                        </a>
                     {% endif %}
                 </div>
                 <div class="header__balance-box">
