@@ -117,6 +117,10 @@ const vm = new Vue({
                     }
                     return false;
                 });
+        },
+        onRowClick(id) {
+            window.location.href = '/lead/' + id;
+            return false;
         }
     }
 });
