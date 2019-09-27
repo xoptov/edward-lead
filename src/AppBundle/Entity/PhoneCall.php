@@ -209,9 +209,9 @@ class PhoneCall extends Operation
     }
 
     /**
-     * @return Callback|null
+     * @return Callback|false
      */
-    public function getLastCallback(): ?Callback
+    public function getLastCallback()
     {
         return $this->callbacks->last();
     }
