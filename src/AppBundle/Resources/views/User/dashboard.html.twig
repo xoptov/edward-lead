@@ -7,32 +7,33 @@
             {% include '@App/flash_messages.html.twig' %}
             <div class="col-12 content_box">
                 <div class="content_title">
-                    <div class="main_title"><h1>Панель управления</h1>
+                    <div class="main_title">
+                        <h1>Панель управления</h1>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 box">
-                        <div class="box_inner">
-                            <h5>Лидов поступило за сегодня</h5>
-                            <p>76 / 100</p>
-                            <a href="#">как повысить ?</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 box">
-                        <div class="box_inner">
-                            <h5>Средний % целевых лидов</h5>
-                            <p>{{ data.averageTarget }}%</p>
-                            <a href="#">как считается ?</a>
-                        </div>
-                    </div>
-                    <div class="col-md-4 box">
-                        <div class="box_inner">
-                            <h5>Лидов поступило за сегодня</h5>
-                            <p>{{ data.addedLeadsToday }} лидов</p>
+                {#<div class="row">#}
+                    {#<div class="col-md-4 box">#}
+                        {#<div class="box_inner">#}
+                            {#<h5>Лидов поступило за сегодня</h5>#}
+                            {#<p>76 / 100</p>#}
+                            {#<a href="#">как повысить ?</a>#}
+                        {#</div>#}
+                    {#</div>#}
+                    {#<div class="col-md-4 box">#}
+                        {#<div class="box_inner">#}
+                            {#<h5>Средний % целевых лидов</h5>#}
+                            {#<p>{{ data.averageTarget }}%</p>#}
+                            {#<a href="#">как считается ?</a>#}
+                        {#</div>#}
+                    {#</div>#}
+                    {#<div class="col-md-4 box">#}
+                        {#<div class="box_inner">#}
+                            {#<h5>Лидов поступило за сегодня</h5>#}
+                            {#<p>{{ data.addedLeadsToday }} лидов</p>#}
                             {#<span>47 принято | 3 холд | 16 не целевые</span>#}
-                        </div>
-                    </div>
-                </div>
+                        {#</div>#}
+                    {#</div>#}
+                {#</div>#}
             </div>
             <div class="col-12 content_box room_list">
                 <div class="content_title">
@@ -55,7 +56,7 @@
                         </thead>
                         <tbody>
                         {% for item in data.list %}
-                            <tr>
+                            <tr class="room-reference" data-room="{{ item.room.id }}">
                                 <td>{{ item.room.id }}</td>
                                 <td>{{ item.room.name }}</td>
                                 <td>{{ item.daily }}</td>
@@ -150,4 +151,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/v2/js/dashboard.js') }}"></script>
 {% endblock %}

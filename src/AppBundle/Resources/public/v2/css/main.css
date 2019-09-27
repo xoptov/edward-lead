@@ -784,7 +784,8 @@ header .header_top .header_main .main .balance p {
     height: auto; } }
 
 #main .main_content .content .content_box {
-  margin-bottom: 50px; }
+  margin-bottom: 30px;
+}
 
 @media all and (max-width: 575px) {
   #main .main_content .content .content_box {
