@@ -601,6 +601,11 @@ header .header_top .header_main .main .balance p {
   padding-top: 5px;
   padding-bottom: 5px; }
 
+#main .main_nav .nav ul.nav_box li .nav_title .sub:hover {
+   cursor: pointer;
+}
+
+
 #main .main_nav .nav ul.nav_box li .nav_title .img {
   -webkit-flex-shrink: 0;
       -ms-flex-negative: 0;
