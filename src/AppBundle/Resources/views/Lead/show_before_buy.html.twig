@@ -169,7 +169,7 @@
                 {{ priceWithFee|money_format }}<br/>
                 <span class="fee">С учётом комиссии {{ fee }}%</span>
             </div>
-            {% if app.user != lead.user %}
+            {% if app.user != lead.user and lead.status is constant('STATUS_EXPECT', lead) %}
                 <a class="btn btn-green btn-buy-lead" href="{{ path('app_lead_buy', {'id': lead.id}) }}">
                     Купить лида за {{ priceWithFee|money_format }}
                 </a>

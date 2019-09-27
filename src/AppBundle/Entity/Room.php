@@ -78,11 +78,11 @@ class Room implements IdentifiableInterface
     /**
      * @var float|null
      *
-     * @Assert\GreaterThan(value="0", message="Комиссия должна быть положительной")
+     * @Assert\GreaterThanOrEqual(value="0", message="Комиссия должна быть положительной")
      *
-     * @ORM\Column(name="buyer_fee", type="float", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(name="buyer_fee", type="float", options={"unsigned":"true"})
      */
-    private $buyerFee;
+    private $buyerFee = 0;
 
     /**
      * @var string
