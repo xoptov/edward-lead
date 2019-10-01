@@ -3,7 +3,6 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
@@ -172,16 +171,28 @@ class TemplateExtension extends \Twig_Extension
 
             $lastPhoneCall = $trade->getLastPhoneCall();
 
-            if ($trade->getStatus() === Trade::STATUS_NEW && !$lastPhoneCall) {
+            if ($trade->isNew() && !$lastPhoneCall) {
                 return true;
             }
 
-            if ($trade->getStatus() === Trade::STATUS_CALL_BACK
-                && $lastPhoneCall
-                && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
-                && $trade->getAskCallbackCount() < $this->maxAsksCallback
-            ){
-                return true;
+            if ($trade->isNew() && $lastPhoneCall) {
+                if ($lastPhoneCall->isResultFail()) {
+                    return true;
+                }
+                if ($lastPhoneCall->isEmptyResult() && $lastPhoneCall->isRequested()) {
+                    return true;
+                }
+            }
+
+            if ($trade->isCallback() && $lastPhoneCall) {
+                if ($lastPhoneCall->isResultFail()) {
+                    return true;
+                }
+                if ($trade->hasAskCallbackPhoneCall($lastPhoneCall)
+                    && $trade->getAskCallbackCount() < $this->maxAsksCallback
+                ) {
+                    return true;
+                }
             }
         }
 

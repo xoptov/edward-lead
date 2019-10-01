@@ -9,9 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Shoulder
 {
-    const STATUS_ANSWER = 'answer';
-    const STATUS_BUSY   = 'busy';
-    const STATUS_CANCEL = 'cancel';
+    const STATUS_NO_ANSWER = 'noanswer';
+    const STATUS_ANSWER    = 'answer';
+    const STATUS_BUSY      = 'busy';
+    const STATUS_CANCEL    = 'cancel';
 
     const TARIFF_MOBILE = 'mobile';
     const TARIFF_CITY   = 'city';

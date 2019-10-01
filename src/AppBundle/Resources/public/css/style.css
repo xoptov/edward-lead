@@ -1110,7 +1110,7 @@ textarea {
 }
 
 .text-red {
-    color: #e82d2d;
+    color: #bc0b28;
 }
 
 .btn--form-reg {
@@ -4214,6 +4214,28 @@ input.is-tel-correct:invalid ~ .error-note {
 .label.label-unknown {
     background-color: #0f0f0f;
     color: #fff;
+}
+
+.label-error {
+    display: inline-block;
+    border: 1px solid #bc0b28;
+    padding: 5px 15px;
+    border-radius: 3px;
+    color: #bc0b28;
+    background-color: #f9bfc0;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.label-success {
+    display: inline-block;
+    border: 1px solid #00a368;
+    padding: 5px 15px;
+    border-radius: 3px;
+    color: #00a368;
+    background-color: #99dbb9;
+    margin-top: 20px;
+    margin-left: 20px;
 }
 
 /*.lead_exchange,*/

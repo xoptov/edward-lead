@@ -298,6 +298,46 @@ class Trade extends Operation
     /**
      * @return bool
      */
+    public function isNew(): bool
+    {
+        return self::STATUS_NEW === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccepted(): bool
+    {
+        return self::STATUS_ACCEPTED === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRejected(): bool
+    {
+        return self::STATUS_REJECTED === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProceeding(): bool
+    {
+        return self::STATUS_PROCEEDING === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCallback(): bool
+    {
+        return self::STATUS_CALL_BACK === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
     public function isProcessed(): bool
     {
         return in_array($this->status, [self::STATUS_ACCEPTED, self::STATUS_REJECTED]);
