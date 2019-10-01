@@ -3,8 +3,8 @@
 {% import '@App/common_macros.html.twig' as common_macros %}
 
 {% block content %}
-    {% include '@App/flash_messages.html.twig' %}
     <div class="table_leads" id="my-leads">
+        {% include '@App/flash_messages.html.twig' %}
         <div class="table_leads_layout exposed_leads">
             <div class="exposed_leads_title">
                 <h2>Мои лиды</h2>

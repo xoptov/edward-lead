@@ -53,7 +53,7 @@ class PhoneCallManager
     private $pbxCallUrl;
 
     /**
-     * @var int
+     * @var float
      */
     private $costPerSecond;
 
@@ -69,7 +69,7 @@ class PhoneCallManager
      * @param TransactionManager     $transactionManager
      * @param Client                 $client
      * @param string                 $pbxCallUrl
-     * @param int                    $costPerSecond
+     * @param float                  $costPerSecond
      * @param int                    $firstCallTimeout
      */
     public function __construct(
@@ -79,7 +79,7 @@ class PhoneCallManager
         TransactionManager $transactionManager,
         Client $client,
         string $pbxCallUrl,
-        int $costPerSecond,
+        float $costPerSecond,
         int $firstCallTimeout
     ) {
         $this->entityManager = $entityManager;

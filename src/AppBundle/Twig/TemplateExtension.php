@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
@@ -176,9 +177,16 @@ class TemplateExtension extends \Twig_Extension
                 return true;
             }
 
+            if ($trade->getStatus() === Trade::STATUS_NEW
+                && $lastPhoneCall
+                && $lastPhoneCall->getResult() === PhoneCall::RESULT_FAIL
+            ) {
+                return true;
+            }
+
             if ($trade->getStatus() === Trade::STATUS_CALL_BACK
                 && $lastPhoneCall
-                && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
+                && $trade->hasAskCallbackPhoneCall($lastPhoneCall)
                 && $trade->getAskCallbackCount() < $this->maxAsksCallback
             ){
                 return true;
