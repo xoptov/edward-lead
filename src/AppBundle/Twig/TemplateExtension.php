@@ -116,7 +116,7 @@ class TemplateExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function moneySource(\AppBundle\Entity\Invoice $invoice): string
+    public function moneySource(Invoice $invoice): string
     {
         $transactions = $this->entityManager->getRepository(MonetaryTransaction::class)->findBy(['operation' => $invoice]);
         if ($transactions != null && count($transactions) > 0) {
