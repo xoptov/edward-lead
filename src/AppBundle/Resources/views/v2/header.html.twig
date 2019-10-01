@@ -1,6 +1,6 @@
 {% block header %}
-    <div class="col-lg-3 header_logo">
-        <div class="logo">
+    <div class="col-lg-4 header_logo">
+        <div class="logo" style="display:flex;">
             {% if is_granted('ROLE_WEBMASTER') %}
                 <a href="{{ path('app_dashboard') }}">
                     <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
@@ -10,9 +10,10 @@
                     <img src="{{ asset('bundles/app/img/logo.png') }}">
                 </a>
             {% endif %}
+            <div style="color:#fff;padding-top:8px;margin-left:20px;">Closed Beta Testing</div>
         </div>
     </div>
-    <div class="col-lg-9 header_main">
+    <div class="col-lg-8 header_main">
         <div class="main">
             <div class="balance">
                 <p>Баланс: <span>{{ app.user.balance|money_format }}</span></p>
