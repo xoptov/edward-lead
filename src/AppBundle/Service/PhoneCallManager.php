@@ -60,7 +60,12 @@ class PhoneCallManager
     /**
      * @var int
      */
-    private $firstCallTimeout;
+    private $talkTimeout;
+
+    /**
+     * @var int
+     */
+    private $hangupTimeout;
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -70,7 +75,8 @@ class PhoneCallManager
      * @param Client                 $client
      * @param string                 $pbxCallUrl
      * @param float                  $costPerSecond
-     * @param int                    $firstCallTimeout
+     * @param int                    $talkTimeout
+     * @param int                    $hangupTimeout
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -80,7 +86,8 @@ class PhoneCallManager
         Client $client,
         string $pbxCallUrl,
         float $costPerSecond,
-        int $firstCallTimeout
+        int $talkTimeout,
+        int $hangupTimeout
     ) {
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
@@ -89,7 +96,8 @@ class PhoneCallManager
         $this->client = $client;
         $this->pbxCallUrl = $pbxCallUrl;
         $this->costPerSecond = $costPerSecond;
-        $this->firstCallTimeout = $firstCallTimeout;
+        $this->talkTimeout = $talkTimeout;
+        $this->hangupTimeout = $hangupTimeout;
     }
 
     /**
@@ -115,7 +123,7 @@ class PhoneCallManager
             throw new RequestCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
         }
 
-        $callCost = $this->firstCallTimeout * $this->costPerSecond;
+        $callCost = ($this->talkTimeout * 2 + $this->hangupTimeout) * $this->costPerSecond;
         $callerBalance = $this->accountManager->getAvailableBalance($caller->getAccount());
 
         if ($callCost > $callerBalance) {
@@ -149,7 +157,7 @@ class PhoneCallManager
                 'query' => [
                     'ext' => $phoneCall->getCallerPhone(),
                     'num' => $phoneCall->getLeadPhone(),
-                    'dur' => $this->firstCallTimeout
+                    'dur' => $this->talkTimeout
                 ]
             ]);
             if ($response->getStatusCode() !== Response::HTTP_OK) {

@@ -169,6 +169,38 @@ class PhoneCall extends Operation
     }
 
     /**
+     * @return bool
+     */
+    public function isNew(): bool
+    {
+        return self::STATUS_NEW === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequested(): bool
+    {
+        return self::STATUS_REQUESTED === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProcessed(): bool
+    {
+        return self::STATUS_PROCESSED === $this->status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isError(): bool
+    {
+        return self::STATUS_ERROR === $this->status;
+    }
+
+    /**
      * @param int|null $result
      *
      * @return PhoneCall
@@ -191,9 +223,25 @@ class PhoneCall extends Operation
     /**
      * @return bool
      */
-    public function isProcessed(): bool
+    public function isEmptyResult(): bool
     {
-        return self::STATUS_PROCESSED === $this->status;
+        return null === $this->result;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResultSuccess(): bool
+    {
+        return self::RESULT_SUCCESS === $this->result;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResultFail(): bool
+    {
+        return self::RESULT_FAIL === $this->result;
     }
 
     /**

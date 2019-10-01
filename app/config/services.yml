@@ -219,7 +219,8 @@ services:
         arguments:
             $pbxCallUrl: '%pbx_call_url%'
             $costPerSecond: '%cost_per_second%'
-            $firstCallTimeout: '%first_call_timeout%'
+            $talkTimeout: '%talk_timeout%'
+            $hangupTimeout: '%hangup_timeout%'
 
     AppBundle\Service\PBXCallbackManager:
         arguments:

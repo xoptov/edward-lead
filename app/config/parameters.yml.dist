@@ -30,7 +30,8 @@ parameters:
     # Telephony
     pbx_call_url: 'http://159.253.123.139:81/make.php'
     cost_per_second: 2.0
-    first_call_timeout: 300
+    talk_timeout: 600
+    hangup_timeout: 30
     min_talk_duration: 5
 
     audio_allowed_types: ['audio/webm', 'audio/ogg', 'audio/mpeg', 'audio/mp3', 'audio/wave', 'audio/wav', 'audio/flac']
