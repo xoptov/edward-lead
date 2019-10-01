@@ -1305,7 +1305,7 @@ textarea {
 
 .header__logo {
     margin-left: 10px;
-    width: 176px;
+    /*width: 176px;*/
     height: 32px;
     display: block;
 
