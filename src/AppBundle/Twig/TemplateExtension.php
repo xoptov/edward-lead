@@ -2,7 +2,9 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
@@ -51,6 +53,7 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFilter("hidden_phone", [$this, "hiddenPhone"]),
             new \Twig_SimpleFilter("date_format", [$this, "dateFormat"]),
             new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"]),
+            new \Twig_SimpleFilter("money_source", [$this, "moneySource"]),
             new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone'])
         ];
     }
@@ -106,6 +109,29 @@ class TemplateExtension extends \Twig_Extension
     public function moneyFormat(int $money): string
     {
         return Formatter::humanizeMoney($money);
+    }
+
+    /**
+     * @param Invoice $invoice
+     *
+     * @return string
+     */
+    public function moneySource(\AppBundle\Entity\Invoice $invoice): string
+    {
+        $transactions = $this->entityManager->getRepository(MonetaryTransaction::class)->findBy(['operation' => $invoice]);
+        if ($transactions != null && count($transactions) > 0) {
+            $accountOut = $transactions[0]->getAccount();
+            if ($accountOut != null) {
+                $descName = (string)$accountOut->getDescription();
+                switch ($descName) {
+                    case 'tincoff-bank':
+                        return 'Банковской картой';
+                    case 'tincoff-bank-uric':
+                        return 'Банковский перевод';
+                }
+            }
+        }
+        return 'Ожидается оплата...';
     }
 
     /**

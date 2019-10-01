@@ -155,4 +155,12 @@ class Invoice extends Operation
     {
         return !$this->isNotProcessed();
     }
+
+    /**
+     * @return string
+     */
+    public function getDecorID(): string
+    {
+        return $this->getCreatedAt()->format('dm') . substr($this->getCreatedAt()->format('Y'), 2) . $this->getId();
+    }
 }
