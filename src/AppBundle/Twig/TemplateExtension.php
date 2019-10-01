@@ -177,11 +177,15 @@ class TemplateExtension extends \Twig_Extension
                 return true;
             }
 
-            if ($trade->getStatus() === Trade::STATUS_NEW
-                && $lastPhoneCall
-                && $lastPhoneCall->getResult() === PhoneCall::RESULT_FAIL
-            ) {
-                return true;
+            if ($trade->getStatus() === Trade::STATUS_NEW && $lastPhoneCall) {
+                if ($lastPhoneCall->getResult() === PhoneCall::RESULT_FAIL) {
+                    return true;
+                }
+                if ($lastPhoneCall->getResult() === null
+                    && $lastPhoneCall->getStatus() === PhoneCall::STATUS_REQUESTED
+                ) {
+                    return true;
+                }
             }
 
             if ($trade->getStatus() === Trade::STATUS_CALL_BACK
