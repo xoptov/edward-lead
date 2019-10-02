@@ -28,6 +28,7 @@ parameters:
     upload_max_size: 1048576
 
     # Telephony
+    telephony_enabled: true
     pbx_call_url: 'http://159.253.123.139:81/make.php'
     cost_per_second: 2.0
     talk_timeout: 600

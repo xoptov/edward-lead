@@ -180,6 +180,18 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isPlatformWarranty(): bool
+    {
+        if ($this->room) {
+            return $this->room->isPlatformWarranty();
+        }
+
+        return true;
+    }
+
+    /**
      * @param User $user
      *
      * @return Lead

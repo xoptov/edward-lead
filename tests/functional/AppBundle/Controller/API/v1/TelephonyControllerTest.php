@@ -504,7 +504,6 @@ class TelephonyControllerTest extends WebTestCase
             ->setUser($buyer)
             ->setShortName('ООО Рога и Копыта')
             ->setLargeName('Общество с Ограниченной Ответственностью Рога и Копыта')
-            ->setPhone('79000000004')
             ->setInn('123456789098')
             ->setOgrn('123456789098765')
             ->setKpp('123456789')
@@ -512,7 +511,6 @@ class TelephonyControllerTest extends WebTestCase
             ->setAccountNumber('1234567890987654321234567')
             ->setAddress('г.Краснодар, ул.Красная')
             ->setZipcode('123456')
-            ->setEmail('roga_i_kopyta@xoptov.ru')
             ->setOfficePhone('79000000004');
 
         $this->entityManager->persist($buyerCompany);

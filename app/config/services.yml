@@ -221,6 +221,8 @@ services:
             $costPerSecond: '%cost_per_second%'
             $talkTimeout: '%talk_timeout%'
             $hangupTimeout: '%hangup_timeout%'
+            $maxAsksCallback: '%max_asks_callback%'
+            $telephonyEnabled: '%telephony_enabled%'
 
     AppBundle\Service\PBXCallbackManager:
         arguments:
@@ -243,9 +245,8 @@ services:
 
     AppBundle\Twig\TemplateExtension:
         public: false
-        tags: ['twig.extension']
-        arguments:
-            $maxAsksCallback: '%max_asks_callback%'
+        tags:
+            - { name: 'twig.extension' }
 
     AppBundle\Imagine\Filter\Loader\EllipseMaskFilter:
         tags:

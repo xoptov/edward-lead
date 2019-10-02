@@ -22,9 +22,16 @@ set('writable_dirs', ['var/cache', 'var/logs', 'var/sessions', 'web/uploads', 'w
 
 server('stage', '94.130.178.198')
     ->user('xoptov')
+    ->identityFile('~/.ssh/id_rsa')
     ->set('deploy_path', '/var/www/stage.edward-lead.ru')
     ->pty(true);
 
+
+server('prod', '94.130.178.198')
+    ->user('xoptov')
+    ->identityFile('~/.ssh/id_rsa')
+    ->set('deploy_path', '/var/www/cabinet.edward-lead.ru')
+    ->pty(true);
 
 // Tasks
 
