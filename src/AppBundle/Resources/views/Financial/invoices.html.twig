@@ -19,10 +19,12 @@
                         </tr>
                         {% for invoice in invoices %}
                             <tr>
-                                <td>{{ invoice.id }}</td>
+                                <td>{{ invoice.getDecorID }}</td>
                                 <td>{{ invoice.createdAt|date('d-m-Y H:i:s') }}</td>
                                 <td>{{ invoice.amount|money_format }}</td>
-                                <td>Банковский перевод</td>
+                                <td>
+                                    {{ invoice|money_source }}
+                                </td>
                                 {% if invoice.notProcessed %}
                                     {% set status_class = 'exchange' %}
                                     {% set status_label = 'Ожидание' %}

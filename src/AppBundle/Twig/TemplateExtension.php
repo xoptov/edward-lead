@@ -2,7 +2,9 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
@@ -55,7 +57,8 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
-            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone'])
+            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
+            new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney'])
         ];
     }
 
@@ -107,6 +110,27 @@ class TemplateExtension extends \Twig_Extension
     public function moneyFormat(int $money): string
     {
         return Formatter::humanizeMoney($money);
+    }
+
+    /**
+     * @param Invoice $invoice
+     * 
+     * @return string
+     */
+    public function getSourceOfMoney(Invoice $invoice): string
+    {
+        $outcomeTransaction = reset($invoice->getOutcomeTransactions());
+
+        if ($outcomeTransaction instanceof MonetaryTransaction) {
+            $sourceAccount = $outcomeTransaction->getAccount();
+            if ($sourceAccount->getDescription() === 'tinkoff-bank') {
+                return 'Банковской картой';
+            } elseif ($sourceAccount->getDescription() === 'tincoff-bank-uric') {
+                return 'Банковский перевод';
+            }
+        }
+
+        return 'Ожидается оплата...';
     }
 
     /**
