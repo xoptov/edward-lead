@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\UpdatedAtTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -154,5 +155,13 @@ class Invoice extends Operation
     public function isProcessed(): bool
     {
         return !$this->isNotProcessed();
+    }
+
+    /**
+     * @return string
+     */
+    public function getDecorID(): string
+    {
+        return $this->getCreatedAt()->format('dm') . substr($this->getCreatedAt()->format('Y'), 2) . $this->getId();
     }
 }
