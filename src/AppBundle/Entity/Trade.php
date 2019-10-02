@@ -102,6 +102,16 @@ class Trade extends Operation
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isBuyer(User $user): bool
+    {
+        return $this->getBuyer() === $user;
+    }
+
+    /**
      * @return int|null
      */
     public function getBuyerId(): ?int
@@ -340,6 +350,6 @@ class Trade extends Operation
      */
     public function isProcessed(): bool
     {
-        return in_array($this->status, [self::STATUS_ACCEPTED, self::STATUS_REJECTED]);
+        return $this->isAccepted() || $this->isRejected();
     }
 }

@@ -12,11 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 class TemplateExtension extends \Twig_Extension
 {
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * @var AccountManager
      */
     private $accountManager;
@@ -27,26 +22,15 @@ class TemplateExtension extends \Twig_Extension
     private $leadManager;
 
     /**
-     * @var int
-     */
-    private $maxAsksCallback;
-
-    /**
-     * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
      * @param LeadManager            $leadManager
-     * @param int                    $maxAsksCallback
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
         AccountManager $accountManager,
-        LeadManager $leadManager,
-        int $maxAsksCallback
+        LeadManager $leadManager
     ) {
-        $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
         $this->leadManager = $leadManager;
-        $this->maxAsksCallback = $maxAsksCallback;
     }
 
     /**
@@ -71,8 +55,7 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
-            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
-            new \Twig_SimpleFunction('can_show_call_button', [$this, 'canShowCallButton'])
+            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone'])
         ];
     }
 
@@ -155,47 +138,5 @@ class TemplateExtension extends \Twig_Extension
     public function canShowPhone(Lead $lead, User $user): bool
     {
         return $this->leadManager->isCanShowPhone($lead, $user);
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function canShowCallButton(Lead $lead, User $user): bool
-    {
-        $trade = $lead->getTrade();
-
-        if ($trade && $trade->getBuyer() === $user) {
-
-            $lastPhoneCall = $trade->getLastPhoneCall();
-
-            if ($trade->isNew() && !$lastPhoneCall) {
-                return true;
-            }
-
-            if ($trade->isNew() && $lastPhoneCall) {
-                if ($lastPhoneCall->isResultFail()) {
-                    return true;
-                }
-                if ($lastPhoneCall->isEmptyResult() && $lastPhoneCall->isRequested()) {
-                    return true;
-                }
-            }
-
-            if ($trade->isCallback() && $lastPhoneCall) {
-                if ($lastPhoneCall->isResultFail()) {
-                    return true;
-                }
-                if ($trade->hasAskCallbackPhoneCall($lastPhoneCall)
-                    && $trade->getAskCallbackCount() < $this->maxAsksCallback
-                ) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

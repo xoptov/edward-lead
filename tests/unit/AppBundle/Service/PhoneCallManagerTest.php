@@ -2,8 +2,6 @@
 
 namespace Unit\AppBundle\Service;
 
-use AppBundle\Entity\PBX\Callback;
-use AppBundle\Entity\PBX\Shoulder;
 use GuzzleHttp\Client;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
@@ -13,6 +11,8 @@ use GuzzleHttp\Psr7\Response;
 use Doctrine\ORM\EntityManager;
 use AppBundle\Entity\PhoneCall;
 use PHPUnit\Framework\TestCase;
+use AppBundle\Entity\PBX\Callback;
+use AppBundle\Entity\PBX\Shoulder;
 use AppBundle\Entity\MonetaryHold;
 use AppBundle\Service\HoldManager;
 use AppBundle\Entity\ClientAccount;
@@ -58,10 +58,12 @@ class PhoneCallManagerTest extends TestCase
             ->setCaller($buyer)
             ->setTrade($trade);
 
-        $firstCallTimeout = 300; // сукунды
-        $costPerSecond = 350; // копейки
+        $talkTimeout = 300;   // лимит разговора в секундах.
+        $costPerSecond = 3.33; // стоимость секунды в копейках.
+        $hangupTimeout = 30;  // количество секунд ожидания поднятия трубки.
+        $maxAsksCallback = 2; // количество перезвонов лиду.
 
-        $holdAmount = $firstCallTimeout * $costPerSecond;
+        $holdAmount = $talkTimeout * $costPerSecond;
 
         $hold = new MonetaryHold();
         $hold
@@ -107,7 +109,10 @@ class PhoneCallManagerTest extends TestCase
             $client,
             '/make.php',
             $costPerSecond,
-            $firstCallTimeout
+            $talkTimeout,
+            $hangupTimeout,
+            $maxAsksCallback,
+            true
         );
 
         $result = $phoneCallManager->create($buyer, $trade);
@@ -155,13 +160,13 @@ class PhoneCallManagerTest extends TestCase
         $transactionManager = $this->createMock(TransactionManager::class);
 
         $pbxCallUrl = '/api/make-call';
-        $firstCallTimeout = 300;
+        $talkTimeout = 300;
 
         $requestOptions = [
             'query' => [
                 'ext' => $officePhone,
                 'num' => $leadPhone,
-                'dur' => $firstCallTimeout
+                'dur' => $talkTimeout
             ]
         ];
 
@@ -185,7 +190,9 @@ class PhoneCallManagerTest extends TestCase
             ->with(Request::METHOD_GET, $pbxCallUrl, $requestOptions)
             ->willReturn($response);
 
-        $costPerSecond = 350;
+        $costPerSecond = 3.33;
+        $hangupTimeout = 30;
+        $maxAsksCallback = 2;
 
         /**
          * @var EntityManager      $entityManager
@@ -202,7 +209,10 @@ class PhoneCallManagerTest extends TestCase
             $client,
             $pbxCallUrl,
             $costPerSecond,
-            $firstCallTimeout
+            $talkTimeout,
+            $hangupTimeout,
+            $maxAsksCallback,
+            true
         );
 
         $phoneCallManager->requestConnection($phoneCall);
@@ -224,8 +234,11 @@ class PhoneCallManagerTest extends TestCase
         $transactionManager = $this->createMock(TransactionManager::class);
         $client = $this->createMock(Client::class);
         $pbxCallUrl = 'some_url';
-        $costPerSecond = 1;
-        $firstCallTimeOut = 60;
+
+        $costPerSecond = 3.33;
+        $talkTimeout = 60;
+        $hangupTimeout = 30;
+        $maxAsksCallback = 2;
 
         $phoneCallManager = $this
             ->getMockBuilder(PhoneCallManager::class)
@@ -238,7 +251,10 @@ class PhoneCallManagerTest extends TestCase
                 $client,
                 $pbxCallUrl,
                 $costPerSecond,
-                $firstCallTimeOut
+                $talkTimeout,
+                $hangupTimeout,
+                $maxAsksCallback,
+                true
             ])
             ->setMethodsExcept(['process'])
             ->getMock();
@@ -266,7 +282,7 @@ class PhoneCallManagerTest extends TestCase
         /** @var PhoneCallManager $phoneCallManager */
         $phoneCallManager->process($phoneCall, $pbxCallback);
 
-        $this->assertEquals(25, $phoneCall->getAmount());
+        $this->assertEquals(84, $phoneCall->getAmount());
     }
 
     public function testProcess_failPhoneCall()
@@ -282,8 +298,11 @@ class PhoneCallManagerTest extends TestCase
         $transactionManager = $this->createMock(TransactionManager::class);
         $client = $this->createMock(Client::class);
         $pbxCallUrl = 'some_url';
-        $costPerSecond = 1;
-        $firstCallTimeOut = 60;
+
+        $costPerSecond = 3.33;
+        $talkTimeout = 60;
+        $hangupTimeout = 30;
+        $maxAsksCallback = 2;
 
         $phoneCallManager = $this
             ->getMockBuilder(PhoneCallManager::class)
@@ -296,7 +315,10 @@ class PhoneCallManagerTest extends TestCase
                 $client,
                 $pbxCallUrl,
                 $costPerSecond,
-                $firstCallTimeOut
+                $talkTimeout,
+                $hangupTimeout,
+                $maxAsksCallback,
+                true
             ])
             ->setMethodsExcept(['process'])
             ->getMock();
@@ -324,6 +346,6 @@ class PhoneCallManagerTest extends TestCase
         /** @var PhoneCallManager $phoneCallManager */
         $phoneCallManager->process($phoneCall, $pbxCallback);
 
-        $this->assertEquals(13, $phoneCall->getAmount());
+        $this->assertEquals(44, $phoneCall->getAmount());
     }
 }

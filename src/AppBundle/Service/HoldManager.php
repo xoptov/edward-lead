@@ -46,4 +46,23 @@ class HoldManager
 
         return $monetaryHold;
     }
+
+    /**
+     * @param Operation $operation
+     * @param bool|null $flush
+     */
+    public function remove(Operation $operation, ?bool $flush = true): void
+    {
+        if (!$operation->hasHold()) {
+            return;
+        }
+
+        $hold = $operation->getHold();
+        $operation->setHold(null);
+        $this->entityManager->remove($hold);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
 }

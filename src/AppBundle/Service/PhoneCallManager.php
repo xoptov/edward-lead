@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Lead;
 use GuzzleHttp\Client;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
@@ -68,6 +69,16 @@ class PhoneCallManager
     private $hangupTimeout;
 
     /**
+     * @var int
+     */
+    private $maxAsksCallback;
+
+    /**
+     * @var bool
+     */
+    private $telephonyEnabled;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
      * @param HoldManager            $holdManager
@@ -77,6 +88,8 @@ class PhoneCallManager
      * @param float                  $costPerSecond
      * @param int                    $talkTimeout
      * @param int                    $hangupTimeout
+     * @param int                    $maxAsksCallback
+     * @param bool                   $telephonyEnabled
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -87,7 +100,9 @@ class PhoneCallManager
         string $pbxCallUrl,
         float $costPerSecond,
         int $talkTimeout,
-        int $hangupTimeout
+        int $hangupTimeout,
+        int $maxAsksCallback,
+        bool $telephonyEnabled
     ) {
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
@@ -98,6 +113,8 @@ class PhoneCallManager
         $this->costPerSecond = $costPerSecond;
         $this->talkTimeout = $talkTimeout;
         $this->hangupTimeout = $hangupTimeout;
+        $this->maxAsksCallback = $maxAsksCallback;
+        $this->telephonyEnabled = $telephonyEnabled;
     }
 
     /**
@@ -123,10 +140,9 @@ class PhoneCallManager
             throw new RequestCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');
         }
 
-        $callCost = ($this->talkTimeout * 2 + $this->hangupTimeout) * $this->costPerSecond;
-        $callerBalance = $this->accountManager->getAvailableBalance($caller->getAccount());
+        $callCost = $this->calculateCallCost($this->calculateMinTalkSec());
 
-        if ($callCost > $callerBalance) {
+        if (!$this->isEnoughMoney($caller)) {
             throw new InsufficientFundsException($caller->getAccount(), $callCost, 'Недостаточно средств для совершения звонка');
         }
 
@@ -153,6 +169,7 @@ class PhoneCallManager
     public function requestConnection(PhoneCall $phoneCall, ?bool $flush = true): void
     {
         try {
+
             $response = $this->client->request(Request::METHOD_GET, $this->pbxCallUrl, [
                 'query' => [
                     'ext' => $phoneCall->getCallerPhone(),
@@ -160,16 +177,21 @@ class PhoneCallManager
                     'dur' => $this->talkTimeout
                 ]
             ]);
+
             if ($response->getStatusCode() !== Response::HTTP_OK) {
+                $this->holdManager->remove($phoneCall);
                 throw new OperationException($phoneCall, 'Ошибка запроса соединения');
             }
+
         } catch (GuzzleException $e) {
+            $this->holdManager->remove($phoneCall);
             throw new OperationException($phoneCall, 'Ошибка запроса соединения');
         }
 
         $json = json_decode($response->getBody(), true);
 
         if (!isset($json['call_id'])) {
+            $this->holdManager->remove($phoneCall);
             throw new OperationException($phoneCall, 'Ошибка. Не указан идентификатор вызова');
         }
 
@@ -197,7 +219,8 @@ class PhoneCallManager
             throw new PhoneCallException($phoneCall, 'Телефонный звонок уже обработан');
         }
 
-        $phoneCall->setAmount($pbxCallback->getTotalBillSec() * $this->costPerSecond);
+        $callCost = $this->calculateCallCost($pbxCallback->getTotalBillSec());
+        $phoneCall->setAmount($callCost);
 
         if ($pbxCallback->isSuccess()) {
             $this->processSuccessfulPhoneCall($phoneCall);
@@ -229,14 +252,11 @@ class PhoneCallManager
                 $this->transactionManager->process($transactions);
             }
 
-            if ($phoneCall->hasHold()) {
-                $hold = $phoneCall->takeHold();
-                $em->remove($hold);
-            }
-
             $phoneCall
                 ->setResult(PhoneCall::RESULT_SUCCESS)
                 ->setStatus(PhoneCall::STATUS_PROCESSED);
+
+            $this->holdManager->remove($phoneCall, false);
 
             $em->flush();
         });
@@ -265,16 +285,99 @@ class PhoneCallManager
                 $this->transactionManager->process($transactions);
             }
 
-            if ($phoneCall->hasHold()) {
-                $hold = $phoneCall->takeHold();
-                $em->remove($hold);
-            }
-
             $phoneCall
                 ->setResult(PhoneCall::RESULT_FAIL)
                 ->setStatus(PhoneCall::STATUS_PROCESSED);
 
+            $this->holdManager->remove($phoneCall, false);
+
             $em->flush();
         });
+    }
+
+    /**
+     * @param User $caller
+     *
+     * @return bool
+     */
+    public function isEnoughMoney(User $caller): bool
+    {
+        $callCost = $this->calculateCallCost($this->calculateMinTalkSec());
+        $callerBalance = $this->accountManager->getAvailableBalance($caller->getAccount());
+
+        if ($callCost <= $callerBalance) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $caller
+     * @param Lead $lead
+     *
+     * @return bool
+     */
+    public function isCanMakeCall(User $caller, Lead $lead): bool
+    {
+        if (!$this->telephonyEnabled) {
+            return false;
+        }
+
+        $trade = $lead->getTrade();
+
+        if (empty($trade)) {
+            return false;
+        }
+
+        if ($trade->isProcessed()) {
+            return false;
+        }
+
+        if (!$trade->isBuyer($caller)) {
+            return false;
+        }
+
+        if ($lead->hasRoom() && !$lead->isPlatformWarranty()) {
+            return false;
+        }
+
+        $lastPhoneCall = $trade->getLastPhoneCall();
+
+        if ($trade->isNew()) {
+            if (!$lastPhoneCall
+                || $lastPhoneCall->isResultFail()
+                || ($lastPhoneCall->isEmptyResult() && $lastPhoneCall->isRequested())
+            ) {
+                return true;
+            }
+        } elseif ($trade->isCallback() && $lastPhoneCall) {
+            if ($lastPhoneCall->isResultFail()
+                || ($trade->hasAskCallbackPhoneCall($lastPhoneCall)
+                    && $trade->getAskCallbackCount() < $this->maxAsksCallback)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return int
+     */
+    private function calculateMinTalkSec(): int
+    {
+        return $this->talkTimeout * 2 + $this->hangupTimeout;
+    }
+
+    /**
+     * @param int $seconds
+     *
+     * @return int
+     */
+    private function calculateCallCost(int $seconds): int
+    {
+        return (int)ceil($seconds * $this->costPerSecond);
     }
 }

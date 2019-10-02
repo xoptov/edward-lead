@@ -74,6 +74,12 @@ class TelephonyController extends Controller
             );
         }
 
+        $telephonyEnabled = $this->getParameter('telephony_enabled');
+
+        if (!$telephonyEnabled) {
+            return new JsonResponse(['message' => 'Телефония отключена'], Response::HTTP_BAD_REQUEST);
+        }
+
         try {
             $phoneCall = $this->phoneCallManager->create($this->getUser(), $trade);
             $this->phoneCallManager->requestConnection($phoneCall);
