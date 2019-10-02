@@ -2,14 +2,13 @@
 
 namespace AppBundle\Twig;
 
-use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\AccountManager;
-use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\MonetaryTransaction;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -121,7 +120,8 @@ class TemplateExtension extends \Twig_Extension
     {
         $outcomeTransaction = reset($invoice->getOutcomeTransactions());
 
-        if ($outcomeTransaction instanceof MonetaryTransaction) {
+        /** @var MonetaryTransaction $outcomeTransaction */
+        if ($outcomeTransaction) {
             $sourceAccount = $outcomeTransaction->getAccount();
             if ($sourceAccount->getDescription() === 'tinkoff-bank') {
                 return 'Банковской картой';

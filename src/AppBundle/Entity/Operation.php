@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\CreatedAtTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
@@ -48,6 +49,18 @@ class Operation implements IdentifiableInterface
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\MonetaryHold", mappedBy="operation")
      */
     private $hold;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\MonetaryTransaction", mappedBy="operation")
+     */
+    private $transactions;
+
+    public function __construct()
+    {
+        $this->transactions = new ArrayCollection();
+    }
 
     /**
      * @param null|string $description
@@ -132,5 +145,41 @@ class Operation implements IdentifiableInterface
         $this->hold = null;
 
         return $hold;
+    }
+
+    /**
+     * @return MonetaryTransaction[]
+     */
+    public function getOutcomeTransactions(): array
+    {
+        $outcomeTransactions = [];
+
+        /** @var MonetaryTransaction $transaction */
+        foreach ($this->transactions as $transaction)
+        {
+            if ($transaction->isOutcome()) {
+                $outcomeTransactions[] = $transaction;
+            }
+        }
+
+        return $outcomeTransactions;
+    }
+
+    /**
+     * @return MonetaryTransaction[]
+     */
+    public function getIncomeTransactions(): array
+    {
+        $incomeTransactions = [];
+
+        /** @var MonetaryTransaction $transaction */
+        foreach ($this->transactions as $transaction)
+        {
+            if ($transaction->isIncome()) {
+                $incomeTransactions[] = $transaction;
+            }
+        }
+
+        return $incomeTransactions;
     }
 }

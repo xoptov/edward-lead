@@ -28,7 +28,7 @@ class MonetaryTransaction implements IdentifiableInterface
     /**
      * @var Operation
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Operation")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Operation", inversedBy="transactions")
      * @ORM\JoinColumn(name="operation_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $operation;
@@ -135,5 +135,21 @@ class MonetaryTransaction implements IdentifiableInterface
     public function isProcessed(): bool
     {
         return $this->processed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOutcome(): bool
+    {
+        return $this->amount < 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isIncome(): bool
+    {
+        return $this->amount > 0;
     }
 }

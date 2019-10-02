@@ -23,7 +23,7 @@
                                 <td>{{ invoice.createdAt|date('d-m-Y H:i:s') }}</td>
                                 <td>{{ invoice.amount|money_format }}</td>
                                 <td>
-                                    {{ invoice|money_source }}
+                                    {{ source_of_money(invoice) }}
                                 </td>
                                 {% if invoice.notProcessed %}
                                     {% set status_class = 'exchange' %}
