@@ -77,6 +77,8 @@ class Trade extends Operation
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->phoneCalls = new ArrayCollection();
         $this->askCallbackPhoneCalls = new ArrayCollection();
     }

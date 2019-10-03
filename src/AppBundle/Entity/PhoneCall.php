@@ -69,6 +69,8 @@ class PhoneCall extends Operation
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->callbacks = new ArrayCollection();
     }
 
