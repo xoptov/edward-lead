@@ -7,7 +7,7 @@
                 Имя лида:&nbsp;{{ trade.leadName }}&nbsp;
             {% endif %}
             Телефон:&nbsp;
-            {% if can_show_phone(lead, app.user) %}
+            {% if can_show_phone(trade.lead, app.user) %}
                 {{ trade.leadPhone|human_phone }}
             {% else %}
                 {{ trade.leadPhone|hidden_phone }}
