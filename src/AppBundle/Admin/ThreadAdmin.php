@@ -4,11 +4,11 @@ namespace AppBundle\Admin;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Thread;
+use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
-use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
 
 class ThreadAdmin extends AbstractAdmin
 {
@@ -137,7 +137,10 @@ class ThreadAdmin extends AbstractAdmin
             ])
             ->end();
 
-        if ($this->subject->hasLead()) {
+        $subject = $this->subject;
+
+        if ($subject->hasLead()) {
+
             $showMapper
                 ->with('Lead', [
                     'class' => 'col-xs-4 col-sm-4 col-md-4',
@@ -195,6 +198,23 @@ class ThreadAdmin extends AbstractAdmin
                 'template' => '@App/CRUD/show_messages_field.html.twig'
             ])
             ->end();
+
+        if ($subject->hasLead()) {
+            /** @var Lead $lead */
+            $lead = $subject->getLead();
+
+            if ($lead->hasRoom()) {
+                $showMapper
+                    ->with('Room', [
+                        'class' => 'col-xs-3 col-sm-3 col-md-3',
+                        'box_class' => 'box box-solid box-default'
+                    ])
+                    ->add('lead.room.leadCriteria', null, [
+                        'label' => 'Lead Criteria'
+                    ])
+                    ->end();
+            }
+        }
     }
 
     /**

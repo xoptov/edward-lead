@@ -2,8 +2,6 @@
 
 namespace AppBundle\Controller\Admin;
 
-use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
-use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
 use AppBundle\Entity\Thread;
@@ -12,11 +10,13 @@ use AppBundle\Form\Type\AdminThreadType;
 use FOS\MessageBundle\Composer\Composer;
 use Symfony\Component\Form\FormRenderer;
 use AppBundle\Form\Type\AdminMessageType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Exception\LockException;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
 
 class ThreadController extends CRUDController
 {
