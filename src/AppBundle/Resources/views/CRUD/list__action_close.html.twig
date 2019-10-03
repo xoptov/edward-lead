@@ -2,10 +2,10 @@
     {% set href = '#' %}
     {% set class = 'disabled' %}
     {% set toggle_label = 'Закрыто' %}
-{% elseif object.sellerThread is null and object.typeAppeal == constant('AppBundle\\Entity\\Thread::TYPE_ARBITRATION') %}
-    {% set href = '#' %}
-    {% set class = 'disabled' %}
-    {% set toggle_label = 'Закрыть' %}
+{#{% elseif object.sellerThread is null and object.typeAppeal == constant('AppBundle\\Entity\\Thread::TYPE_ARBITRATION') %}#}
+    {#{% set href = '#' %}#}
+    {#{% set class = 'disabled' %}#}
+    {#{% set toggle_label = 'Закрыть' %}#}
 {% else %}
     {% set href = admin.generateObjectUrl('close', object) %}
     {% set toggle_label = 'Закрыть' %}
