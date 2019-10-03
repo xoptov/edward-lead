@@ -478,7 +478,9 @@ class UserController extends Controller
             ->getIncoming($user->getAccount());
         $result['lastIncomes'] = $lastIncomes;
 
-        $result['lastLeads'] = $leadRepository->findBy(['status' => Lead::STATUS_EXPECT], ['createdAt' => 'DESC'], 5);
+        $result['lastLeads'] = $leadRepository->findBy([
+            'user' => $user
+        ], ['createdAt' => 'DESC'], 6);
 
         return $this->render('@App/User/dashboard.html.twig', ['data' => $result]);
     }
