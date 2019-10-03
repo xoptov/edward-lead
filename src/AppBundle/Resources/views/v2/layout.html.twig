@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
-    <title>Панель управления</title>
     <meta content="" name="description" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -12,6 +11,8 @@
         <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/main.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/blocked-modal.css') }}">
     {%- endblock %}
+    <title>Edward лидогенерация</title>
+    {% include '@App/google_tag_manager_head.html.twig' %}
 </head>
 <body>
     <header>
@@ -45,5 +46,6 @@
         <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
         <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
     {%- endblock %}
+    {% include '@App/google_tag_manager_body.html.twig' %}
 </body>
 </html>
