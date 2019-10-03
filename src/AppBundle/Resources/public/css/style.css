@@ -1739,6 +1739,7 @@ ul.errors li {
 
 .message__content {
     padding-left: 14px;
+    width: 472px;
 }
 
 .message__header {}
@@ -1750,7 +1751,10 @@ ul.errors li {
     font-weight: 400;
 }
 
-.message__text {}
+.message__text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
 .message__images {
     margin-top: 10px;
