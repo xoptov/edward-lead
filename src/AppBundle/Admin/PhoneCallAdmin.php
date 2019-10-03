@@ -49,9 +49,15 @@ class PhoneCallAdmin extends AbstractAdmin
             ->add('caller.company.officePhone', null, [
                 'label' => 'Caller Phone'
             ])
-            ->add('trade.lead.id')
-            ->add('trade.lead.name')
-            ->add('trade.lead.phone')
+            ->add('trade.lead.id', null, [
+                'label' => 'Lead Id'
+            ])
+            ->add('trade.lead.name', null, [
+                'label' => 'Lead Name'
+            ])
+            ->add('trade.lead.phone', null, [
+                'label' => 'Lead Phone'
+            ])
             ->add('status', 'choice', [
                 'choices' => [
                     PhoneCall::STATUS_NEW => 'Новый',
@@ -61,7 +67,7 @@ class PhoneCallAdmin extends AbstractAdmin
                 ]
             ])
             ->add($amount)
-            ->add('callback.recording', null, [
+            ->add('getLastAudioRecord', null, [
                 'label' => 'Recording',
                 'template' => '@App/CRUD/list_recording.html.twig'
             ]);
