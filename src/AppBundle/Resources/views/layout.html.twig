@@ -8,7 +8,8 @@
         <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/blocked-modal.css') }}">
     {% endblock %}
-    <title></title>
+    <title>Edward лидогенерация</title>
+    {% include '@App/google_tag_manager_head.html.twig' %}
 </head>
 <body>
     <div class="header-bg">
@@ -51,5 +52,6 @@
         {%- endif -%}
         <script src="{{ asset('bundles/app/js/main.js') }}"></script>
     {% endblock %}
+    {% include '@App/google_tag_manager_body.html.twig' %}
 </body>
 </html>
