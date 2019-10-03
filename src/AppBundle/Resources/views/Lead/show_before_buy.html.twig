@@ -162,7 +162,9 @@
             <div class="plain__text text-mod-6">Стоимость лида:</div>
             <div class="text-green">
                 {{ priceWithFee|money_format }}<br/>
-                <span class="fee">С учётом комиссии {{ fee }}%</span>
+                {% if lead.hasRoom() and not lead.room.hideFee %}
+                    <span class="fee">С учётом комиссии {{ fee }}%</span>
+                {% endif %}
             </div>
             {% if app.user != lead.user and lead.status is constant('STATUS_EXPECT', lead) %}
                 <a class="btn btn-green btn-buy-lead" href="{{ path('app_lead_buy', {'id': lead.id}) }}">

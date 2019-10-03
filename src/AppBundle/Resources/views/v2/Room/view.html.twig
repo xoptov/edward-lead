@@ -95,7 +95,9 @@
                             {% else %}
                                 Зависит от населенного пункта
                             {% endif %}
-                            <div class="fee">{{ fee }}% комиссия</div>
+                            {% if not room.hideFee %}
+                                <div class="fee">{{ fee }}% комиссия</div>
+                            {% endif %}
                         </span>
                         <div class="box_title proc">Ср. % целевых:</div>
                         <span>Ещё не расчитан</span>

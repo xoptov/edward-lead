@@ -75,7 +75,10 @@ class RoomAdmin extends AbstractAdmin
             ->add('leadCriteria')
             ->add('platformWarranty')
             ->add($leadPrice)
-            ->add('buyerFee', null, ['label' => '% комиссии'])
+            ->add('buyerFee', null, [
+                'template' => '@App/CRUD/list_buyer_fee.html.twig'
+            ])
+            ->add('hideFee')
             ->add('enabled')
             ->add('_action', null, [
                 'actions' => [
@@ -108,7 +111,8 @@ class RoomAdmin extends AbstractAdmin
                 'currency' => 'RUB',
                 'divisor' => Account::DIVISOR
             ])
-            ->add('buyerFee', null, ['label' => '% комиссии'])
+            ->add('buyerFee')
+            ->add('hideFee')
             ->add('enabled');
     }
 
@@ -127,7 +131,10 @@ class RoomAdmin extends AbstractAdmin
             ->add('leadCriteria')
             ->add('platformWarranty')
             ->add($leadPrice)
-            ->add('buyerFee', null, ['label' => '% комиссии'])
+            ->add('buyerFee', null, [
+                'template' => '@App/CRUD/show_buyer_fee.html.twig'
+            ])
+            ->add('hideFee')
             ->add('enabled');
     }
 
@@ -136,6 +143,6 @@ class RoomAdmin extends AbstractAdmin
      */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept(['create', 'edit', 'delete', 'list', 'show']);
+        $collection->clearExcept(['create', 'edit', 'list', 'show']);
     }
 }

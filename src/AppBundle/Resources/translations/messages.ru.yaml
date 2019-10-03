@@ -155,6 +155,8 @@ Order Date: Дата поступления заявки
 Lead Channel: Рекламный источник
 Lead Status: Статус лида
 Chat With Buyer: Открыть диалог с покупателем
+Buyer Fee: Комиссия покупателя
+Hide Fee: Прятать комиссию
 
 lead:
     status:
