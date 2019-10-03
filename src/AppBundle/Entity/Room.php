@@ -92,6 +92,13 @@ class Room implements IdentifiableInterface
     private $inviteToken;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="hide_fee", type="boolean")
+     */
+    private $hideFee = false;
+
+    /**
      * @return User|null
      */
     public function getOwner(): ?User
@@ -260,5 +267,25 @@ class Room implements IdentifiableInterface
     public function getInviteToken(): string
     {
         return $this->inviteToken;
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return Room
+     */
+    public function setHideFee(bool $value): self
+    {
+        $this->hideFee = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHideFee(): bool
+    {
+        return $this->hideFee;
     }
 }

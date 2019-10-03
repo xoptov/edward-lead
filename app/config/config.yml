@@ -38,6 +38,7 @@ twig:
     strict_variables: '%kernel.debug%'
     globals:
         max_asks_callback: '%max_asks_callback%'
+        trade_buyer_fee: '%trade_buyer_fee%'
 
 # Doctrine Configuration
 doctrine:
