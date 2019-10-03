@@ -4,8 +4,8 @@ namespace Tests\unit\AppBundle\Service;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
 use Doctrine\ORM\EntityManagerInterface;

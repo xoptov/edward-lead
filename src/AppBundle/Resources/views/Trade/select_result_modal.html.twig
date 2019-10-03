@@ -2,11 +2,17 @@
     <div class="content-area">
         <h2>Помогите нам улучшить сервис</h2>
         <h3 style="margin:25px;">Дайте нам обратную связь, чтобы наш робот на основании данных формировал рейтинг продавца</h3>
-        {% if trade.leadName is not empty %}
-            <p class="text-gray">Имя лида: {{ trade.leadName }} Телефон: {{ trade.leadPhone|human_phone }}</p>
-        {% else %}
-            <p class="text-gray">Телефон: {{ trade.leadPhone|human_phone }}</p>
-        {% endif %}
+        <p class="text-gray">
+            {% if trade.leadName is not empty %}
+                Имя лида:&nbsp;{{ trade.leadName }}&nbsp;
+            {% endif %}
+            Телефон:&nbsp;
+            {% if can_show_phone(lead, app.user) %}
+                {{ trade.leadPhone|human_phone }}
+            {% else %}
+                {{ trade.leadPhone|hidden_phone }}
+            {% endif %}
+        </p>
         <div class="result-choices">
             <div class="result-case">
                 <div>
