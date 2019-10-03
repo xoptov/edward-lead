@@ -1939,6 +1939,10 @@ main.body_invite {
   .modal .box_btn a.cancel {
     max-width: 100px; } }
 
-.room_list table tr:hover {
+.room_list table tbody tr:hover {
+  cursor: pointer;
+}
+
+.lead_list tbody tr:hover {
   cursor: pointer;
 }
