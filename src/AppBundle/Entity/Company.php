@@ -44,26 +44,26 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(max=30)
+     * @Assert\Length(max=50)
      * @Assert\NotBlank(
      *     message="Необходимо указать короткое название компании",
      *     groups={"Company"}
      * )
      *
-     * @ORM\Column(name="short_name", type="string", length=30)
+     * @ORM\Column(name="short_name", type="string", length=50)
      */
     private $shortName;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(max=60)
+     * @Assert\Length(max=100)
      * @Assert\NotBlank(
      *     message="Необходимо указать полное название компании",
      *     groups={"Company"}
      * )
      *
-     * @ORM\Column(name="large_name", type="string", length=60)
+     * @ORM\Column(name="large_name", type="string", length=100)
      */
     private $largeName;
 
