@@ -18,20 +18,11 @@ class TemplateExtension extends \Twig_Extension
     private $accountManager;
 
     /**
-     * @var LeadManager
-     */
-    private $leadManager;
-
-    /**
      * @param AccountManager         $accountManager
-     * @param LeadManager            $leadManager
      */
-    public function __construct(
-        AccountManager $accountManager,
-        LeadManager $leadManager
-    ) {
+    public function __construct(AccountManager $accountManager)
+    {
         $this->accountManager = $accountManager;
-        $this->leadManager = $leadManager;
     }
 
     /**
@@ -55,7 +46,6 @@ class TemplateExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
-            new \Twig_SimpleFunction('vue_var', [$this, 'vueVariable']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney'])
         ];
@@ -134,16 +124,6 @@ class TemplateExtension extends \Twig_Extension
     }
 
     /**
-     * @param string $var
-     *
-     * @return string
-     */
-    public function vueVariable(string $var): string
-    {
-        return '{{'.$var.'}}';
-    }
-
-    /**
      * @param User $user
      *
      * @return int
@@ -161,6 +141,6 @@ class TemplateExtension extends \Twig_Extension
      */
     public function canShowPhone(Lead $lead, User $user): bool
     {
-        return $this->leadManager->isCanShowPhone($lead, $user);
+        return LeadManager::isCanShowPhone($lead, $user);
     }
 }

@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Util\Formatter;
@@ -65,6 +64,39 @@ class LeadManager
         $this->defaultStarCost = $starCost;
         $this->leadExpirationPeriod = $leadExpirationPeriod;
         $this->leadPerUser = $leadPerUser;
+    }
+
+    /**
+     * @param Lead $lead
+     * @param User $user
+     *
+     * @return bool
+     */
+    public static function isCanShowPhone(Lead $lead, User $user): bool
+    {
+        if ($lead->isOwner($user)) {
+            return true;
+        }
+
+        if (!$lead->hasTrade()) {
+            return false;
+        }
+
+        $trade = $lead->getTrade();
+
+        if (!$trade->isBuyer($user)) {
+            return false;
+        }
+
+        if ($trade->isAccepted()) {
+            return true;
+        }
+
+        if ($trade->isNew() && !$lead->isPlatformWarranty()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -212,33 +244,6 @@ class LeadManager
             ->getByLeadAndBuyerAndStatus($lead, $buyer, Trade::STATUS_ACCEPTED);
 
         return $trade instanceof Trade;
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function isCanShowPhone(Lead $lead, User $user): bool
-    {
-        if ($lead->isOwner($user)) {
-            return true;
-        }
-
-        $room = $lead->getRoom();
-
-        if ($room instanceof Room && !$room->isPlatformWarranty()) {
-            if ($lead->getBuyer() === $user && in_array($lead->getStatus(), [Lead::STATUS_IN_WORK,  Lead::STATUS_TARGET])) {
-                return true;
-            }
-        }
-
-        if ($lead->getBuyer() === $user && $lead->getStatus() === Lead::STATUS_TARGET) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
