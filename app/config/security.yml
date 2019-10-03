@@ -31,7 +31,7 @@ security:
                 username_parameter: login[email]
                 password_parameter: login[password]
                 provider: database_email_user_provider
-                default_target_path: app_select_type
+                default_target_path: app_index
             guard:
                 authenticators:
                     - AppBundle\Security\AccessTokenAuthenticator
