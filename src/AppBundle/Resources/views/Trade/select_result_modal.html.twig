@@ -23,16 +23,20 @@
                     <a class="btn green btn-green" href="{{ path('app_trade_accept', {'id': trade.id}) }}">Выбрать вариант</a>
                 </div>
             </div>
-            <div class="result-case">
-                <div>
-                    <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Позвонить позже</span>
-                    <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/circle.svg') }}" width="72" height="72">
+
+            {% if trade.askCallbackCount() < max_asks_callback %}
+                <div class="result-case">
+                    <div>
+                        <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Позвонить позже</span>
+                        <img style="margin-bottom:20px;" src="{{ asset('bundles/app/img/circle.svg') }}" width="72" height="72">
+                    </div>
+                    <div>
+                        <p>Лид не вышел на<br>связь или просил<br>перезвонить</p>
+                        <a class="btn green btn-green" href="{{ path('app_trade_ask_callback', {'id': trade.id}) }}">Выбрать вариант</a>
+                    </div>
                 </div>
-                <div>
-                    <p>Лид не вышел на<br>связь или просил<br>перезвонить</p>
-                    <a class="btn green btn-green" href="{{ path('app_trade_ask_callback', {'id': trade.id}) }}">Выбрать вариант</a>
-                </div>
-            </div>
+            {% endif %}
+
             <div class="result-case">
                 <div>
                     <span style="margin-bottom:25px;font-size:12px;color:#b4b4b4;">Отправить в арбитраж</span>

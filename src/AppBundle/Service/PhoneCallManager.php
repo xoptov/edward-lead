@@ -354,7 +354,7 @@ class PhoneCallManager
         } elseif ($trade->isCallback() && $lastPhoneCall) {
             if ($lastPhoneCall->isResultFail()
                 || ($trade->hasAskCallbackPhoneCall($lastPhoneCall)
-                    && $trade->getAskCallbackCount() < $this->maxAsksCallback)
+                    && $trade->getAskCallbackCount() <= $this->maxAsksCallback)
             ) {
                 return true;
             }
