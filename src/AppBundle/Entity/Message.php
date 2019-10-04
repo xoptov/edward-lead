@@ -12,7 +12,7 @@ use FOS\MessageBundle\Entity\Message as BaseMessage;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MessageRepository")
  */
 class Message extends BaseMessage implements IdentifiableInterface
 {
