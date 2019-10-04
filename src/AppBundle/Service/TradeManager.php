@@ -339,12 +339,11 @@ class TradeManager
     {
         $lastPhoneCall = $trade->getLastPhoneCall();
 
-        if ($lastPhoneCall) {
-            if ($lastPhoneCall->getResult() === PhoneCall::RESULT_SUCCESS
-                && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
-            ) {
-                return true;
-            }
+        if ($lastPhoneCall
+            && $lastPhoneCall->isResultSuccess()
+            && !$trade->hasAskCallbackPhoneCall($lastPhoneCall)
+        ) {
+            return true;
         }
 
         return false;

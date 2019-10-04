@@ -136,12 +136,14 @@ class TradeController extends Controller
      */
     public function showResultModal(): Response
     {
-        $trade = $this->getDoctrine()
+        $trades = $this->getDoctrine()
             ->getRepository(Trade::class)
             ->getByBuyerAndWarrantyAndIncomplete($this->getUser());
 
-        if ($trade && $this->tradeManager->isCanShowResultModal($trade)) {
-            return $this->render('@App/Trade/select_result_modal.html.twig', ['trade' => $trade]);
+        foreach ($trades as $trade) {
+            if ($this->tradeManager->isCanShowResultModal($trade)) {
+                return $this->render('@App/Trade/select_result_modal.html.twig', ['trade' => $trade]);
+            }
         }
 
         return new Response();
