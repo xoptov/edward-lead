@@ -72,21 +72,18 @@ class TradeRepository extends EntityRepository
     /**
      * @param User $buyer
      *
-     * @return Trade|null
-     *
-     * @throws NonUniqueResultException
+     * @return Trade[]
      */
-    public function getByBuyerAndWarrantyAndIncomplete(User $buyer): ?Trade
+    public function getByBuyerAndWarrantyAndIncomplete(User $buyer): array
     {
         $qb = $this->createWarrantyAndStatusesQueryBuilder([Trade::STATUS_NEW, Trade::STATUS_CALL_BACK]);
         $query = $qb
             ->andWhere('t.buyer = :buyer')
                 ->setParameter('buyer', $buyer)
-            ->setMaxResults(1)
             ->orderBy('t.createdAt', 'ASC')
             ->getQuery();
 
-        return $query->getOneOrNullResult();
+        return $query->getResult();
     }
 
     /**
