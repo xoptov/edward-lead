@@ -151,6 +151,9 @@ var vm = new Vue({
     computed: {
         isCurrentThreadOpen: function() {
             return this.currentThread && this.currentThread.status !== 'closed';
+        },
+        isOpenNewThreadError: function() {
+            return this.openNewThreadError;
         }
     },
     methods: {
@@ -208,11 +211,37 @@ var vm = new Vue({
             }
         },
         createNewThread: function() {
-            this.$http.post('/api/v1/support').then((response) => {
-                this.openedThreads.push(response.data);
-                this.currentThread = response.data;
-                this.$emit('thread-changed');
-            });
+            // Проверяем есть ли таймер запущенный 60 секунд назад.
+            if (this.openNewThreadTimer) {
+                if (!this.openNewThreadError) {
+                    this.openNewThreadError = 'Вы создали обращение меньше минуты назад';
+                }
+                return false;
+            }
+
+            this.$http.post('/api/v1/support')
+                .then((response) => {
+                    this.openNewThreadError = null;
+                    this.openedThreads.push(response.data);
+                    this.currentThread = response.data;
+                    this.$emit('thread-changed');
+                })
+                .catch((event) => {
+                    this.openNewThreadError = event.body.error;
+                    if (!this.errorShowTimer) {
+                        this.errorShowTimer = setTimeout(() => {
+                            this.openNewThreadError = this.errorShowTimer = null;
+                        }, 5000);
+                    }
+                });
+
+            // Блокируем кнопку на фронте.
+            this.openNewThreadTimer = setTimeout(
+                () => {
+                    this.openNewThreadTimer = this.openNewThreadError = null;
+                },
+                60000
+            );
         }
     }
 });

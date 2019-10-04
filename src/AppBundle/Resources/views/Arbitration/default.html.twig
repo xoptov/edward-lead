@@ -51,6 +51,7 @@
                 </div>
             </div>
             {% if not is_granted('ROLE_ADMIN') %}
+                <div class="label-error text-red" v-if="isOpenNewThreadError" v-text="openNewThreadError"></div>
                 <button class="btn btn-middle-green u-margin-auto" @click="createNewThread" v-if="openTab">Открыть новое обращение</button>
             {% endif %}
         </div>

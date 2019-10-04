@@ -48,6 +48,17 @@ class SupportController extends Controller
             return new JsonResponse(['error' => 'В системе нет администраторов'], Response::HTTP_BAD_REQUEST);
         }
 
+        try {
+            $lastThread = $entityManager->getRepository(Thread::class)
+                ->getLastSupportThreadByCreatorAndTimeBound($user, new \DateTime('-1 minute'));
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Произошла ошибка создания обращения'], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($lastThread) {
+            return new JsonResponse(['error' => 'Вы создали обращение меньше минуты назад'], Response::HTTP_BAD_REQUEST);
+        }
+
         /** @var Thread $thread */
         $thread = $this->threadManager->createThread();
         $thread->setCreatedBy($user);

@@ -8,7 +8,7 @@ use FOS\MessageBundle\Model\ParticipantInterface;
 use FOS\MessageBundle\Entity\Thread as BaseThread;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ThreadRepository")
  */
 class Thread extends BaseThread implements IdentifiableInterface
 {
