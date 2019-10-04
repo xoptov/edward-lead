@@ -274,6 +274,7 @@ services:
         arguments:
             $composer: '@fos_message.composer.default'
             $sender: '@fos_message.sender.default'
+            $messageLimitInMinute: '%message_limit_in_minute%'
 
     AppBundle\Controller\API\v1\SupportController:
         arguments:

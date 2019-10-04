@@ -8,6 +8,8 @@ use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
 use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\ReplayType;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,15 +37,23 @@ class ArbitrationController extends Controller
     private $fosSender;
 
     /**
+     * @var int
+     */
+    private $messageLimitInMinute;
+
+    /**
      * @param ComposerInterface $composer
      * @param SenderInterface   $sender
+     * @param int               $messageLimitInMinute
      */
     public function __construct(
         ComposerInterface $composer,
-        SenderInterface $sender
+        SenderInterface $sender,
+        int $messageLimitInMinute
     ) {
         $this->fosComposer = $composer;
         $this->fosSender = $sender;
+        $this->messageLimitInMinute = $messageLimitInMinute;
     }
 
     /**
@@ -97,13 +107,15 @@ class ArbitrationController extends Controller
      *
      * @param Request                $request
      * @param CacheManager           $cacheManager
+     * @param EntityManagerInterface $entityManager
      *
      * @return JsonResponse
      */
     public function reply(
         Request $request,
-        CacheManager $cacheManager
-    ) : JsonResponse {
+        CacheManager $cacheManager,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
 
         $form = $this->createForm(ReplayType::class);
         $form->handleRequest($request);
@@ -117,16 +129,33 @@ class ArbitrationController extends Controller
             return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // todo: Нравится ли мне как тут я сделал? Нет конечно! Но! Блять я уже устал в пятницу вечером и хочу домой.
+        try {
+            $messageInTimeFrame = $entityManager->getRepository(Message::class)
+                ->getCountInTimeFrameBySender($user, 60);
+
+            if ($messageInTimeFrame >= $this->messageLimitInMinute) {
+                return new JsonResponse([
+                    'errors' => ['Вы слишком часто пишите сообщения. Подождите 10 минут']
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+        } catch (DBALException $e) {
+            return new JsonResponse(['errors' => ['Произошла ошибка при приёме сообщения']], Response::HTTP_BAD_REQUEST);
+        }
+
         /** @var Message $message */
         $data = $form->getData();
 
-        /** @var User $user */
-        $user = $this->getUser();
 
         $messageBuilder = $this->fosComposer->reply($data['thread']);
         $messageBuilder->setBody($data['body']);
         $messageBuilder->setSender($user);
         $message = $messageBuilder->getMessage();
+
         /** @var Thread $thread */
         $thread = $message->getThread();
         $thread->setStatus(Thread::STATUS_WAIT_SUPPORT);
