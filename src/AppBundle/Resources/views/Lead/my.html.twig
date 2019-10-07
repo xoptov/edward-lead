@@ -110,6 +110,9 @@
                                     </td>
                                     <td>
                                         <div class="table_link">
+                                            {% if trade.lastPhoneCall %}
+                                                <a href="{{ path('app_telephony_listen_record', {'call_id': trade.lastPhoneCall.id }) }}" class="speaker" target="_blank"></a>
+                                            {% endif %}
                                             <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
                                         </div>
                                     </td>
