@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=1200">
+    <title>Edward лидогенерация</title>
+</head>
+<body>
+    <div>
+        {% if phoneCall.lastAudioRecord %}
+            <audio src="{{ phoneCall.lastAudioRecord }}" controls></audio>
+            <div>
+                <a href="{{ phoneCall.lastAudioRecord }}">Скачать</a>
+            </div>
+        {% else %}
+            Нет записи последненго разговора
+        {% endif %}
+    </div>
+</body>
+</html>

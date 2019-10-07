@@ -26,4 +26,18 @@ class TelephonyController extends Controller
             'phoneCalls' => $phoneCalls
         ]);
     }
+
+    /**
+     * @Route("/telephony/{id}", name="app_telephony_listen_record", methods={"GET"})
+     *
+     * @param PhoneCall $phoneCall
+     *
+     * @return Response
+     */
+    public function listenAudioRecord(PhoneCall $phoneCall): Response
+    {
+        return $this->render('@App/Telephony/listen_audio_record.html.twig', [
+            'phoneCall' => $phoneCall
+        ]);
+    }
 }
