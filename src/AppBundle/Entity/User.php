@@ -179,6 +179,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var int|null
      *
+     * @Assert\GreaterThanOrEqual(value=0, message="Значение может быть 0 или больше")
+     *
      * @ORM\Column(name="sale_lead_limit", type="integer", nullable=true)
      */
     private $saleLeadLimit;
