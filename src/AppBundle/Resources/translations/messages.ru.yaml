@@ -157,6 +157,8 @@ Lead Status: Статус лида
 Chat With Buyer: Открыть диалог с покупателем
 Buyer Fee: Комиссия покупателя
 Hide Fee: Прятать комиссию
+Last Call AnswerAt: Дата и время звонка
+Trade Lead Phone: Телефон лида
 
 lead:
     status:
