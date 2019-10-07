@@ -2,14 +2,12 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Trade;
+use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
-use AppBundle\Exception\OperationException;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
