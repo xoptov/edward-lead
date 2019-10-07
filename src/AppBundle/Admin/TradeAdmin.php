@@ -33,6 +33,7 @@ class TradeAdmin extends AbstractAdmin
             ])
             ->add('_action', null, [
                 'actions' => [
+                    'accept' => ['template' => '@App/CRUD/list__action_accept.html.twig'],
                     'reject' => ['template' => '@App/CRUD/list__action_reject.html.twig'],
                     'show' => []
                 ]
