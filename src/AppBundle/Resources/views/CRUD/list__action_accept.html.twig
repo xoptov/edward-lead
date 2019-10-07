@@ -1,5 +1,5 @@
-{% if object.isProcessed() == false %}
+{% if not object.isProcessed() %}
     <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('accept', object) }}">
-        <i class="fa fa-ban"></i> Принять
+        <i class="fa fa-check"></i> Принять
     </a>
 {% endif %}

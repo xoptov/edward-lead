@@ -1,4 +1,4 @@
-{% if object.isProcessed() == false %}
+{% if not object.isProcessed() %}
     <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('reject', object) }}">
         <i class="fa fa-ban"></i> Отклонить
     </a>
