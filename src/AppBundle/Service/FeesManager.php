@@ -43,14 +43,6 @@ class FeesManager
     /**
      * @return float
      */
-    public function getTradeBuyerFee(): float
-    {
-        return $this->tradeBuyerFee;
-    }
-
-    /**
-     * @return float
-     */
     public function getTradeSellerFee(): float
     {
         return $this->tradeSellerFee;

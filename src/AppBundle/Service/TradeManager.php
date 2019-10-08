@@ -103,7 +103,11 @@ class TradeManager
         }
 
         $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
-        $fee = $this->feesManager->calculateTradeFee($amount, $this->feesManager->getTradeBuyerFee());
+
+        $fee = $this->feesManager->calculateTradeFee(
+            $amount,
+            $this->feesManager->getCommissionForBuyingLead($lead)
+        );
 
         $costWithFee = $amount + $fee;
 
@@ -138,7 +142,11 @@ class TradeManager
         }
 
         $buyerAccount = $trade->getBuyerAccount();
-        $buyerFee = $this->feesManager->calculateTradeFee($trade->getAmount(), $this->feesManager->getTradeBuyerFee());
+
+        $buyerFee = $this->feesManager->calculateTradeFee(
+            $trade->getAmount(),
+            $this->feesManager->getCommissionForBuyingLead($trade->getLead())
+        );
 
         if ($buyerAccount->getBalance() < $trade->getAmount() + $buyerFee) {
             throw new InsufficientFundsException(
