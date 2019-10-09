@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Security\Voter\PhoneCallVoter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,6 +37,10 @@ class TelephonyController extends Controller
      */
     public function listenAudioRecord(PhoneCall $phoneCall): Response
     {
+        if (!$this->isGranted(PhoneCallVoter::LISTEN, $phoneCall)) {
+            return new Response('У Вас нет прав на прослушивание телефонного разговора');
+        }
+
         return $this->render('@App/Telephony/listen_audio_record.html.twig', [
             'phoneCall' => $phoneCall
         ]);

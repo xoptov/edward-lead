@@ -174,6 +174,26 @@ class Trade extends Operation
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isSeller(User $user): bool
+    {
+        return $this->getSeller() === $user;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isDealMember(User $user): bool
+    {
+        return $this->isBuyer($user) || $this->isSeller($user);
+    }
+
+    /**
      * @param Lead $lead
      *
      * @return Trade
