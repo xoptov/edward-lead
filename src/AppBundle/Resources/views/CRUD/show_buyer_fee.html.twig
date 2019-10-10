@@ -1,8 +1,10 @@
 {% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
 
-{% block field%}
-    {% if value is empty or value == 0 %}
+{% block field %}
+    {% if value is null %}
         {{ trade_buyer_fee|number_format(2) }}%
+    {% elseif value == 0 %}
+        Без комиссии
     {% else %}
         {{ value|number_format(2) }}%
     {% endif %}

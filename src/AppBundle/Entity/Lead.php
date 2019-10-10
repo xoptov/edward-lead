@@ -272,6 +272,16 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isBuyer(User $user): bool
+    {
+        return $this->getBuyer() === $user;
+    }
+
+    /**
      * @param null|string $name
      *
      * @return Lead
@@ -563,6 +573,26 @@ class Lead implements IdentifiableInterface
         }
 
         return $this->price;
+    }
+
+    /**
+     * @param int|null $divisor
+     *
+     * @return int|null
+     */
+    public function getPriceWithMargin(?int $divisor = null): ?int
+    {
+        if ($this->room && $this->room->hasHiddenMargin()) {
+            $price = $this->price + $this->room->getHiddenMargin();
+        } else {
+            $price = $this->price;
+        }
+
+        if ($divisor) {
+            return $price / $divisor;
+        }
+
+        return $price;
     }
 
     /**

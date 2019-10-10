@@ -84,7 +84,6 @@ class TradeManager
      * @param User      $buyer
      * @param User      $seller
      * @param Lead      $lead
-     * @param int       $amount
      * @param bool|null $flush
      *
      * @return Trade
@@ -92,7 +91,7 @@ class TradeManager
      * @throws FinancialException
      * @throws TradeException
      */
-    public function start(User $buyer, User $seller, Lead $lead, int $amount, ?bool $flush = true): Trade
+    public function start(User $buyer, User $seller, Lead $lead, ?bool $flush = true): Trade
     {
         if ($lead->getStatus() !== Lead::STATUS_EXPECT) {
             throw new TradeException($lead, $buyer, $seller, 'У лида должен быть статус активный для совершения сделки');
@@ -102,20 +101,17 @@ class TradeManager
             throw new TradeException($lead, $buyer, $seller, 'Пользователь не может купить лида сам у себя');
         }
 
+        $leadPrice = $lead->getPriceWithMargin();
+
+        $costWithFee = $this->calculateCostWithMarginWithFee($lead);
+
         $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
-
-        $fee = $this->feesManager->calculateTradeFee(
-            $amount,
-            $this->feesManager->getCommissionForBuyingLead($lead)
-        );
-
-        $costWithFee = $amount + $fee;
 
         if ($buyerBalance < $costWithFee) {
             throw new InsufficientFundsException($buyer->getAccount(), $costWithFee, 'Недостаточно средств у покупателя');
         }
 
-        $trade = $this->create($buyer, $seller, $lead, $amount);
+        $trade = $this->create($buyer, $seller, $lead, $leadPrice);
         $lead->setStatus(Lead::STATUS_IN_WORK);
 
         $hold = $this->holdManager->create($buyer->getAccount(), $trade, $costWithFee, false);
@@ -143,7 +139,7 @@ class TradeManager
 
         $buyerAccount = $trade->getBuyerAccount();
 
-        $buyerFee = $this->feesManager->calculateTradeFee(
+        $buyerFee = $this->feesManager->calculateFee(
             $trade->getAmount(),
             $this->feesManager->getCommissionForBuyingLead($trade->getLead())
         );
@@ -157,7 +153,7 @@ class TradeManager
         }
 
         $sellerAccount = $trade->getSellerAccount();
-        $sellerFee = $this->feesManager->calculateTradeFee($trade->getAmount(), $this->feesManager->getTradeSellerFee());
+        $sellerFee = $this->feesManager->calculateFee($trade->getAmount(), $this->feesManager->getTradeSellerFee());
 
         if ($sellerAccount->getBalance() < $sellerFee) {
             throw new InsufficientFundsException(
@@ -355,6 +351,44 @@ class TradeManager
         }
 
         return false;
+    }
+
+    /**
+     * Метод для расчёта стоимости с учётом комиссии и без учёта наценки.
+     *
+     * @param Lead $lead
+     *
+     * @return int
+     */
+    public function calculateCostWithFee(Lead $lead): int
+    {
+        $interest = $this->feesManager->getCommissionForBuyingLead($lead);
+
+        if ($interest) {
+            return $lead->getPrice() + FeesManager::calculateFee($lead->getPrice(), $interest);
+        }
+
+        return $lead->getPrice();
+    }
+
+    /**
+     * Метод для расчёта стоимости с учётом наценки и комиссии.
+     *
+     * @param Lead $lead
+     *
+     * @return int
+     */
+    public function calculateCostWithMarginWithFee(Lead $lead): int
+    {
+        $leadPrice = $lead->getPriceWithMargin();
+
+        $interest = $this->feesManager->getCommissionForBuyingLead($lead);
+
+        if ($interest) {
+            return $leadPrice + FeesManager::calculateFee($leadPrice, $interest);
+        }
+
+        return $leadPrice;
     }
 
     /**

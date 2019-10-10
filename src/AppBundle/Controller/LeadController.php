@@ -8,8 +8,8 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Service\FeesManager;
-use AppBundle\Service\PhoneCallManager;
 use AppBundle\Service\TradeManager;
+use AppBundle\Service\PhoneCallManager;
 use AppBundle\Security\Voter\LeadBuyVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
 use Symfony\Component\HttpFoundation\Response;
@@ -102,26 +102,34 @@ class LeadController extends Controller
      * @Route("/lead/{id}", name="app_lead_show", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @param Lead             $lead
+     * @param TradeManager     $tradeManager
      * @param FeesManager      $feesManager
      * @param PhoneCallManager $phoneCallManager
      *
      * @return Response
      */
-    public function showLeadAction(Lead $lead, FeesManager $feesManager, PhoneCallManager $phoneCallManager): Response
-    {
+    public function showLeadAction(
+        Lead $lead,
+        TradeManager $tradeManager,
+        FeesManager $feesManager,
+        PhoneCallManager $phoneCallManager
+    ): Response {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
 
             return $this->redirectToRoute('app_leads_my');
         }
 
-        if ($lead->getUser() === $this->getUser()) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($lead->isOwner($user)) {
             return $this->render('@App/Lead/show_before_buy.html.twig', [
                 'lead' => $lead,
-                'priceWithFee' => $feesManager->getLeadPriceWithBuyerFee($lead),
+                'priceWithFee' => $tradeManager->calculateCostWithFee($lead),
                 'fee' => $feesManager->getCommissionForBuyingLead($lead)
             ]);
-        } elseif ($lead->getBuyer() === $this->getUser()) {
+        } elseif ($lead->isBuyer($user)) {
             $canMakeCall = $phoneCallManager->isCanMakeCall($this->getUser(), $lead);
 
             return $this->render('@App/Lead/show_after_buy.html.twig', [
@@ -132,7 +140,7 @@ class LeadController extends Controller
         } else {
             return $this->render("@App/Lead/show_before_buy.html.twig", [
                 'lead' => $lead,
-                'priceWithFee' => $feesManager->getLeadPriceWithBuyerFee($lead),
+                'priceWithFee' => $tradeManager->calculateCostWithMarginWithFee($lead),
                 'fee' => $feesManager->getCommissionForBuyingLead($lead)
             ]);
         }
@@ -154,7 +162,7 @@ class LeadController extends Controller
         }
 
         try {
-            $trade = $this->tradeManager->start($this->getUser(), $lead->getUser(), $lead, $lead->getPrice());
+            $trade = $this->tradeManager->start($this->getUser(), $lead->getUser(), $lead);
             $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());

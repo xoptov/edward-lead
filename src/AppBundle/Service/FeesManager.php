@@ -41,22 +41,22 @@ class FeesManager
     }
 
     /**
-     * @return float
-     */
-    public function getTradeSellerFee(): float
-    {
-        return $this->tradeSellerFee;
-    }
-
-    /**
      * @param int   $amount
      * @param float $interest
      *
      * @return int
      */
-    public function calculateTradeFee(int $amount, float $interest): int
+    public static function calculateFee(int $amount, float $interest): int
     {
         return (int)ceil($amount * $interest / 100);
+    }
+
+    /**
+     * @return float
+     */
+    public function getTradeSellerFee(): float
+    {
+        return $this->tradeSellerFee;
     }
 
     /**
@@ -69,7 +69,7 @@ class FeesManager
     {
         $fees = [];
 
-        $feeAmount = $this->calculateTradeFee(
+        $feeAmount = $this->calculateFee(
             $trade->getAmount(),
             $this->getCommissionForBuyingLead($trade->getLead())
         );
@@ -86,7 +86,7 @@ class FeesManager
             $fees[] = $fee;
         }
 
-        $feeAmount = $this->calculateTradeFee($trade->getAmount(), $this->tradeSellerFee);
+        $feeAmount = $this->calculateFee($trade->getAmount(), $this->tradeSellerFee);
 
         if ($feeAmount > 0) {
             $fee = new Fee();
@@ -108,17 +108,21 @@ class FeesManager
     }
 
     /**
+     * Метод возвращает величину комиссии.
+     *
      * @param Room $room
      *
      * @return float
      */
     public function getCommissionForBuyerInRoom(Room $room): float
     {
-        if ($room->getBuyerFee()) {
-            return $room->getBuyerFee();
+        $buyerFee = $room->getBuyerFee();
+
+        if (is_null($buyerFee)) {
+            return $this->tradeBuyerFee;
         }
 
-        return $this->tradeBuyerFee;
+        return $buyerFee;
     }
 
     /**
@@ -133,15 +137,5 @@ class FeesManager
         }
 
         return $this->tradeBuyerFee;
-    }
-
-    /**
-     * @param Lead $lead
-     *
-     * @return int
-     */
-    public function getLeadPriceWithBuyerFee(Lead $lead): int
-    {
-        return (int)ceil($lead->getPrice() + $lead->getPrice() * $this->getCommissionForBuyingLead($lead) / 100);
     }
 }

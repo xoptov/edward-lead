@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Invoice;
-use AppBundle\Event\InvoiceEvent;
 use AppBundle\Event\WithdrawEvent;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\InvoiceManager;

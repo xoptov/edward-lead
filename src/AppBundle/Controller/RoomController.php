@@ -176,16 +176,12 @@ class RoomController extends Controller
             $totalAvailableMoney += $accountManager->getAvailableBalance($buyer->getAccount());
         }
 
-        $countCanBy = 0;
-
-        if ($totalAvailableMoney > 0) {
-            $countCanBy = floor($totalAvailableMoney / $room->getLeadPrice());
-        }
+        $buyerFee = $feesManager->getCommissionForBuyerInRoom($room);
 
         return $this->render('@App/v2/Room/view.html.twig', [
             'room' => $room,
             'leads' => $leads,
-            'countCanBuy' => (int)$countCanBy,
+            'countCanBuy' => $this->roomManager->countCanBuy($room, $buyerFee, $totalAvailableMoney),
             'fee' => $feesManager->getCommissionForBuyerInRoom($room)
         ]);
     }
