@@ -2,9 +2,9 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Table(name="trade")
@@ -68,7 +68,7 @@ class Trade extends Operation
     /**
      * @var int
      *
-     * @ORM\Column(name="status", type="smallint", options={"unsigned"="true"})
+     * @ORM\Column(name="status", type="smallint", options={"unsigned":"true"})
      */
     private $status = self::STATUS_NEW;
 

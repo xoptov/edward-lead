@@ -69,31 +69,52 @@ class FeesManager
     {
         $fees = [];
 
-        $feeAmount = $this->calculateFee(
-            $trade->getAmount(),
-            $this->getCommissionForBuyingLead($trade->getLead())
-        );
-
-        if ($feeAmount > 0) {
+        if ($trade->getLead() && $trade->getLead()->getHiddenMargin()) {
+            $hiddenMargin = $trade->getLead()->getHiddenMargin();
             $fee = new Fee();
-            $fee->setOperation($trade)
+            $fee
+                ->setOperation($trade)
                 ->setPayer($trade->getBuyer())
-                ->setDescription('Комиссия на сделку для покупателя')
-                ->setAmount($feeAmount);
+                ->setDescription('Наценка системы для покупателя')
+                ->setAmount($hiddenMargin);
 
             $this->entityManager->persist($fee);
 
             $fees[] = $fee;
         }
 
-        $feeAmount = $this->calculateFee($trade->getAmount(), $this->tradeSellerFee);
+        if (isset($hiddenMargin) && $hiddenMargin) {
+            $baseAmount = $trade->getAmount() + $hiddenMargin;
+        } else {
+            $baseAmount = $trade->getAmount();
+        }
 
-        if ($feeAmount > 0) {
+        $amount = $this->calculateFee(
+            $baseAmount,
+            $this->getCommissionForBuyingLead($trade->getLead())
+        );
+
+        if ($amount > 0) {
+            $fee = new Fee();
+            $fee
+                ->setOperation($trade)
+                ->setPayer($trade->getBuyer())
+                ->setDescription('Комиссия на сделку для покупателя')
+                ->setAmount($amount);
+
+            $this->entityManager->persist($fee);
+
+            $fees[] = $fee;
+        }
+
+        $amount = $this->calculateFee($trade->getAmount(), $this->tradeSellerFee);
+
+        if ($amount > 0) {
             $fee = new Fee();
             $fee->setOperation($trade)
                 ->setPayer($trade->getSeller())
                 ->setDescription('Комиссия на сделку для продавца')
-                ->setAmount($feeAmount);
+                ->setAmount($amount);
 
             $this->entityManager->persist($fee);
 
@@ -108,7 +129,7 @@ class FeesManager
     }
 
     /**
-     * Метод возвращает величину комиссии.
+     * Метод возвращает величину комиссии в процентах по комнате.
      *
      * @param Room $room
      *
@@ -126,6 +147,8 @@ class FeesManager
     }
 
     /**
+     * Метод возвращает величину комиссии в процентах по лиду.
+     *
      * @param Lead $lead
      *
      * @return float

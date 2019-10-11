@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Fee;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
@@ -93,29 +94,33 @@ class TradeManager
      */
     public function start(User $buyer, User $seller, Lead $lead, ?bool $flush = true): Trade
     {
-        if ($lead->getStatus() !== Lead::STATUS_EXPECT) {
+        if (!$lead->isExpected()) {
             throw new TradeException($lead, $buyer, $seller, 'У лида должен быть статус активный для совершения сделки');
         }
 
-        if ($lead->getUser() === $buyer) {
+        if ($lead->isOwner($buyer)) {
             throw new TradeException($lead, $buyer, $seller, 'Пользователь не может купить лида сам у себя');
         }
 
-        $leadPrice = $lead->getPriceWithMargin();
-
-        $costWithFee = $this->calculateCostWithMarginWithFee($lead);
-
+        $amountForHold = $this->calculateCostWithMarginWithFee($lead);
         $buyerBalance = $this->accountManager->getAvailableBalance($buyer->getAccount());
 
-        if ($buyerBalance < $costWithFee) {
-            throw new InsufficientFundsException($buyer->getAccount(), $costWithFee, 'Недостаточно средств у покупателя');
+        if ($buyerBalance < $amountForHold) {
+            throw new InsufficientFundsException($buyer->getAccount(), $amountForHold, 'Недостаточно средств у покупателя');
         }
 
-        $trade = $this->create($buyer, $seller, $lead, $leadPrice);
-        $lead->setStatus(Lead::STATUS_IN_WORK);
+        $trade = $this->create($buyer, $seller, $lead);
 
-        $hold = $this->holdManager->create($buyer->getAccount(), $trade, $costWithFee, false);
+        $hold = $this->holdManager->create($buyer->getAccount(), $trade, $amountForHold, false);
         $trade->setHold($hold);
+
+        $fees = $this->feesManager->createForTrade($trade, false);
+
+        foreach ($fees as $fee) {
+            $trade->addFee($fee);
+        }
+
+        $lead->setStatus(Lead::STATUS_IN_WORK);
 
         if ($flush) {
             $this->entityManager->flush();
@@ -137,36 +142,13 @@ class TradeManager
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        $buyerAccount = $trade->getBuyerAccount();
-
-        $buyerFee = $this->feesManager->calculateFee(
-            $trade->getAmount(),
-            $this->feesManager->getCommissionForBuyingLead($trade->getLead())
-        );
-
-        if ($buyerAccount->getBalance() < $trade->getAmount() + $buyerFee) {
-            throw new InsufficientFundsException(
-                $buyerAccount,
-                $trade->getAmount() + $buyerFee,
-                'У покупателя недостаточно средств для завершения сделки'
-            );
-        }
-
-        $sellerAccount = $trade->getSellerAccount();
-        $sellerFee = $this->feesManager->calculateFee($trade->getAmount(), $this->feesManager->getTradeSellerFee());
-
-        if ($sellerAccount->getBalance() < $sellerFee) {
-            throw new InsufficientFundsException(
-                $sellerAccount,
-                $sellerFee,
-                'У продавца недостаточно средств для завершения сделки'
-            );
-        }
-
-        $fees = $this->feesManager->createForTrade($trade, false);
         $transactions = [];
 
-        foreach ($fees as $fee) {
+        /** @var Fee $fee */
+        foreach ($trade->getFees() as $fee) {
+            if ($fee->isProcessed()) {
+                continue;
+            }
             $transactions = array_merge(
                 $transactions,
                 $this->transactionManager->create($fee->getPayerAccount(), $feesAccount, $fee, false)
@@ -183,6 +165,11 @@ class TradeManager
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($trade, $transactions) {
 
             $this->transactionManager->process($transactions);
+
+            /** @var Fee $fee */
+            foreach ($trade->getFees() as $fee) {
+                $fee->setStatus(Fee::STATUS_PROCESSED);
+            }
 
             $trade->setStatus(Trade::STATUS_ACCEPTED);
             $trade->getLead()->setStatus(Lead::STATUS_TARGET);
@@ -214,6 +201,12 @@ class TradeManager
 
             $trade->setStatus(Trade::STATUS_REJECTED);
             $lead->setStatus(Lead::STATUS_NOT_TARGET);
+
+            /** @var Fee $fee */
+            foreach ($trade->getFees() as $fee) {
+                $this->entityManager->remove($fee);
+                $trade->removeFee($fee);
+            }
 
             if ($trade->hasHold()) {
                 $hold = $trade->getHold();
@@ -395,11 +388,10 @@ class TradeManager
      * @param User $buyer
      * @param User $seller
      * @param Lead $lead
-     * @param int  $amount
      *
      * @return Trade
      */
-    private function create(User $buyer, User $seller, Lead $lead, int $amount): Trade
+    private function create(User $buyer, User $seller, Lead $lead): Trade
     {
         $trade = new Trade();
         $trade
@@ -407,7 +399,7 @@ class TradeManager
             ->setSeller($seller)
             ->setLead($lead)
             ->setDescription(self::START_TRADE_DESCRIPTION)
-            ->setAmount($amount);
+            ->setAmount($lead->getPrice());
 
         $this->entityManager->persist($trade);
 

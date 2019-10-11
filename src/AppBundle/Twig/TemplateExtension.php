@@ -7,6 +7,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
+use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Entity\MonetaryTransaction;
 
@@ -18,11 +19,20 @@ class TemplateExtension extends \Twig_Extension
     private $accountManager;
 
     /**
-     * @param AccountManager         $accountManager
+     * @var TradeManager
      */
-    public function __construct(AccountManager $accountManager)
-    {
+    private $tradeManager;
+
+    /**
+     * @param AccountManager $accountManager
+     * @param TradeManager   $tradeManager
+     */
+    public function __construct(
+        AccountManager $accountManager,
+        TradeManager $tradeManager
+    ) {
         $this->accountManager = $accountManager;
+        $this->tradeManager = $tradeManager;
     }
 
     /**
@@ -47,7 +57,8 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
-            new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney'])
+            new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
+            new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
         ];
     }
 
@@ -142,5 +153,15 @@ class TemplateExtension extends \Twig_Extension
     public function canShowPhone(Lead $lead, User $user): bool
     {
         return LeadManager::isCanShowPhone($lead, $user);
+    }
+
+    /**
+     * @param Lead $lead
+     *
+     * @return int
+     */
+    public function getFinalPrice(Lead $lead): int
+    {
+        return $this->tradeManager->calculateCostWithMarginWithFee($lead);
     }
 }

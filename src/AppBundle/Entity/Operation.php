@@ -53,12 +53,20 @@ class Operation implements IdentifiableInterface
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Fee", mappedBy="operation");
+     */
+    private $fees;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\MonetaryTransaction", mappedBy="operation")
      */
     private $transactions;
 
     public function __construct()
     {
+        $this->fees = new ArrayCollection();
         $this->transactions = new ArrayCollection();
     }
 
@@ -145,6 +153,39 @@ class Operation implements IdentifiableInterface
         $this->hold = null;
 
         return $hold;
+    }
+
+    /**
+     * @param Fee $fee
+     *
+     * @return bool
+     */
+    public function addFee(Fee $fee): bool
+    {
+        // Пока так запрещаем добавлять комиссию на комиссию.
+        if ($this instanceof Fee) {
+            return false;
+        }
+
+        return $this->fees->add($fee);
+    }
+
+    /**
+     * @param Fee $fee
+     *
+     * @return bool
+     */
+    public function removeFee(Fee $fee): bool
+    {
+        return $this->fees->removeElement($fee);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getFees()
+    {
+        return $this->fees;
     }
 
     /**
