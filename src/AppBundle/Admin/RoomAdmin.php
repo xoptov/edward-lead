@@ -68,6 +68,9 @@ class RoomAdmin extends AbstractAdmin
         $leadPrice = new MoneyFieldDescription();
         $leadPrice->setName('leadPrice');
 
+        $hiddenMargin = new MoneyFieldDescription();
+        $hiddenMargin->setName('hiddenMargin');
+
         $list
             ->addIdentifier('id')
             ->add('name')
@@ -78,6 +81,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('buyerFee', null, [
                 'template' => '@App/CRUD/list_buyer_fee.html.twig'
             ])
+            ->add($hiddenMargin)
             ->add('hideFee')
             ->add('enabled')
             ->add('_action', null, [
@@ -109,9 +113,15 @@ class RoomAdmin extends AbstractAdmin
             ])
             ->add('leadPrice', MoneyType::class, [
                 'currency' => 'RUB',
-                'divisor' => Account::DIVISOR
+                'divisor' => Account::DIVISOR,
+                'required' => false
             ])
             ->add('buyerFee')
+            ->add('hiddenMargin', MoneyType::class, [
+                'currency' => 'RUB',
+                'divisor' => Account::DIVISOR,
+                'required' => false
+            ])
             ->add('hideFee')
             ->add('enabled');
     }
@@ -124,6 +134,9 @@ class RoomAdmin extends AbstractAdmin
         $leadPrice = new MoneyFieldDescription();
         $leadPrice->setName('leadPrice');
 
+        $hiddenMargin = new MoneyFieldDescription();
+        $hiddenMargin->setName('hiddenMargin');
+
         $show
             ->add('name')
             ->add('owner.name')
@@ -134,6 +147,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('buyerFee', null, [
                 'template' => '@App/CRUD/show_buyer_fee.html.twig'
             ])
+            ->add($hiddenMargin)
             ->add('hideFee')
             ->add('enabled');
     }

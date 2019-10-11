@@ -67,4 +67,28 @@ class RoomManager
 
         return $member;
     }
+
+    /**
+     * @param Room  $room
+     * @param float $buyerFee
+     * @param int   $availableBalance
+     *
+     * @return int
+     */
+    public function countCanBuy(Room $room, float $buyerFee, int $availableBalance): int
+    {
+        if ($availableBalance === 0) {
+            return 0;
+        }
+
+        if ($room->hasHiddenMargin()) {
+            $leadPrice = $room->getLeadPrice() + $room->getHiddenMargin();
+        } else {
+            $leadPrice = $room->getLeadPrice();
+        }
+
+        $leadPriceWithFee = $leadPrice + FeesManager::calculateFee($leadPrice, $buyerFee);
+
+        return floor($availableBalance / $leadPriceWithFee);
+    }
 }

@@ -47,7 +47,6 @@ class TradeController extends Controller
         }
 
         try {
-
             $feesAccount = $this->getDoctrine()->getRepository(Account::class)
                 ->getFeesAccount();
 

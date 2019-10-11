@@ -91,7 +91,11 @@
                         <div class="box_title">Стоимость лида:</div>
                         <span class="price">
                             {% if room.leadPrice %}
-                                {{ room.leadPrice|money_format }}
+                                {% if is_granted('ROLE_COMPANY') and room.hasHiddenMargin %}
+                                    {{ (room.leadPrice + room.hiddenMargin)|money_format }}
+                                {% else %}
+                                    {{ room.leadPrice|money_format }}
+                                {% endif %}
                             {% else %}
                                 Зависит от населенного пункта
                             {% endif %}

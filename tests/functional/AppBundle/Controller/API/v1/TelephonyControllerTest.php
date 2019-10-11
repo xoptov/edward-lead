@@ -439,7 +439,7 @@ class TelephonyControllerTest extends WebTestCase
         $seller = $this->createSeller();
         $lead = $this->createLead($seller);
 
-        $trade = $this->tradeManager->start($buyer, $seller, $lead, 10000, false);
+        $trade = $this->tradeManager->start($buyer, $seller, $lead, false);
 
         $phoneCall = $this->phoneCallManager->create($buyer, $trade);
         $phoneCall

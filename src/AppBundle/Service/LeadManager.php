@@ -105,13 +105,13 @@ class LeadManager
      *
      * @return int
      */
-    public function estimateCost(Lead $lead, ?int $divisor = 1): int
+    public function estimateCost(Lead $lead, ?int $divisor = null): int
     {
         $room = $lead->getRoom();
 
         if ($room) {
-            if ($room->getLeadPrice()) {
-                return $room->getLeadPrice() / $divisor;
+            if ($room->hasLeadPrice()) {
+                return $room->getLeadPrice($divisor);
             }
         }
 
@@ -136,7 +136,11 @@ class LeadManager
 
         $stars = $this->estimateStars($lead);
 
-        return ($leadCost + $stars * $starCost) / $divisor;
+        if ($divisor) {
+            return ($leadCost + $stars * $starCost) / $divisor;
+        }
+
+        return $leadCost + $stars * $starCost;
     }
 
     /**

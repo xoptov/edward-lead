@@ -23,7 +23,7 @@ class FeesManagerTest extends TestCase
         /** @var EntityManager $entityManager */
         $feesManager = new FeesManager($entityManager, 0, 0);
 
-        $feeAmount = $feesManager->calculateTradeFee($amount, $interest);
+        $feeAmount = $feesManager->calculateFee($amount, $interest);
 
         $this->assertEquals(5000, $feeAmount);
     }
@@ -122,7 +122,7 @@ class FeesManagerTest extends TestCase
 
         $this->assertCount(1, $fees);
 
-        $fee = $fees[0];
+        $fee = reset($fees);
 
         $this->assertInstanceOf(Fee::class, $fee);
 
@@ -182,41 +182,5 @@ class FeesManagerTest extends TestCase
         $interest =  $feesManager->getCommissionForBuyingLead($lead3);
 
         $this->assertEquals(15, $interest);
-    }
-
-    public function testGetLeadPriceWithBuyerFee()
-    {
-        $entityManager = $this->createMock(EntityManager::class);
-
-        /** @var EntityManager $entityManager */
-        $feesManager = new FeesManager($entityManager, 10, 0);
-
-        $lead1 = new Lead();
-        $lead1->setPrice(10000);
-
-        $priceWithFee1 =  $feesManager->getLeadPriceWithBuyerFee($lead1);
-
-        $this->assertEquals(11000, $priceWithFee1);
-
-        $room1 = new Room();
-
-        $lead2 = new Lead();
-        $lead2->setRoom($room1)
-            ->setPrice(10000);
-
-        $priceWithFee2 =  $feesManager->getLeadPriceWithBuyerFee($lead2);
-
-        $this->assertEquals(11000, $priceWithFee2);
-
-        $room2 = new Room();
-        $room2->setBuyerFee(15);
-
-        $lead3 = new Lead();
-        $lead3->setRoom($room2)
-            ->setPrice(10000);
-
-        $interest =  $feesManager->getLeadPriceWithBuyerFee($lead3);
-
-        $this->assertEquals(11500, $interest);
     }
 }

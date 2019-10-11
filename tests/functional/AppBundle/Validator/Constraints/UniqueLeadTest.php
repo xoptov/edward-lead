@@ -2,7 +2,6 @@
 
 namespace Tests\functional\AppBundle\Validator\Constraints;
 
-use AppBundle\Admin\AccountAdmin;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use Doctrine\ORM\EntityManagerInterface;

@@ -41,22 +41,22 @@ class FeesManager
     }
 
     /**
-     * @return float
-     */
-    public function getTradeSellerFee(): float
-    {
-        return $this->tradeSellerFee;
-    }
-
-    /**
      * @param int   $amount
      * @param float $interest
      *
      * @return int
      */
-    public function calculateTradeFee(int $amount, float $interest): int
+    public static function calculateFee(int $amount, float $interest): int
     {
         return (int)ceil($amount * $interest / 100);
+    }
+
+    /**
+     * @return float
+     */
+    public function getTradeSellerFee(): float
+    {
+        return $this->tradeSellerFee;
     }
 
     /**
@@ -69,31 +69,52 @@ class FeesManager
     {
         $fees = [];
 
-        $feeAmount = $this->calculateTradeFee(
-            $trade->getAmount(),
-            $this->getCommissionForBuyingLead($trade->getLead())
-        );
-
-        if ($feeAmount > 0) {
+        if ($trade->getLead() && $trade->getLead()->getHiddenMargin()) {
+            $hiddenMargin = $trade->getLead()->getHiddenMargin();
             $fee = new Fee();
-            $fee->setOperation($trade)
+            $fee
+                ->setOperation($trade)
                 ->setPayer($trade->getBuyer())
-                ->setDescription('Комиссия на сделку для покупателя')
-                ->setAmount($feeAmount);
+                ->setDescription('Наценка системы для покупателя')
+                ->setAmount($hiddenMargin);
 
             $this->entityManager->persist($fee);
 
             $fees[] = $fee;
         }
 
-        $feeAmount = $this->calculateTradeFee($trade->getAmount(), $this->tradeSellerFee);
+        if (isset($hiddenMargin) && $hiddenMargin) {
+            $baseAmount = $trade->getAmount() + $hiddenMargin;
+        } else {
+            $baseAmount = $trade->getAmount();
+        }
 
-        if ($feeAmount > 0) {
+        $amount = $this->calculateFee(
+            $baseAmount,
+            $this->getCommissionForBuyingLead($trade->getLead())
+        );
+
+        if ($amount > 0) {
+            $fee = new Fee();
+            $fee
+                ->setOperation($trade)
+                ->setPayer($trade->getBuyer())
+                ->setDescription('Комиссия на сделку для покупателя')
+                ->setAmount($amount);
+
+            $this->entityManager->persist($fee);
+
+            $fees[] = $fee;
+        }
+
+        $amount = $this->calculateFee($trade->getAmount(), $this->tradeSellerFee);
+
+        if ($amount > 0) {
             $fee = new Fee();
             $fee->setOperation($trade)
                 ->setPayer($trade->getSeller())
                 ->setDescription('Комиссия на сделку для продавца')
-                ->setAmount($feeAmount);
+                ->setAmount($amount);
 
             $this->entityManager->persist($fee);
 
@@ -108,20 +129,26 @@ class FeesManager
     }
 
     /**
+     * Метод возвращает величину комиссии в процентах по комнате.
+     *
      * @param Room $room
      *
      * @return float
      */
     public function getCommissionForBuyerInRoom(Room $room): float
     {
-        if ($room->getBuyerFee()) {
-            return $room->getBuyerFee();
+        $buyerFee = $room->getBuyerFee();
+
+        if (is_null($buyerFee)) {
+            return $this->tradeBuyerFee;
         }
 
-        return $this->tradeBuyerFee;
+        return $buyerFee;
     }
 
     /**
+     * Метод возвращает величину комиссии в процентах по лиду.
+     *
      * @param Lead $lead
      *
      * @return float
@@ -133,15 +160,5 @@ class FeesManager
         }
 
         return $this->tradeBuyerFee;
-    }
-
-    /**
-     * @param Lead $lead
-     *
-     * @return int
-     */
-    public function getLeadPriceWithBuyerFee(Lead $lead): int
-    {
-        return (int)ceil($lead->getPrice() + $lead->getPrice() * $this->getCommissionForBuyingLead($lead) / 100);
     }
 }

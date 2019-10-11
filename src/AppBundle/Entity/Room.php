@@ -78,11 +78,18 @@ class Room implements IdentifiableInterface
     /**
      * @var float|null
      *
-     * @Assert\GreaterThanOrEqual(value="0", message="Комиссия должна быть положительной")
-     *
-     * @ORM\Column(name="buyer_fee", type="float", options={"unsigned":"true"})
+     * @ORM\Column(name="buyer_fee", type="float", nullable=true, options={"unsigned":"true"})
      */
-    private $buyerFee = 0;
+    private $buyerFee;
+
+    /**
+     * @var int
+     *
+     * @Assert\GreaterThan(value=0, message="Значение должно быть положительным или пустым")
+     *
+     * @ORM\Column(name="hidden_margin", type="integer", nullable=true, options={"unsigned":"true"})
+     */
+    private $hiddenMargin;
 
     /**
      * @var string
@@ -189,11 +196,25 @@ class Room implements IdentifiableInterface
     }
 
     /**
+     * @param int|null $divisor
+     *
      * @return int|null
      */
-    public function getLeadPrice(): ?int
+    public function getLeadPrice(?int $divisor = null): ?int
     {
+        if ($divisor && $this->leadPrice) {
+            return $this->leadPrice / $divisor;
+        }
+
         return $this->leadPrice;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLeadPrice(): bool
+    {
+        return !empty($this->leadPrice);
     }
 
     /**
@@ -248,6 +269,33 @@ class Room implements IdentifiableInterface
         return $this->buyerFee;
     }
 
+    /**
+     * @param int|null $value
+     *
+     * @return Room
+     */
+    public function setHiddenMargin(?int $value): self
+    {
+        $this->hiddenMargin = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getHiddenMargin(): ?int
+    {
+        return $this->hiddenMargin;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasHiddenMargin(): bool
+    {
+        return !empty($this->hiddenMargin);
+    }
 
     /**
      * @param string $inviteToken

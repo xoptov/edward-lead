@@ -272,6 +272,16 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isBuyer(User $user): bool
+    {
+        return $this->getBuyer() === $user;
+    }
+
+    /**
      * @param null|string $name
      *
      * @return Lead
@@ -566,6 +576,40 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @return int|null
+     */
+    public function getHiddenMargin(): ?int
+    {
+        if ($this->room && $this->room->hasHiddenMargin()) {
+            return $this->room->getHiddenMargin();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int|null $divisor
+     *
+     * @return int|null
+     */
+    public function getPriceWithMargin(?int $divisor = null): ?int
+    {
+        $hiddenMargin = $this->getHiddenMargin();
+
+        if ($hiddenMargin) {
+            $price = $this->price + $hiddenMargin;
+        } else {
+            $price = $this->price;
+        }
+
+        if ($divisor) {
+            return $price / $divisor;
+        }
+
+        return $price;
+    }
+
+    /**
      * @param User $user
      *
      * @return bool
@@ -573,5 +617,13 @@ class Lead implements IdentifiableInterface
     public function isOwner(User $user): bool
     {
         return $this->user === $user;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpected(): bool
+    {
+        return self::STATUS_EXPECT === $this->status;
     }
 }

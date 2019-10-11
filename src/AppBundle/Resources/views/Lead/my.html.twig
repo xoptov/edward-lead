@@ -27,7 +27,7 @@
                         {% if leads|length %}
                             {% for lead in leads %}
                                 <tr>
-                                    <td>{{ lead.orderDate|date('d.m.Y') }}</td>
+                                    <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
                                     <td>{{ lead.price|money_format }}</td>
@@ -79,7 +79,7 @@
                             {% for trade in trades %}
                                 {% set lead = trade.lead %}
                                 <tr>
-                                    <td>{{ trade.createdAt|date('d.m.Y') }}</td>
+                                    <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>
                                         {% set show_number = false %}
@@ -98,7 +98,7 @@
                                             {{ lead.phone|hidden_phone }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ trade.amount|money_format }}</td>
+                                    <td>{{ final_price(trade.lead)|money_format }}</td>
                                     <td>
                                         {{ lead.user.name }}
                                     </td>
