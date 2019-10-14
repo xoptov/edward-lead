@@ -2,13 +2,11 @@
 
 namespace AppBundle\Service;
 
+use Exception;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Trade;
 use AppBundle\Util\Formatter;
-use AppBundle\Entity\PhoneCall;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 
 class LeadManager
 {
@@ -16,11 +14,6 @@ class LeadManager
      * @var EntityManagerInterface
      */
     private $entityManager;
-
-    /**
-     * @var TradeManager
-     */
-    private $tradeManager;
 
     /**
      * @var int
@@ -44,7 +37,6 @@ class LeadManager
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param TradeManager           $tradeManager
      * @param int                    $leadCost
      * @param int                    $starCost
      * @param int                    $leadExpirationPeriod
@@ -52,14 +44,12 @@ class LeadManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        TradeManager $tradeManager,
         int $leadCost,
         int $starCost,
         int $leadExpirationPeriod,
         int $leadPerUser
     ) {
         $this->entityManager = $entityManager;
-        $this->tradeManager = $tradeManager;
         $this->defaultLeadCost = $leadCost;
         $this->defaultStarCost = $starCost;
         $this->leadExpirationPeriod = $leadExpirationPeriod;
@@ -181,6 +171,10 @@ class LeadManager
 
     /**
      * @param Lead $lead
+     *
+     * @throws Exception
+     *
+     * @todo тут необходимо переделать с дней на часы когда я буду использовать таймеры.
      */
     public function setExpirationDate(Lead $lead): void
     {
@@ -199,7 +193,7 @@ class LeadManager
             $activeLeadsCount = $this->entityManager
                 ->getRepository(Lead::class)
                 ->getOwnCount($user);
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             return false;
         }
 
@@ -214,40 +208,6 @@ class LeadManager
         }
 
         return true;
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $caller
-     *
-     * @return bool
-     *
-     * @throws NonUniqueResultException
-     */
-    public function hasAnsweredPhoneCall(Lead $lead, User $caller): bool
-    {
-        $phoneCall = $this->entityManager
-            ->getRepository(PhoneCall::class)
-            ->getAnsweredPhoneCallByLeadAndCaller($lead, $caller);
-
-        return $phoneCall instanceof PhoneCall;
-    }
-
-    /**
-     * @param Lead $lead
-     * @param User $buyer
-     *
-     * @return bool
-     *
-     * @throws NonUniqueResultException
-     */
-    public function hasAcceptedTrade(Lead $lead, User $buyer): bool
-    {
-        $trade = $this->entityManager
-            ->getRepository(Trade::class)
-            ->getByLeadAndBuyerAndStatus($lead, $buyer, Trade::STATUS_ACCEPTED);
-
-        return $trade instanceof Trade;
     }
 
     /**
