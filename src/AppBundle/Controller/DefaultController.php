@@ -62,8 +62,7 @@ class DefaultController extends Controller
                     return $this->redirectToRoute('app_room_invite_confirm', ['token' => $room->getInviteToken()]);
 
                 } catch (UnexpectedResultException $e) {
-                    $logger->error($e->getMessage());
-                    $this->addFlash('error', 'Приглашение не доступно');
+                    return $this->redirectToRoute('app_room_invite_invalid');
                 }
             }
         }
