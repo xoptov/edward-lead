@@ -7,7 +7,7 @@
                 <h2>Приглашение присоедениться к закрытой <br> к комнате #{{ room.id }} - {{ room.name }}</h2>
                 <div class="box_btn">
                     <a href="{{ path('app_room_invite_accept', {'token': room.inviteToken}) }}" class="btn green">Принять</a>
-                    <a href="{{ path('app_room_invite_reject') }}" class="btn gray">Отклонить</a>
+                    <a href="{{ path('app_room_invite_reject', {'token': room.inviteToken}) }}" class="btn gray">Отклонить</a>
                 </div>
                 <a href="#" class="whatis">Что это?</a>
             </div>

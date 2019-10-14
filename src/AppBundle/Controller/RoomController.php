@@ -209,16 +209,6 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/reject", name="app_room_invite_reject", methods={"GET"})
-     *
-     * @return Response
-     */
-    public function rejectInviteAction(): Response
-    {
-        return $this->render('@App/v2/Room/invite_reject.html.twig');
-    }
-
-    /**
      * @Route("/room/invite/{token}", name="app_room_invite_confirm", methods={"GET"})
      *
      * @param string $token
@@ -268,5 +258,33 @@ class RoomController extends Controller
         }
 
         return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
+    }
+
+    /**
+     * @Route("/room/invite/reject/{token}", name="app_room_invite_reject", methods={"GET"})
+     *
+     * @param string $token
+     *
+     * @return Response
+     */
+    public function rejectInviteAction(string $token): Response
+    {
+        $room = $this->entityManager->getRepository(Room::class)->findOneBy([
+            'inviteToken' => $token,
+            'enabled' => true
+        ]);
+
+        if (!$room) {
+            return $this->redirectToRoute('app_room_invite_invalid');
+        }
+
+        try {
+            $this->roomManager->updateInviteToken($room);
+            $this->entityManager->flush();
+        } catch (\Exception $e) {
+            return $this->redirectToRoute('app_room_invite_invalid');
+        }
+
+        return $this->render('@App/v2/Room/invite_reject.html.twig');
     }
 }
