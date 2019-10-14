@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\City;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
@@ -192,6 +193,7 @@ class LeadController extends Controller
             ->setUser($user)
             ->setPrice($this->leadManager->estimateCost($newLead));
 
+        //todo: Вот эту вот хрень необходимо выпилить и переделать когда будем вкручивать таймеры.
         $this->leadManager->setExpirationDate($newLead);
 
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
@@ -308,6 +310,7 @@ class LeadController extends Controller
 
         $result = [];
 
+        /** @var Lead $lead */
         foreach ($leads as $lead) {
             $leadUser = $lead->getUser();
 
@@ -330,11 +333,13 @@ class LeadController extends Controller
 
             if ($lead->hasTrade()) {
                 $trade = $lead->getTrade();
+                /** @var User $buyer */
                 $buyer = $trade->getBuyer();
                 $row['buyer'] = [
                     'id' => $buyer->getId(),
                     'name' => $buyer->getName()
                 ];
+                /** @var Company $company */
                 $company = $buyer->getCompany();
                 if ($company) {
                     $row['buyer']['company'] = [

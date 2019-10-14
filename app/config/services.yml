@@ -209,6 +209,13 @@ services:
         calls:
             - [setRoomManager, ['@AppBundle\Service\RoomManager']]
 
+    app.admin.lead:
+        class: AppBundle\Admin\LeadAdmin
+        arguments: [~, AppBundle\Entity\Lead, AppBundle\Controller\Admin\LeadController]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: exchange, label: Lead }
+        public: true
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
     AppBundle\Service\LeadManager:

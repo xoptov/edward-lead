@@ -1,0 +1,5 @@
+{% if object.expected %}
+    <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('archive', object) }}">
+        <i class="fa fa-ban"></i> В архив
+    </a>
+{% endif %}

@@ -12,3 +12,5 @@ flash_reject_success: Успешно отклонена
 flash_reject_error: Ошибка отклонения
 flash_accept_success: Успешно принята
 flash_accept_error: Ошибка принятия
+flash_archive_success: Успешно пеомещён в архив
+flash_archive_error: Ошибка помещения в архив
