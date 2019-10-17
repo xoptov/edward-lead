@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sip Exchange Specification</title>
+</head>
+<body>
+    <h1>Описания обмена данными с sip</h1>
+    <h2>Примеры запросов и ответов на создание учётной записи</h2>
+
+    <h3>Кейс отрабатывает случай когда отправили пустой запрос на создание учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    POST /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Получено пустое тело запроса"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указали пароль для создания учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    POST /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать password"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указали логин для создания учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    POST /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса</b><br>
+    {"password":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать login"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда учётная запись уже существует при создании учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    POST /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"1","password":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Учётная запись с таким login уже существует"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда учётная запись успешно создана</h3>
+    <b>Заголовок запроса:</b><br>
+    POST /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"4","password":"4"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 200 OK<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"message": "Учётная запись создана"<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не отпревлены данные для удаления учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors":[<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Не указаны данные в запросе"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указан пароль для удаления учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать password"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указан логин для удаления учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"password":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать login"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда указан неверный пароль для удаления учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"1","password":"2"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 401 Unauthorized<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;"Указан неверный пароль"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда данные указаны верно и учётная запись удалена</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"1","password":"1"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 200 OK<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"message": "Учётная запись удалена"<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда пользователь не существует при удалении учётной записи</h3>
+    <b>Заголовок запроса:</b><br>
+    DELETE /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело запроса:</b><br>
+    {"login":"4","password":"4"}<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 404 Not Found<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Учётная запись не найдена"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не отпревлены данные для проверки статуса</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Не указаны данные в запросе"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указан пароль для получения статуса</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?login=1<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать password"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда не указан логин для получения статуса</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?password=1<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 400 Bad Request<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Необходимо указать login"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда указан логин и пароль и статус ожидает</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?login=1&password=1<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 200 OK<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"status": "waiting"<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда указан логин и пароль и статус подключен</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?login=2&password=2<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 200 OK<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"status": "connected"<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда указан логин и пароль и статус ошибка</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?login=3&password=3<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 200 OK<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"status": "error"<br>
+    }
+
+    <hr>
+
+    <h3>Кейс отрабатывает случай когда указан логин и пароль но учетная запись не существует</h3>
+    <b>Заголовок запроса:</b><br>
+    GET /stub/sip/account?login=4&password=4<br>
+    Host: localhost:8000<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Заголовок ответа:</b><br>
+    HTTP/1.1 404 Not Found<br>
+    Content-Type: application/json<br>
+    <br>
+    <b>Тело ответа:</b><br>
+    {<br>
+    &nbsp;&nbsp;"errors": [<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"Учётная запись не найдена"<br>
+    &nbsp;&nbsp;]<br>
+    }
+
+</body>
+</html>

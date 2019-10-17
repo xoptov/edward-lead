@@ -12,3 +12,7 @@ _errors:
 
 _main:
     resource: routing.yml
+
+stub:
+    resource: '@StubBundle/Controller/'
+    type: annotation
