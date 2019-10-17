@@ -43,6 +43,9 @@
     </main>
     {{ render(controller('AppBundle\\Controller\\TradeController::showResultModal')) }}
     {% block javascripts -%}
+        {%- if app.environment == 'prod' -%}
+            <script src="//code-ru1.jivosite.com/widget.js" data-jv-id="YinHI3gAhp" async></script>
+        {%- endif -%}
         <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
         <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
     {%- endblock %}
