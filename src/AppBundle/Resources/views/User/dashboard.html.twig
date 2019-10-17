@@ -1,6 +1,5 @@
 {% extends '@App/v2/layout.html.twig' %}
 
-
 {% block content %}
     <div class="content">
         <div class="row">
@@ -11,29 +10,6 @@
                         <h1>Панель управления</h1>
                     </div>
                 </div>
-                {#<div class="row">#}
-                    {#<div class="col-md-4 box">#}
-                        {#<div class="box_inner">#}
-                            {#<h5>Лидов поступило за сегодня</h5>#}
-                            {#<p>76 / 100</p>#}
-                            {#<a href="#">как повысить ?</a>#}
-                        {#</div>#}
-                    {#</div>#}
-                    {#<div class="col-md-4 box">#}
-                        {#<div class="box_inner">#}
-                            {#<h5>Средний % целевых лидов</h5>#}
-                            {#<p>{{ data.averageTarget }}%</p>#}
-                            {#<a href="#">как считается ?</a>#}
-                        {#</div>#}
-                    {#</div>#}
-                    {#<div class="col-md-4 box">#}
-                        {#<div class="box_inner">#}
-                            {#<h5>Лидов поступило за сегодня</h5>#}
-                            {#<p>{{ data.addedLeadsToday }} лидов</p>#}
-                            {#<span>47 принято | 3 холд | 16 не целевые</span>#}
-                        {#</div>#}
-                    {#</div>#}
-                {#</div>#}
             </div>
             <div class="col-12 content_box room_list">
                 <div class="content_title">
@@ -60,7 +36,7 @@
                                 <td>{{ item.room.id }}</td>
                                 <td>{{ item.room.name }}</td>
                                 <td>{{ item.daily }}</td>
-                                <td>{{ item.averageTarget }}</td>
+                                <td>{{ item.averageTarget|number_format(0) }}</td>
                                 <td>{{ item.companies }}</td>
                                 <td>{{ item.webmasters }}</td>
                                 <td class="{% if item.room.enabled %}enable{% else %}disable{% endif %}"></td>
@@ -107,7 +83,6 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                {#<a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>#}
                             </div>
                         </div>
                     </div>
@@ -143,7 +118,6 @@
                                     {% endfor %}
                                     </tbody>
                                 </table>
-                                {#<a href="#" class="more">СМОТРЕТЬ ВСЕХ ЛИДОВ</a>#}
                             </div>
                         </div>
                     </div>
