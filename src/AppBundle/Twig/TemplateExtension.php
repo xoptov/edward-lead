@@ -119,7 +119,8 @@ class TemplateExtension extends \Twig_Extension
      */
     public function getSourceOfMoney(Invoice $invoice): string
     {
-        $outcomeTransaction = reset($invoice->getOutcomeTransactions());
+        $outcomeTransactions = $invoice->getOutcomeTransactions();
+        $outcomeTransaction = reset($outcomeTransactions);
 
         /** @var MonetaryTransaction $outcomeTransaction */
         if ($outcomeTransaction) {
