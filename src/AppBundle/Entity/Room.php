@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Room\Schedule;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
@@ -104,6 +105,20 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="hide_fee", type="boolean")
      */
     private $hideFee = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="timer", type="boolean")
+     */
+    private $timer = false;
+
+    /**
+     * @var Schedule|null
+     *
+     * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
+     */
+    private $schedule;
 
     /**
      * @return User|null
@@ -335,5 +350,45 @@ class Room implements IdentifiableInterface
     public function isHideFee(): bool
     {
         return $this->hideFee;
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return Room
+     */
+    public function setTimer(bool $value): self
+    {
+        $this->timer = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTimer(): bool
+    {
+        return $this->timer;
+    }
+
+    /**
+     * @param Schedule $schedule
+     *
+     * @return Room
+     */
+    public function setSchedule(Schedule $schedule): self
+    {
+        $this->schedule = $schedule;
+
+        return $this;
+    }
+
+    /**
+     * @return Schedule|null
+     */
+    public function getSchedule(): ?Schedule
+    {
+        return $this->schedule;
     }
 }
