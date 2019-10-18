@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Lead\Timer;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
@@ -131,13 +132,6 @@ class Lead implements IdentifiableInterface
     private $audioRecord;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="expiration_date", type="datetime")
-     */
-    private $expirationDate;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="status", type="string")
@@ -150,6 +144,13 @@ class Lead implements IdentifiableInterface
      * @ORM\Column(name="price", type="integer", options={"unsigned":true})
      */
     private $price;
+
+    /**
+     * @var Timer|null
+     *
+     * @ORM\Embedded(class="AppBundle\Entity\Lead\Timer")
+     */
+    private $timer;
 
     /**
      * @param Room|null $room
@@ -500,36 +501,6 @@ class Lead implements IdentifiableInterface
     }
 
     /**
-     * @param \DateTime $expirationDate
-     *
-     * @return Lead
-     */
-    public function setExpirationDate(\DateTime $expirationDate): self
-    {
-        $this->expirationDate = $expirationDate;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExpirationDate(): \DateTime
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * @param string $format
-     *
-     * @return string
-     */
-    public function getExpirationDateFormatted(string $format): string
-    {
-        return $this->expirationDate->format($format);
-    }
-
-    /**
      * @param string $status
      *
      * @return Lead
@@ -573,6 +544,26 @@ class Lead implements IdentifiableInterface
         }
 
         return $this->price;
+    }
+
+    /**
+     * @param Timer $timer
+     *
+     * @return Lead
+     */
+    public function setTimer(Timer $timer): self
+    {
+        $this->timer = $timer;
+
+        return $this;
+    }
+
+    /**
+     * @return Timer|null
+     */
+    public function getTimer(): ?Timer
+    {
+        return $this->timer;
     }
 
     /**
