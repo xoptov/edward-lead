@@ -70,7 +70,9 @@ class Lead implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @ORM\Column(name="name", type="string", length=30, nullable=true)
+     * @Assert\Length(max=40, maxMessage="Значение в поле 'Имя Лида' должно быть не более {{ limit }} символов")
+     *
+     * @ORM\Column(name="name", type="string", length=40, nullable=true)
      */
     private $name;
 
@@ -118,6 +120,8 @@ class Lead implements IdentifiableInterface
 
     /**
      * @var string|null
+     *
+     * @Assert\Length(max=2000, maxMessage="Описание не должно привышать 2000 символов")
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      */
