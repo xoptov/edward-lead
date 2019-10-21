@@ -48,3 +48,7 @@ parameters:
     max_asks_callback: 2
 
     message_limit_in_minute: 5
+
+    # Statistics
+    google_tag_manager: false
+    jivosite_enabled: false

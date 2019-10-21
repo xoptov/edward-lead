@@ -39,6 +39,8 @@ twig:
     globals:
         max_asks_callback: '%max_asks_callback%'
         trade_buyer_fee: '%trade_buyer_fee%'
+        google_tag_manager: '%google_tag_manager%'
+        jivosite_enabled: '%jivosite_enabled%'
 
 # Doctrine Configuration
 doctrine:
