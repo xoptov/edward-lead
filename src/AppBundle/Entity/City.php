@@ -55,6 +55,13 @@ class City implements IdentifiableInterface
     private $starPrice;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="timezone", type="string", nullable=true)
+     */
+    private $timezone;
+
+    /**
      * @param Region $region
      *
      * @return City
@@ -164,6 +171,26 @@ class City implements IdentifiableInterface
     public function getStarPrice(): ?int
     {
         return $this->starPrice;
+    }
+
+    /**
+     * @param string $timezone
+     *
+     * @return City
+     */
+    public function setTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
     }
 }
 

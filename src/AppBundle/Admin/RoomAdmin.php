@@ -123,6 +123,7 @@ class RoomAdmin extends AbstractAdmin
                 'required' => false
             ])
             ->add('hideFee')
+            ->add('timer')
             ->add('enabled');
     }
 
@@ -149,6 +150,15 @@ class RoomAdmin extends AbstractAdmin
             ])
             ->add($hiddenMargin)
             ->add('hideFee')
+            ->add('timer')
+            ->ifTrue('timer')
+                ->add('schedule.city.name')
+                ->add('schedule.startHour')
+                ->add('schedule.endHour')
+                ->add('schedule.daysOfWeek')
+                ->add('schedule.executionHours')
+                ->add('schedule.leadsPerDay')
+            ->ifEnd()
             ->add('enabled');
     }
 

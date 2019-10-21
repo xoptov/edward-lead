@@ -2,8 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Entity\Room\Schedule;
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;

@@ -36,6 +36,15 @@ class RoomType extends AbstractType
                 ],
                 'expanded' => true
             ])
+            ->add('timer', ChoiceType::class, [
+                'data' => false,
+                'choices' => [
+                    'Да' => true,
+                    'Нет' => false
+                ],
+                'expanded' => true
+            ])
+            ->add('schedule', ScheduleType::class)
             ->add('submit', SubmitType::class);
     }
 

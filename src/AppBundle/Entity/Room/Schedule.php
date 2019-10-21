@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Room;
 
 use AppBundle\Entity\City;
+use AppBundle\Entity\Room\Schedule\WorkTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,18 +28,11 @@ class Schedule
     private $city;
 
     /**
-     * @var int
+     * @var WorkTime
      *
-     * @ORM\Column(name="start_hour", type="smallint", nullable=true)
+     * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
      */
-    private $startHour;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="end_hour", type="smallint", nullable=true)
-     */
-    private $endHour;
+    private $workTime;
 
     /**
      * @var array
@@ -93,43 +87,23 @@ class Schedule
     }
 
     /**
-     * @param int $hour
+     * @param WorkTime $workTime
      *
      * @return Schedule
      */
-    public function setStartHour(int $hour): self
+    public function setWorkTime(WorkTime $workTime): self
     {
-        $this->startHour = $hour;
+        $this->workTime = $workTime;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return WorkTime|null
      */
-    public function getStartHour(): int
+    public function getWorkTime(): ?WorkTime
     {
-        return $this->startHour;
-    }
-
-    /**
-     * @param int $hour
-     *
-     * @return Schedule
-     */
-    public function setEndHour(int $hour): self
-    {
-        $this->endHour = $hour;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getEndHour(): int
-    {
-        return $this->endHour;
+        return $this->workTime;
     }
 
     /**
