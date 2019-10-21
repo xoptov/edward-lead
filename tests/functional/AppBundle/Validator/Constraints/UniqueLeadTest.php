@@ -300,7 +300,6 @@ class UniqueLeadTest extends KernelTestCase
         $lead
             ->setRoom($room)
             ->setPhone($phone)
-            ->setExpirationDate(new \DateTime('+48 hours'))
             ->setPrice(100000)
             ->setStatus($status);
 

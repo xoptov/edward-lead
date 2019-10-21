@@ -170,19 +170,6 @@ class LeadManager
     }
 
     /**
-     * @param Lead $lead
-     *
-     * @throws Exception
-     *
-     * @todo тут необходимо переделать с дней на часы когда я буду использовать таймеры.
-     */
-    public function setExpirationDate(Lead $lead): void
-    {
-        $expirationDate = new \DateTime(sprintf('+%d days', $this->leadExpirationPeriod));
-        $lead->setExpirationDate($expirationDate);
-    }
-
-    /**
      * @param User $user
      *
      * @return bool

@@ -295,7 +295,6 @@ class PBXCallbackTypeTest extends KernelTestCase
         $lead = new Lead();
         $lead
             ->setPhone('79000000003')
-            ->setExpirationDate(new \DateTime('+2 days'))
             ->setPrice(10000)
             ->setUser($seller);
 

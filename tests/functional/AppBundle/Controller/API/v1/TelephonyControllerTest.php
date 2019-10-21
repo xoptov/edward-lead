@@ -550,8 +550,7 @@ class TelephonyControllerTest extends WebTestCase
             ->setPhone('79000000003')
             ->setStatus(Lead::STATUS_EXPECT)
             ->setPrice(10000)
-            ->setUser($seller)
-            ->setExpirationDate(new \DateTime('+1 day'));
+            ->setUser($seller);
 
         $this->entityManager->persist($lead);
 
