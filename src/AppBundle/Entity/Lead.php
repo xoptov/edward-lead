@@ -135,13 +135,6 @@ class Lead implements IdentifiableInterface
     private $audioRecord;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="expiration_date", type="datetime")
-     */
-    private $expirationDate;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="status", type="string")
@@ -501,36 +494,6 @@ class Lead implements IdentifiableInterface
     public function hasAudioRecord(): bool
     {
         return !empty($this->audioRecord);
-    }
-
-    /**
-     * @param \DateTime $expirationDate
-     *
-     * @return Lead
-     */
-    public function setExpirationDate(\DateTime $expirationDate): self
-    {
-        $this->expirationDate = $expirationDate;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExpirationDate(): \DateTime
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * @param string $format
-     *
-     * @return string
-     */
-    public function getExpirationDateFormatted(string $format): string
-    {
-        return $this->expirationDate->format($format);
     }
 
     /**
