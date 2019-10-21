@@ -121,7 +121,7 @@ class Lead implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(max=2000, maxMessage="Описание не должно привышать 2000 символов")
+     * @Assert\Length(max=2000, maxMessage="Описание не должно привышать {{ limit }} символов")
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      */
