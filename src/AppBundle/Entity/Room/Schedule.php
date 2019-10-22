@@ -3,8 +3,8 @@
 namespace AppBundle\Entity\Room;
 
 use AppBundle\Entity\City;
-use AppBundle\Entity\Room\Schedule\WorkTime;
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Room\Schedule\WorkTime;
 
 /**
  * @ORM\Embeddable
@@ -13,14 +13,14 @@ class Schedule
 {
     const MONDAY    = 1;
     const TUESDAY   = 2;
-    const WEDNESDAY = 3;
-    const THURSDAY  = 4;
-    const FRIDAY    = 5;
-    const SATURDAY  = 6;
-    const SUNDAY    = 7;
+    const WEDNESDAY = 4;
+    const THURSDAY  = 8;
+    const FRIDAY    = 16;
+    const SATURDAY  = 32;
+    const SUNDAY    = 64;
 
     /**
-     * @var City
+     * @var City|null
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=true)
@@ -28,43 +28,18 @@ class Schedule
     private $city;
 
     /**
-     * @var WorkTime
+     * @var WorkTime|null
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
      */
     private $workTime;
 
     /**
-     * @var array
+     * @var int|null
      *
-     * @ORM\Column(name="days_of_week", type="simple_array", nullable=true)
+     * @ORM\Column(name="work_days", type="smallint", nullable=true, options={"unsigned":true})
      */
-    private $daysOfWeek = array();
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="execution_hours", type="smallint", nullable=true)
-     */
-    private $executionHours;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="leads_per_day", type="smallint", nullable=true)
-     */
-    private $leadsPerDay;
-
-    /**
-     * @param array $daysOfWeek
-     */
-    public function __construct(array $daysOfWeek = array())
-    {
-        foreach ($daysOfWeek as $day)
-        {
-            $this->addDayOfWeek($day);
-        }
-    }
+    private $workDays;
 
     /**
      * @param City $city
@@ -79,9 +54,9 @@ class Schedule
     }
 
     /**
-     * @return City
+     * @return City|null
      */
-    public function getCity(): City
+    public function getCity(): ?City
     {
         return $this->city;
     }
@@ -113,108 +88,38 @@ class Schedule
      */
     public function isDayOfWeek(int $day): bool
     {
-        if (in_array($day, [
+        return in_array($day, [
             self::MONDAY,
             self::TUESDAY,
             self::WEDNESDAY,
             self::THURSDAY,
             self::FRIDAY,
             self::SATURDAY,
-            self::SUNDAY])
-        ) {
+            self::SUNDAY
+        ]);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getWorkDays(): ?int
+    {
+        return $this->workDays;
+    }
+
+    /**
+     * @param int $days
+     *
+     * @return boolean
+     */
+    public function setWorkDays(int $days): bool
+    {
+        if (0 <= $days && 127 >= $days) {
+            $this->workDays = $days;
+
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDaysOfWeek(): array
-    {
-        return $this->daysOfWeek;
-    }
-
-    /**
-     * @param int $day
-     *
-     * @return bool
-     */
-    public function addDayOfWeek(int $day): bool
-    {
-        if (!$this->isDayOfWeek($day)) {
-            return false;
-        }
-
-        if (in_array($day, $this->daysOfWeek)) {
-            return false;
-        }
-
-        $this->daysOfWeek[] = $day;
-
-        return sort($this->daysOfWeek);
-    }
-
-    /**
-     * @param int $day
-     *
-     * @return bool
-     */
-    public function removeDayOfWeek(int $day): bool
-    {
-       if (!in_array($day, $this->daysOfWeek)) {
-           return false;
-       }
-
-       $key = array_search($day, $this->daysOfWeek);
-
-       if (!$key) {
-           return false;
-       }
-
-       unset($this->daysOfWeek[$key]);
-
-       return true;
-    }
-
-    /**
-     * @param int $hours
-     *
-     * @return Schedule
-     */
-    public function setExecutionHours(int $hours): self
-    {
-        $this->executionHours = $hours;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getExecutionHours(): int
-    {
-        return $this->executionHours;
-    }
-
-    /**
-     * @param int $limit
-     *
-     * @return Schedule
-     */
-    public function setLeadsPerDay(int $limit): self
-    {
-        $this->leadsPerDay = $limit;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLeadsPerDay(): int
-    {
-        return $this->leadsPerDay;
     }
 }

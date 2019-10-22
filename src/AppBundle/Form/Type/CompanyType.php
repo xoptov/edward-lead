@@ -5,12 +5,12 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\Company;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use AppBundle\Form\DataTransformer\PhoneTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Form\EventListener\CompanyTypeSubscriber;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -51,12 +51,6 @@ class CompanyType extends AbstractType
                 ->add('officeName', TextType::class)
                 ->add('officeAddress', TextType::class)
                 ->add('officePhone', TelType::class);
-//                ->add('cities', EntityType::class, [
-//                    'class' => City::class,
-//                    'choice_label' => 'name',
-//                    'expanded' => true,
-//                    'multiple' => true
-//                ]);
 
             $builder->get('officePhone')
                 ->addViewTransformer(new PhoneTransformer());

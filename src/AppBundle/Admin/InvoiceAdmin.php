@@ -12,7 +12,7 @@ use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use AppBundle\Form\Type\DataTransformer\MoneyTransformer;
+use AppBundle\Form\DataTransformer\MoneyTransformer;
 
 class InvoiceAdmin extends AbstractAdmin
 {

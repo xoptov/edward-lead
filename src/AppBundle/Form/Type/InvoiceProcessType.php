@@ -3,8 +3,8 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Invoice;
-use AppBundle\Entity\IncomeAccount;
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\IncomeAccount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

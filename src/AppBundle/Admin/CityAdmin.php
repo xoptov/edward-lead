@@ -5,7 +5,6 @@ namespace AppBundle\Admin;
 use AppBundle\Entity\City;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Account;
-use AppBundle\Util\Formatter;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;

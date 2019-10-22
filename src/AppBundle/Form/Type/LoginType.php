@@ -10,6 +10,9 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class LoginType extends AbstractType
 {
+    /**
+     * @inheritdoc
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

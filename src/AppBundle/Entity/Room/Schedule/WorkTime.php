@@ -10,14 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 class WorkTime
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
      * @ORM\Column(name="start_at", type="time", nullable=true)
      */
     private $startAt;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
      * @ORM\Column(name="end_at", type="time", nullable=true)
      */
@@ -36,9 +36,9 @@ class WorkTime
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getStartAt(): \DateTime
+    public function getStartAt(): ?\DateTime
     {
         return $this->startAt;
     }
@@ -56,9 +56,9 @@ class WorkTime
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getEndAt(): \DateTime
+    public function getEndAt(): ?\DateTime
     {
         return $this->endAt;
     }

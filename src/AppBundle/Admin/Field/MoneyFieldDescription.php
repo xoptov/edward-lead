@@ -3,7 +3,7 @@
 namespace AppBundle\Admin\Field;
 
 use Sonata\AdminBundle\Exception\NoValueException;
-use AppBundle\Form\Type\DataTransformer\MoneyTransformer;
+use AppBundle\Form\DataTransformer\MoneyTransformer;
 use Sonata\DoctrineORMAdminBundle\Admin\FieldDescription;
 
 class MoneyFieldDescription extends FieldDescription

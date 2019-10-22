@@ -55,7 +55,7 @@ class City implements IdentifiableInterface
     private $starPrice;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="timezone", type="string", nullable=true)
      */

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Entity\Country;
 use AppBundle\Entity\Region;
+use AppBundle\Entity\Country;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;

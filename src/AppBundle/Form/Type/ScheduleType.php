@@ -8,8 +8,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use AppBundle\Form\DataTransformer\BitMaskToArrayTransformer;
 
 class ScheduleType extends AbstractType
 {
@@ -21,15 +21,13 @@ class ScheduleType extends AbstractType
         $builder
             ->add('city', EntityType::class, [
                 'class' => City::class,
-                'choice_label' => 'name'
+                'choice_label' => 'name',
+                'required' => false
             ])
-            ->add('startHour', ChoiceType::class, [
-                'choices' => $this->getHoursChoices()
+            ->add('workTime', WorkTimeType::class, [
+                'required' => false
             ])
-            ->add('endHour', ChoiceType::class, [
-                'choices' => $this->getHoursChoices()
-            ])
-            ->add('daysOfWeek', ChoiceType::class, [
+            ->add('workDays', ChoiceType::class, [
                 'choices' => [
                     'Пн' => Schedule::MONDAY,
                     'Вт' => Schedule::TUESDAY,
@@ -40,10 +38,15 @@ class ScheduleType extends AbstractType
                     'Вс' => Schedule::SUNDAY
                 ],
                 'multiple' => true,
-                'expanded' => true
-            ])
-            ->add('executionHours', TextType::class)
-            ->add('leadsPerDay', TextType::class);
+                'expanded' => true,
+                'required' => false
+            ]);
+
+        $builder
+            ->get('workDays')
+            ->addModelTransformer(
+                new BitMaskToArrayTransformer(Schedule::SUNDAY)
+            );
     }
 
     /**
@@ -52,18 +55,5 @@ class ScheduleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', Schedule::class);
-    }
-
-    /**
-     * @return array
-     */
-    private function getHoursChoices(): array
-    {
-        $items = [];
-        for ($x = 0; $x < 24; $x++) {
-            $key = sprintf('%02d:00', $x);
-            $items[$key] = $x;
-        }
-        return $items;
     }
 }

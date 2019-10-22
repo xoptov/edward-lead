@@ -70,8 +70,6 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
-     * @Assert\NotNull(message="Необходимо указать использование гарантии")
-     *
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
     private $platformWarranty = false;
@@ -119,6 +117,34 @@ class Room implements IdentifiableInterface
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
     private $schedule;
+
+    /**
+     * @var int|null
+     *
+     * @Assert\Range(
+     *     min=1,
+     *     max=24,
+     *     minMessage="Минимальное кол-во {{ limit }} часов на обработку",
+     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку"
+     * )
+     *
+     * @ORM\Column(name="execution_hours", type="smallint", nullable=true, options={"unsigned":true})
+     */
+    private $executionHours;
+
+    /**
+     * @var int|null
+     *
+     * @Assert\Range(
+     *     min=1,
+     *     max=1000,
+     *     minMessage="Минимальное кол-во {{ limit }} лидов в день по таймеру",
+     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру"
+     * )
+     *
+     * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
+     */
+    private $leadsPerDay;
 
     /**
      * @return User|null
@@ -390,5 +416,45 @@ class Room implements IdentifiableInterface
     public function getSchedule(): ?Schedule
     {
         return $this->schedule;
+    }
+
+    /**
+     * @param int $hours
+     *
+     * @return Room
+     */
+    public function setExecutionHours(int $hours): self
+    {
+        $this->executionHours = $hours;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getExecutionHours(): ?int
+    {
+        return $this->executionHours;
+    }
+
+    /**
+     * @param int $limit
+     *
+     * @return Room
+     */
+    public function setLeadsPerDay(int $limit): self
+    {
+        $this->leadsPerDay = $limit;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getLeadsPerDay(): ?int
+    {
+        return $this->leadsPerDay;
     }
 }
