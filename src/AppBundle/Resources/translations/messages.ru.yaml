@@ -161,6 +161,9 @@ Last Call AnswerAt: Дата и время звонка
 Trade Lead Phone: Телефон лида
 Hidden Margin: Скрытая наценка
 
+Timezone: Временная зона
+Timer: Таймер
+
 lead:
     status:
         expect: 'ожидает'

@@ -8,6 +8,14 @@
     </label>
 {% endblock %}
 
+{% block _room_timer_entry_row %}
+    <label class="wrapper">
+        {{ label }}
+        {{ block('radio_widget') }}
+        <span class="checkmark"></span>
+    </label>
+{% endblock %}
+
 {% form_theme form _self %}
 
 {% block content %}
@@ -82,6 +90,47 @@
                                         {% if form.platformWarranty.vars.errors|length %}
                                             <span class="text-error">{{ form.platformWarranty.vars.errors[0].message }}</span>
                                         {% endif %}
+                                    </div>
+                                    <div class="timer">
+                                        {{ form_label(form.timer, 'Включить таймер для менеджера?', {'attr': {'class': 'timer_title'}}) }}
+                                        <p>Если Вы активируете эту функцию, Вам потребуются выбрыть город, рабочее время менеджера, который будет звонить лидам, максимальное время для обработки лидов и необходимое количество лидов в день.</p>
+                                        <p>Таймер будет отсчитывать время, только в установленном графике работы. Если менеджер не успел его обработать согласно настройкам, лид автоматически получит статус "Целевой"</p>
+                                        <a href="#" class="more">Смотреть как работает на примере</a>
+                                        <div class="box_checkbox">
+                                            {{ form_row(form.timer[0], {'attr': {'selected': true}}) }}
+                                            {{ form_row(form.timer[1]) }}
+                                        </div>
+                                        <div class="form_item">
+                                            {{ form_label(form.schedule.city, 'Город работы:') }}
+                                            <span>
+                                                {{ form_widget(form.schedule.city) }}
+                                            </span>
+                                        </div>
+                                        <div class="form_item">
+                                            {{ form_label(form.schedule.workTime, 'Время работы:') }}
+                                            <span>
+                                                {{ form_widget(form.schedule.workTime) }}
+                                                {{ form_widget(form.schedule.workDays) }}
+                                            </span>
+                                        </div>
+                                        <div class="form_item">
+                                            {{ form_label(form.executionHours) }}
+                                            <span {% if form.executionHours.vars.errors|length %}class="error"{% endif %}>
+                                                {{ form_widget(form.executionHours) }}
+                                                {% if form.executionHours.vars.errors|length %}
+                                                    <span class="text-error">{{ form.executionHours.vars.errors[0].message }}</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="form_item">
+                                            {{ form_label(form.leadsPerDay) }}
+                                            <span {% if form.leadsPerDay.vars.errors|length %}class="error"{% endif %}>
+                                                {{ form_widget(form.leadsPerDay) }}
+                                                {% if form.leadsPerDay.vars.errors|length %}
+                                                    <span class="text-error">{{ form.leadsPerDay.vars.errors[0].message }}</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

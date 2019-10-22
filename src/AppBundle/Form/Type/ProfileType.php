@@ -5,10 +5,10 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use AppBundle\Form\DataTransformer\PhoneTransformer;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use AppBundle\Form\Type\DataTransformer\PhoneTransformer;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProfileType extends AbstractType

@@ -10,37 +10,37 @@ use Doctrine\ORM\Mapping as ORM;
 class Timer
 {
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
-     * @ORM\Column(name="timeout_at", type="datetimetz", nullable=true)
+     * @ORM\Column(name="end_at", type="datetime", nullable=true)
      */
-    private $timeoutAt;
+    private $endAt;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="action", type="string", nullable=true)
      */
     private $action;
 
     /**
-     * @param \DateTime $timeoutAt
+     * @param \DateTime $endAt
      *
      * @return Timer
      */
-    public function setTimeoutAt(\DateTime $timeoutAt): self
+    public function setEndAt(\DateTime $endAt): self
     {
-        $this->timeoutAt = $timeoutAt;
+        $this->endAt = $endAt;
 
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getTimeoutAt(): \DateTime
+    public function getEndAt(): ?\DateTime
     {
-        return $this->timeoutAt;
+        return $this->endAt;
     }
 
     /**
@@ -56,9 +56,9 @@ class Timer
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getAction(): string
+    public function getAction(): ?string
     {
         return $this->action;
     }

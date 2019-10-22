@@ -123,20 +123,35 @@ abstract class Formatter
     }
 
     /**
-     * @param int $second
+     * @param int $seconds
      *
      * @return string
      */
-    public static function humanDuration(int $second): string
+    public static function humanDuration(int $seconds): string
     {
-        $remainSeconds = $second % 60;
-
-        $minutes = (int)floor($second / 60);
-
-        $remainMinutes = $minutes % 60;
-
+        $minutes = (int)floor($seconds / 60);
         $hours = (int)floor($minutes / 60);
 
-        return sprintf('%02d:%02d:%02d', $hours, $remainMinutes, $remainSeconds);
+        return sprintf('%02d:%02d:%02d', $hours, $minutes % 60, $seconds % 60);
+    }
+
+    /**
+     * @param int $seconds
+     * @return string
+     */
+    public static function offsetFormatHHMM(int $seconds): string
+    {
+        $minutes = (int)floor(abs($seconds) / 60);
+        $hours = (int)floor($minutes / 60);
+
+        if ($seconds < 0) {
+            $sign = '-';
+        } elseif ($seconds > 0) {
+            $sign = '+';
+        } else {
+            $sign = '';
+        }
+
+        return sprintf('%s%02d:%02d', $sign, $hours, $minutes % 60);
     }
 }

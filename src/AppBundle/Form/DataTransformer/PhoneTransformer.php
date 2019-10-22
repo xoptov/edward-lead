@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form\Type\DataTransformer;
+namespace AppBundle\Form\DataTransformer;
 
 use AppBundle\Util\Formatter;
 use Symfony\Component\Form\DataTransformerInterface;

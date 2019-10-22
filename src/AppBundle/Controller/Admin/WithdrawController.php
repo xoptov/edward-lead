@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Service\WithdrawManager;
 use AppBundle\Form\Type\WithdrawProcessType;
@@ -114,6 +115,7 @@ class WithdrawController extends CRUDController
                 $data = $form->getData();
 
                 try {
+                    /** @var User $user */
                     $user = $this->getUser();
                     $this->withdrawManager->confirm($object, $user);
                     $this->withdrawManager->process($data['invoice'], $data['account']);

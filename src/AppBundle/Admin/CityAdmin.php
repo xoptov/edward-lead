@@ -13,6 +13,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class CityAdmin extends AbstractAdmin
 {
@@ -56,6 +57,7 @@ class CityAdmin extends AbstractAdmin
             ->add('region.name', null, ['label' => 'Region'])
             ->add($leadPriceField)
             ->add($starPriceField)
+            ->add('timezone')
             ->add('enabled')
             ->add('createdAt')
             ->add('updatedAt')
@@ -89,6 +91,9 @@ class CityAdmin extends AbstractAdmin
                 'currency' => 'RUB',
                 'divisor' => Account::DIVISOR
             ])
+            ->add('timezone', ChoiceType::class, [
+                'choices' => $this->getTimezones()
+            ])
             ->add("enabled")
         ;
     }
@@ -110,6 +115,7 @@ class CityAdmin extends AbstractAdmin
             ->add('name', null, ['label' => 'City'])
             ->add($leadPriceField)
             ->add($starPriceField)
+            ->add('timezone')
             ->add('enabled')
             ->add('createdAt')
             ->add('updatedAt')
@@ -118,10 +124,24 @@ class CityAdmin extends AbstractAdmin
 
     /**
      * @param City $object
+     *
      * @return string
      */
     public function toString($object): string
     {
         return $object->getName() ?? "новый город";
+    }
+
+    /**
+     * @return array
+     */
+    public function getTimezones(): array
+    {
+        $identifiers = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, 'RU');
+
+        return array_combine(
+            array_values($identifiers),
+            array_values($identifiers)
+        );
     }
 }
