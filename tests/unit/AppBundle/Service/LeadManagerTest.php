@@ -246,9 +246,7 @@ class LeadManagerTest extends TestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
-        /** @var TradeManager $tradeManager */
-        $tradeManager = $this->createMock(TradeManager::class);
 
-        return new LeadManager($entityManager, $tradeManager, 10000, 1000, 48, 10);
+        return new LeadManager($entityManager, 10000, 1000, 10);
     }
 }

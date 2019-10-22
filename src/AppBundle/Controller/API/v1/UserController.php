@@ -3,8 +3,8 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\User;
+use Doctrine\ORM\ORMException;
 use AppBundle\Service\UserManager;
-use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,7 +31,7 @@ class UserController extends Controller
 
         try {
             $userManager->updateUser($user);
-        } catch (OptimisticLockException $e) {
+        } catch (ORMException $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 

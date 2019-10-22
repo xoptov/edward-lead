@@ -121,7 +121,7 @@ class WithdrawManager
 
         $transactions = $this->transactionManager->create($withdraw->getAccount(), $account, $withdraw, false);
 
-        $this->entityManager->transactional(function(EntityManagerInterface $em) use ($withdraw, $transactions) {
+        $this->entityManager->transactional(function(EntityManagerInterface $entityManager) use ($withdraw, $transactions) {
 
             $this->transactionManager->process($transactions);
 
@@ -129,7 +129,7 @@ class WithdrawManager
 
             $withdraw->setStatus(Withdraw::STATUS_DONE);
 
-            $this->entityManager->flush();
+            $entityManager->flush();
         });
     }
 

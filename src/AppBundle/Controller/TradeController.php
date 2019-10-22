@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
@@ -135,9 +136,12 @@ class TradeController extends Controller
      */
     public function showResultModal(): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $trades = $this->getDoctrine()
             ->getRepository(Trade::class)
-            ->getByBuyerAndWarrantyAndIncomplete($this->getUser());
+            ->getByBuyerAndWarrantyAndIncomplete($user);
 
         foreach ($trades as $trade) {
             if ($this->tradeManager->isCanShowResultModal($trade)) {
