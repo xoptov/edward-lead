@@ -192,9 +192,6 @@ class LeadController extends Controller
             ->setUser($user)
             ->setPrice($this->leadManager->estimateCost($newLead));
 
-        //todo: Вот эту вот хрень необходимо выпилить и переделать когда будем вкручивать таймеры.
-        $this->leadManager->setExpirationDate($newLead);
-
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
             return new JsonResponse(['errors' => ['Вы не имеете прав создавать нового лида']], Response::HTTP_FORBIDDEN);
         }

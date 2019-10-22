@@ -14,7 +14,6 @@ class LeadRepository extends EntityRepository
 {
     /**
      * @param User $user
-     * @param string $status
      *
      * @return int
      *

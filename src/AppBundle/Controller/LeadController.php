@@ -130,7 +130,7 @@ class LeadController extends Controller
                 'fee' => $feesManager->getCommissionForBuyingLead($lead)
             ]);
         } elseif ($lead->isBuyer($user)) {
-            $canMakeCall = $phoneCallManager->isCanMakeCall($this->getUser(), $lead);
+            $canMakeCall = $phoneCallManager->isCanMakeCall($user, $lead);
 
             return $this->render('@App/Lead/show_after_buy.html.twig', [
                 'lead' => $lead,
@@ -162,7 +162,11 @@ class LeadController extends Controller
         }
 
         try {
-            $trade = $this->tradeManager->start($this->getUser(), $lead->getUser(), $lead);
+            /** @var User $buyer */
+            $buyer = $this->getUser();
+            $seller = $lead->getUser();
+
+            $trade = $this->tradeManager->start($buyer, $seller, $lead);
             $this->addFlash('success', "Резервирование лида выполнено, номер резервирования {$trade->getId()}.");
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
