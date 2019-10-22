@@ -212,6 +212,7 @@ class FinancialController extends Controller
      */
     public function invoicesAction(): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         $invoices = $this->entityManager

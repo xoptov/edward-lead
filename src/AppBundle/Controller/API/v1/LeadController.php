@@ -77,7 +77,6 @@ class LeadController extends Controller
             'interestAssessment' => $lead->getInterestAssessment(),
             'description' => $lead->getDescription(),
             'audioRecord' => $lead->getAudioRecord(),
-            'expirationDate' => $lead->getExpirationDateFormatted('c'),
             'status' => $lead->getStatus(),
             'price' => $lead->getPrice(Account::DIVISOR)
         ];

@@ -8,7 +8,6 @@ use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\ClientAccount;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
 use AppBundle\Form\Type\RegistrationType;
 use AppBundle\Form\Type\PasswordResetType;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,8 +56,6 @@ class SecurityController extends Controller
      * @param Request $request
      *
      * @return Response
-     *
-     * @throws OptimisticLockException
      */
     public function registrationAction(Request $request): Response
     {
@@ -195,6 +192,7 @@ class SecurityController extends Controller
      * @Route("/password/reset/{token}", name="app_password_reset_confirm", methods={"GET"})
      *
      * @param string $token
+     *
      * @return Response
      */
     public function resetPasswordConfirmAction(string $token): Response
@@ -220,9 +218,8 @@ class SecurityController extends Controller
      * @Route("/password/resetting", name="app_password_resetting", methods={"POST"})
      *
      * @param Request $request
-     * @return Response
      *
-     * @throws OptimisticLockException
+     * @return Response
      */
     public function resettingPasswordAction(Request $request): Response
     {

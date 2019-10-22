@@ -28,31 +28,23 @@ class LeadManager
     /**
      * @var int
      */
-    private $leadExpirationPeriod;
-
-    /**
-     * @var int
-     */
     private $leadPerUser;
 
     /**
      * @param EntityManagerInterface $entityManager
      * @param int                    $leadCost
      * @param int                    $starCost
-     * @param int                    $leadExpirationPeriod
      * @param int                    $leadPerUser
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         int $leadCost,
         int $starCost,
-        int $leadExpirationPeriod,
         int $leadPerUser
     ) {
         $this->entityManager = $entityManager;
         $this->defaultLeadCost = $leadCost;
         $this->defaultStarCost = $starCost;
-        $this->leadExpirationPeriod = $leadExpirationPeriod;
         $this->leadPerUser = $leadPerUser;
     }
 

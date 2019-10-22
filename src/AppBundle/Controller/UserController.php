@@ -15,7 +15,6 @@ use AppBundle\Form\Type\ProfileType;
 use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\MonetaryTransaction;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
@@ -273,6 +272,7 @@ class UserController extends Controller
      * @Route("/profile", name="app_profile", methods={"GET", "POST"})
      *
      * @param Request $request
+     *
      * @return Response
      */
     public function profileAction(Request $request): Response
@@ -306,8 +306,11 @@ class UserController extends Controller
      */
     public function historyAction(): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $historyLogins = $this->entityManager->getRepository('AppBundle:HistoryAction')
-            ->getByUserAndActionInDescOrder($this->getUser(), HistoryAction::ACTION_LOGIN);
+            ->getByUserAndActionInDescOrder($user, HistoryAction::ACTION_LOGIN);
 
         return $this->render('@App/User/history_logins.html.twig', [
             'historyLogins' => $historyLogins
@@ -318,9 +321,8 @@ class UserController extends Controller
      * @Route("/profile/password/update", name="app_profile_update_password", methods={"POST"})
      *
      * @param Request $request
-     * @return Response
      *
-     * @throws OptimisticLockException
+     * @return Response
      */
     public function updatePasswordAction(Request $request): Response
     {
@@ -365,9 +367,12 @@ class UserController extends Controller
             throw new \Exception('Запрос на удаление пользователя уже отправлен');
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $deleteRequest = new UserDeleteRequest();
         $deleteRequest
-            ->setUser($this->getUser());
+            ->setUser($user);
 
         $this->entityManager->persist($deleteRequest);
         $this->entityManager->flush();
@@ -409,8 +414,11 @@ class UserController extends Controller
             $result['averageTarget'] = 100;
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $rooms = $this->entityManager->getRepository(Room::class)
-            ->getByMember($this->getUser());
+            ->getByMember($user);
 
         $members = $this->entityManager->getRepository(Member::class)
             ->getByRooms($rooms);

@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
-use Psr\Log\LoggerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,15 +22,13 @@ class DefaultController extends Controller
      * @param Request                $request
      * @param ValidatorInterface     $validator
      * @param EntityManagerInterface $entityManager
-     * @param LoggerInterface        $logger
      *
      * @return Response
      */
     public function indexAction(
         Request $request,
         ValidatorInterface $validator,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger
+        EntityManagerInterface $entityManager
     ): Response {
 
         // Этот чудный код делает редирект на реальный роут для инвайта.
