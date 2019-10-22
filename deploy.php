@@ -24,7 +24,6 @@ server('stage', '94.130.178.198')
     ->user('xoptov')
     ->identityFile('~/.ssh/id_rsa')
     ->set('deploy_path', '/var/www/stage.edward-lead.ru')
-    ->set('branch', 'stage')
     ->pty(true);
 
 

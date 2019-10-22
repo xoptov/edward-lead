@@ -54,16 +54,19 @@ class RoomController extends Controller
 
         if ($form->isValid()) {
 
+            /** @var User $user */
+            $user = $this->getUser();
+
             /** @var Room $data */
             $data = $form->getData();
             $data
-                ->setOwner($this->getUser())
+                ->setOwner($user)
                 ->setEnabled(true);
 
             $this->entityManager->persist($data);
 
             try {
-                $this->roomManager->joinInRoom($data, $this->getUser());
+                $this->roomManager->joinInRoom($data, $user);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 
@@ -88,6 +91,7 @@ class RoomController extends Controller
      */
     public function listAction(): Response
     {
+        /** @var User $user */
         $user = $this->getUser();
 
         $rooms = $this->entityManager->getRepository(Room::class)
@@ -249,8 +253,11 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_invite_invalid');
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         try {
-            $this->roomManager->joinInRoom($room, $this->getUser());
+            $this->roomManager->joinInRoom($room, $user);
             $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (\Exception $e) {

@@ -93,7 +93,6 @@ class TradeControllerTest extends WebTestCase
             ->setUser($webmasterUser)
             ->setRoom($room)
             ->setPhone('79000000002')
-            ->setExpirationDate(new \DateTime('+2 day'))
             ->setPrice(10000)
             ->setStatus(Lead::STATUS_IN_WORK);
 
@@ -213,7 +212,6 @@ class TradeControllerTest extends WebTestCase
             ->setUser($webmasterUser)
             ->setRoom($room)
             ->setPhone('79000000002')
-            ->setExpirationDate(new \DateTime('+2 day'))
             ->setPrice(10000)
             ->setStatus(Lead::STATUS_IN_WORK);
 

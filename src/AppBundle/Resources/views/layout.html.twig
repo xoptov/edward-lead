@@ -47,7 +47,9 @@
     {% block javascripts %}
         {%- if app.environment == 'prod' -%}
             <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.min.js') }}"></script>
-            <script src="//code-ru1.jivosite.com/widget.js" data-jv-id="YinHI3gAhp" async></script>
+            {%- if jivosite_enabled -%}
+                <script src="//code-ru1.jivosite.com/widget.js" data-jv-id="YinHI3gAhp" async></script>
+            {%- endif -%}
         {%- else -%}
             <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.js') }}"></script>
         {%- endif -%}

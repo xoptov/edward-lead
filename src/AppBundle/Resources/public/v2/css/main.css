@@ -1946,3 +1946,14 @@ main.body_invite {
 .lead_list tbody tr:hover {
   cursor: pointer;
 }
+
+.label-success {
+  display: inline-block;
+  border: 1px solid #00a368;
+  padding: 5px 15px;
+  border-radius: 3px;
+  color: #00a368;
+  background-color: #99dbb9;
+  margin-top: 20px;
+  margin-left: 20px;
+}
