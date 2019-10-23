@@ -122,4 +122,54 @@ class Schedule
 
         return false;
     }
+
+    /**
+     * @return array|null
+     */
+    public function getMatrix(): ?array
+    {
+        if (!$this->workTime) {
+            return null;
+        }
+
+        if (!$this->workDays) {
+            return null;
+        }
+
+        $startHour = (int)$this->workTime->getStartAt()->format('H');
+        $endHour = (int)$this->workTime->getEndAt()->format('H');
+
+        $matrix = [];
+
+        for ($dowBit = 1, $dow = 1; $dowBit <= self::SUNDAY; $dowBit *= 2, $dow++) {
+            for ($hour = 0; $hour < 24; $hour++) {
+                if (!($this->workDays & $dowBit)) {
+                    $matrix[$dow][$hour] = 0;
+                    continue;
+                }
+
+                if ($startHour === $endHour && $hour === $startHour) {
+                    $matrix[$dow][$hour] = 1;
+                    continue;
+                }
+
+                if ($startHour < $endHour
+                    && ($hour >= $startHour && $hour <= $endHour)
+                ) {
+                    $matrix[$dow][$hour] = 1;
+                    continue;
+                }
+
+                if ($startHour > $endHour
+                    && ($hour >= $startHour || $hour <= $endHour)) {
+                    $matrix[$dow][$hour] = 1;
+                    continue;
+                }
+
+                $matrix[$dow][$hour] = 0;
+            }
+        }
+
+        return $matrix;
+    }
 }

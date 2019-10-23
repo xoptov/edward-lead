@@ -203,4 +203,22 @@ class LeadManager
 
         return Formatter::hidePhoneNumber($lead->getPhone());
     }
+
+    /**
+     * @param Lead $lead
+     */
+    public function setTimer(Lead $lead): void
+    {
+        if (!$lead->hasRoom()) {
+            return;
+        }
+
+        $room = $lead->getRoom();
+
+        if (!$room->isTimer()) {
+            return;
+        }
+
+
+    }
 }
