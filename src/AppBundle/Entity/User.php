@@ -47,6 +47,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @var string|null
      *
      * @Assert\NotBlank(message="Имя должно быть указано")
+     * @Assert\Length(max=30, maxMessage="Имя не должно превышать {{ limit }} символов")
+     *
      * @ORM\Column(name="name", type="string", length=30)
      */
     private $name;
@@ -60,7 +62,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      *     message="Невалидный формат телефона"
      * )
      *
-     * @ORM\Column(name="phone", type="string", length=32)
+     * @ORM\Column(name="phone", type="string", length=11)
      */
     private $phone;
 
@@ -68,15 +70,18 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @var string
      *
      * @Assert\Email(message="Невалидное значение поля")
-     * @Assert\NotBlank(message="Значение в поле должно быть указано.")
-     * @ORM\Column(name="email", type="string", length=30, unique=true)
+     * @Assert\NotBlank(message="Значение в поле должно быть указано")
+     * @Assert\Length(max=50, maxMessage="Email не полжен превышать {{ limit }} символов")
+     *
+     * @ORM\Column(name="email", type="string", length=50, unique=true)
      */
     private $email;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(max=30)
+     * @Assert\Length(max=30, maxMessage="Skype не должен превышать {{ limit }} символов")
+     *
      * @ORM\Column(name="skype", type="string", length=30, nullable=true, unique=true)
      */
     private $skype;
@@ -84,7 +89,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var string|null
      *
-     * @Assert\Length(max=50)
+     * @Assert\Length(max=50, maxMessage="Ссылка VK не должна привышать {{ limit }} символов")
+     *
      * @ORM\Column(name="vkontakte", type="string", length=50, nullable=true, unique=true)
      */
     private $vkontakte;
@@ -92,7 +98,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var string|null
      *
-     * @Assert\Length(max=50)
+     * @Assert\Length(max=50, maxMessage="Ссылка Facebook не должна привышать {{ limit }} символов")
+     *
      * @ORM\Column(name="facebook", type="string", length=50, nullable=true, unique=true)
      */
     private $facebook;
@@ -100,7 +107,12 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var string|null
      *
-     * @Assert\Length(min=2, max=30)
+     * @Assert\Length(
+     *     min=2,
+     *     minMessage="Логин в telegram должен быть минимум {{ limit }} символов",
+     *     max=30,
+     *     maxMessage="Логин в telegram должен быть максимум {{ limit }} символов"
+     * )
      * @ORM\Column(name="telegram", type="string", length=30, nullable=true, unique=true)
      */
     private $telegram;
