@@ -57,7 +57,7 @@ class Lead implements IdentifiableInterface
      *     message="Невалидный формат телефона"
      * )
      *
-     * @ORM\Column(name="phone", type="string", length=32)
+     * @ORM\Column(name="phone", type="string", length=11)
      */
     private $phone;
 
