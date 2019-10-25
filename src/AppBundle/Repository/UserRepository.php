@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends EntityRepository
 {
@@ -35,20 +36,64 @@ class UserRepository extends EntityRepository
      *
      * @return User[]
      */
-    public function getBuyersInRoom(Room $room): array
+    public function getAdvertisersInRoom(Room $room): array
+    {
+        $queryBuilder = $this->getAdvertisersInRoomsQueryBuilder([$room]);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param Room[] $rooms
+     *
+     * @return User[]
+     */
+    public function getAdvertisesInRooms(array $rooms): array
+    {
+        $queryBuilder = $this->getAdvertisersInRoomsQueryBuilder($rooms);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @param Member[] $members
+     *
+     * @return User[]
+     */
+    public function getByMembers(array $members): array
     {
         $queryBuilder = $this->createQueryBuilder('u');
 
         $query = $queryBuilder
-            ->innerJoin(Member::class, 'm', Join::WITH, 'u = m.user AND m.room = :room')
-                ->setParameter('room', $room)
-            ->where('u.typeSelected = :type_selected')
-                ->setParameter('type_selected', true)
-            ->andWhere('u.roles LIKE :role_company')
-                ->setParameter('role_company', '%ROLE_COMPANY%')
+            ->join(Member::class, 'm', Join::WITH, 'u = m.user AND m IN (:members)')
+                ->setParameter('members', $members)
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param Room[] $rooms
+     *
+     * @return QueryBuilder
+     */
+    private function getAdvertisersInRoomsQueryBuilder(array $rooms): QueryBuilder
+    {
+       $queryBuilder = $this->createQueryBuilder('u');
+
+       $queryBuilder
+           ->join(Member::class, 'm', Join::WITH, 'u = m.user AND m.room IN (:rooms)')
+                ->setParameter('rooms', $rooms)
+           ->where('u.typeSelected = :type_selected')
+                ->setParameter('type_selected', true)
+           ->andWhere('u.roles LIKE :role_company')
+                ->setParameter('role_company', '%ROLE_COMPANY%');
+
+       return $queryBuilder;
     }
 
     /**

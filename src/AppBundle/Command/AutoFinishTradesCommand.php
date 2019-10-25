@@ -2,8 +2,8 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\Account;
 use AppBundle\Entity\Trade;
+use AppBundle\Entity\Account;
 use AppBundle\Service\TradeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnexpectedResultException;
