@@ -188,13 +188,16 @@ class LeadController extends Controller
 
         /** @var Lead $newLead */
         $newLead = $form->getData();
-        $newLead
-            ->setUser($user)
-            ->setPrice($this->leadManager->estimateCost($newLead));
+        $newLead->setUser($user);
 
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
             return new JsonResponse(['errors' => ['Вы не имеете прав создавать нового лида']], Response::HTTP_FORBIDDEN);
         }
+
+        $newLead
+            ->setPrice($this->leadManager->estimateCost($newLead));
+
+
 
         $this->entityManager->persist($newLead);
         $this->entityManager->flush();
