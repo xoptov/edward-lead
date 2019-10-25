@@ -4,18 +4,22 @@ namespace AppBundle\Service;
 
 use DateTime;
 use DateTimeZone;
+use AppBundle\Entity\Lead\Timer;
 use AppBundle\Entity\Room\Schedule;
 
 class TimerManager
 {
     /**
-     * @param DateTimeZone $timezone
+     * @param string|null       $time
+     * @param DateTimeZone|null $timezone
      *
      * @return DateTime
      */
-    public function now(DateTimeZone $timezone): DateTime
-    {
-        return new DateTime(null, $timezone);
+    public function createDateTime(
+        ?string $time = null,
+        DateTimeZone $timezone = null
+    ): DateTime {
+        return new DateTime($time, $timezone);
     }
 
     /**
@@ -24,8 +28,6 @@ class TimerManager
      * @param int          $execHours
      *
      * @return int
-     *
-     * @throws \Exception
      */
     public function calculateOffsetInHours(
         Schedule $schedule,
@@ -34,29 +36,40 @@ class TimerManager
     ): int {
 
         $scheduleMatrix = $schedule->getMatrix();
-        $remoteDateTime = $this->now($timezone);
+        $remoteDateTime = $this->createDateTime(null, $timezone);
 
-        $startDayOfWeek = (int)$remoteDateTime->format('N');
+        $startDOW = (int)$remoteDateTime->format('N');
         $startHour = (int)$remoteDateTime->format('H');
 
-        if ($scheduleMatrix[$startDayOfWeek][$startHour]) {
-            $offsetHours = -1;
-        } else {
-            $offsetHours = 0;
-        }
+        $matched = 0;
+        $offset = 0;
 
-        for ($filledHours = 0; $filledHours < $execHours; $offsetHours++) {
-            for ($dow = $startDayOfWeek; $dow <= 7 && $filledHours < $execHours; $dow++) {
-                for ($hour = $startHour; $hour < 24 && $filledHours < $execHours; $hour++, $offsetHours++) {
+        for (;$matched < $execHours; $startDOW = 1, $startHour = 0) {
+            for ($dow = $startDOW; $dow <= 7 && $matched < $execHours; $dow++, $startHour = 0) {
+                for ($hour = $startHour; $hour < 24 && $matched < $execHours; $hour++, $offset++) {
                     if ($scheduleMatrix[$dow][$hour]) {
-                        $filledHours++;
+                        $matched++;
                     }
                 }
             }
-            $startDayOfWeek = 1;
-            $startHour = 0;
         }
 
-        return $offsetHours;
+        return $offset;
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return Timer
+     */
+    public function createTimer(int $offsetHours): Timer
+    {
+        $timer = new Timer();
+
+        $endedAt = $this->createDateTime('+'.$offsetHours.' hours');
+
+        $timer->setEndAt($endedAt);
+
+        return $timer;
     }
 }

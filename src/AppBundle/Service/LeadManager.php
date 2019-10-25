@@ -5,8 +5,10 @@ namespace AppBundle\Service;
 use Exception;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use Psr\Log\LoggerInterface;
 use AppBundle\Util\Formatter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
 class LeadManager
 {
@@ -14,6 +16,16 @@ class LeadManager
      * @var EntityManagerInterface
      */
     private $entityManager;
+
+    /**
+     * @var TimerManager
+     */
+    private $timerManager;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @var int
@@ -32,17 +44,23 @@ class LeadManager
 
     /**
      * @param EntityManagerInterface $entityManager
+     * @param TimerManager           $timerManager
+     * @param LoggerInterface        $logger
      * @param int                    $leadCost
      * @param int                    $starCost
      * @param int                    $leadPerUser
      */
     public function __construct(
         EntityManagerInterface $entityManager,
+        TimerManager $timerManager,
+        LoggerInterface $logger,
         int $leadCost,
         int $starCost,
         int $leadPerUser
     ) {
         $this->entityManager = $entityManager;
+        $this->timerManager = $timerManager;
+        $this->logger = $logger;
         $this->defaultLeadCost = $leadCost;
         $this->defaultStarCost = $starCost;
         $this->leadPerUser = $leadPerUser;
@@ -207,18 +225,58 @@ class LeadManager
     /**
      * @param Lead $lead
      */
-    public function setTimer(Lead $lead): void
+    public function postCreate(Lead $lead): void
     {
+        $lead->setPrice($this->estimateCost($lead));
+
         if (!$lead->hasRoom()) {
             return;
         }
 
         $room = $lead->getRoom();
 
-        if (!$room->isTimer()) {
-            return;
+        if ($room->isPlatformWarranty() && $room->isTimer()) {
+
+            try {
+                $addedIn24h = $this->entityManager->getRepository(Lead::class)
+                    ->getAddedCountInRoomByDate(
+                        $room,
+                        $this->timerManager->createDateTime()
+                    );
+            } catch (NonUniqueResultException $e) {
+                $this->logger->error($e->getMessage());
+                return;
+            }
+
+            if ($room->getLeadsPerDay() <= $addedIn24h) {
+                return;
+            }
+
+            $schedule = $room->getSchedule();
+
+            if (empty($schedule)) {
+                return;
+            }
+
+            $city = $room->getCity();
+
+            if ($city->getTimezone()) {
+                $timezone = new \DateTimeZone($city->getTimezone());
+            } else {
+                $timezone = new \DateTimeZone('Europe/Moscow');
+            }
+
+            $executionHours = $room->getExecutionHours();
+
+            $offsetHours = $this->timerManager->calculateOffsetInHours(
+                $schedule,
+                $timezone,
+                $executionHours
+            );
+
+            $timer = $this->timerManager->createTimer($offsetHours);
+
+            $lead->setTimer($timer);
         }
-
-
     }
 }

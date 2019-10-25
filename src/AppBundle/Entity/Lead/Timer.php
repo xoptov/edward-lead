@@ -17,18 +17,11 @@ class Timer
     private $endAt;
 
     /**
-     * @var string|null
+     * @var \DateTime|null
      *
-     * @ORM\Column(name="action", type="string", nullable=true)
+     * @ORM\Column(name="processed_at", type="datetime", nullable=true)
      */
-    private $action;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="processed", type="boolean", nullable=true)
-     */
-    private $processed;
+    private $processedAt;
 
     /**
      * @param \DateTime $endAt
@@ -51,35 +44,23 @@ class Timer
     }
 
     /**
-     * @param string $action
+     * @param \DateTime $processedAt
      *
      * @return Timer
      */
-    public function setAction(string $action): self
+    public function setProcessedAt(\DateTime $processedAt): self
     {
-        $this->action = $action;
+        $this->processedAt = $processedAt;
 
         return $this;
     }
 
     /**
-     * @return string|null
+     * @return \DateTime
      */
-    public function getAction(): ?string
+    public function getProcessedAt(): \DateTime
     {
-        return $this->action;
-    }
-
-    /**
-     * @param bool $value
-     *
-     * @return Timer
-     */
-    public function setProcessed(bool $value): self
-    {
-        $this->processed = $value;
-
-        return $this;
+        return $this->processedAt;
     }
 
     /**
@@ -87,6 +68,6 @@ class Timer
      */
     public function isProcessed(): bool
     {
-        return $this->processed;
+        return !empty($this->processedAt);
     }
 }

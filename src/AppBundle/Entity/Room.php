@@ -112,6 +112,14 @@ class Room implements IdentifiableInterface
     private $timer = false;
 
     /**
+     * @var City|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="id")
+     */
+    private $city;
+
+    /**
      * @var Schedule|null
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
@@ -396,6 +404,26 @@ class Room implements IdentifiableInterface
     public function isTimer(): bool
     {
         return $this->timer;
+    }
+
+    /**
+     * @param City|null $city
+     *
+     * @return Room
+     */
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * @return City|null
+     */
+    public function getCity(): ?City
+    {
+        return $this->city;
     }
 
     /**

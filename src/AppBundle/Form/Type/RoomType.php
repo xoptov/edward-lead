@@ -2,10 +2,12 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\City;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -44,6 +46,11 @@ class RoomType extends AbstractType
                     'Нет' => false
                 ],
                 'expanded' => true
+            ])
+            ->add('city', EntityType::class, [
+                'class' => City::class,
+                'choice_label' => 'name',
+                'required' => false
             ])
             ->add('schedule', ScheduleType::class, [
                 'required' => false

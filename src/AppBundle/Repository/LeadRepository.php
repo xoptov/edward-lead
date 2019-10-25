@@ -24,7 +24,7 @@ class LeadRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('l');
 
         $queryBuilder
-            ->select('count(l.id)')
+            ->select('COUNT(l.id)')
             ->where('l.user = :user')
             ->setParameter('user', $user);
 
@@ -128,15 +128,28 @@ class LeadRepository extends EntityRepository
      *
      * @throws NonUniqueResultException
      */
-    public function getCountAddedByDate(\DateTime $compareDate): int
+    public function getAddedCountByDate(\DateTime $compareDate): int
     {
-        $queryBuilder = $this->createQueryBuilder('l');
+        $queryBuilder = $this->getAddedCountByDateQueryBuilder($compareDate);
+        $query = $queryBuilder->getQuery();
 
+        return $query->getSingleScalarResult();
+    }
+
+    /**
+     * @param Room      $room
+     * @param \DateTime $compareDate
+     *
+     * @return int
+     *
+     * @throws NonUniqueResultException
+     */
+    public function getAddedCountInRoomByDate(Room $room, \DateTime $compareDate): int
+    {
+        $queryBuilder = $this->getAddedCountByDateQueryBuilder($compareDate);
         $query = $queryBuilder
-            ->select('count(l.id)')
-            ->where('l.createdAt BETWEEN :from AND :to')
-                ->setParameter('from', $compareDate->format('Y-m-d 00:00:00'))
-                ->setParameter('to', $compareDate->format('Y-m-d 23:59:59'))
+            ->andWhere('l.room = :room')
+                ->setParameter('room', $room)
             ->getQuery();
 
         return $query->getSingleScalarResult();
@@ -174,7 +187,7 @@ class LeadRepository extends EntityRepository
     public function getCountByStatus(string $status): int
     {
         $queryBuilder = $this->createQueryBuilder('l')
-            ->select('count(l.id)');
+            ->select('COUNT(l.id)');
 
         $this->addStatusesCondition($queryBuilder, [$status]);
 
@@ -207,6 +220,24 @@ class LeadRepository extends EntityRepository
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param \DateTime $compareDate
+     *
+     * @return QueryBuilder
+     */
+    private function getAddedCountByDateQueryBuilder(\DateTime $compareDate): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $queryBuilder
+            ->select('COUNT(l.id)')
+            ->where('l.createdAt BETWEEN :from AND :to')
+                ->setParameter('from', $compareDate->format('Y-m-d 00:00:00'))
+                ->setParameter('to', $compareDate->format('Y-m-d 23:59:59'));
+
+        return $queryBuilder;
     }
 
     /**

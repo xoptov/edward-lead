@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Room;
 
-use AppBundle\Entity\City;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Room\Schedule\WorkTime;
 
@@ -20,14 +19,6 @@ class Schedule
     const SUNDAY    = 64;
 
     /**
-     * @var City|null
-     *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
-     * @ORM\JoinColumn(name="city_id", referencedColumnName="id", nullable=true)
-     */
-    private $city;
-
-    /**
      * @var WorkTime|null
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
@@ -40,26 +31,6 @@ class Schedule
      * @ORM\Column(name="work_days", type="smallint", nullable=true, options={"unsigned":true})
      */
     private $workDays;
-
-    /**
-     * @param City $city
-     *
-     * @return Schedule
-     */
-    public function setCity(City $city): self
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
-    /**
-     * @return City|null
-     */
-    public function getCity(): ?City
-    {
-        return $this->city;
-    }
 
     /**
      * @param WorkTime $workTime
@@ -154,14 +125,14 @@ class Schedule
                 }
 
                 if ($startHour < $endHour
-                    && ($hour >= $startHour && $hour <= $endHour)
+                    && ($hour >= $startHour && $hour < $endHour)
                 ) {
                     $matrix[$dow][$hour] = 1;
                     continue;
                 }
 
                 if ($startHour > $endHour
-                    && ($hour >= $startHour || $hour <= $endHour)) {
+                    && ($hour >= $startHour || $hour < $endHour)) {
                     $matrix[$dow][$hour] = 1;
                     continue;
                 }

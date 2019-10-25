@@ -85,11 +85,13 @@ class CityAdmin extends AbstractAdmin
             ->add("name", null, ['label' => 'City'])
             ->add('leadPrice', MoneyType::class, [
                 'currency' => 'RUB',
-                'divisor' => Account::DIVISOR
+                'divisor' => Account::DIVISOR,
+                'required' => false
             ])
             ->add('starPrice', MoneyType::class, [
                 'currency' => 'RUB',
-                'divisor' => Account::DIVISOR
+                'divisor' => Account::DIVISOR,
+                'required' => false
             ])
             ->add('timezone', ChoiceType::class, [
                 'choices' => $this->getTimezones()
