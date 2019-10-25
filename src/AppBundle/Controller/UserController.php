@@ -403,7 +403,7 @@ class UserController extends Controller
 
         $now = new \DateTime();
 
-        $result['addedLeadsToday'] = $leadRepository->getCountAddedByDate($now);
+        $result['addedLeadsToday'] = $leadRepository->getAddedCountByDate($now);
 
         $totalTarget = $leadRepository->getCountByStatus(Lead::STATUS_TARGET);
         $totalNotTarget = $leadRepository->getCountByStatus(Lead::STATUS_NOT_TARGET);

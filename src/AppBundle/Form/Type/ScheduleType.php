@@ -2,11 +2,9 @@
 
 namespace AppBundle\Form\Type;
 
-use AppBundle\Entity\City;
 use AppBundle\Entity\Room\Schedule;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use AppBundle\Form\DataTransformer\BitMaskToArrayTransformer;
@@ -19,11 +17,6 @@ class ScheduleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('city', EntityType::class, [
-                'class' => City::class,
-                'choice_label' => 'name',
-                'required' => false
-            ])
             ->add('workTime', WorkTimeType::class, [
                 'required' => false
             ])

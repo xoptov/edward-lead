@@ -194,10 +194,7 @@ class LeadController extends Controller
             return new JsonResponse(['errors' => ['Вы не имеете прав создавать нового лида']], Response::HTTP_FORBIDDEN);
         }
 
-        $newLead
-            ->setPrice($this->leadManager->estimateCost($newLead));
-
-
+        $this->leadManager->postCreate($newLead);
 
         $this->entityManager->persist($newLead);
         $this->entityManager->flush();
