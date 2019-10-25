@@ -24,6 +24,13 @@ class Timer
     private $action;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="processed", type="boolean", nullable=true)
+     */
+    private $processed;
+
+    /**
      * @param \DateTime $endAt
      *
      * @return Timer
@@ -61,5 +68,25 @@ class Timer
     public function getAction(): ?string
     {
         return $this->action;
+    }
+
+    /**
+     * @param bool $value
+     *
+     * @return Timer
+     */
+    public function setProcessed(bool $value): self
+    {
+        $this->processed = $value;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProcessed(): bool
+    {
+        return $this->processed;
     }
 }
