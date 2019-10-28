@@ -28,6 +28,7 @@
         "friendsofsymfony/message-bundle": "^2.0",
         "friendsofsymfony/rest-bundle": "^2.5",
         "incenteev/composer-parameter-handler": "^2.0",
+        "league/csv": "^9.4",
         "liip/imagine-bundle": "^2.1",
         "sensio/distribution-bundle": "^5.0.19",
         "sensio/framework-extra-bundle": "^5.0.0",

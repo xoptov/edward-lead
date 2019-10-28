@@ -9,7 +9,7 @@ use AppBundle\Entity\Part\TimeTrackableTrait;
 
 /**
  * @ORM\Table(name="region")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\RegionRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Region implements IdentifiableInterface
