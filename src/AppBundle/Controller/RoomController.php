@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
