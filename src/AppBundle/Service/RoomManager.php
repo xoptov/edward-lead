@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
+use AppBundle\Exception\RoomException;
 use Doctrine\ORM\EntityManagerInterface;
 
 class RoomManager
@@ -51,12 +52,36 @@ class RoomManager
      *
      * @return Member
      *
-     * @throws \Exception
+     * @throws RoomException
      */
     public function joinInRoom(Room $room, User $user): Member
     {
         if ($this->isMember($room, $user)) {
-            throw new \Exception('Пользователь уже находится в группе');
+            throw new RoomException($room, $user, 'Пользователь уже находится в группе');
+        }
+
+        // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
+        if ($room->isTimer()) {
+
+            $members = $this->entityManager->getRepository(Member::class)
+                ->getByRooms([$room]);
+
+            $webmasters = 0;
+            $advertisers = 0;
+
+            /** @var Member $member */
+            foreach ($members as $member) {
+                if ($member->isWebmaster()) {
+                    $webmasters++;
+                } elseif ($member->isCompany()) {
+                    $advertisers++;
+                }
+            }
+
+            if (($user->isWebmaster() && $webmasters)
+                || ($user->isCompany() && $advertisers)) {
+                throw new RoomException($room, $user, 'Комната с таймером и такой тип пользователя уже есть в комнате');
+            }
         }
 
         $member = new Member();
