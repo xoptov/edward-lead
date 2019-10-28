@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\RoomType;
@@ -255,6 +256,31 @@ class RoomController extends Controller
 
         /** @var User $user */
         $user = $this->getUser();
+
+        // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
+        if ($room->isTimer()) {
+
+            $members = $this->entityManager->getRepository(Member::class)
+                ->getByRooms([$room]);
+
+            $webmasters = 0;
+            $advertisers = 0;
+
+            /** @var Member $member */
+            foreach ($members as $member) {
+                $memberUser = $member->getUser();
+                if ($memberUser->isWebmaster()) {
+                    $webmasters++;
+                } elseif ($memberUser->isCompany()) {
+                    $advertisers++;
+                }
+            }
+
+            if (($user->isWebmaster() && $webmasters)
+                || ($user->isCompany() && $advertisers)) {
+                return $this->redirectToRoute('app_room_invite_invalid');
+            }
+        }
 
         try {
             $this->roomManager->joinInRoom($room, $user);
