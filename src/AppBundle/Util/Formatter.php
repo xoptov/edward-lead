@@ -137,6 +137,7 @@ abstract class Formatter
 
     /**
      * @param int $seconds
+     *
      * @return string
      */
     public static function offsetFormatHHMM(int $seconds): string
@@ -153,5 +154,30 @@ abstract class Formatter
         }
 
         return sprintf('%s%02d:%02d', $sign, $hours, $minutes % 60);
+    }
+
+    /**
+     * @param \DateTime $now
+     * @param \DateTime $target
+     *
+     * @return int
+     */
+    public static function intervalInSeconds(\DateTime $now, \DateTime $target): int
+    {
+        if ($now > $target) {
+            return 0;
+        }
+
+        $interval = $now->diff($target);
+
+        $seconds = $interval->s;
+        $seconds += $interval->m * 60;
+        $seconds += $interval->h * 3600;
+
+        if ($interval->days) {
+            $seconds += $interval->days * 86400;
+        }
+
+        return $seconds;
     }
 }
