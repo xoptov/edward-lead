@@ -3,9 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Exception\RoomException;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
@@ -261,7 +261,7 @@ class RoomController extends Controller
             $this->roomManager->joinInRoom($room, $user);
             $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
-        } catch (\Exception $e) {
+        } catch (RoomException $e) {
             return $this->redirectToRoute('app_room_invite_invalid');
         }
 
