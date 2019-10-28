@@ -49,8 +49,16 @@ class ArchiveStaledLeadsCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $sql = <<<SQL
+UPDATE lead
+SET status = :archive 
+WHERE status = :expect 
+  AND timer_end_at IS NULL
+  AND UNIX_TIMESTAMP(NOW()) > (UNIX_TIMESTAMP(created_at) + :ttl)
+SQL;
+
         try {
-            $stmt = $this->connection->prepare('UPDATE lead SET status = :archive WHERE status = :expect AND UNIX_TIMESTAMP(NOW()) > (UNIX_TIMESTAMP(created_at) + :ttl)');
+            $stmt = $this->connection->prepare($sql);
         } catch (DBALException $e) {
             $output->writeln($e->getMessage());
             return;

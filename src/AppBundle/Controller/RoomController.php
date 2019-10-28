@@ -172,7 +172,7 @@ class RoomController extends Controller
         $leads = $this->entityManager->getRepository(Lead::class)
             ->findBy(['room' => $room], ['createdAt' => 'DESC']);
 
-        $buyers = $this->entityManager->getRepository(User::class)->getBuyersInRoom($room);
+        $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
 
         $totalAvailableMoney = 0.0;
 

@@ -223,6 +223,28 @@ class LeadRepository extends EntityRepository
     }
 
     /**
+     * @param \DateTime $timeBound
+     *
+     * @return Lead[]
+     */
+    public function getByEndedTimerAndExpect(\DateTime $timeBound): array
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+
+        $query = $queryBuilder
+            ->innerJoin('l.room', 'r', Join::WITH, 'r.enabled = :enabled')
+                ->setParameter('enabled', true)
+            ->where('l.status = :status')
+                ->setParameter('status', Lead::STATUS_EXPECT)
+            ->andWhere('l.timer.endAt IS NOT NULL')
+            ->andWhere('l.timer.endAt <= :time_bound')
+                ->setParameter('time_bound', $timeBound)
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
      * @param \DateTime $compareDate
      *
      * @return QueryBuilder
