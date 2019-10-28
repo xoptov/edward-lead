@@ -72,4 +72,20 @@ class Member implements IdentifiableInterface
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isCompany(): bool
+    {
+        return $this->user->isCompany();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWebmaster(): bool
+    {
+        return $this->user->isWebmaster();
+    }
 }
