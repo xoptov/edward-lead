@@ -237,9 +237,8 @@ class LeadRepository extends EntityRepository
             ->where('l.status = :status')
                 ->setParameter('status', Lead::STATUS_EXPECT)
             ->andWhere('l.timer.endAt IS NOT NULL')
-            ->andWhere('l.timer.endAt < :time_bound')
+            ->andWhere('l.timer.endAt <= :time_bound')
                 ->setParameter('time_bound', $timeBound)
-            ->andWhere('l.timer.processedAt IS NULL')
             ->getQuery();
 
         return $query->getResult();

@@ -3,20 +3,25 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Account;
 use AppBundle\Service\TimerManager;
 use AppBundle\Service\TradeManager;
-use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
+use AppBundle\Exception\OperationException;
+use AppBundle\Exception\FinancialException;
+use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TimerProcessCommand extends Command
 {
+    const RESULT_OK = 0;
+    const RESULT_ERROR = 1;
+
     /**
      * @var EntityManagerInterface
      */
@@ -71,29 +76,67 @@ class TimerProcessCommand extends Command
         $leads = $this->entityManager->getRepository(Lead::class)
             ->getByEndedTimerAndExpect($now);
 
-        if (empty($leads)) {
-            $output->writeln('No leads with expired timer');
+        if (empty($leads))
+            return self::RESULT_OK;
 
-            return false;
+        try {
+            $feesAccount = $this->entityManager->getRepository(Account::class)
+                ->getFeesAccount();
+        } catch (UnexpectedResultException $e) {
+            $output->writeln($e->getMessage());
+            return self::RESULT_ERROR;
         }
 
-        $rooms = $this->entityManager->getRepository(Room::class)
+        // Для гидрации прокси объектов комнат.
+        $this->entityManager->getRepository(Room::class)
             ->getByLeads($leads);
 
-        if (empty($rooms)) {
-            $output->writeln('Some thing goes wrong with rooms');
+        foreach ($leads as $lead) {
+
+            $room = $lead->getRoom();
+
+            if (empty($room))
+                continue;
+
+            $advertisers = $this->entityManager->getRepository(User::class)
+                ->getAdvertisersInRoom($room);
+
+            if (empty($advertisers))
+                continue;
+
+            $processedAdvertisers = []; // Для хранения уже обработанных рекламодателей.
+            $tradeCreatedAndAccepted = false; // Флаг для отметки успешного создания и завершения сделки.
+
+            do {
+                $advertiser = $advertisers[rand(0, count($advertisers) - 1)];
+
+                if (in_array($advertiser, $processedAdvertisers))
+                    continue;
+
+                $processedAdvertisers[] = $advertiser;
+
+                try {
+                    $trade = $this->tradeManager->start($advertiser, $lead->getUser(), $lead, false);
+
+                    // Сразу же пробуем акцептировать сделку автоматически.
+                    $this->tradeManager->accept($trade, $feesAccount);
+
+                    if ($trade->isAccepted())
+                        $tradeCreatedAndAccepted = true;
+
+                } catch (FinancialException | TradeException | OperationException $e) {
+                    $output->writeln($e->getMessage());
+                }
+
+            } while (!$tradeCreatedAndAccepted || count($processedAdvertisers) < count($advertisers));
+
+            if (!$tradeCreatedAndAccepted) {
+                $lead->setStatus(Lead::STATUS_ARCHIVE);
+            }
         }
 
-        $members = $this->entityManager->getRepository(Member::class)
-            ->getByRooms($rooms);
+        $this->entityManager->flush();
 
-        if (empty($members)) {
-            $output->writeln('Some thing goes wrong with members');
-        }
-
-        $users = $this->entityManager->getRepository(User::class)
-            ->getByMembers($members);
-
-        return false;
+        return self::RESULT_OK;
     }
 }
