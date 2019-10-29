@@ -3,7 +3,7 @@
 namespace AppBundle\Command;
 
 use League\Csv\Reader;
-use AppBundle\Service\CitiesImporter;
+use AppBundle\Importer\CitiesImporter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,15 +54,16 @@ class ImportCitiesCommand extends Command
             $records[] = $record;
         }
 
-        $result = $this->importer->import($records);
+        $this->importer->import($records);
 
         $output->writeln('Import data about cities complete.');
         $output->writeln([
-            'Cities imported: ' . $result['cityImported'],
-            'Cities duplicate skipped: ' . $result['cityDuplicate'],
-            'Region imported: ' . $result['regionImported'],
-            'Region duplicate skipped: ' . $result['regionDuplicate'],
-            'Empty skipped: ' . $result['emptyRecords']
+            'Cities imported: ' . $this->importer->getImportedCities(),
+            'Cities duplicate skipped: ' . $this->importer->getCityDuplicates(),
+            'Region imported: ' . $this->importer->getImportedRegions(),
+            'Region duplicate skipped: ' . $this->importer->getRegionDuplicates(),
+            'Empty skipped: ' . $this->importer->getEmptyRecords(),
+            'Validation violations: ' . count($this->importer->getViolations())
         ]);
     }
 }

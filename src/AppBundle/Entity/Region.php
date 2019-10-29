@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="region")
@@ -31,7 +32,9 @@ class Region implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @ORM\Column(name="name", type="string", length=30, unique=true)
+     * @Assert\Length(max=32, maxMessage="Название может содрежать не более {{ limit }} символов")
+     *
+     * @ORM\Column(name="name", type="string", length=32, unique=true)
      */
     private $name;
 
