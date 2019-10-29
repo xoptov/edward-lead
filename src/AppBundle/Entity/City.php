@@ -32,6 +32,8 @@ class City implements IdentifiableInterface
     /**
      * @var string
      *
+     * @Assert\Length(max=30, maxMessage="Название может содержать только {{ limit }} символов")
+     *
      * @ORM\Column(name="name", type="string", length=30)
      */
     private $name;
@@ -56,6 +58,8 @@ class City implements IdentifiableInterface
 
     /**
      * @var string|null
+     *
+     * @Assert\NotBlank(message="Необходимо указать временую зону")
      *
      * @ORM\Column(name="timezone", type="string", nullable=true)
      */
