@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Room\Schedule;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable
@@ -12,6 +13,8 @@ class WorkTime
     /**
      * @var \DateTime|null
      *
+     * @Assert\NotBlank
+     *
      * @ORM\Column(name="start_at", type="time", nullable=true)
      */
     private $startAt;
@@ -19,16 +22,18 @@ class WorkTime
     /**
      * @var \DateTime|null
      *
+     * @Assert\NotBlank
+     *
      * @ORM\Column(name="end_at", type="time", nullable=true)
      */
     private $endAt;
 
     /**
-     * @param \DateTime $startAt
+     * @param \DateTime|null $startAt
      *
      * @return WorkTime
      */
-    public function setStartAt(\DateTime $startAt): self
+    public function setStartAt(?\DateTime $startAt): self
     {
         $this->startAt = $startAt;
 
@@ -44,11 +49,11 @@ class WorkTime
     }
 
     /**
-     * @param \DateTime $endAt
+     * @param \DateTime|null $endAt
      *
      * @return WorkTime
      */
-    public function setEndAt(\DateTime $endAt): self
+    public function setEndAt(?\DateTime $endAt): self
     {
         $this->endAt = $endAt;
 

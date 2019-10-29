@@ -21,6 +21,7 @@ class ScheduleType extends AbstractType
                 'required' => false
             ])
             ->add('workDays', ChoiceType::class, [
+                'required' => false,
                 'choices' => [
                     'Пн' => Schedule::MONDAY,
                     'Вт' => Schedule::TUESDAY,
@@ -31,8 +32,7 @@ class ScheduleType extends AbstractType
                     'Вс' => Schedule::SUNDAY
                 ],
                 'multiple' => true,
-                'expanded' => true,
-                'required' => false
+                'expanded' => true
             ]);
 
         $builder

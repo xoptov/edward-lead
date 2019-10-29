@@ -52,7 +52,10 @@ class Room implements IdentifiableInterface
      * @var string|null
      *
      * @Assert\NotBlank(message="Необходимо указать критерии")
-     * @Assert\Length(max=1000, maxMessage="Максимальное количество символов 1000")
+     * @Assert\Length(
+     *     max=1000,
+     *     maxMessage="Максимальное количество символов 1000"
+     * )
      *
      * @ORM\Column(name="lead_criteria", type="text", nullable=true)
      */
@@ -107,12 +110,22 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
+     * @Assert\Expression(
+     *     "!(!this.isPlatformWarranty() and value)",
+     *     message="Включить таймер можно только с включенной гарантией платформы"
+     * )
+     *
      * @ORM\Column(name="timer", type="boolean")
      */
     private $timer = false;
 
     /**
      * @var City|null
+     *
+     * @Assert\Expression(
+     *     "!(this.isTimer() and !value)",
+     *     message="Необходимо указать город"
+     * )
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinColumn(name="city_id", referencedColumnName="id")
@@ -122,6 +135,8 @@ class Room implements IdentifiableInterface
     /**
      * @var Schedule|null
      *
+     * @Assert\Valid
+     *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
     private $schedule;
@@ -129,6 +144,10 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
+     * @Assert\Expression(
+     *     "!(this.isTimer() and !value)",
+     *     message="Необходимо указать время в часах на обработку лида"
+     * )
      * @Assert\Range(
      *     min=1,
      *     max=24,
@@ -142,6 +161,11 @@ class Room implements IdentifiableInterface
 
     /**
      * @var int|null
+     *
+     * @Assert\Expression(
+     *     "!(this.isTimer() and !value)",
+     *     message="Необходимо указать количество лидов в день по таймеру"
+     * )
      *
      * @Assert\Range(
      *     min=1,

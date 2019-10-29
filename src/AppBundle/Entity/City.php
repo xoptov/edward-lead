@@ -24,6 +24,8 @@ class City implements IdentifiableInterface
     /**
      * @var Region
      *
+     * @Assert\Valid
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Region")
      * @ORM\JoinColumn(name="region_id", referencedColumnName="id", nullable=false)
      */
