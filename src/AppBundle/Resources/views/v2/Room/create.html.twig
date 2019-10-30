@@ -102,6 +102,7 @@
                                             <p>Если Вы активируете эту функцию, Вам потребуются выбрыть город, рабочее время менеджера, который будет звонить лидам, максимальное время для обработки лидов и необходимое количество лидов в день.</p>
                                             <p>Таймер будет отсчитывать время, только в установленном графике работы. Если менеджер не успел его обработать согласно настройкам, лид автоматически получит статус "Целевой"</p>
                                             <a href="#" class="more">Смотреть как работает на примере</a>
+
                                             <div class="box_checkbox">
                                                 {{ form_row(form.timer[0], {'attr': {'selected': true}}) }}
                                                 {{ form_row(form.timer[1]) }}
@@ -120,8 +121,9 @@
                                             </div>
                                             <div class="form_item">
                                                 {{ form_label(form.schedule.workTime, 'Время работы:') }}
+                                                {{ form_row(form.schedule.workTime.startAt, {'label': 'с'}) }}
+                                                {{ form_row(form.schedule.workTime.endAt, {'label': 'по'}) }}
                                                 <span>
-                                                    {{ form_widget(form.schedule.workTime) }}
                                                     {{ form_widget(form.schedule.workDays) }}
                                                 </span>
                                                 {% if form.schedule.workDays.vars.errors|length %}
