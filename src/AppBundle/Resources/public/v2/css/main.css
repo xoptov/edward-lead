@@ -1957,3 +1957,7 @@ main.body_invite {
   margin-top: 20px;
   margin-left: 20px;
 }
+
+.text-red {
+  color: #bc0b28;
+}
