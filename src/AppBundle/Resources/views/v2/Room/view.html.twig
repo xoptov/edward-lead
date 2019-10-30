@@ -115,11 +115,35 @@
                             {% else %}
                                 Нет
                             {% endif %}
+                            {% if room.timer %}
+                                {% if room.city is not empty %}
+                                    <div>Город работы: {{ room.city.name }}</div>
+                                {% endif %}
+                                {% if room.schedule is not empty %}
+                                    {% set schedule = room.schedule %}
+                                    {% if schedule.workTime is not empty %}
+                                        {% set workTime = schedule.workTime %}
+                                        <div>
+                                            Режим работы: с {{ workTime.startAt|date('H:i') }} по {{ workTime.endAt|date('H:i') }}
+                                        </div>
+                                    {% endif %}
+                                    {% if schedule.workDays is not empty %}
+                                        {% set workDays = humanize_work_days(schedule.workDays) %}
+                                        <div>
+                                            {% for workDay in workDays %}
+                                                {{ workDay }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    {% if room.executionHours is not empty %}
+                                        <div>Таймер мереджера: {{ room.executionHours }} час(ов)</div>
+                                    {% endif %}
+                                    {% if room.leadsPerDay is not empty %}
+                                        <div>Требуется лидов в день: {{ room.leadsPerDay }} шт</div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
                         </span>
-                        {#<div class="box_btn">#}
-                            {#<a href="#" class="enable">Включить</a>#}
-                            {#<a href="#" class="disable">Отключить</a>#}
-                        {#</div>#}
                     </div>
                     <div class="col-lg-3 room_info box_date">
                         <div class="box_title">

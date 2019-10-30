@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
@@ -59,6 +60,7 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
+            new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays'])
         ];
     }
 
@@ -164,5 +166,33 @@ class TemplateExtension extends \Twig_Extension
     public function getFinalPrice(Lead $lead): int
     {
         return $this->tradeManager->calculateCostWithMarginWithFee($lead);
+    }
+
+    /**
+     * @param int $workDays
+     *
+     * @return array
+     */
+    public function humanizeWorkDays(int $workDays): array
+    {
+        $maps = [
+            Schedule::MONDAY => 'пн',
+            Schedule::TUESDAY => 'вт',
+            Schedule::WEDNESDAY => 'ср',
+            Schedule::THURSDAY => 'чт',
+            Schedule::FRIDAY => 'пт',
+            Schedule::SATURDAY => 'сб',
+            Schedule::SUNDAY => 'вс'
+        ];
+
+        $humanizedWorkDays = [];
+
+        for ($x = 1; $x <= Schedule::SUNDAY; $x *= 2) {
+            if ($workDays & $x) {
+                $humanizedWorkDays[] = $maps[$x];
+            }
+        }
+
+        return $humanizedWorkDays;
     }
 }
