@@ -3,11 +3,12 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
 use AppBundle\Service\LeadManager;
+use AppBundle\Service\TimerManager;
+use AppBundle\Entity\Room\Schedule;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Entity\MonetaryTransaction;
@@ -25,15 +26,23 @@ class TemplateExtension extends \Twig_Extension
     private $tradeManager;
 
     /**
+     * @var TimerManager
+     */
+    private $timerManager;
+
+    /**
      * @param AccountManager $accountManager
      * @param TradeManager   $tradeManager
+     * @param TimerManager   $timerManager
      */
     public function __construct(
         AccountManager $accountManager,
-        TradeManager $tradeManager
+        TradeManager $tradeManager,
+        TimerManager $timerManager
     ) {
         $this->accountManager = $accountManager;
         $this->tradeManager = $tradeManager;
+        $this->timerManager = $timerManager;
     }
 
     /**
@@ -46,7 +55,8 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFilter("date_format", [$this, "dateFormat"]),
             new \Twig_SimpleFilter("money_format", [$this, "moneyFormat"]),
             new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone']),
-            new \Twig_SimpleFilter('human_duration', [$this, 'humanDuration'])
+            new \Twig_SimpleFilter('human_duration', [$this, 'humanDuration']),
+            new \Twig_SimpleFilter('human_remain_time', [$this, 'humanRemainTime'])
         ];
     }
 
@@ -176,13 +186,13 @@ class TemplateExtension extends \Twig_Extension
     public function humanizeWorkDays(int $workDays): array
     {
         $maps = [
-            Schedule::MONDAY => 'пн',
-            Schedule::TUESDAY => 'вт',
+            Schedule::MONDAY    => 'пн',
+            Schedule::TUESDAY   => 'вт',
             Schedule::WEDNESDAY => 'ср',
-            Schedule::THURSDAY => 'чт',
-            Schedule::FRIDAY => 'пт',
-            Schedule::SATURDAY => 'сб',
-            Schedule::SUNDAY => 'вс'
+            Schedule::THURSDAY  => 'чт',
+            Schedule::FRIDAY    => 'пт',
+            Schedule::SATURDAY  => 'сб',
+            Schedule::SUNDAY    => 'вс'
         ];
 
         $humanizedWorkDays = [];
@@ -194,5 +204,19 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return $humanizedWorkDays;
+    }
+
+    /**
+     * @param \DateTime $endAt
+     *
+     * @return null|string
+     */
+    public function humanRemainTime(\DateTime $endAt): ?string
+    {
+
+        $now = $this->timerManager->createDateTime();
+        $remainInSeconds = Formatter::intervalInSeconds($now, $endAt);
+
+        return Formatter::humanTimerRemain($remainInSeconds);
     }
 }

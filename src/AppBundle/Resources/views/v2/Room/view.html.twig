@@ -50,7 +50,11 @@
                                 <td v-text="lead.phone"></td>
                                 <td v-text="lead.channel"></td>
                                 <td>
-                                    <span v-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
+                                    <span v-if="'timer' in lead">
+                                        таймер<br>
+                                        <span class="text-red" v-text="lead.timer.remain"></span>
+                                    </span>
+                                    <span v-else-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
                                 </td>
                                 <td class="status">
                                     <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label"></span>

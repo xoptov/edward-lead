@@ -171,7 +171,7 @@ abstract class Formatter
         $interval = $now->diff($target);
 
         $seconds = $interval->s;
-        $seconds += $interval->m * 60;
+        $seconds += $interval->i * 60;
         $seconds += $interval->h * 3600;
 
         if ($interval->days) {
@@ -179,5 +179,35 @@ abstract class Formatter
         }
 
         return $seconds;
+    }
+
+    /**
+     * @param int $seconds
+     *
+     * @return null|string
+     */
+    public static function humanTimerRemain(int $seconds): ?string
+    {
+        if ($seconds < 60) {
+            return null;
+        }
+
+        $days = intval($seconds / 86400);
+        $hours = intval($seconds % 86400 / 3600);
+        $minutes = intval($seconds % 86400 % 3600 / 60);
+
+        if ($days) {
+            return sprintf('%d д. %d ч. %d м.', $days, $hours, $minutes);
+        }
+
+        if ($hours) {
+            return sprintf('%d ч. %d м.', $hours, $minutes);
+        }
+
+        if ($minutes) {
+            return sprintf('%d м.', $minutes);
+        }
+
+        return null;
     }
 }

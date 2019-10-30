@@ -133,6 +133,10 @@ class TimerProcessCommand extends Command
             if (!$tradeCreatedAndAccepted) {
                 $lead->setStatus(Lead::STATUS_ARCHIVE);
             }
+
+            if ($lead->hasTimer()) {
+                $lead->getTimer()->setProcessedAt($now);
+            }
         }
 
         $this->entityManager->flush();

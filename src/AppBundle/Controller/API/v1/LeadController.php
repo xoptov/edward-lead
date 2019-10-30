@@ -3,14 +3,16 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\City;
-use AppBundle\Entity\Company;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
+use AppBundle\Util\Formatter;
+use AppBundle\Entity\Company;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Property;
 use AppBundle\Event\LeadEvent;
 use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
+use AppBundle\Service\TimerManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\LeadEditVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
@@ -40,15 +42,23 @@ class LeadController extends Controller
     private $entityManager;
 
     /**
+     * @var TimerManager
+     */
+    private $timerManager;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param LeadManager            $leadManager
+     * @param TimerManager           $timerManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        LeadManager $leadManager
+        LeadManager $leadManager,
+        TimerManager $timerManager
     ) {
         $this->entityManager = $entityManager;
         $this->leadManager = $leadManager;
+        $this->timerManager = $timerManager;
     }
 
     /**
@@ -68,9 +78,12 @@ class LeadController extends Controller
 
         $numToBoolTransformer = new NumberToBooleanTransformer();
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         $result = [
             'id' => $lead->getId(),
-            'phone' => $this->leadManager->getNormalizedPhone($lead, $this->getUser()),
+            'phone' => $this->leadManager->getNormalizedPhone($lead, $user),
             'name' => $lead->getName() ? $lead->getName() : 'Неизвестно',
             'orderDate' => $lead->getOrderDateFormatted('c'),
             'decisionMaker' => $numToBoolTransformer->transform($lead->isDecisionMaker()),
@@ -106,6 +119,14 @@ class LeadController extends Controller
             $result['channel'] = [
                 'id' => $lead->getChannel()->getId(),
                 'name' => $lead->getChannel()->getValue()
+            ];
+        }
+
+        if ($lead->hasTimer() && $lead->getTimer()->getEndAt()) {
+            $now = $this->timerManager->createDateTime();
+            $remainInSeconds = Formatter::intervalInSeconds($now, $lead->getTimer()->getEndAt());
+            $result['timer'] = [
+                'remain' => Formatter::humanTimerRemain($remainInSeconds)
             ];
         }
 
@@ -321,7 +342,7 @@ class LeadController extends Controller
                 'stars' => $this->leadManager->estimateStars($lead),
                 'city' => $lead->getCityName(),
                 'cpa' => false,
-                'audio_record' => $lead->hasAudioRecord(),
+                'audioRecord' => $lead->hasAudioRecord(),
                 'channel' => $lead->getChannelName(),
                 'status' => $lead->getStatus(),
                 'price' => $lead->getPrice(Account::DIVISOR)
@@ -340,10 +361,18 @@ class LeadController extends Controller
                 if ($company) {
                     $row['buyer']['company'] = [
                         'id' => $company->getId(),
-                        'short_name' => $company->getShortName(),
-                        'large_name' => $company->getLargeName()
+                        'shortName' => $company->getShortName(),
+                        'largeName' => $company->getLargeName()
                     ];
                 }
+            }
+
+            if ($lead->hasTimer() && $lead->getTimer()->getEndAt()) {
+                $now = $this->timerManager->createDateTime();
+                $remainInSeconds = Formatter::intervalInSeconds($now, $lead->getTimer()->getEndAt());
+                $row['timer'] = [
+                    'remain' => Formatter::humanTimerRemain($remainInSeconds)
+                ];
             }
 
             $result[] = $row;

@@ -571,6 +571,14 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasTimer(): bool
+    {
+        return !empty($this->timer);
+    }
+
+    /**
      * @return int|null
      */
     public function getHiddenMargin(): ?int

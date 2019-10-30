@@ -8,6 +8,9 @@
     <div class="lead-view office-settings u-w-100">
         {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Лид #{{ lead.id }}</h3>
+        {% if lead.hasTimer and lead.timer.endAt is not empty %}
+            <div class="plain__text text-mod-5">Время на обработку <span class="text-red">{{ lead.timer.endAt|human_remain_time }}</span></div>
+        {% endif %}
         <div class="plain__text text-mod-5">Просмотрите карточку лида, если Вам он показался интересный, Вы можете его купить и получить его контактные данные. Мы продаём лида только одной организации.</div>
         <div class="info-block">
             <div class="info-block__list">

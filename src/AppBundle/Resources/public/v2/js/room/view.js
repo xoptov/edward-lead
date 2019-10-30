@@ -55,6 +55,9 @@ const vm = new Vue({
             }
             return '/bundles/app/v2/img/icon_2.png';
         },
+        getTimerOrCompanyLabel: function(lead) {
+            return '';
+        },
         getStatusObject: function(status) {
             const statusObj = {
                 class: null,
