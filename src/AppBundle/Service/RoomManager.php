@@ -61,7 +61,7 @@ class RoomManager
         }
 
         // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
-        if ($room->isTimer()) {
+        if ($room->isTimer() && $room->getId()) {
 
             $members = $this->entityManager->getRepository(Member::class)
                 ->getByRooms([$room]);

@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Room;
 
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Room\Schedule\WorkTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable
@@ -21,6 +22,8 @@ class Schedule
     /**
      * @var WorkTime|null
      *
+     * @Assert\NotBlank(message="Необходимо указать рабочее время")
+     *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
      */
     private $workTime;
@@ -28,16 +31,19 @@ class Schedule
     /**
      * @var int|null
      *
+     * @Assert\NotBlank(message="Необходимо указать рабочие дни")
+     * @Assert\Range(min=1, max=127)
+     *
      * @ORM\Column(name="work_days", type="smallint", nullable=true, options={"unsigned":true})
      */
     private $workDays;
 
     /**
-     * @param WorkTime $workTime
+     * @param WorkTime|null $workTime
      *
      * @return Schedule
      */
-    public function setWorkTime(WorkTime $workTime): self
+    public function setWorkTime(?WorkTime $workTime): self
     {
         $this->workTime = $workTime;
 
@@ -79,12 +85,16 @@ class Schedule
     }
 
     /**
-     * @param int $days
+     * @param int|null $days
      *
      * @return boolean
      */
-    public function setWorkDays(int $days): bool
+    public function setWorkDays(?int $days): bool
     {
+        if (empty($days)) {
+            return false;
+        }
+
         if (0 <= $days && 127 >= $days) {
             $this->workDays = $days;
 

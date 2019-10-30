@@ -30,6 +30,11 @@
                 <div class="create_room">
                     <div class="form">
                         {{ form_start(form, {'attr': {'novalidate': true}}) }}
+                            {% if form.vars.errors|length %}
+                                {% for error in form.vars.errors %}
+                                    <span class="text-error">{{ error.message }}</span>
+                                {% endfor %}
+                            {% endif %}
                             <div class="row">
                                 <div class="col-xl-7 col-12">
                                     <div class="form_item">
@@ -91,47 +96,60 @@
                                             <span class="text-error">{{ form.platformWarranty.vars.errors[0].message }}</span>
                                         {% endif %}
                                     </div>
-                                    <div class="timer">
-                                        {{ form_label(form.timer, 'Включить таймер для менеджера?', {'attr': {'class': 'timer_title'}}) }}
-                                        <p>Если Вы активируете эту функцию, Вам потребуются выбрыть город, рабочее время менеджера, который будет звонить лидам, максимальное время для обработки лидов и необходимое количество лидов в день.</p>
-                                        <p>Таймер будет отсчитывать время, только в установленном графике работы. Если менеджер не успел его обработать согласно настройкам, лид автоматически получит статус "Целевой"</p>
-                                        <a href="#" class="more">Смотреть как работает на примере</a>
-                                        <div class="box_checkbox">
-                                            {{ form_row(form.timer[0], {'attr': {'selected': true}}) }}
-                                            {{ form_row(form.timer[1]) }}
-                                        </div>
-                                        <div class="form_item">
-                                            {{ form_label(form.city, 'Город работы:') }}
-                                            <span>
-                                                {{ form_widget(form.city) }}
-                                            </span>
-                                        </div>
-                                        <div class="form_item">
-                                            {{ form_label(form.schedule.workTime, 'Время работы:') }}
-                                            <span>
-                                                {{ form_widget(form.schedule.workTime) }}
-                                                {{ form_widget(form.schedule.workDays) }}
-                                            </span>
-                                        </div>
-                                        <div class="form_item">
-                                            {{ form_label(form.executionHours) }}
-                                            <span {% if form.executionHours.vars.errors|length %}class="error"{% endif %}>
-                                                {{ form_widget(form.executionHours) }}
-                                                {% if form.executionHours.vars.errors|length %}
-                                                    <span class="text-error">{{ form.executionHours.vars.errors[0].message }}</span>
+                                    {% if form.timer is defined %}
+                                        <div class="timer">
+                                            {{ form_label(form.timer, 'Включить таймер для менеджера?', {'attr': {'class': 'timer_title'}}) }}
+                                            <p>Если Вы активируете эту функцию, Вам потребуются выбрыть город, рабочее время менеджера, который будет звонить лидам, максимальное время для обработки лидов и необходимое количество лидов в день.</p>
+                                            <p>Таймер будет отсчитывать время, только в установленном графике работы. Если менеджер не успел его обработать согласно настройкам, лид автоматически получит статус "Целевой"</p>
+                                            <a href="#" class="more">Смотреть как работает на примере</a>
+
+                                            <div class="box_checkbox">
+                                                {{ form_row(form.timer[0], {'attr': {'selected': true}}) }}
+                                                {{ form_row(form.timer[1]) }}
+                                            </div>
+                                            {% if form.timer.vars.errors|length %}
+                                                <span class="text-error">{{ form.timer.vars.errors[0].message }}</span>
+                                            {% endif %}
+                                            <div class="form_item">
+                                                {{ form_label(form.city, 'Город работы:') }}
+                                                <span>
+                                                    {{ form_widget(form.city) }}
+                                                    {% if form.city.vars.errors|length %}
+                                                        <span class="text-error">{{ form.city.vars.errors[0].message }}</span>
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="form_item">
+                                                {{ form_label(form.schedule.workTime, 'Время работы:') }}
+                                                {{ form_row(form.schedule.workTime.startAt, {'label': 'с'}) }}
+                                                {{ form_row(form.schedule.workTime.endAt, {'label': 'по'}) }}
+                                                <span>
+                                                    {{ form_widget(form.schedule.workDays) }}
+                                                </span>
+                                                {% if form.schedule.workDays.vars.errors|length %}
+                                                    <span class="text-error">{{ form.schedule.workDays.vars.errors[0].message }}</span>
                                                 {% endif %}
-                                            </span>
+                                            </div>
+                                            <div class="form_item">
+                                                {{ form_label(form.executionHours, 'Время исполнения лида') }}
+                                                <span {% if form.executionHours.vars.errors|length %}class="error"{% endif %}>
+                                                    {{ form_widget(form.executionHours) }}
+                                                    {% if form.executionHours.vars.errors|length %}
+                                                        <span class="text-error">{{ form.executionHours.vars.errors[0].message }}</span>
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <div class="form_item">
+                                                {{ form_label(form.leadsPerDay, 'Минимальное количество лидов в день') }}
+                                                <span {% if form.leadsPerDay.vars.errors|length %}class="error"{% endif %}>
+                                                    {{ form_widget(form.leadsPerDay) }}
+                                                    {% if form.leadsPerDay.vars.errors|length %}
+                                                        <span class="text-error">{{ form.leadsPerDay.vars.errors[0].message }}</span>
+                                                    {% endif %}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="form_item">
-                                            {{ form_label(form.leadsPerDay) }}
-                                            <span {% if form.leadsPerDay.vars.errors|length %}class="error"{% endif %}>
-                                                {{ form_widget(form.leadsPerDay) }}
-                                                {% if form.leadsPerDay.vars.errors|length %}
-                                                    <span class="text-error">{{ form.leadsPerDay.vars.errors[0].message }}</span>
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         {{ form_end(form) }}

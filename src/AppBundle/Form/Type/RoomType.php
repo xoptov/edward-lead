@@ -8,6 +8,7 @@ use AppBundle\Entity\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Form\EventListener\RoomTypeSubscriber;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -46,22 +47,29 @@ class RoomType extends AbstractType
                     'Нет' => false
                 ],
                 'expanded' => true
-            ])
-            ->add('city', EntityType::class, [
-                'class' => City::class,
-                'choice_label' => 'name',
-                'required' => false
-            ])
-            ->add('schedule', ScheduleType::class, [
-                'required' => false
-            ])
-            ->add('executionHours', NumberType::class, [
-                'required' => false
-            ])
-            ->add('leadsPerDay', NumberType::class, [
-                'required' => false
-            ])
-            ->add('submit', SubmitType::class);
+            ]);
+
+        if (isset($options['timer']) && $options['timer']) {
+            $builder
+                ->add('city', EntityType::class, [
+                    'class' => City::class,
+                    'choice_label' => 'name',
+                    'required' => false
+                ])
+                ->add('schedule', ScheduleType::class, [
+                    'required' => false
+                ])
+                ->add('executionHours', TextType::class, [
+                    'required' => false
+                ])
+                ->add('leadsPerDay', TextType::class, [
+                    'required' => false
+                ]);
+        }
+
+        $builder->add('submit', SubmitType::class);
+
+        $builder->addEventSubscriber(new RoomTypeSubscriber());
     }
 
     /**
@@ -69,6 +77,12 @@ class RoomType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('data_class', Room::class);
+        $resolver
+            ->setDefined('timer')
+            ->setAllowedValues('timer', [false, true])
+            ->setDefaults([
+                'data_class' => Room::class,
+                'timer' => false
+            ]);
     }
 }
