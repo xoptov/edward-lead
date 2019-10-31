@@ -205,6 +205,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $deleteRequest;
 
     /**
+     * @var User|null
+     *
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
+     * @ORM\JoinColumn(name="referrer_id", referencedColumnName="id")
+     */
+    private $referrer;
+
+    /**
      * @return array
      */
     public static function getPossibleRoles(): array
@@ -748,6 +756,26 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getDeleteRequest(): ?UserDeleteRequest
     {
         return $this->deleteRequest;
+    }
+
+    /**
+     * @param User|null $referrer
+     *
+     * @return User
+     */
+    public function setReferrer(?User $referrer): self
+    {
+        $this->referrer = $referrer;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getReferrer(): ?User
+    {
+        return $this->referrer;
     }
 
     /**
