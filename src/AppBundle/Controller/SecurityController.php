@@ -3,7 +3,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use Psr\Log\LoggerInterface;
 use AppBundle\Event\UserEvent;
+use Doctrine\DBAL\DBALException;
 use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\ClientAccount;
@@ -53,12 +55,16 @@ class SecurityController extends Controller
     /**
      * @Route("/registration", name="app_registration", methods={"POST", "GET"})
      *
-     * @param Request $request
+     * @param Request         $request
+     * @param LoggerInterface $logger
      *
      * @return Response
      */
-    public function registrationAction(Request $request): Response
-    {
+    public function registrationAction(
+        Request $request,
+        LoggerInterface $logger
+    ): Response {
+
         $form = $this->createForm(RegistrationType::class);
 
         if ($request->isMethod(Request::METHOD_POST)) {
@@ -71,11 +77,39 @@ class SecurityController extends Controller
             }
 
             if ($form->isValid()) {
+
                 /** @var User $user */
                 $user = $form->getData();
+                $user->setEnabled(true);
 
                 $this->entityManager->persist($user);
                 $this->userManager->updateUser($user, false);
+
+                //todo надо подумать куда вынести этот код в лучшее место.
+                if ($request->cookies->has('referrer')) {
+
+                    $referrerToken = $request->cookies->get('referrer');
+
+                    if (!empty($referrerToken)) {
+
+                        $userRepository = $this->entityManager->getRepository(User::class);
+
+                        try {
+                            $referrerUser = $userRepository
+                                ->getByReferrerToken($referrerToken);
+                        } catch (DBALException $e) {
+                            $logger->error('Ошибка привязки пользователья к реферреру', [
+                                'message' => $e->getMessage()
+                            ]);
+                        }
+
+                        if (isset($referrerUser) && $referrerUser) {
+                            $user->setReferrer($referrerUser);
+                        }
+                    }
+                }
+
+                //todo конец кода который нужно по хорошему вынести отдельно.
 
                 $account = new ClientAccount();
                 $account
@@ -83,6 +117,7 @@ class SecurityController extends Controller
                     ->setEnabled(true);
 
                 $this->entityManager->persist($account);
+                $this->entityManager->flush();
 
                 $this->eventDispatcher->dispatch(UserEvent::NEW_REGISTERED, new UserEvent($user));
 
