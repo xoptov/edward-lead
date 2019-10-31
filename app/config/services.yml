@@ -40,9 +40,6 @@ services:
             $audioAllowedTypes: '%audio_allowed_types%'
             $audioMaxSize: '%audio_max_size%'
 
-    AppBundle\EventListener\UserSubscriber:
-        tags: ['kernel.event_subscriber']
-
     AppBundle\EventListener\SecuritySubscriber:
         tags: ['kernel.event_subscriber']
 

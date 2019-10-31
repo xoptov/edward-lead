@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\User;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -126,5 +127,38 @@ class UserRepository extends EntityRepository
             ->getQuery();
 
         return $query->getSingleScalarResult();
+    }
+
+    /**
+     * @param string $referrerToken
+     *
+     * @return User|null
+     *
+     * @throws DBALException
+     */
+    public function getByReferrerToken(string $referrerToken): ?User
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT id FROM user WHERE SHA1(id) LIKE :hash_suffix LIMIT 1';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('hash_suffix', '%' . $referrerToken);
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+
+            $userId = $stmt->fetchColumn();
+
+            if (!$userId) {
+                return null;
+            }
+
+            /** @var User $user */
+            $user = $this->find($userId);
+
+            return $user;
+        }
+
+        return null;
     }
 }
