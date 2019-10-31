@@ -66,6 +66,11 @@ class Trade extends Operation
     private $askCallbackPhoneCalls;
 
     /**
+     * @var ArrayCollection
+     */
+    private $referrerRewards;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="status", type="smallint", options={"unsigned":"true"})
@@ -81,6 +86,7 @@ class Trade extends Operation
 
         $this->phoneCalls = new ArrayCollection();
         $this->askCallbackPhoneCalls = new ArrayCollection();
+        $this->referrerRewards = new ArrayCollection();
     }
 
     /**
@@ -305,6 +311,38 @@ class Trade extends Operation
         }
 
         return $this->askCallbackPhoneCalls->add($phoneCall);
+    }
+
+    /**
+     * @param ReferrerReward $reward
+     *
+     * @return bool
+     */
+    public function addReferrerReward(ReferrerReward $reward): bool
+    {
+        if ($this->referrerRewards->contains($reward)) {
+            return false;
+        }
+
+        return $this->referrerRewards->add($reward);
+    }
+
+    /**
+     * @param ReferrerReward $reward
+     *
+     * @return bool
+     */
+    public function removeReferrerReward(ReferrerReward $reward): bool
+    {
+        return $this->referrerRewards->removeElement($reward);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getReferrerRewards()
+    {
+        return $this->referrerRewards;
     }
 
     /**

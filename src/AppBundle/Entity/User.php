@@ -781,6 +781,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @return bool
      */
+    public function hasReferrer(): bool
+    {
+        return $this->referrer instanceof User;
+    }
+
+    /**
+     * @return bool
+     */
     public function isCompany(): bool
     {
         return in_array(self::ROLE_COMPANY, $this->roles);

@@ -45,6 +45,11 @@ class TradeManager
     private $feesManager;
 
     /**
+     * @var ReferrerRewardManager
+     */
+    private $referrerRewardManager;
+
+    /**
      * @var TransactionManager
      */
     private $transactionManager;
@@ -60,6 +65,7 @@ class TradeManager
      * @param AccountManager         $accountManager
      * @param HoldManager            $holdManager
      * @param FeesManager            $feesManager
+     * @param ReferrerRewardManager  $referrerRewardManager
      * @param TransactionManager     $transactionManager
      * @param int                    $maxAsksCallback
      */
@@ -69,6 +75,7 @@ class TradeManager
         AccountManager $accountManager,
         HoldManager $holdManager,
         FeesManager $feesManager,
+        ReferrerRewardManager $referrerRewardManager,
         TransactionManager $transactionManager,
         int $maxAsksCallback
     ) {
@@ -77,6 +84,7 @@ class TradeManager
         $this->accountManager = $accountManager;
         $this->holdManager = $holdManager;
         $this->feesManager = $feesManager;
+        $this->referrerRewardManager = $referrerRewardManager;
         $this->transactionManager = $transactionManager;
         $this->maxAsksCallback = $maxAsksCallback;
     }
@@ -142,6 +150,7 @@ class TradeManager
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
+        // Массив в который мы положем транзакции.
         $transactions = [];
 
         /** @var Fee $fee */
@@ -155,12 +164,17 @@ class TradeManager
             );
         }
 
-        $transactions = array_merge($transactions, $this->transactionManager->create(
-            $trade->getBuyerAccount(),
-            $trade->getSellerAccount(),
-            $trade,
-            false
-        ));
+        $transactions = array_merge(
+            $transactions,
+            $this->transactionManager->create(
+                $trade->getBuyerAccount(),
+                $trade->getSellerAccount(),
+                $trade,
+                false
+            )
+        );
+
+        //todo: тут нужно добавить транзакции для вознаграждений.
 
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($trade, $transactions) {
 
