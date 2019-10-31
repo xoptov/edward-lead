@@ -51,6 +51,9 @@ services:
             $firewallMap: '@security.firewall.map'
         tags: ['kernel.event_subscriber']
 
+    AppBundle\EventListener\ReferrerTokenListener:
+        tags: ['kernel.event_subscriber']
+
     AppBundle\EventListener\TradeSubscriber:
         arguments:
             $fosComposer: '@fos_message.composer.default'
