@@ -9,6 +9,7 @@ use AppBundle\Entity\User;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\HoldManager;
+use AppBundle\Service\ReferrerRewardManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\TransactionManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -250,6 +251,18 @@ class TradeManagerTest extends TestCase
         /** @var TransactionManager $transactionManager */
         $transactionManager = $this->createMock(TransactionManager::class);
 
-        return new TradeManager($logger, $entityManager, $accountManager, $holdManager, $feesManager, $transactionManager, 2);
+        /** @var ReferrerRewardManager $referrerRewardManager */
+        $referrerRewardManager = $this->createMock(ReferrerRewardManager::class);
+
+        return new TradeManager(
+            $logger,
+            $entityManager,
+            $accountManager,
+            $holdManager,
+            $feesManager,
+            $referrerRewardManager,
+            $transactionManager,
+            2
+        );
     }
 }

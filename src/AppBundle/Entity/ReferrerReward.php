@@ -66,4 +66,12 @@ class ReferrerReward extends Operation
     {
         return $this->referrer;
     }
+
+    /**
+     * @return Account
+     */
+    public function getReferrerAccount(): Account
+    {
+        return $this->referrer->getAccount();
+    }
 }

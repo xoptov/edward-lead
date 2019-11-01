@@ -26,12 +26,17 @@ class HoldManager
      * @param ClientAccount $account
      * @param Operation     $operation
      * @param int           $amount
-     * @param bool|null     $flush
+     * @param bool          $flush
      *
      * @return MonetaryHold
      */
-    public function create(ClientAccount $account, Operation $operation, int $amount, ?bool $flush = true): MonetaryHold
-    {
+    public function create(
+        ClientAccount $account,
+        Operation $operation,
+        int $amount,
+        bool $flush = true
+    ): MonetaryHold {
+
         $monetaryHold = new MonetaryHold();
         $monetaryHold
             ->setAccount($account)
@@ -49,9 +54,9 @@ class HoldManager
 
     /**
      * @param Operation $operation
-     * @param bool|null $flush
+     * @param bool      $flush
      */
-    public function remove(Operation $operation, ?bool $flush = true): void
+    public function remove(Operation $operation, bool $flush = true): void
     {
         if (!$operation->hasHold()) {
             return;

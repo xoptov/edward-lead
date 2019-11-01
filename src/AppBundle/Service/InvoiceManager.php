@@ -37,12 +37,17 @@ class InvoiceManager
      * @param User        $user
      * @param int         $amount
      * @param string|null $phone
-     * @param bool|null   $flush
+     * @param bool        $flush
      *
      * @return Invoice
      */
-    public function create(User $user, int $amount, ?string $phone = null, ?bool $flush = true): Invoice
-    {
+    public function create(
+        User $user,
+        int $amount,
+        ?string $phone = null,
+        bool $flush = true
+    ): Invoice {
+
         $invoice = new Invoice();
         $invoice
             ->setHash(md5(microtime()))
@@ -73,7 +78,11 @@ class InvoiceManager
             throw new OperationException($invoice, 'Инвойс уже обработан');
         }
 
-        $transactions = $this->transactionManager->create($account, $invoice->getAccount(), $invoice);
+        $transactions = $this->transactionManager->create(
+            $account,
+            $invoice->getAccount(),
+            $invoice
+        );
 
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($invoice, $transactions){
 

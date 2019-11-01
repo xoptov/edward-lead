@@ -2,8 +2,8 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Lead;
 use GuzzleHttp\Client;
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
@@ -118,8 +118,8 @@ class PhoneCallManager
     }
 
     /**
-     * @param User      $caller
-     * @param Trade     $trade
+     * @param User  $caller
+     * @param Trade $trade
      *
      * @return PhoneCall
      *
@@ -162,12 +162,15 @@ class PhoneCallManager
 
     /**
      * @param PhoneCall $phoneCall
-     * @param bool|null $flush
+     * @param bool      $flush
      *
      * @throws OperationException
      */
-    public function requestConnection(PhoneCall $phoneCall, ?bool $flush = true): void
-    {
+    public function requestConnection(
+        PhoneCall $phoneCall,
+        bool $flush = true
+    ): void {
+
         try {
 
             $response = $this->client->request(Request::METHOD_GET, $this->pbxCallUrl, [
@@ -244,7 +247,12 @@ class PhoneCallManager
             ->getRepository(Account::class)
             ->getTelephonyAccount();
 
-        $transactions = $this->transactionManager->create($caller->getAccount(), $telephonyAccount, $phoneCall, false);
+        $transactions = $this->transactionManager->create(
+            $caller->getAccount(),
+            $telephonyAccount,
+            $phoneCall,
+            false
+        );
 
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($phoneCall, $transactions) {
 
@@ -277,7 +285,12 @@ class PhoneCallManager
             ->getRepository(Account::class)
             ->getTelephonyAccount();
 
-        $transactions = $this->transactionManager->create($caller->getAccount(), $telephonyAccount, $phoneCall, false);
+        $transactions = $this->transactionManager->create(
+            $caller->getAccount(),
+            $telephonyAccount,
+            $phoneCall,
+            false
+        );
 
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($phoneCall, $transactions) {
 
