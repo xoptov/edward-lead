@@ -246,6 +246,10 @@ services:
         arguments:
             $maxAsksCallback: '%max_asks_callback%'
 
+    AppBundle\Service\ReferrerRewardManager:
+        arguments:
+            $rewardInterest: '%referrer_reward%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'

@@ -34,8 +34,11 @@ class RoomController extends Controller
      */
     public function getAllAction(): JsonResponse
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $rooms = $this->getDoctrine()->getRepository(Room::class)
-            ->getByMember($this->getUser());
+            ->getByMember($user);
 
         $result = [];
 

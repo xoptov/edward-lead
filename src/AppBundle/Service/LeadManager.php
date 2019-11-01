@@ -100,12 +100,12 @@ class LeadManager
     }
 
     /**
-     * @param Lead     $lead
-     * @param null|int $divisor
+     * @param Lead $lead
+     * @param int  $divisor
      *
      * @return int
      */
-    public function estimateCost(Lead $lead, ?int $divisor = null): int
+    public function estimateCost(Lead $lead, int $divisor = 1): int
     {
         $room = $lead->getRoom();
 

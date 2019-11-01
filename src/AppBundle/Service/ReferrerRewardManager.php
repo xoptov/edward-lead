@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Util\Math;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Operation;
@@ -38,20 +39,28 @@ class ReferrerRewardManager
     ) {
         $this->entityManager = $entityManager;
         $this->feesManager = $feesManager;
-        $this->rewardInterest = $rewardInterest;
+
+        if ($rewardInterest <= 0.0 || $rewardInterest >= 100.0) {
+            $this->rewardInterest = 0.0;
+        } else {
+            $this->rewardInterest = $rewardInterest;
+        }
     }
 
     /**
-     * @param Trade     $trade
-     * @param bool|null $flush
+     * @param Trade $trade
+     * @param bool  $flush
      *
      * @return ReferrerReward[]|null
      *
      * @throws OperationException
      */
-    public function createRewardsForTrade(Trade $trade, bool $flush = true): ?array
-    {
-        if ($this->rewardInterest <= 0) {
+    public function createRewardsForTrade(
+        Trade $trade,
+        bool $flush = true
+    ): ?array {
+
+        if (0 >= $this->rewardInterest) {
             return null;
         }
 
@@ -59,12 +68,16 @@ class ReferrerRewardManager
             throw new OperationException($trade, 'Торговая операция уже обработана');
         }
 
-        $feesAmount = $this->feesManager->getCommissionForBuyingLead(
-            $trade->getLead()
-        );
+        $interest = $this->feesManager->getCommissionForBuyingLead($trade->getLead());
 
-        if (empty($feesAmount)) {
-            return null; // Нет вознаграждений так как нет комиссии системы
+        if (empty($interest)) {
+            return null;
+        }
+
+        $feesAmount = Math::calculateByInterest($trade->getAmount(), $interest);
+
+        if (0 >= $feesAmount) {
+            return null;
         }
 
         $buyer = $trade->getBuyer();
@@ -74,13 +87,13 @@ class ReferrerRewardManager
             return null;
         }
 
-        $rewardAmount = intval(floor($feesAmount * $this->rewardInterest / 100));
+        $rewardAmount = intval(ceil($feesAmount * $this->rewardInterest / 100));
 
         if ($buyer->hasReferrer() && $seller->hasReferrer()) {
-            $rewardAmount = intval(floor($feesAmount / 2));
+            $rewardAmount = intval(ceil($feesAmount / 2));
         }
 
-        if ($rewardAmount === 0) {
+        if (0 >= $rewardAmount) {
             return null; // Вознагрождение настолоко мало что его нет смысла учитывать.
         }
 

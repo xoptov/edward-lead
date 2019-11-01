@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Util\Math;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
@@ -100,8 +101,12 @@ class RoomManager
      *
      * @return int
      */
-    public function countCanBuy(Room $room, float $buyerFee, int $availableBalance): int
-    {
+    public function countCanBuy(
+        Room $room,
+        float $buyerFee,
+        int $availableBalance
+    ): int {
+
         if ($availableBalance === 0) {
             return 0;
         }
@@ -112,7 +117,7 @@ class RoomManager
             $leadPrice = $room->getLeadPrice();
         }
 
-        $leadPriceWithFee = $leadPrice + FeesManager::calculateFee($leadPrice, $buyerFee);
+        $leadPriceWithFee = $leadPrice + Math::calculateByInterest($leadPrice, $buyerFee);
 
         return floor($availableBalance / $leadPriceWithFee);
     }

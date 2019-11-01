@@ -7,8 +7,9 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Service\LeadManager;
-use AppBundle\Service\TradeManager;
+use AppBundle\Service\TimerManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 class LeadManagerTest extends TestCase
@@ -243,10 +244,18 @@ class LeadManagerTest extends TestCase
 
     private function createLeadManager()
     {
-        /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
+        $timerManager = $this->createMock(TimerManager::class);
 
-        return new LeadManager($entityManager, 10000, 1000, 10);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        /**
+         * @var EntityManagerInterface $entityManager
+         * @var TimerManager           $timerManager
+         * @var LoggerInterface        $logger
+         */
+
+        return new LeadManager($entityManager, $timerManager, $logger, 10000, 1000, 10);
     }
 }

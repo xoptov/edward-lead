@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Util\Math;
 use AppBundle\Entity\Fee;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
@@ -9,6 +10,7 @@ use AppBundle\Entity\Trade;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\ReferrerReward;
 use AppBundle\Exception\TradeException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\FinancialException;
@@ -90,18 +92,23 @@ class TradeManager
     }
 
     /**
-     * @param User      $buyer
-     * @param User      $seller
-     * @param Lead      $lead
-     * @param bool|null $flush
+     * @param User $buyer
+     * @param User $seller
+     * @param Lead $lead
+     * @param bool $flush
      *
      * @return Trade
      *
      * @throws FinancialException
      * @throws TradeException
      */
-    public function start(User $buyer, User $seller, Lead $lead, ?bool $flush = true): Trade
-    {
+    public function start(
+        User $buyer,
+        User $seller,
+        Lead $lead,
+        bool $flush = true
+    ): Trade {
+
         if (!$lead->isExpected()) {
             throw new TradeException($lead, $buyer, $seller, 'У лида должен быть статус активный для совершения сделки');
         }
@@ -174,7 +181,18 @@ class TradeManager
             )
         );
 
-        //todo: тут нужно добавить транзакции для вознаграждений.
+        $rewards = $this->referrerRewardManager->createRewardsForTrade($trade, false);
+
+        // Если есть вознаграждения то добавляем транзакции к коллекции транзакций.
+        if (!empty($rewards)) {
+            /** @var ReferrerReward $reward */
+            foreach ($rewards as $reward) {
+                $transactions = array_merge(
+                    $transactions,
+                    $this->transactionManager->create($feesAccount, $reward->getReferrerAccount(), $reward, false)
+                );
+            }
+        }
 
         $this->entityManager->transactional(function(EntityManagerInterface $em) use ($trade, $transactions) {
 
@@ -372,7 +390,7 @@ class TradeManager
         $interest = $this->feesManager->getCommissionForBuyingLead($lead);
 
         if ($interest) {
-            return $lead->getPrice() + FeesManager::calculateFee($lead->getPrice(), $interest);
+            return $lead->getPrice() + Math::calculateByInterest($lead->getPrice(), $interest);
         }
 
         return $lead->getPrice();
@@ -392,7 +410,7 @@ class TradeManager
         $interest = $this->feesManager->getCommissionForBuyingLead($lead);
 
         if ($interest) {
-            return $leadPrice + FeesManager::calculateFee($leadPrice, $interest);
+            return $leadPrice + Math::calculateByInterest($leadPrice, $interest);
         }
 
         return $leadPrice;

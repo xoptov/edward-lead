@@ -52,16 +52,20 @@ class WithdrawManager
     }
 
     /**
-     * @param User      $user
-     * @param int       $amount
-     * @param bool|null $flush
+     * @param User $user
+     * @param int  $amount
+     * @param bool $flush
      *
      * @return Withdraw
      *
      * @throws FinancialException
      */
-    public function create(User $user, int $amount, ?bool $flush = true): Withdraw
-    {
+    public function create(
+        User $user,
+        int $amount,
+        bool $flush = true
+    ): Withdraw {
+
         $balance = $this->accountManager->getAvailableBalance($user->getAccount());
 
         if ($balance < $amount) {
@@ -174,8 +178,12 @@ class WithdrawManager
      * @param Withdraw      $withdraw
      * @param int           $amount
      */
-    private function addHold(ClientAccount $account, Withdraw $withdraw, int $amount): void
-    {
+    private function addHold(
+        ClientAccount $account,
+        Withdraw $withdraw,
+        int $amount
+    ): void {
+
         $hold = $this->holdManager
             ->create($account, $withdraw, $amount, false);
 

@@ -13,21 +13,6 @@ use AppBundle\Service\FeesManager;
 
 class FeesManagerTest extends TestCase
 {
-    public function testCalculateTradeFee()
-    {
-        $amount = 100000;
-        $interest = 5.0;
-
-        $entityManager = $this->createMock(EntityManager::class);
-
-        /** @var EntityManager $entityManager */
-        $feesManager = new FeesManager($entityManager, 0, 0);
-
-        $feeAmount = $feesManager->calculateFee($amount, $interest);
-
-        $this->assertEquals(5000, $feeAmount);
-    }
-
     public function testCreateForTrade_inExchange()
     {
         $buyer = new User();

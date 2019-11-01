@@ -28,14 +28,19 @@ class TransactionManager
      * @param Account   $source
      * @param Account   $destination
      * @param Operation $operation
-     * @param bool|null $flush
+     * @param bool      $flush
      *
      * @return array
      *
      * @throws AccountException
      */
-    public function create(Account $source, Account $destination, Operation $operation, ?bool $flush = true): array
-    {
+    public function create(
+        Account $source,
+        Account $destination,
+        Operation $operation,
+        bool $flush = true
+    ): array {
+
         if (!$source->isEnabled()) {
             throw new AccountException($source, 'Счёт источник заблокирован и не может участвовать в транзакциях');
         }
@@ -47,14 +52,14 @@ class TransactionManager
         $result = [];
 
         $outgoing = $this->createOutgoing($source, $operation);
+
         if ($outgoing) {
-            $this->entityManager->persist($outgoing);
             $result[] = $outgoing;
         }
 
         $income = $this->createIncome($destination, $operation);
+
         if ($income) {
-            $this->entityManager->persist($income);
             $result[] = $income;
         }
 
@@ -86,11 +91,16 @@ class TransactionManager
     /**
      * @param Account   $account
      * @param Operation $operation
+     * @param bool      $persist
      *
      * @return MonetaryTransaction|null
      */
-    private function createOutgoing(Account $account, Operation $operation): ?MonetaryTransaction
-    {
+    private function createOutgoing(
+        Account $account,
+        Operation $operation,
+        bool $persist = true
+    ): ?MonetaryTransaction {
+
         $amount = -$operation->getAmount();
 
         if (empty($amount)) {
@@ -103,17 +113,26 @@ class TransactionManager
             ->setOperation($operation)
             ->setAmount($amount);
 
+        if ($persist) {
+            $this->entityManager->persist($transaction);
+        }
+
         return $transaction;
     }
 
     /**
      * @param Account   $account
      * @param Operation $operation
+     * @param bool      $persist
      *
      * @return MonetaryTransaction|null
      */
-    private function createIncome(Account $account, Operation $operation): ?MonetaryTransaction
-    {
+    private function createIncome(
+        Account $account,
+        Operation $operation,
+        bool $persist = true
+    ): ?MonetaryTransaction {
+
         $amount = $operation->getAmount();
 
         if (empty($amount)) {
@@ -125,6 +144,10 @@ class TransactionManager
             ->setAccount($account)
             ->setOperation($operation)
             ->setAmount($amount);
+
+        if ($persist) {
+            $this->entityManager->persist($transaction);
+        }
 
         return $transaction;
     }

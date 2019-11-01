@@ -22,8 +22,10 @@ class UserManager
      * @param EntityManagerInterface       $entityManager
      * @param UserPasswordEncoderInterface $encoder
      */
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UserPasswordEncoderInterface $encoder
+    ) {
         $this->entityManager = $entityManager;
         $this->encoder = $encoder;
     }
@@ -32,7 +34,7 @@ class UserManager
      * @param User $user
      * @param bool $flush
      */
-    public function updateUser(User $user, $flush = true)
+    public function updateUser(User $user, bool $flush = true)
     {
         if ($user->getPlainPassword()) {
             $encodedPassword = $this->encoder->encodePassword($user, $user->getPlainPassword());

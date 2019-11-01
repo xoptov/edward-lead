@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Trade;
+use AppBundle\Entity\User;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -80,8 +81,11 @@ class TelephonyController extends Controller
             return new JsonResponse(['message' => 'Телефония отключена'], Response::HTTP_BAD_REQUEST);
         }
 
+        /** @var User $user */
+        $user = $this->getUser();
+
         try {
-            $phoneCall = $this->phoneCallManager->create($this->getUser(), $trade);
+            $phoneCall = $this->phoneCallManager->create($user, $trade);
             $this->phoneCallManager->requestConnection($phoneCall);
         } catch (RequestCallException $e) {
             return new JsonResponse(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);

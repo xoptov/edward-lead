@@ -47,7 +47,7 @@ class AccountManager
      * @param Account $account
      * @param bool    $flush
      */
-    public function recalculateBalance(Account $account, $flush = true): void
+    public function recalculateBalance(Account $account, bool $flush = true): void
     {
         $actualBalance = $this->calculateBalance($account);
 
@@ -61,12 +61,12 @@ class AccountManager
     }
 
     /**
-     * @param Account  $account
-     * @param int|null $divisor
+     * @param Account $account
+     * @param int     $divisor
      *
      * @return float
      */
-    public function getAvailableBalance(Account $account, ?int $divisor = null): float
+    public function getAvailableBalance(Account $account, int $divisor = 1): float
     {
         $balance = $account->getBalance();
 
@@ -79,20 +79,16 @@ class AccountManager
             $balance -= $hold->getAmount();
         }
 
-        if ($divisor) {
-            return $balance / $divisor;
-        }
-
-        return $balance;
+        return $balance / $divisor;
     }
 
     /**
-     * @param Account  $account
-     * @param int|null $divisor
+     * @param Account $account
+     * @param int     $divisor
      *
      * @return float
      */
-    public function getHoldAmount(Account $account, ?int $divisor = null): float
+    public function getHoldAmount(Account $account, int $divisor = 1): float
     {
         $holds = $this->entityManager
             ->getRepository('AppBundle:MonetaryHold')
@@ -104,20 +100,20 @@ class AccountManager
             $totalHold += $hold->getAmount();
         }
 
-        if ($divisor) {
-            return $totalHold / $divisor;
-        }
-
-        return $totalHold;
+        return $totalHold / $divisor;
     }
 
     /**
      * @param ClientAccount $account
      * @param Operation     $operation
-     * @param bool|null     $flush
+     * @param bool          $flush
      */
-    public function setHold(ClientAccount $account, Operation $operation, ?bool $flush = true): void
-    {
+    public function setHold(
+        ClientAccount $account,
+        Operation $operation,
+        bool $flush = true
+    ): void {
+
         if ($operation->hasHold()) {
             throw new \RuntimeException('По операции уже производилать блокировка средств');
         }

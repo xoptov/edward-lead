@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Util\Math;
 use AppBundle\Entity\Fee;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
@@ -41,17 +42,6 @@ class FeesManager
     }
 
     /**
-     * @param int   $amount
-     * @param float $interest
-     *
-     * @return int
-     */
-    public static function calculateFee(int $amount, float $interest): int
-    {
-        return (int)ceil($amount * $interest / 100);
-    }
-
-    /**
      * @return float
      */
     public function getTradeSellerFee(): float
@@ -60,12 +50,12 @@ class FeesManager
     }
 
     /**
-     * @param Trade     $trade
-     * @param bool|null $flush
+     * @param Trade $trade
+     * @param bool  $flush
      *
      * @return Fee[]
      */
-    public function createForTrade(Trade $trade, ?bool $flush = true): array
+    public function createForTrade(Trade $trade, bool $flush = true): array
     {
         $fees = [];
 
@@ -89,7 +79,7 @@ class FeesManager
             $baseAmount = $trade->getAmount();
         }
 
-        $amount = $this->calculateFee(
+        $amount = Math::calculateByInterest(
             $baseAmount,
             $this->getCommissionForBuyingLead($trade->getLead())
         );
@@ -107,7 +97,10 @@ class FeesManager
             $fees[] = $fee;
         }
 
-        $amount = $this->calculateFee($trade->getAmount(), $this->tradeSellerFee);
+        $amount = Math::calculateByInterest(
+            $trade->getAmount(),
+            $this->tradeSellerFee
+        );
 
         if ($amount > 0) {
             $fee = new Fee();
