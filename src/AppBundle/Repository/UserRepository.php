@@ -3,13 +3,13 @@
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\Room;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Member;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\QueryBuilder;
 
 class UserRepository extends EntityRepository
 {
@@ -118,9 +118,10 @@ class UserRepository extends EntityRepository
      */
     public function getUsernameByAccessToken(string $accessToken): ?string
     {
-        $qb = $this->createQueryBuilder('u');
+        $queryBuilder = $this->createQueryBuilder('u');
 
-        $query = $qb->select('u.email')
+        $query = $queryBuilder
+            ->select('u.email')
             ->where('u.token = :token')
             ->setParameter('token', $accessToken)
             ->setMaxResults(1)

@@ -1,0 +1,54 @@
+{% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
+
+{% block show_groups %}
+    {{ parent() }}
+    {% if referrals|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-default">
+                    <div class="box-header">
+                        <h4 class="box-title">Рефералы</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                            <thead>
+                            <tr class="sonata-ba-list-field-header">
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Id'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Name'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Phone'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Email'|trans }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for referral in referrals %}
+                                <tr class="sonata-ba-view-container">
+                                    <td class="sonata-ba-list-field">
+                                        <a href="{{ admin.generateUrl('show', {'id': referral.id}) }}">{{ referral.id }}</a>
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ referral.name }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ referral.phone|human_phone }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ referral.email }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

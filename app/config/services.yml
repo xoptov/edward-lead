@@ -86,7 +86,7 @@ services:
 
     app.admin.user:
         class: AppBundle\Admin\UserAdmin
-        arguments: [~, AppBundle\Entity\User, ~]
+        arguments: [~, AppBundle\Entity\User, AppBundle\Controller\Admin\UserController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: Users }
         public: true
