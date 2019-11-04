@@ -104,7 +104,8 @@ class UserRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('u');
 
-        $query = $queryBuilder->where('u.roles LIKE \'%ROLE%ADMIN%\'')
+        $query = $queryBuilder
+            ->where('u.roles LIKE \'%ROLE%ADMIN%\'')
             ->getQuery();
 
         return $query->getResult();
@@ -123,7 +124,7 @@ class UserRepository extends EntityRepository
         $query = $queryBuilder
             ->select('u.email')
             ->where('u.token = :token')
-            ->setParameter('token', $accessToken)
+                ->setParameter('token', $accessToken)
             ->setMaxResults(1)
             ->getQuery();
 
@@ -161,5 +162,28 @@ class UserRepository extends EntityRepository
         }
 
         return null;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return int
+     *
+     * @throws DBALException
+     */
+    public function getReferralCount(User $user): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT COUNT(id) FROM user WHERE referrer_id = :referrer_id';
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('referrer_id', $user->getId());
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            return $stmt->fetchColumn();
+        }
+
+        return 0;
     }
 }

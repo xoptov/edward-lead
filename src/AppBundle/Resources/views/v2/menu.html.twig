@@ -53,6 +53,14 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <div class="nav_title">
+                <div class="img">
+                    <img src="{{ asset('bundles/app/v2/img/icon_8.png') }}">
+                </div>
+                <a href="{{ path('app_referral_index') }}">Реферальная программа</a>
+            </div>
+        </li>
         {% if is_granted('ROLE_COMPANY') %}
             <li>
                 <div class="nav_title">
