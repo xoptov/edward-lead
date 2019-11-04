@@ -41,6 +41,8 @@ twig:
         trade_buyer_fee: '%trade_buyer_fee%'
         google_tag_manager: '%google_tag_manager%'
         jivosite_enabled: '%jivosite_enabled%'
+        referrer_reward: '%referrer_reward%'
+        landing_url: '%landing_url%'
 
 # Doctrine Configuration
 doctrine:

@@ -213,6 +213,18 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
+     * @param int $id
+     *
+     * @return User
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public static function getPossibleRoles(): array

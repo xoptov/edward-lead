@@ -1,0 +1,109 @@
+{% extends '@App/layout.html.twig' %}
+
+{% block head %}
+    <script type="text/javascript" src="https://vk.com/js/api/share.js?93" charset="windows-1251"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="office-settings u-w-100">
+
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v5.0"></script>
+
+        <div class="ref_programs">
+            <h3 class="office-settings__title">
+                Реферальная программа
+            </h3>
+            <div class="ref_programs_profile">
+                <div class="ref_programs_profile_info">
+                    <p class="plain__text text-mod-2">Отчёт по реферальной программе</p>
+                    <div class="ref_programs_profile_info_list">
+                        <div class="ref_prof_bal_items billing__item">
+                            <span>Всего заработано:</span>
+                            <p class="referal_balanse">{{ earned|money_format }}</p>
+                            <a class="btn btn--grey" href="{{ path('app_financial_withdraw') }}">Заказать выплату</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ref_programs_profile_photo">
+                    <div>
+                        <img src="{{ asset('bundles/app/img/ref_profile.png') }}">
+                    </div>
+                    <p>За вами закреплено {{ referralCount }} партнеров</p>
+                </div>
+            </div>
+        </div>
+        <div class="ref_advantage">
+            <h3 class="office-settings__title">Зарабатывайте вместе с Edward</h3>
+            <div class="ref_advantage_layout">
+                <div class="ref_advantage_img">
+                    <img src="{{ asset('bundles/app/img/advant_ref.png') }}">
+                </div>
+                <div class="ref_advantage_list">
+                    <p>Мы выплачиваем <span class="text_bold">{{ referrer_reward }}% от стоимости лида</span>, купленым Вашим партнёром.</p>
+                    <p><span class="text_bold">Возможность вывести средства</span> или пополнить кабинет компании.</p>
+                    <p>Начисление коммисии в течении всего времени работы партнёра.</p>
+                </div>
+            </div>
+            <div class="ref_advantage_layout">
+                <div class="ref_advantage_link">
+                    <p class="plain__text">Отправьте ссылку на регистрацию </p>
+                    <p class="profile-ref__code">{{ url('app_index', {'ref': referrerToken}) }}</p>
+                    <p class="small-text">Вы можете отправить клиенту прямую ссылку, чтобы подключить его к своей реферальной программе.</p>
+                </div>
+                <div class="ref_advantage_social">
+                    <p class="plain__text">Добавьте запись на страницу в соц. сетях</p>
+                    <ul>
+                        <li>
+                            <script type="text/javascript">
+                                document.write(VK.Share.button({url: '{{ landing_url }}'}, {type: 'round_nocount'}));
+                            </script>
+                        </li>
+                        <li>
+                            <div class="fb-share-button" data-href="https://edward-lead.ru" data-layout="button" data-size="large">
+                                <a target="_blank" href="https://edward-lead.ru" class="fb-xfbml-parse-ignore">Поделиться</a>
+                            </div>
+                        </li>
+                    </ul>
+                    <p class=" small-text">Разместите ссылку в социальной сети и все пользователи, которые зарегистрируются по ней, будут автоматически подключены к вашей реферальной программе.</p>
+                </div>
+            </div>
+            {#<div class="ref_advantage_layout_email">#}
+                {#<p class="plain__text">Отправьте приглашение на эл. почту</p>#}
+                {#<div class="advantage_layout_email">#}
+                    {#<input type="email" placeholder="Введите E-mail">#}
+                    {#<input class="btn btn-green btn-billig--mod" type="submit" value="Отправить">#}
+                {#</div>#}
+                {#<p class=" small-text">Партнёру придёт письмо с ссылкой на регистрацию на платформе Edward</p>#}
+            {#</div>#}
+            <div class="ref_advantage_layout_promo">
+                <hr>
+                <p class="plain__text">Промо материалы</p>
+                <ul>
+                    <li>
+                        <p><span>Маркетинг кит</span> презентация и описание возможностей платформы</p>
+                    </li>
+                    <li>
+                        <p><span>Логотипы</span> Для вставки на сайте, коммерческие предложения и прочие материалы</p>
+                    </li>
+                    <li>
+                        <p><span>Описание платформы</span> Подробное описание всех возможностей и функций платформы Edward</p>
+                    </li>
+                    <li>
+                        <p><span>Видеоролик</span> с демонстрацией работы платформы Edward</p>
+                    </li>
+                    <li>
+                        <p><span>Баннеры</span> Коды баннеров для вставки на свои сайты</p>
+                    </li>
+                    <li>
+                        <p><span>Инфографика</span> Демонстрация платформы в цифрах с помощью инфографики</p>
+                    </li>
+                </ul>
+                {#<a class="btn btn-green" href="#">Смотреть промо-материалы</a>#}
+            </div>
+        </div>
+        <div class="block-copyright">
+            © 2019 Edward - решения для бизнеса
+        </div>
+    </div>
+{% endblock %}
