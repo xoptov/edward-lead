@@ -53,3 +53,5 @@ parameters:
     # Statistics
     google_tag_manager: false
     jivosite_enabled: false
+
+    landing_url: 'https://edward-lead.ru'
