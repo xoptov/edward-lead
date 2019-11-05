@@ -42,7 +42,15 @@ class ReferrerTokenListener implements EventSubscriberInterface
             return;
         }
 
-        $cookie = new Cookie('referrer', $referrer, new \DateTime('+1 week'));
+        $cookie = new Cookie(
+            'referrer',
+            $referrer,
+            new \DateTime('+1 week'),
+            '/',
+            null,
+            false,
+            false
+        );
 
         $response = $event->getResponse();
         $response->headers->setCookie($cookie);
