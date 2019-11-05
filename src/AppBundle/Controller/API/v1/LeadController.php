@@ -122,7 +122,10 @@ class LeadController extends Controller
             ];
         }
 
-        if ($lead->hasTimer() && $lead->getTimer()->getEndAt()) {
+        if ($lead->isExpected()
+            && $lead->hasTimer()
+            && $lead->getTimer()->getEndAt()
+        ) {
             $now = $this->timerManager->createDateTime();
             $remainInSeconds = Formatter::intervalInSeconds($now, $lead->getTimer()->getEndAt());
             $result['timer'] = [
@@ -367,8 +370,13 @@ class LeadController extends Controller
                 }
             }
 
-            if ($lead->hasTimer() && $lead->getTimer()->getEndAt()) {
-                $now = $this->timerManager->createDateTime();
+            $now = $this->timerManager->createDateTime();
+
+            if ($lead->isExpected()
+                && $lead->hasTimer()
+                && $lead->getTimerEndAt()
+                && $lead->getTimerEndAt() > $now
+            ) {
                 $remainInSeconds = Formatter::intervalInSeconds($now, $lead->getTimer()->getEndAt());
                 $row['timer'] = [
                     'remain' => Formatter::humanTimerRemain($remainInSeconds)

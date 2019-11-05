@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Service\FeesManager;
+use AppBundle\Service\TimerManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\PhoneCallManager;
 use AppBundle\Security\Voter\LeadBuyVoter;
@@ -62,10 +63,14 @@ class LeadController extends Controller
     /**
      * @Route("/leads/my", name="app_leads_my", methods={"GET"})
      *
+     * @param TimerManager $timerManager
+     *
      * @return Response
      */
-    public function myAction(): Response
-    {
+    public function myAction(
+        TimerManager $timerManager
+    ): Response {
+
         /** @var User $user */
         $user = $this->getUser();
         $data = null;
@@ -95,7 +100,9 @@ class LeadController extends Controller
             );
         }
 
-        return $this->render('@App/Lead/my.html.twig', $data);
+        $now = $timerManager->createDateTime();
+
+        return $this->render('@App/Lead/my.html.twig', array_merge($data, ['now' => $now]));
     }
 
     /**
@@ -105,6 +112,7 @@ class LeadController extends Controller
      * @param TradeManager     $tradeManager
      * @param FeesManager      $feesManager
      * @param PhoneCallManager $phoneCallManager
+     * @param TimerManager     $timerManager
      *
      * @return Response
      */
@@ -112,7 +120,8 @@ class LeadController extends Controller
         Lead $lead,
         TradeManager $tradeManager,
         FeesManager $feesManager,
-        PhoneCallManager $phoneCallManager
+        PhoneCallManager $phoneCallManager,
+        TimerManager $timerManager
     ): Response {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
@@ -124,6 +133,8 @@ class LeadController extends Controller
         $user = $this->getUser();
 
         if ($lead->isOwner($user)) {
+            $now = $timerManager->createDateTime();
+
             return $this->render('@App/Lead/show_before_buy.html.twig', [
                 'lead' => $lead,
                 'priceWithFee' => $tradeManager->calculateCostWithFee($lead),
