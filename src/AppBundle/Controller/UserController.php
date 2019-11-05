@@ -243,8 +243,11 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function stayWebmasterAction(TokenStorageInterface $tokenStorage, UserManager $userManager): Response
-    {
+    public function stayWebmasterAction(
+        TokenStorageInterface $tokenStorage,
+        UserManager $userManager
+    ): Response {
+
         /** @var User $user */
         $user = $this->getUser();
 

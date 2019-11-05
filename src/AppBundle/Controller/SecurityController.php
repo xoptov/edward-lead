@@ -19,6 +19,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SecurityController extends Controller
 {
@@ -55,14 +58,18 @@ class SecurityController extends Controller
     /**
      * @Route("/registration", name="app_registration", methods={"POST", "GET"})
      *
-     * @param Request         $request
-     * @param LoggerInterface $logger
+     * @param Request                        $request
+     * @param LoggerInterface                $logger
+     * @param AuthenticationManagerInterface $authenticationManager
+     * @param TokenStorageInterface          $tokenStorage
      *
      * @return Response
      */
     public function registrationAction(
         Request $request,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        AuthenticationManagerInterface $authenticationManager,
+        TokenStorageInterface $tokenStorage
     ): Response {
 
         $form = $this->createForm(RegistrationType::class);
@@ -80,6 +87,9 @@ class SecurityController extends Controller
 
                 /** @var User $user */
                 $user = $form->getData();
+
+                $plainPassword = $user->getPlainPassword();
+
                 $user->setEnabled(true);
 
                 $this->entityManager->persist($user);
@@ -118,6 +128,11 @@ class SecurityController extends Controller
 
                 $this->entityManager->persist($account);
                 $this->entityManager->flush();
+
+                //todo возможно нужно в листнер вынести на событие NEW_REGISTERED
+                $token = new UsernamePasswordToken($user, $plainPassword, 'main');
+                $resultToken = $authenticationManager->authenticate($token);
+                $tokenStorage->setToken($resultToken);
 
                 $this->eventDispatcher->dispatch(UserEvent::NEW_REGISTERED, new UserEvent($user));
 
