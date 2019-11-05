@@ -48,7 +48,7 @@
             <div class="ref_advantage_layout">
                 <div class="ref_advantage_link">
                     <p class="plain__text">Отправьте ссылку на регистрацию </p>
-                    <p class="profile-ref__code">{{ url('app_index', {'ref': referrerToken}) }}</p>
+                    <p class="profile-ref__code">{{ landing_url ~ '/?ref=' ~ referrerToken }}</p>
                     <p class="small-text">Вы можете отправить клиенту прямую ссылку, чтобы подключить его к своей реферальной программе.</p>
                 </div>
                 <div class="ref_advantage_social">
