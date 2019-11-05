@@ -104,7 +104,7 @@ class RoomController extends Controller
             ->getByMember($user);
 
         if (empty($rooms)) {
-            return $this->render('@App/v2/Room/list.html.twig');
+            return $this->redirectToRoute('app_room_create');
         }
 
         $rooms = array_map(function(Room $room) {
