@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\API\v1;
 
+use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\User;
@@ -153,8 +154,17 @@ class RoomController extends Controller
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher
     ): JsonResponse {
+
         if (!$this->isGranted(RoomVoter::DEACTIVATE, $room)) {
             return new JsonResponse(['error' => 'Нет прав для деактивации комнаты'], Response::HTTP_FORBIDDEN);
+        }
+
+        $leads = $entityManager
+            ->getRepository(Lead::class)
+            ->getOffersByRooms([$room], [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]);
+
+        if (count($leads)) {
+            return new JsonResponse(['error' => 'Нельзя деактиваровать комнату с активными лидами']);
         }
 
         $room->setEnabled(false);
