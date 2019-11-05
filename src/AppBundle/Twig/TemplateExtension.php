@@ -70,7 +70,8 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
-            new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays'])
+            new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays']),
+            new \Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer'])
         ];
     }
 
@@ -218,5 +219,34 @@ class TemplateExtension extends \Twig_Extension
         $remainInSeconds = Formatter::intervalInSeconds($now, $endAt);
 
         return Formatter::humanTimerRemain($remainInSeconds);
+    }
+
+    public function canShowTimer(Lead $lead): bool
+    {
+        if (!$lead->isExpected()) {
+            return false;
+        }
+
+        if (!$lead->isPlatformWarranty()) {
+            return false;
+        }
+
+        if (!$lead->hasTimer()) {
+            return false;
+        }
+
+        $endAt = $lead->getTimerEndAt();
+
+        if (empty($endAt)) {
+            return false;
+        }
+
+        $now = $this->timerManager->createDateTime();
+
+        if ($now >= $endAt) {
+            return false;
+        }
+
+        return true;
     }
 }

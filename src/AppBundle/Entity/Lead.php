@@ -579,6 +579,18 @@ class Lead implements IdentifiableInterface
     }
 
     /**
+     * @return \DateTime|null
+     */
+    public function getTimerEndAt(): ?\DateTime
+    {
+        if ($this->timer) {
+            return $this->timer->getEndAt();
+        }
+
+        return null;
+    }
+
+    /**
      * @return int|null
      */
     public function getHiddenMargin(): ?int

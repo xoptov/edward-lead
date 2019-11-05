@@ -42,6 +42,9 @@
                                             {% else %}
                                                 {{ buyer.name }}
                                             {% endif %}
+                                        {% elseif can_show_timer(lead) %}
+                                            таймер<br>
+                                            <span class="text-red">{{ lead.timer.endAt|human_remain_time }}</span>
                                         {% else %}
                                             ---
                                         {% endif %}
