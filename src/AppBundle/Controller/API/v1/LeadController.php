@@ -122,11 +122,13 @@ class LeadController extends Controller
             ];
         }
 
+        $now = $this->timerManager->createDateTime();
+
         if ($lead->isExpected()
             && $lead->hasTimer()
-            && $lead->getTimer()->getEndAt()
+            && $lead->getTimerEndAt()
+            && $lead->getTimerEndAt() > $now
         ) {
-            $now = $this->timerManager->createDateTime();
             $remainInSeconds = Formatter::intervalInSeconds($now, $lead->getTimer()->getEndAt());
             $result['timer'] = [
                 'remain' => Formatter::humanTimerRemain($remainInSeconds)
