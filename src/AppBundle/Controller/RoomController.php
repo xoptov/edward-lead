@@ -111,7 +111,7 @@ class RoomController extends Controller
             return [
                 'room' => $room,
                 'daily' => 0,
-                'in_work' => 0,
+                'expect' => 0,
                 'webmasters' => 0,
                 'companies' => 0
             ];
@@ -122,20 +122,21 @@ class RoomController extends Controller
         $repository = $this->entityManager->getRepository(Lead::class);
 
         $dailyLeads = $repository->getAddedInRoomsByDate($rooms, $now);
-        $inWorkLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_IN_WORK]);
+        $expectLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_EXPECT]);
 
         for ($i = 0; $i < count($rooms); $i++) {
-            /** @var Lead $dailyLead */
-            foreach ($dailyLeads as $dailyLead) {
-                if ($dailyLead->getRoom() === $rooms[$i]['room']) {
+
+            /** @var Lead $lead */
+            foreach ($dailyLeads as $lead) {
+                if ($lead->getRoom() === $rooms[$i]['room']) {
                     $rooms[$i]['daily']++;
                 }
             }
 
-            /** @var Lead $inWorkLead */
-            foreach ($inWorkLeads as $inWorkLead) {
-                if ($inWorkLead->getRoom() === $rooms[$i]['room']) {
-                    $rooms[$i]['in_work']++;
+            /** @var Lead $lead */
+            foreach ($expectLeads as $lead) {
+                if ($lead->getRoom() === $rooms[$i]['room']) {
+                    $rooms[$i]['expect']++;
                 }
             }
 
