@@ -37,11 +37,25 @@ class UniqueLeadValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, Lead::class);
         }
 
-        $existedLeads = $this->entityManager
+        $leads = $this->entityManager
             ->getRepository(Lead::class)
             ->getByPhoneAndWithNoFinishStatus($value->getPhone(), $value->getRoom());
 
-        if (count($existedLeads)) {
+        $violation = false;
+
+        if ($value->getId()) {
+            /** @var Lead $lead */
+            foreach ($leads as $lead) {
+                if ($lead->getId() === $value->getId()) {
+                    continue;
+                }
+                $violation = true;
+            }
+        } elseif (count($leads)) {
+            $violation = true;
+        }
+
+        if ($violation) {
             if ($value->hasRoom()) {
                 $this->context
                     ->buildViolation($constraint->messageForRoom)

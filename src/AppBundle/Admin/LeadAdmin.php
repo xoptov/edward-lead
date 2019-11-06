@@ -2,12 +2,19 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\City;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Property;
 use AppBundle\Exception\LeadException;
+use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Form\DataTransformer\PhoneTransformer;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class LeadAdmin extends AbstractAdmin
 {
@@ -19,7 +26,7 @@ class LeadAdmin extends AbstractAdmin
     ];
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
     public function configureListFields(ListMapper $list)
     {
@@ -30,9 +37,57 @@ class LeadAdmin extends AbstractAdmin
             ->add('createdAt')
             ->add('_action', null, [
                 'actions' => [
+                    'show' => [],
+                    'edit' => [],
                     'archive' => ['template' => '@App/CRUD/list__action_archive.html.twig']
                 ]
             ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function configureFormFields(FormMapper $form)
+    {
+        $form
+            ->add('name', 'text')
+            ->add('city', EntityType::class, [
+                'class' => City::class,
+                'choice_label' => 'name'
+            ])
+            ->add('phone', 'text')
+            ->add('channel', EntityType::class, [
+                'class' => Property::class,
+                'choice_label' => 'value'
+            ])
+            ->add('orderDate')
+            ->add('decisionMaker', ChoiceType::class, [
+                'choices' => [
+                    'Да' => true,
+                    'Нет' => false
+                ]
+            ])
+            ->add('interestAssessment')
+            ->add('description');
+
+        $form->get('phone')->addViewTransformer(new PhoneTransformer());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function configureShowFields(ShowMapper $show)
+    {
+        $show
+            ->add('room.name')
+            ->add('name')
+            ->add('city.name', null, ['label' => 'City'])
+            ->add('phone', null, ['template' => '@App/CRUD/show_phone_field.html.twig'])
+            ->add('channel.value', null, ['label' => 'Lead Channel'])
+            ->add('orderDate')
+            ->add('decisionMaker', 'boolean')
+            ->add('interestAssessment')
+            ->add('description');
     }
 
     /**
@@ -41,7 +96,7 @@ class LeadAdmin extends AbstractAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         $collection
-            ->clearExcept(['list'])
+            ->clearExcept(['list', 'edit', 'show'])
             ->add('archive', $this->getRouterIdParameter() . '/archive');
     }
 
