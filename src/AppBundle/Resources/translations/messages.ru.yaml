@@ -160,9 +160,10 @@ Hide Fee: Прятать комиссию
 Last Call AnswerAt: Дата и время звонка
 Trade Lead Phone: Телефон лида
 Hidden Margin: Скрытая наценка
-
 Timezone: Временная зона
 Timer: Таймер
+Decision Maker: Лицо принимающее решение
+Interest Assessment: Оценка заинтересованость в покупке
 
 lead:
     status:

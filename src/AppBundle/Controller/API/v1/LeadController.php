@@ -196,7 +196,9 @@ class LeadController extends Controller
             return new JsonResponse(['errors' => ['Вы должны быть вэбмастером для того чтобы создавать лидов']], Response::HTTP_FORBIDDEN);
         }
 
-        $form = $this->createForm(LeadType::class, null, ['csrf_protection' => false]);
+        $form = $this->createForm(LeadType::class, null, [
+            'csrf_protection' => false
+        ]);
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
