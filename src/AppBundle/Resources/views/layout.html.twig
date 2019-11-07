@@ -10,6 +10,9 @@
     {% endblock %}
     <title>Edward лидогенерация</title>
     {% include '@App/google_tag_manager_head.html.twig' %}
+    {%- if app.environment == 'prod' -%}
+        <script charset="UTF-8" src="//cdn.sendpulse.com/js/push/22ce0a589cd420aab9f2fde235baa123_1.js" async></script>
+    {%- endif -%}
 </head>
 <body>
     <div class="header-bg">
