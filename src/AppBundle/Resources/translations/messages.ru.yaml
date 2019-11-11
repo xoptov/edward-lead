@@ -173,3 +173,20 @@ lead:
         arbitration: 'арбитраж'
         not_target: 'не целевой'
         archive: 'архив'
+
+Event: Событие
+First Shoulder Phone: Телефон перового плеча
+First Shoulder Tariff: Тариф первого плеча
+First Shoulder Start At: Начало вызова первого плеча
+First Shoulder Answer At: Ответ первого плеча
+First Shoulder Hangup At: Завершение первого плеча
+First Shoulder BillSec: Billsec первого плеча
+First Shoulder Status: Статус первого плеча
+Second Shoulder Phone: Телефон второго плеча
+Second Shoulder Tariff: Тариф второго плеча
+Second Shoulder Start At: Начало вызова второго плеча
+Second Shoulder Answer At: Ответ второго плеча
+Second Shoulder Hangup At: Завершение второго плеча
+Second Shoulder BillSec: Billsec второго плеча
+Second Shoulder Status: Статус второго плеча
+Audio Record: Аудио запись

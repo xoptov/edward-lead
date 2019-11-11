@@ -106,12 +106,16 @@ class TemplateExtension extends \Twig_Extension
     }
 
     /**
-     * @param int $seconds
+     * @param int|null $seconds
      *
-     * @return string
+     * @return string|null
      */
-    public function humanDuration(int $seconds): string
+    public function humanDuration(?int $seconds): ?string
     {
+        if (empty($seconds)) {
+            return null;
+        }
+
         return Formatter::humanDuration($seconds);
     }
 

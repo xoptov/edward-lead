@@ -1,0 +1,180 @@
+{% extends '@SonataAdmin/CRUD/base_show.html.twig' %}
+
+{% block show_groups %}
+    {{ parent() }}
+    {% if object.callbacks|length %}
+        <div class="row">
+            <div class="{{ show_group.class|default('col-md-12') }} {{ no_padding|default(false) ? 'nopadding' }}">
+                <div class="box box-default">
+                    <div class="box-header">
+                        <h4 class="box-title">Коллбэки от PBX</h4>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-bordered table-striped table-hover sonata-ba-list">
+                            <thead>
+                            <tr class="sonata-ba-list-field-header">
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Id'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Event'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Phone'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Tariff'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Start At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Answer At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Hangup At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder BillSec'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'First Shoulder Status'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Phone'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Tariff'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Start At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Answer At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Hangup At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder BillSec'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Second Shoulder Status'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Audio Record'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Created At'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Status'|trans }}
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for callback in object.callbacks %}
+                                <tr class="sonata-ba-view-container">
+                                    <td class="sonata-ba-list-field">
+                                        {{ callback.id }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ callback.event }}
+                                    </td>
+                                    {% if callback.firstShoulder is not empty %}
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.firstShoulder.phone|human_phone }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.firstShoulder.tariff }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.firstShoulder.startAt is not empty %}
+                                                {{ callback.firstShoulder.startAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.firstShoulder.answerAt is not empty %}
+                                                {{ callback.firstShoulder.answerAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.firstShoulder.hangupAt is not empty %}
+                                                {{ callback.firstShoulder.hangupAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.firstShoulder.billSec|human_duration }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.firstShoulder.status }}
+                                        </td>
+                                    {% else %}
+                                        <td class="sonata-ba-list-field" colspan="7">
+                                            Нет информации по плечу
+                                        </td>
+                                    {% endif %}
+                                    {% if callback.secondShoulder is not empty %}
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.secondShoulder.phone|human_phone }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.secondShoulder.tariff }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.secondShoulder.startAt is not empty %}
+                                                {{ callback.secondShoulder.startAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.secondShoulder.answerAt is not empty %}
+                                                {{ callback.secondShoulder.answerAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {% if callback.secondShoulder.hangupAt is not empty %}
+                                                {{ callback.secondShoulder.hangupAt|date('d.m.Y H:i:s') }}
+                                            {% endif %}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.secondShoulder.billSec|human_duration }}
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            {{ callback.secondShoulder.status }}
+                                        </td>
+                                    {% else %}
+                                        <td class="sonata-ba-list-field" colspan="7">
+                                            Нет информации по плечу
+                                        </td>
+                                    {% endif %}
+                                    <td class="sonata-ba-list-field">
+                                        {% if callback.audioRecord is empty %}
+                                            Нет записи
+                                        {% else %}
+                                            <audio controls src="{{ callback.audioRecord }}">
+                                                Не поддерживается
+                                            </audio>
+                                        {% endif %}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {{ callback.createdAt|date('d.m.Y H:i:s') }}
+                                    </td>
+                                    <td class="sonata-ba-list-field">
+                                        {% if callback.status is null %}
+                                            Нет статуса
+                                        {% elseif callback.status is constant('STATUS_SUCCESS', callback) %}
+                                            Успешно
+                                        {% elseif callback.status is constant('STATUS_FAIL', callback) %}
+                                            Фэил
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

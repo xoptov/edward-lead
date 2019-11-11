@@ -11,6 +11,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class UserAdmin extends AbstractAdmin
 {
@@ -98,14 +99,17 @@ class UserAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('name')
-            ->add('plainPassword', 'password', ['label' => 'Password'])
+            ->add('plainPassword', 'password', [
+                'label' => 'Password',
+                'required' => false
+            ])
             ->add('phone')
             ->add('email')
             ->add('skype')
             ->add('vkontakte')
             ->add('facebook')
             ->add('telegram')
-            ->add("saleLeadLimit")
+            ->add("saleLeadLimit", NumberType::class)
             ->add('enabled')
         ;
     }
