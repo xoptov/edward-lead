@@ -8,6 +8,7 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
+use Sonata\AdminBundle\Show\ShowMapper;
 
 class PhoneCallAdmin extends AbstractAdmin
 {
@@ -82,8 +83,35 @@ class PhoneCallAdmin extends AbstractAdmin
     /**
      * @inheritdoc
      */
+    protected function configureShowFields(ShowMapper $show)
+    {
+        $show
+            ->add('id')
+            ->add('externalId')
+            ->add('caller.id')
+            ->add('caller.name')
+            ->add('caller.company.officePhone', null, [
+                'label' => 'Caller Phone',
+                'template' => '@App/CRUD/show_phone_field.html.twig'
+            ])
+            ->add('trade.lead.id', null, [
+                'label' => 'Lead Id'
+            ])
+            ->add('trade.lead.name', null, [
+                'label' => 'Lead Name'
+            ])
+            ->add('trade.lead.phone', null, [
+                'label' => 'Lead Phone',
+                'template' => '@App/CRUD/show_phone_field.html.twig'
+            ])
+            ->add('status');
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function configureRoutes(RouteCollection $collection)
     {
-        $collection->clearExcept('list');
+        $collection->clearExcept(['list', 'show']);
     }
 }

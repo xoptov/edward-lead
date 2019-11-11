@@ -115,6 +115,14 @@ class Callback implements IdentifiableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasFirstShoulder(): bool
+    {
+        return !empty($this->firstShoulder);
+    }
+
+    /**
      * @param Shoulder $firstShoulder
      *
      * @return Callback
@@ -132,6 +140,14 @@ class Callback implements IdentifiableInterface
     public function getFirstShoulder(): ?Shoulder
     {
         return $this->firstShoulder;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSecondShoulder(): bool
+    {
+        return !empty($this->secondShoulder);
     }
 
     /**

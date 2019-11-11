@@ -743,6 +743,18 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @param int|null $limit
+     *
+     * @return $this
+     */
+    public function setSaleLeadLimit(?int $limit): self
+    {
+        $this->saleLeadLimit = $limit;
+
+        return $this;
+    }
+
+    /**
      * @return int|null
      */
     public function getSaleLeadLimit(): ?int
