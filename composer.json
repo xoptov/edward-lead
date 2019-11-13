@@ -21,6 +21,7 @@
         "ext-imagick": "*",
         "ext-json": "*",
         "ext-timezonedb": "*",
+        "ext-curl": "*",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-migrations-bundle": "^1.3",
         "doctrine/orm": "^2.5",

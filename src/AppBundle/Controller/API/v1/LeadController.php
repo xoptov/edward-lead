@@ -16,20 +16,18 @@ use AppBundle\Service\TimerManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\LeadEditVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
-use Symfony\Component\Form\FormErrorIterator;
 use AppBundle\Security\Voter\LeadCreateVoter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use AppBundle\Form\DataTransformer\NumberToBooleanTransformer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @Route("/api/v1")
  */
-class LeadController extends Controller
+class LeadController extends APIController
 {
     /**
      * @var LeadManager
@@ -72,7 +70,7 @@ class LeadController extends Controller
     {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             return new JsonResponse([
-                'errors' => 'У Вас нет прав на просмотр информации по указанному лиду'
+                'error' => 'У Вас нет прав на просмотр информации по указанному лиду'
             ], Response::HTTP_FORBIDDEN);
         }
 
@@ -193,7 +191,7 @@ class LeadController extends Controller
     ): Response {
 
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['errors' => ['Вы должны быть вэбмастером для того чтобы создавать лидов']], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['error' => 'Вы должны быть вэбмастером для того чтобы создавать лидов'], Response::HTTP_FORBIDDEN);
         }
 
         $form = $this->createForm(LeadType::class, null, [
@@ -210,7 +208,7 @@ class LeadController extends Controller
 
         if (!$this->leadManager->checkActiveLeadPerUser($user)) {
             return new JsonResponse([
-                'errors' => ['Привышено количество активных лидов для пользователя']
+                'error' => 'Привышено количество активных лидов для пользователя'
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -219,7 +217,7 @@ class LeadController extends Controller
         $newLead->setUser($user);
 
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
-            return new JsonResponse(['errors' => ['Вы не имеете прав создавать нового лида']], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['error' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
         }
 
         $this->leadManager->postCreate($newLead);
@@ -242,7 +240,7 @@ class LeadController extends Controller
     public function postEstimateAction(Request $request): JsonResponse
     {
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['errors' => 'Вы должны быть вэбмастером для получения оценки лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['error' => 'Вы должны быть вэбмастером для получения оценки лида'], Response::HTTP_FORBIDDEN);
         }
 
         $form = $this->createForm(LeadType::class, null, [
@@ -261,13 +259,7 @@ class LeadController extends Controller
             ]);
         }
 
-        $errors = [];
-
-        foreach ($form->getErrors(true) as $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        return new JsonResponse(['error' => $errors], Response::HTTP_BAD_REQUEST);
+        return new JsonResponse(['error' => 'Не удалось расчитать стоимость']);
     }
 
     /**
@@ -286,7 +278,7 @@ class LeadController extends Controller
     ): Response {
 
         if (!$this->isGranted(LeadEditVoter::OPERATION, $lead)) {
-            return new JsonResponse(['errors' => 'У Вас нет прав на редактирование чужего лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(['error' => 'У Вас нет прав на редактирование чужего лида'], Response::HTTP_FORBIDDEN);
         }
 
         $form = $this->createForm(LeadType::class, $lead, [
@@ -391,21 +383,5 @@ class LeadController extends Controller
         }
 
         return new JsonResponse($result);
-    }
-
-    /**
-     * @param FormErrorIterator $formErrors
-     *
-     * @return Response
-     */
-    private function responseErrors(FormErrorIterator $formErrors): Response
-    {
-        $errors = [];
-
-        foreach ($formErrors as $error) {
-            $errors[] = $error->getMessage();
-        }
-
-        return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
     }
 }
