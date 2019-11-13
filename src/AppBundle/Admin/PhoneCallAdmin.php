@@ -46,9 +46,9 @@ class PhoneCallAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->add('externalId')
             ->add('caller.id')
-            ->add('getLastCallback', null, [
-                'label' => 'Last Call AnswerAt',
-                'template' => '@App/CRUD/list_callback_answer_at.html.twig'
+            ->add('createdAt', 'datetime', [
+                'label' => 'Call Created At',
+                'format' => 'd.m.Y H:i:s'
             ])
             ->add('caller.name')
             ->add('caller.company.officePhone', null, [
