@@ -6,6 +6,7 @@ use AppBundle\Entity\Fee;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
+use Doctrine\DBAL\DBALException;
 use Psr\Log\LoggerInterface;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
@@ -382,6 +383,19 @@ class TradeManager
         }
 
         return $leadPrice;
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return int
+     *
+     * @throws DBALException
+     */
+    public function getAmountInPendingTrades(User $user): int
+    {
+        return $this->entityManager->getRepository(Trade::class)
+            ->getAmountInPendingTrades($user);
     }
 
     /**

@@ -10,6 +10,7 @@ use AppBundle\Service\LeadManager;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Entity\MonetaryTransaction;
+use Doctrine\DBAL\DBALException;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -59,6 +60,7 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
+            new \Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades'])
         ];
     }
 
@@ -147,6 +149,20 @@ class TemplateExtension extends \Twig_Extension
     public function getBalanceHold(User $user): int
     {
         return $this->accountManager->getHoldAmount($user->getAccount());
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return int
+     */
+    public function getAmountInPendingTrades(User $user): int
+    {
+        try {
+            return $this->tradeManager->getAmountInPendingTrades($user);
+        } catch (DBALException $e) {
+            return 0;
+        }
     }
 
     /**
