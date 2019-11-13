@@ -41,7 +41,11 @@
                 </div>
                 <div class="header__balance-box">
                     <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>
-                    <div class="header__text text-white">Холд: {{ balance_hold(app.user)|money_format }}</div>
+                    {% if is_granted('ROLE_COMPANY') %}
+                        <div class="header__text text-white">Холд: {{ balance_hold(app.user)|money_format }}</div>
+                    {% elseif is_granted('ROLE_WEBMASTER') %}
+                        <div class="header__text text-white">В сделках: {{ pending_amount(app.user)|money_format }}</div>
+                    {% endif %}
                 </div>
                 {% include '@App/top_menu.html.twig' %}
             </div>
