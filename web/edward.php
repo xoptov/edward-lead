@@ -13,7 +13,11 @@ define('ROOM_ID', 1057); // Идентификатор комнаты в кот�
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
 define('API_URL', 'http://172.19.0.1:8000/api/v1/lead');
 
+define('API_TIMEOUT', 60);
+
 ini_set('error_reporting', E_ERROR);
+
+$formFields = ['name', 'phone', 'hasAgreement']; // Список полей в формы.
 
 if (!extension_loaded('json')) {
     sendResponse('Необходимо подключить json расширение к php', 500, ['Content-Type: text/html; charset=UTF-8']);
@@ -32,7 +36,6 @@ if (!extension_loaded('curl')) {
 
 checkConfigs();
 
-$formFields = ['name', 'phone', 'hasAgreement'];
 $errors = [];
 
 foreach ($formFields as $field)
@@ -48,51 +51,58 @@ if (count($errors)) {
     sendResponse(json_encode($content), 400);
 }
 
-sendLeadToPlatform($formFields);
+$dataForSubmit = [];
+
+foreach ($formFields as $field) {
+    if (isset($_POST[$field])) {
+        $dataForSubmit[$field] = $_POST[$field];
+    }
+}
+
+$dataForSubmit['room'] = ROOM_ID;
+$postData = http_build_query($dataForSubmit);
+
+$headers = [
+    'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
+    'X-Auth-Token: ' . API_KEY
+];
+
+if (DEBUG_MODE) {
+    $headers[] = 'Cookie: XDEBUG_SESSION=PHPSTORM';
+}
+
+$ch = curl_init(API_URL);
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_TIMEOUT, API_TIMEOUT);
+
+$response = curl_exec($ch);
+$responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+curl_close($ch);
+
+if (500 === $responseCode) {
+    sendResponse(json_encode(['error' => 'Произошла ошибка при отправки лида на платформу']), 500);
+}
+
+if (403 === $responseCode) {
+    sendResponse(json_encode(['error' => 'У сайта нет прав отправлять информацию на платформу Edward']), 403);
+}
+
+if (400 === $responseCode) {
+    sendResponse($response, 400);
+}
+
+sendResponse($response, 200);
 
 function validatePhone(array &$errors)
 {
     if (empty($_POST['phone'])) {
-        $errors[] = ['phone' => 'Необходимо указать номер телефона'];
+        $errors['phone'] = ['Необходимо указать номер телефона'];
     }
-}
-
-function sendLeadToPlatform(array &$formFields)
-{
-    $dataForSubmit = [];
-
-    foreach ($formFields as $field) {
-        if (isset($_POST[$field])) {
-            $dataForSubmit[$field] = $_POST[$field];
-        }
-    }
-
-    $dataForSubmit['room'] = ROOM_ID;
-    $postData = http_build_query($dataForSubmit);
-
-    $headers = [
-        'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
-        'X-Auth-Token: ' . API_KEY
-    ];
-
-    if (DEBUG_MODE) {
-        $headers[] = 'Cookie: XDEBUG_SESSION=PHPSTORM';
-    }
-
-    $ch = curl_init(API_URL);
-
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    $response = curl_exec($ch);
-
-    curl_close($ch);
-
-    //todo: тут нужно проверять какой ответ и если ошибка то отправлять ответ с ошибкой.
-
-    return $response;
 }
 
 function sendResponse(string $content, int $code = 200, array $headers = [])

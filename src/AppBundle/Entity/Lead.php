@@ -51,10 +51,10 @@ class Lead implements IdentifiableInterface
     /**
      * @var string
      *
-     * @Assert\NotBlank(message="Необходимо указать номер телефона")
+     * @Assert\NotBlank(message="Необходимо указать значение")
      * @Assert\Regex(
      *     pattern="/^7\d{10}$/",
-     *     message="Невалидный формат телефона"
+     *     message="Неправильный формат"
      * )
      *
      * @ORM\Column(name="phone", type="string", length=11)
@@ -71,7 +71,7 @@ class Lead implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(max=40, maxMessage="Значение в поле 'Имя Лида' должно быть не более {{ limit }} символов")
+     * @Assert\Length(max=40, maxMessage="Значение должно быть не более {{ limit }} символов")
      *
      * @ORM\Column(name="name", type="string", length=40, nullable=true)
      */
@@ -122,7 +122,7 @@ class Lead implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(max=2000, maxMessage="Описание не должно привышать {{ limit }} символов")
+     * @Assert\Length(max=2000, maxMessage="Значение не должно привышать {{ limit }} символов")
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      */

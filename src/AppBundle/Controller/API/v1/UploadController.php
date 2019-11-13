@@ -82,7 +82,7 @@ class UploadController extends Controller
     ): Response {
 
         if (!$request->files->has('uploader')) {
-            return new JsonResponse(['errors' => ['Файл не отправлен']], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'Файл не отправлен'], Response::HTTP_BAD_REQUEST);
         }
 
         $uploadedFile = $request->files->get('uploader');
@@ -102,7 +102,7 @@ class UploadController extends Controller
         try {
             $result = $this->uploader->store($uploadedFile, 'logotype');
         } catch (\Exception $e) {
-            return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         $url = $imagineCacheManager->getBrowserPath($result['path'], $filter);
@@ -123,7 +123,7 @@ class UploadController extends Controller
     public function postUploadAudioRecordAction(Request $request): Response
     {
         if (!$request->files->has('uploader')) {
-            return new JsonResponse(['errors' => ['Файл не отправлен']]);
+            return new JsonResponse(['error' => 'Файл не отправлен']);
         }
 
         $uploadedFile = $request->files->get('uploader');
@@ -144,12 +144,12 @@ class UploadController extends Controller
         try {
             $result = $this->uploader->store($uploadedFile, 'audio');
         } catch (\Exception $e) {
-            return new JsonResponse(['errors' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         $url = $this->generateUrl('app_uploaded_path', [
-                'directory' => 'audio',
-                'filename' => $result['filename']]
+            'directory' => 'audio',
+            'filename' => $result['filename']]
         );
 
         return new JsonResponse([
