@@ -5,6 +5,8 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -84,6 +86,38 @@ class TradeRepository extends EntityRepository
             ->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return int
+     *
+     * @throws DBALException
+     */
+    public function getAmountInPendingTrades(User $user): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = <<<SQL
+SELECT SUM(o.amount)
+FROM operation AS o
+INNER JOIN trade AS t ON o.id = t.id AND t.seller_id = :seller_id
+WHERE t.status IN (0,3,4);
+SQL;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('seller_id', $user->getId());
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            $value = $stmt->fetchColumn();
+            if (is_null($value)) {
+                return 0;
+            }
+            return $value;
+        }
+
+        return 0;
     }
 
     /**

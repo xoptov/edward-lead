@@ -1,5 +1,5 @@
 {% block header %}
-    <div class="col-lg-4 header_logo">
+    <div class="col-lg-4 header_logo" xmlns="http://www.w3.org/1999/html">
         <div class="logo" style="display:flex;">
             {% if is_granted('ROLE_WEBMASTER') %}
                 <a href="{{ path('app_dashboard') }}">
@@ -17,7 +17,11 @@
         <div class="main">
             <div class="balance">
                 <p>Баланс: <span>{{ app.user.balance|money_format }}</span></p>
-                <p>Холд: <span>{{ balance_hold(app.user)|money_format }}</span></p>
+                {% if is_granted('ROLE_COMPANY') %}
+                    <p>Холд: <span>{{ balance_hold(app.user)|money_format }}</span></p>
+                {% elseif is_granted('ROLE_WEBMASTER') %}
+                    <p>В сделках: <span>{{ pending_amount(app.user)|money_format }}</span></p>
+                {% endif %}
             </div>
             {% include '@App/v2/top_menu.html.twig' %}
         </div>
