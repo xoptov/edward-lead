@@ -5,6 +5,9 @@
     <title>Edward Lead Form</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        body {
+            background-color: darkgray;
+        }
         label {
             display: block;
             margin-top: 10px;
@@ -12,17 +15,37 @@
             font-size: 15px;
             text-indent: px;
         }
-        input {
+        input[type="text"] {
             width:100%;
             height: 40px;
             border: 1px solid #afafaf;
             border-radius: 3px;
-            display: block;
+            display: inline-block;
             font-size: 18px;
             
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-        button {
+        input[type="text"]:-moz-placeholder {
+            color:blue;
+            font-style: italic,oblique;
+        } 
+        input[type="text"]::-webkit-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+        }
+        input[type="text"]:-ms-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+        }
+        input[type="text"]::-ms-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+        }
+        input[type="text"]::placeholder {
+            color:lightgray;
+            font-style: italic;
+        }
+        input[type="button"] {
             background-color:#00a468; 
             font-size: 18px; 
             color: white;  
@@ -31,6 +54,17 @@
             height: 45px;
             border: 1px #00a468; 
             border-radius: 3px;
+        }
+        input[type="button"]:hover{
+            background-color: #00b478;
+        }
+        input[type="button"]:active{
+            background-color: #00d498;
+        }
+        
+        input[type="input"]:focus{
+            border-color: #00a468;
+            outline: none;
         }
     </style>
 </head>
@@ -46,23 +80,23 @@
         <form>
             <div>
                 <label>Ваше имя:</label>
-                <input type="text" name="name">
+                <input type="text" name="name" placeholder="пример: Иван">
             </div>
             <div>
                 <label>Ваш телефон: <span style="font-size: 14px; color:#6b6b6b;">(обязательное поле)</span></label>
-                <input type="text" name="phone">
+                <input type="text" name="phone" placeholder="пример: +7(900)100-10-20">
             </div>
             <div>
                 <label>Ваш email:</label>
-                <input type="text" name="email">
+                <input type="text" name="email" placeholder="пример: ivan@yandex.ru">
             </div>
             <div>
-                <button>Отправить заявку</button>
+                <input type="button" value="Отправить заявку">
             </div>
         </form>
     </div>
     <div>
-        <p style="display:block; color: #6b6b6b; text-align: center; top:-50px; position: relative;">Отправляя сведенья через электронную форму,<br>вы соглашаетесь с условиями <a>Политики конфиденциальности</a></p>
+        <span style="font-size:14px;display:block; color: #6b6b6b; text-align: center; top:-50px; position: relative;">Отправляя сведенья через электронную форму,<br>вы соглашаетесь с условиями <a>Политики конфиденциальности</a></span>
     </div>
 </div>
 <!--/ Код формы  -->
