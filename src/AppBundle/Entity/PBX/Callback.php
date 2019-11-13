@@ -143,6 +143,18 @@ class Callback implements IdentifiableInterface
     }
 
     /**
+     * @return null|string
+     */
+    public function getFirstShoulderStatus(): ?string
+    {
+        if (!$this->firstShoulder) {
+            return null;
+        }
+
+        return $this->firstShoulder->getStatus();
+    }
+
+    /**
      * @return bool
      */
     public function hasSecondShoulder(): bool
@@ -168,6 +180,18 @@ class Callback implements IdentifiableInterface
     public function getSecondShoulder(): ?Shoulder
     {
         return $this->secondShoulder;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSecondShoulderStatus(): ?string
+    {
+        if (!$this->secondShoulder) {
+            return null;
+        }
+
+        return $this->secondShoulder->getStatus();
     }
 
     /**
