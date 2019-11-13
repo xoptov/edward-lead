@@ -4,33 +4,65 @@
     <meta charset="UTF-8">
     <title>Edward Lead Form</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 7px;
+            font-size: 15px;
+            text-indent: px;
+        }
+        input {
+            width:100%;
+            height: 40px;
+            border: 1px solid #afafaf;
+            border-radius: 3px;
+            display: block;
+            font-size: 18px;
+            
+            margin-bottom: 20px;
+        }
+        button {
+            background-color:#00a468; 
+            font-size: 18px; 
+            color: white;  
+            display: block; 
+            width: 100%; 
+            height: 45px;
+            border: 1px #00a468; 
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body>
 <!-- Код формы -->
-<div style="width:440px;padding: 0 42px;border: 2px solid #d9d9d9;border-radius: 3px;">
+<div style="width:440px;height:502px;border: 2px solid #afafaf;border-radius: 5px; background-color: white; color: #333333;">
+    
     <div style="margin-bottom: 30px;">
         <h1 style="margin-top: 24px;line-height: 1em;text-align: center;font-size: 22px;font-weight: normal;margin-bottom: 14px;">Оставьте свои контактные данные</h1>
-        <span style="font-size: 16px;text-align: center;line-height: 1em;">и наш менеджер свяжется с Вами в ближайшее время</span>
+        <p style="color:#6b6b6b;font-size: 16px;text-align: center;line-height: 1em;">и наш менеджер свяжется с Вами<br>в ближайшее время</p>
     </div>
-    <form>
-        <div>
-            <label style="display: block;margin-bottom: 10px;line-height: 15px;">Ваше имя:</label>
-            <input type="text" name="name">
-        </div>
-        <div>
-            <label>Ваш телефон: (обязательное поле)</label>
-            <input type="text" name="phone">
-        </div>
-        <div>
-            <label>Ваш email:</label>
-            <input type="text" name="email">
-        </div>
-        <div>
-            <button>Отправить заявку</button>
-        </div>
-    </form>
+    <div style="display: block; width: 296px;padding: 0 0 72px 72px">    
+        <form>
+            <div>
+                <label>Ваше имя:</label>
+                <input type="text" name="name">
+            </div>
+            <div>
+                <label>Ваш телефон: <span style="font-size: 14px; color:#6b6b6b;">(обязательное поле)</span></label>
+                <input type="text" name="phone">
+            </div>
+            <div>
+                <label>Ваш email:</label>
+                <input type="text" name="email">
+            </div>
+            <div>
+                <button>Отправить заявку</button>
+            </div>
+        </form>
+    </div>
     <div>
-        <p>Отправляя сведенья через электронную форму, вы соглашаетесь с условиями <a>Политики конфиденциальности</a></p>
+        <p style="display:block; color: #6b6b6b; text-align: center; top:-50px; position: relative;">Отправляя сведенья через электронную форму,<br>вы соглашаетесь с условиями <a>Политики конфиденциальности</a></p>
     </div>
 </div>
 <!--/ Код формы  -->
