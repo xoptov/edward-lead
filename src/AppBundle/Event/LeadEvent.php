@@ -12,6 +12,7 @@ class LeadEvent extends Event
     const IN_WORK    = 'lead.in_work';
     const TARGET     = 'lead.target';
     const NOT_TARGET = 'lead.not_target';
+    const ARCHIVED   = 'lead.archived';
 
     /**
      * @var Lead
