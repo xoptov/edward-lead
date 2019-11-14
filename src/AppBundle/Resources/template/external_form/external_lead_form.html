@@ -6,15 +6,27 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
-            background-color: darkgray;
+            background-color: darkslategray;
+        }
+        h1 {
+            margin: 24px auto 14px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: normal;
+        }
+        #ext_form_header{
+            color:#6b6b6b;
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.2em;
         }
         label {
             display: block;
             margin-top: 10px;
-            margin-bottom: 7px;
+            margin-bottom: 5px;
             font-size: 15px;
-            text-indent: px;
         }
+
         input[type="text"] {
             width:100%;
             height: 40px;
@@ -22,32 +34,41 @@
             border-radius: 3px;
             display: inline-block;
             font-size: 18px;
-            
             margin-bottom: 10px;
         }
         input[type="text"]:focus{
-            border-width: 2px;
-        }
-        input[type="text"]:-moz-placeholder {
-            color:blue;
-            font-style: italic,oblique;
-        } 
-        input[type="text"]::-webkit-input-placeholder {
-            color:lightgray;
-            font-style: italic;
-        }
-        input[type="text"]:-ms-input-placeholder {
-            color:lightgray;
-            font-style: italic;
-        }
-        input[type="text"]::-ms-input-placeholder {
-            color:lightgray;
-            font-style: italic;
+            border-width: 1px;
+            outline-color: lightgreen;
+            outline-width: 2px;
+
         }
         input[type="text"]::placeholder {
             color:lightgray;
             font-style: italic;
+            text-indent: 10px;
         }
+        
+        input[type="text"]::-webkit-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+            text-indent: 10px;
+        }
+        input[type="text"]:-moz-placeholder {
+            color:lightgray;
+            font-style: italic,oblique;
+            text-indent: 10px;
+        } 
+        input[type="text"]:-ms-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+            text-indent: 10px;
+        }
+        input[type="text"]::-ms-input-placeholder {
+            color:lightgray;
+            font-style: italic;
+            text-indent: 10px;
+        }
+
         input[type="button"] {
             background-color:#00a468; 
             font-size: 18px; 
@@ -67,8 +88,63 @@
         }
         
         input[type="input"]:focus{
-            border-color: #00a468;
+            //border-color: #00a468;
+        }
+        a {
+            color:#00a468;
+        }
+        a:focus {
             outline: none;
+        }
+        
+        a:active {
+            color:#00d498;
+        }
+        a:hover{
+            color:#00b478;
+        }
+        
+        #ext_form_footer {
+            margin: 40px auto;
+            font-size:13px;
+            display: block; 
+            width:400px; 
+            color: #6b6b6b; 
+            text-align: center; 
+            position:relative; 
+            
+        }
+        
+        #ext_form_input_txt_phone{
+
+        }
+
+        #ext_form_err_sign{
+            /*visibility: hidden;*/
+            /*display: none;*/
+            display: block;
+            position: absolute;
+            font-size: 0px;
+            width: 0px; 
+            height: 0px;
+            border-top: 20px solid transparent;
+            border-left: 30px solid rgb(255, 85, 85);
+            border-bottom: 20px solid transparent;
+            top:40px;
+            left:298px;
+        }
+        #ext_form_err_sign:after{
+            content:"!";
+            font-family: serif;
+            font-weight: bolder;
+            font-size: 20px;
+            font-style: normal;
+            color: white;
+            position:absolute;
+            width:40px;
+            height: 40px;
+            top: calc(50% - 10px);
+            left: calc(50% - 25px);
         }
     </style>
 </head>
@@ -77,18 +153,19 @@
 <div style="width:440px;height:502px;border: 2px solid #afafaf;border-radius: 5px; background-color: white; color: #333333;">
     
     <div style="margin-bottom: 30px;">
-        <h1 style="margin-top: 24px;line-height: 1em;text-align: center;font-size: 22px;font-weight: normal;margin-bottom: 14px;">Оставьте свои контактные данные</h1>
-        <p style="color:#6b6b6b;font-size: 16px;text-align: center;line-height: 1em;">и наш менеджер свяжется с Вами<br>в ближайшее время</p>
+        <h1>Оставьте свои контактные данные</h1>
+        <p id="ext_form_header">и наш менеджер свяжется с Вами<br>в ближайшее время</p>
     </div>
-    <div style="display: block; width: 296px;padding: 0 0 72px 72px">    
+    <div style="display: block; width: 296px;margin: 0 auto">    
         <form>
             <div>
                 <label>Ваше имя:</label>
-                <input type="text" name="name" placeholder="пример: Иван">
+                <input type="text" name="name" placeholder="пример: Иван Сергеевич">
             </div>
             <div>
                 <label>Ваш телефон: <span style="font-size: 14px; color:#6b6b6b;">(обязательное поле)</span></label>
-                <input type="text" name="phone" placeholder="пример: +7(900)100-10-20">
+                <input id="ext_form_input_txt_phone" type="text" name="phone" placeholder="пример: +7(900)100-10-20">
+                
             </div>
             <div>
                 <label>Ваш email:</label>
@@ -98,10 +175,12 @@
                 <input type="button" value="Отправить заявку">
             </div>
         </form>
+        
     </div>
     <div>
-        <span style="font-size:14px;display:block; color: #6b6b6b; text-align: center; top:-50px; position: relative;">Отправляя сведенья через электронную форму,<br>вы соглашаетесь с условиями <a>Политики конфиденциальности</a></span>
+        <span id="ext_form_footer">Отправляя сведенья через электронную форму, вы&nbsp;соглашаетесь с условиями <a href="#" target="_blank">Политики конфиденциальности</a></span>
     </div>
+    <div id="ext_form_err_sign"></div>
 </div>
 <!--/ Код формы  -->
 </body>
