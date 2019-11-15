@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Confirmation layout</title>
@@ -7,9 +7,25 @@
     <link rel="stylesheet" href="../public/css/modal.css">
 </head>
 <body>
-<div class="blocked-modal">
-    <div class="content-area">
-        <h2>Подтверждение действия</h2>
+<div class="overlay" style="display:flex;">
+    <div class="modal">
+        <ul class="modal__list">
+            <li class="modal__item modal__item_hello modal-item">
+                <div class="modal-item__wrap">
+                    <div class="modal_row">
+                        <div class="modal_row_item">
+                            Вы действительно хотите отправить лида в архив?
+                        </div>
+                        <div class="modal_row_item">
+                            <button class="btn">Да</button>
+                        </div>
+                        <div class="modal_row_item">
+                            <button class="btn">Нет</button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
 </body>

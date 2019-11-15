@@ -380,6 +380,8 @@ class LeadController extends Controller
         $lead->setStatus(Lead::STATUS_ARCHIVE);
         $this->entityManager->flush();
 
+        $this->addFlash('success', 'Лид #' . $lead->getId() . ' помещен в архив');
+
         $eventDispatcher->dispatch(LeadEvent::ARCHIVED, new LeadEvent($lead));
 
         return new JsonResponse(['id' => $lead->getId(), 'status' => Lead::STATUS_ARCHIVE]);

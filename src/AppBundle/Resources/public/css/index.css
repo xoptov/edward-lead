@@ -281,7 +281,7 @@ body {
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
-  font-family: "Helvetica Neue Cyr - Roman";
+  font-family: "Helvetica Neue Cyr - Roman", sans-serif;
   font-size: 1.6rem;
   color: #000000;
   background-color: #f2f2f2;
