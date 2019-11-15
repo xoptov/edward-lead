@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", Arial, sans-serif;
 }
 
 .content-area h2 {
