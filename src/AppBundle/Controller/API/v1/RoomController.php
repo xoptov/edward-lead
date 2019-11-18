@@ -4,12 +4,12 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Member;
 use AppBundle\Event\RoomEvent;
-use AppBundle\Security\Voter\MemberVoter;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Security\Voter\MemberVoter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +17,6 @@ use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -26,7 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @Route("/api/v1")
  */
-class RoomController extends Controller
+class RoomController extends APIController
 {
     /**
      * @Route("/rooms", name="api_v1_rooms", methods={"GET"}, options={"_format": "json"})
@@ -193,6 +192,7 @@ class RoomController extends Controller
         \Swift_Mailer $mailer,
         EntityManagerInterface $entityManager
     ): JsonResponse {
+
         $formBuilder = $this->createFormBuilder(null, [
             'method' => Request::METHOD_POST,
             'csrf_protection' => false
@@ -214,40 +214,34 @@ class RoomController extends Controller
         $form = $formBuilder->getForm();
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $data = $form->getData();
-
-            $room = $entityManager->getRepository(Room::class)->findOneBy([
-                'inviteToken' => $data['token']
-            ]);
-
-            if (!$room) {
-                return new JsonResponse(['errors' => ['Невалидный токен приглашения']], Response::HTTP_BAD_REQUEST);
-            }
-
-            $content = $this->renderView('@App/v2/Room/invite_email.txt.twig', [
-                'room' => $room,
-                'inviteUrl' => $this->generateUrl('app_room_invite_confirm', ['token' => $data['token']], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]);
-
-            $senderEmail = $this->getParameter('system_email');
-
-            $message = new \Swift_Message('Приглашение в комнату', $content);
-            $message
-                ->setFrom($senderEmail)
-                ->setTo($data['email']);
-
-            $mailer->send($message);
-
-            return new JsonResponse(['message' => 'Приглашение в комнату принято в очередь на отправку']);
+        if (!$form->isValid()) {
+            return $this->responseErrors($form->getErrors(true));
         }
 
-        $errors = [];
+        $data = $form->getData();
 
-        foreach ($form->getErrors(true) as $error) {
-            $errors[] = $error->getMessage();
+        $room = $entityManager->getRepository(Room::class)->findOneBy([
+            'inviteToken' => $data['token']
+        ]);
+
+        if (!$room) {
+            return new JsonResponse(['error' => 'Невалидный токен приглашения'], Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+        $content = $this->renderView('@App/v2/Room/invite_email.txt.twig', [
+            'room' => $room,
+            'inviteUrl' => $this->generateUrl('app_room_invite_confirm', ['token' => $data['token']], UrlGeneratorInterface::ABSOLUTE_URL)
+        ]);
+
+        $senderEmail = $this->getParameter('system_email');
+
+        $message = new \Swift_Message('Приглашение в комнату', $content);
+        $message
+            ->setFrom($senderEmail)
+            ->setTo($data['email']);
+
+        $mailer->send($message);
+
+        return new JsonResponse(['message' => 'Приглашение в комнату принято в очередь на отправку']);
     }
 }

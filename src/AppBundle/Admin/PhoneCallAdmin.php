@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\PBX\Shoulder;
 use AppBundle\Entity\PhoneCall;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -46,9 +47,27 @@ class PhoneCallAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->add('externalId')
             ->add('caller.id')
-            ->add('getLastCallback', null, [
-                'label' => 'Last Call AnswerAt',
-                'template' => '@App/CRUD/list_callback_answer_at.html.twig'
+            ->add('createdAt', 'datetime', [
+                'label' => 'Call Created At',
+                'format' => 'd.m.Y H:i:s'
+            ])
+            ->add('getLastCallbackFirstShoulderStatus', 'choice', [
+                'label' => 'Абонент 1',
+                'choices' => [
+                    Shoulder::STATUS_NO_ANSWER => 'Не ответил',
+                    Shoulder::STATUS_ANSWER    => 'Ответил',
+                    Shoulder::STATUS_BUSY      => 'Занят',
+                    Shoulder::STATUS_CANCEL    => 'Сбросил'
+                ]
+            ])
+            ->add('getLastCallbackSecondShoulderStatus', 'choice', [
+                'label' => 'Абонент 2',
+                'choices' => [
+                    Shoulder::STATUS_NO_ANSWER => 'Не ответил',
+                    Shoulder::STATUS_ANSWER    => 'Ответил',
+                    Shoulder::STATUS_BUSY      => 'Занят',
+                    Shoulder::STATUS_CANCEL    => 'Сбросил'
+                ]
             ])
             ->add('caller.name')
             ->add('caller.company.officePhone', null, [

@@ -3,9 +3,8 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\User;
-use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use AppBundle\Service\UserManager;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,7 +17,8 @@ class UserController extends Controller
     /**
      * @Route("/user/renew-token", name="api_v1_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
      *
-     * @param UserManager $userManager
+     * @param UserManager     $userManager
+     * @param LoggerInterface $logger
      *
      * @return JsonResponse
      */
@@ -28,12 +28,7 @@ class UserController extends Controller
         $user = $this->getUser();
 
         $userManager->updateAccessToken($user);
-
-        try {
-            $userManager->updateUser($user);
-        } catch (ORMException $e) {
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $userManager->updateUser($user);
 
         return new JsonResponse(['token' => $user->getToken()]);
     }

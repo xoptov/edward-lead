@@ -51,8 +51,7 @@ class PaymentController extends Controller
         InvoiceManager $invoiceManager,
         EventDispatcherInterface $eventDispatcher,
         string $paymentGatewayToken
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->invoiceManager = $invoiceManager;
         $this->eventDispatcher = $eventDispatcher;

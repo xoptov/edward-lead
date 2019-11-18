@@ -267,6 +267,34 @@ class PhoneCall extends Operation
     }
 
     /**
+     * @return null|string
+     */
+    public function getLastCallbackFirstShoulderStatus(): ?string
+    {
+        $lastCallback = $this->getLastCallback();
+
+        if (empty($lastCallback)) {
+            return null;
+        }
+
+        return $lastCallback->getFirstShoulderStatus();
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getLastCallbackSecondShoulderStatus(): ?string
+    {
+        $lastCallback = $this->getLastCallback();
+
+        if (empty($lastCallback)) {
+            return null;
+        }
+
+        return $lastCallback->getSecondShoulderStatus();
+    }
+
+    /**
      * @return int
      */
     public function getTalkDuration()
