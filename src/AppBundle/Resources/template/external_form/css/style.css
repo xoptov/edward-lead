@@ -200,7 +200,7 @@ a:hover{
     left:3px;
 }
 .ext_form_err_msg {
-    display:none;
+    display:block;
     position: absolute;
     background-color:red;
     color:white;
