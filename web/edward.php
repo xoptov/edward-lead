@@ -17,7 +17,7 @@ define('API_TIMEOUT', 60);
 
 ini_set('error_reporting', E_ERROR);
 
-$formFields = ['name', 'phone', 'hasAgreement']; // Список полей в формы.
+$formFields = ['name', 'phone', 'hasAgreement', 'email']; // Список полей в формы.
 
 if (!extension_loaded('json')) {
     sendResponse('Необходимо подключить json расширение к php', 500, ['Content-Type: text/html; charset=UTF-8']);

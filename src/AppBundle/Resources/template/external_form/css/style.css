@@ -48,51 +48,30 @@ label {
 
 input[type="text"] {
     /* Поле ввода - база */
-    width:100%;
+    width:275px;
     height: 40px;
     border: 1px solid #afafaf;
     border-radius: 3px;
     display: inline-block;
     font-size: 18px;
     margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 input[type="text"]:focus{
     /* Поле ввода - в фокусе */
-    border-width: 1px;
-    outline-color: lightgreen;
+    outline-color: #00a468;
     outline-width: 2px;
+    outline-style: dashed;
 
 }
 
 input[type="text"]::placeholder {
     color:lightgray;
     font-style: italic;
-    text-indent: 10px;
-}
-
-input[type="text"]::-webkit-input-placeholder {
-    color:lightgray;
-    font-style: italic;
-    text-indent: 10px;
-}
-
-input[type="text"]::-moz-placeholder {
-    color:lightgray;
-    font-style: italic,oblique;
-    text-indent: 10px;
-} 
-
-input[type="text"]::-ms-input-placeholder {
-    color:lightgray;
-    font-style: italic;
-    text-indent: 10px;
-}
-
-input[type="text"]::-ms-input-placeholder {
-    color:lightgray;
-    font-style: italic;
-    text-indent: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 input[type="button"] {
@@ -115,10 +94,6 @@ input[type="button"]:hover{
 
 input[type="button"]:active{
     background-color: #00d498;
-}
-
-input[type="input"]:focus{
-    /*border-color: #00a468;*/
 }
 
 a:link {
@@ -165,7 +140,7 @@ a:hover{
 }
 
 #ext_form_err_sign{
-    display:block;
+    display:none;
     position:absolute;
     top:236px;
     left:393px;
@@ -200,7 +175,7 @@ a:hover{
     left:3px;
 }
 .ext_form_err_msg {
-    display:block;
+    display:none;
     position: absolute;
     background-color:red;
     color:white;
