@@ -169,7 +169,7 @@
                     <span class="fee">С учётом комиссии {{ fee }}%</span>
                 {% endif %}
             </div>
-            {% if not lead.owner(app.user) and lead.status is constant('STATUS_EXPECT', lead) %}
+            {% if not lead.owner(app.user) and is_granted('ROLE_COMPANY') and lead.status is constant('STATUS_EXPECT', lead) %}
                 <a class="btn btn-green btn-buy-lead" href="{{ path('app_lead_buy', {'id': lead.id}) }}">
                     Купить лида за {{ priceWithFee|money_format }}
                 </a>
