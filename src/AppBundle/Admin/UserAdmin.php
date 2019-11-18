@@ -29,8 +29,7 @@ class UserAdmin extends AbstractAdmin
     }
 
     /**
-     * @param $object
-     * @throws OptimisticLockException
+     * @inheritdoc
      */
     public function prePersist($object)
     {
@@ -38,8 +37,7 @@ class UserAdmin extends AbstractAdmin
     }
 
     /**
-     * @param $object
-     * @throws OptimisticLockException
+     * @inheritdoc
      */
     public function preUpdate($object)
     {
@@ -134,6 +132,9 @@ class UserAdmin extends AbstractAdmin
             ->add('typeSelected')
             ->add('createdAt')
             ->add('updatedAt')
+            ->add('referrer', null, [
+                'template' => '@App/CRUD/show_referrer_field.html.twig'
+            ])
         ;
     }
 
