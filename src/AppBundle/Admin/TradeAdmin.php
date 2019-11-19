@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Admin\Field\MoneyFieldDescription;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use Sonata\AdminBundle\Show\ShowMapper;
@@ -17,6 +18,10 @@ class TradeAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $list)
     {
+        $amountField = new MoneyFieldDescription();
+        $amountField->setName('amount');
+
+
         $list
             ->addIdentifier('id')
             ->add('buyer.name')
@@ -31,6 +36,16 @@ class TradeAdmin extends AbstractAdmin
                 ],
                 'catalogue' => 'messages'
             ])
+            ->add('createdAt', 'datetime', [
+                'format' => 'd.m.Y H:i:s'
+            ])
+            ->add('lead', null, [
+                'template' => '@App/CRUD/list_lead_field.html.twig'
+            ])
+            ->add('lead.room.name', null, [
+                'label' => 'Room'
+            ])
+            ->add($amountField)
             ->add('_action', null, [
                 'actions' => [
                     'accept' => ['template' => '@App/CRUD/list__action_accept.html.twig'],
