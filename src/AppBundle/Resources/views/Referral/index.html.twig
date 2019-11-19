@@ -56,12 +56,12 @@
                     <ul>
                         <li>
                             <script type="text/javascript">
-                                document.write(VK.Share.button({url: '{{ landing_url }}'}, {type: 'round_nocount'}));
+                                document.write(VK.Share.button({url: '{{ landing_url ~ '/?ref=' ~ referrerToken }}'}, {type: 'round_nocount'}));
                             </script>
                         </li>
                         <li>
-                            <div class="fb-share-button" data-href="https://edward-lead.ru" data-layout="button" data-size="large">
-                                <a target="_blank" href="https://edward-lead.ru" class="fb-xfbml-parse-ignore">Поделиться</a>
+                            <div class="fb-share-button" data-href="{{ landing_url ~ '/?ref=' ~ referrerToken }}" data-layout="button" data-size="large">
+                                <a target="_blank" href="{{ landing_url ~ '/?ref=' ~ referrerToken }}" class="fb-xfbml-parse-ignore">Поделиться</a>
                             </div>
                         </li>
                     </ul>
