@@ -686,8 +686,6 @@ body {
 }
 
 .btn {
-  max-width: 124px;
-  width: 100%;
   display: block;
   background-color: #00a368;
   color: #ffffff;
