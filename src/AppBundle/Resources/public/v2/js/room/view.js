@@ -47,7 +47,7 @@ const vm = new Vue({
         },
         dateFormat: function(value) {
             const createdAt = new Date(value);
-            return createdAt.format('dd.mm.yyyy');
+            return createdAt.format('dd.mm.yyyy HH:MM:s');
         },
         getLogotype: function(member) {
             if (member.user.logotype) {
