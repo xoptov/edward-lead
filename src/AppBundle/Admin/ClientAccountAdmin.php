@@ -35,7 +35,9 @@ class ClientAccountAdmin extends AbstractAdmin
 
         $list
             ->addIdentifier('id', 'number')
+            ->add('user.id')
             ->add('user.name')
+            ->add('user.email')
             ->add($balanceField, 'number')
             ->add('enabled');
     }
