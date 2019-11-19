@@ -26,6 +26,12 @@ security:
             security: false
         main:
             anonymous: ~
+            remember_me:
+                name: rememberme
+                secret: '%secret%'
+                lifetime: 2592000
+                path: /
+                always_remember_me: true
             form_login:
                 login_path: app_login
                 username_parameter: login[email]
