@@ -11,7 +11,7 @@ define('API_KEY', '77826e8bc72600cc6be514fc9d6c507c70253c76'); // Необход
 define('ROOM_ID', 1057); // Идентификатор комнаты в которую будет добавляться лид.
 
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
-define('API_URL', 'http://172.19.0.1:8000/api/v1/lead');
+define('API_URL', 'http://edward.local/api/v1/lead');
 
 define('API_TIMEOUT', 60);
 
@@ -42,7 +42,7 @@ foreach ($formFields as $field)
 {
     $validateFunction = 'validate' . $field;
     if (function_exists($validateFunction)) {
-        call_user_func($validateFunction, $errors);
+        call_user_func_array($validateFunction, [&$errors]);
     }
 }
 
