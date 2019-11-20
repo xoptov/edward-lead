@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Operation;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
@@ -70,6 +71,7 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
+            new \Twig_SimpleFunction('destination_of_money', [$this, 'getDestinationOfMoney']),
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
             new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays']),
             new \Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer']),
@@ -152,6 +154,24 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return 'Ожидается оплата...';
+    }
+
+    /**
+     * @param Operation $operation
+     *
+     * @return null|string
+     */
+    public function getDestinationOfMoney(Operation $operation): ?string
+    {
+        $incomeTransactions = $operation->getIncomeTransactions();
+        $incomeTransaction = reset($incomeTransactions);
+
+        if ($incomeTransaction) {
+            $destinationAccount = $incomeTransaction->getAccount();
+            return $destinationAccount->getDescription();
+        }
+
+        return null;
     }
 
     /**

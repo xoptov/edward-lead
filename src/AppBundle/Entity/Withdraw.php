@@ -8,6 +8,7 @@ use AppBundle\Entity\Part\UpdatedAtTrait;
 /**
  * @ORM\Table(name="withdraw")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Withdraw extends Operation
 {
@@ -27,7 +28,7 @@ class Withdraw extends Operation
     private $user;
 
     /**
-     * @var WithdrawConfirm
+     * @var WithdrawConfirm|null
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\WithdrawConfirm", mappedBy="withdraw")
      */
@@ -81,9 +82,9 @@ class Withdraw extends Operation
     }
 
     /**
-     * @return WithdrawConfirm
+     * @return WithdrawConfirm|null
      */
-    public function getConfirm(): WithdrawConfirm
+    public function getConfirm(): ?WithdrawConfirm
     {
         return $this->confirm;
     }
