@@ -3,11 +3,11 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
     {% if app.environment == 'dev' %}
-        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.css') }}">
-        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/lib/jquery-ui/jquery-ui.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/lib/jquery-ui/jquery-ui.theme.css') }}">
     {% else %}
-        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('bundles/app/css/jquery-ui.theme.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/lib/jquery-ui/jquery-ui.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/lib/jquery-ui/jquery-ui.theme.min.css') }}">
     {% endif %}
 {% endblock %}
 

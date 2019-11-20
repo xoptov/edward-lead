@@ -378,10 +378,45 @@ class LeadController extends APIController
                     'remain' => Formatter::humanTimerRemain($remainInSeconds)
                 ];
             }
-
+    
             $result[] = $row;
         }
 
         return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/lead/{id}/archive", name="api_v1_archive_lead", methods={"GET"}, defaults={"_format": "json"})
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Lead                     $lead
+     *
+     * @return JsonResponse
+     */
+    public function archiveAction(
+        EventDispatcherInterface $eventDispatcher,
+        Lead $lead
+    ): JsonResponse {
+
+        if (!$this->isGranted(LeadEditVoter::OPERATION, $lead)) {
+            return new JsonResponse([
+                'error' => 'У вас нет прав на архивирование лида'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        if (!$lead->isExpected()) {
+            return new JsonResponse([
+                'error' => 'Нельзя отправлять лида в архив с другими статусами кроме "ожидает"'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $lead->setStatus(Lead::STATUS_ARCHIVE);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Лид #' . $lead->getId() . ' помещен в архив');
+
+        $eventDispatcher->dispatch(LeadEvent::ARCHIVED, new LeadEvent($lead));
+
+        return new JsonResponse(['id' => $lead->getId(), 'status' => Lead::STATUS_ARCHIVE]);
     }
 }
