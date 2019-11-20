@@ -2,11 +2,11 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Admin\Field\LastLoginAtFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserManager;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Doctrine\ORM\OptimisticLockException;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
@@ -68,14 +68,22 @@ class UserAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
+        $lastLoginAtField = new LastLoginAtFieldDescription();
+        $lastLoginAtField->setName('lastLoginAt');
+
         $listMapper
             ->addIdentifier('id', 'number')
             ->add('name')
-            ->add('phone')
+            ->add('phone', null, ['template' => '@App/CRUD/list_phone_number.html.twig'])
             ->add('email')
-            ->add('roles', "array", ['template' => '@App/CRUD/list_array.html.twig'])
+            ->add('roles', 'array', ['template' => '@App/CRUD/list_array.html.twig'])
             ->add('enabled')
-            ->add('createdAt')
+            ->add('createdAt', 'datetime', [
+                'format' => 'd.m.Y H:i:s'
+            ])
+            ->add($lastLoginAtField, 'datetime', [
+                'format' => 'd.m.Y H:i:s'
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
