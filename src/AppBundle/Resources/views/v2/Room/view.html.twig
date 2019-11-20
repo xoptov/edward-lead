@@ -60,7 +60,7 @@
                                     <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label"></span>
                                 </td>
                                 <td>
-                                    <a target="_blank" :href="leadViewUrl(lead)" v-if="activated">
+                                    <a :href="leadViewUrl(lead)" v-if="activated">
                                         <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
                                     </a>
                                 </td>
