@@ -57,7 +57,7 @@
                                             {% if lead.trade is not empty and lead.trade.lastPhoneCall is not empty and lead.trade.lastPhoneCall.id is not empty %}
                                                 <a href="{{ path('app_telephony_listen_record', {'id': lead.trade.lastPhoneCall.id }) }}" class="speaker" target="_blank"></a>
                                             {% endif %}
-                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link"></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -119,7 +119,7 @@
                                             {% if trade.lastPhoneCall is not empty and trade.lastPhoneCall.id is not empty %}
                                                 <a href="{{ path('app_telephony_listen_record', {'id': trade.lastPhoneCall.id }) }}" class="speaker" target="_blank"></a>
                                             {% endif %}
-                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link"></a>
                                         </div>
                                     </td>
                                 </tr>

@@ -89,7 +89,7 @@
                             {% for lead in leads %}
                                 <tr class="sonata-ba-view-container">
                                     <td class="sonata-ba-list-field">
-                                        <a target="_blank" href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.id }}</a>
+                                        <a href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.id }}</a>
                                     </td>
                                     <td class="sonata-ba-list-field">
                                         {{ lead.name }}
