@@ -2,6 +2,7 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Admin\Field\DestinationAccountFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Service\HoldManager;
@@ -79,8 +80,12 @@ class WithdrawAdmin extends AbstractAdmin
         $amountField = new MoneyFieldDescription();
         $amountField->setName('amount');
 
+        $destinationAccountField = new DestinationAccountFieldDescription();
+        $destinationAccountField->setName('destinationAccount');
+
         $listMapper
             ->addIdentifier('id', 'number')
+            ->add('user.id')
             ->add('description')
             ->add($amountField, 'number')
             ->add('status', 'choice', [
@@ -88,8 +93,15 @@ class WithdrawAdmin extends AbstractAdmin
                 'catalogue' => 'messages',
                 'template' => '@App/CRUD/list_status.html.twig'
             ])
-            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:m'])
-            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:m'])
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
+            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
+            ->add('confirm.createdAt', 'datetime', [
+                'label' => 'Confirm Created At',
+                'format' => 'd.m.Y H:i:s']
+            )
+            ->add($destinationAccountField, null, [
+                'label' => 'Output Method'
+            ])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -132,8 +144,8 @@ class WithdrawAdmin extends AbstractAdmin
             ->add('status', 'choice', [
                 'choices' => $this->statuses
             ])
-            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:m'])
-            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:m']);
+            ->add('createdAt', 'datetime', ['format' => 'd.m.Y H:i:s'])
+            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:s']);
     }
 
     /**
