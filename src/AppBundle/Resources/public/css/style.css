@@ -23,7 +23,7 @@
 }
 
 [class^="icon-"], [class*=" icon-"] {
-    font-family: "icomoon" !important;
+    font-family: "icomoon", sans-serif !important;
     speak: none;
     font-style: normal;
     font-weight: normal;
@@ -379,8 +379,7 @@
 }
 
 .sprite2 {
-    background-image: url(../img/spritesheet.png);
-    background-repeat: no-repeat;
+    background: url(../img/spritesheet.png) no-repeat;
     display: block;
 }
 
@@ -529,7 +528,7 @@ html, body {
 body {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 20px;
     background-color: #f2f2f2;
 }
@@ -586,14 +585,12 @@ form {
 }
 
 .u-font-16-roman {
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 16px;
     font-weight: 400;
 }
 
 .plain__text {
     color: #3a3a3a;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 16px;
     font-weight: 400;
     line-height: 1.2;
@@ -612,7 +609,6 @@ select {
 
 select:invalid {
     color: #909090;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     font-style: italic;
@@ -684,7 +680,6 @@ select:invalid {
 
 .btn {
     display: block;
-    font-family: "Helvetica Neue Cyr - Roman";
     border: none;
     outline: none;
     border-radius: 2px;
@@ -701,13 +696,17 @@ select:invalid {
     color: #ffffff;
 }
 
+.btn-red {
+    background-color: #9f191f;
+    color: #fff;
+}
+
 .ref_block .btn-green, .btn-green:hover {
     background-color: #01c37d;
 }
 
 .btn-middle-green {
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     padding: 8px 10px;
@@ -797,7 +796,6 @@ select:invalid {
 .form {}
 
 .form__text {
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     color: #333333;
@@ -844,64 +842,15 @@ select:invalid {
     border: 1px solid #b7b7b7;
 }
 
-.form__input::-webkit-input-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-.form__input:-moz-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-.form__input::-moz-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-.form__input:-ms-input-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-textarea::-webkit-input-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-textarea:-moz-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-textarea::-moz-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
-    font-size: 14px;
-    font-style: italic;
-    font-weight: 400;
-    color: #737373;
-}
-
-textarea:-ms-input-placeholder {
-    font-family: "Helvetica Neue Cyr - Roman";
+input::-webkit-input-placeholder,
+input:-moz-placeholder,
+input::-moz-placeholder,
+input:-ms-input-placeholder,
+textarea::-webkit-input-placeholder,
+textarea:-moz-placeholder,
+textarea::-moz-placeholder,
+textarea:-ms-input-placeholder
+{
     font-size: 14px;
     font-style: italic;
     font-weight: 400;
@@ -917,7 +866,6 @@ textarea {
     width: 100%;
     padding-top: 12px;
     padding-bottom: 12px;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 16px;
     font-weight: 400;
     color: #ffffff;
@@ -940,7 +888,6 @@ textarea {
 }
 
 .header__text {
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     color: #353535;
@@ -970,7 +917,6 @@ textarea {
 
 .form__line-span {
     display: block;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 16px;
     font-weight: 400;
     color: #b7b7b7;
@@ -1020,7 +966,6 @@ textarea {
     padding-bottom: 12px;
     padding-left: 33px;
     background-color: #eeeeee;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     color: #5f83aa;
@@ -1030,8 +975,7 @@ textarea {
 .sprite {
     position: absolute;
     display: block;
-    background-repeat: no-repeat;
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAABCCAYAAAAL1LXDAAANtklEQVRoQ+2beVxU1RfAz33bzLAMKOAGCuhPVFAJCWVQk1wizaVSNtM2XCstbdNswSxbTNvVFDDNyqW0NHIpSw0cUUBRUcECFxZRBHGA2d579/e5g4Mz48A8QH7ZL+9f8Lnnnnu+75x3z3n33kHwL2voX8YLd4D/3z1+x8OOPDwwflUQFql4DCgSADoCAAUAOgAQ1RsTghyNl9L/TkCXrt2cFVHeMtkQLxnd05mivWgErBHj2mu8UHLZYDxSWKv75ZShas/7eeUaKTrNMk3ysCouOQEwvA8Abe1Not6Y0CR9tjo+CPDrGdbGZX6As/xhJ5pywQAgYAARYyB/E+U0QkAhAIwBKo18wYnq2hW/l1V//mFRkVYKuGQDVTEpUYDwNgDgGlLcEuCNwQFz7vFQLnSiaVeDKJoAHTUCzyAERTpD9o7yq3NeOFX4B0DjQyUBB0Vv4pSU5jcAGNiYEc0Bjgag56j6fhHkIk8wYgyiFFIbIxQ0BZf0xmMxZy6qskpKahuzURKwKi4pBDA6AAByG2V5AJAGgKpJn3rjkzMcecW2/9vg7snj2ns8WS0INw0loWsKYUCmcCZ+Jw9EuB7iZADxMAY4U6DVjQlLP0bsabRJA45NigZAXwMAa6HtDAJ6JFd29tzeSBCjcwPR5s0xN1vdyPRvB3SeM8ev07JqQbSSIqAE5BovlJfq9OrLvHBSw4s17VjWy5Oj+3WUcQM4CjHkPS438n/uuHL5/tknLvzlCJb0SwKOiEuajDFKtgRGgJO4sqKZe/cm8lImspWJ9vTs8Ukfv2yOppyIx8yNpRDoBLE642r1O0f1upTE3LMXbccuDfQNCXdXJvZ0UvT6pbJiZFzWn5JgJQOrYpMfBYAkW2C9m/BU1qrpxuYA74jttH7wlS6P1PAiILoOmKMQeRcvbL14dcLL+YWHHOmd2MWtzTfnqyodyVn2S/KwKiYlHhBeax3S6At1r/NPQWKidTxKmP2ZaPBfMpPOhZNtFZqfugCuYYCRiaATcfXc02eHbCwpz5agplkidoEHjk12NcgoZ1MI8JSR4viJCGAZWSPMs2CE1wtAvUIhwSDyDKIYHmd8O7VMihWrX6BmT3mQ/lgAAfgSJ6j5wQ/YIiWsvXRx/qzTBe9K0dFcGbvAqtjk9xHAExiAB5LzETgBgJvNJCTRV13vJ8soq96Q4CnFkMyVzJbQQPQQbwBArAjIQEPJtk6XXv6xsmdDIeqjSmiLxRInAIVpCnOVUfffzU3P1wjlWbtKbXvsAkfEJq/BAI9LMd5SRmoeLt3C5LZ3R4HmxZmRY1DnipsjposxDc0Z9vT+1a6d7ooXyVOS0DAWruxLbO8rCTg8LnkVwjBVgl5LkQr1xgQPKWNqd3KlHIs7mBdnhgPYnYETo17kFzY0vv/sjPVuPmGPiLxeyhRE5tqeVxS2UWk/LaliU74GwBOlar4uV6jemNBVyhjDL2w5QlD/cBgWYG8WfuHeufzSBoFnHVin9Amb3ATgit8WuNzkALshHR6T8hJC+AEAJAJgUkx4A0APq7yNoRQoyCfVIAKQAcYZ6k1T5koBrv6ZKZLLkLelh3cexO+OfImf3zCwer3S5GHyYWbZCILdelQ6sCp6k4Jmy+VMrQJrWAOWISYGI/jcptJKNlD8PFctx+tZgTLoBF3W9umN1rFmM89tYLI6d0D9hOslC8MJkJlH/xI21XhfQ8ADZqWvcbUT0oiiAWPiF6sqEBCiq/a8onCX9A7bCkXEpEzCCK+xTEsAsKqudkZNLvf3fsSuHRIKjwp6Uisb4bTgAW9UhNTu+vpC76rteYX2oPvOWNdO2aGXi3WfDGounxFkXPvFzu37T8RC3YKGEA16bfnptEWdezULODwm6TGEEKm06vMwKS2bW2l99Aw98dlY9DUYBNim84P3NMGgYZ3AcKw4KW/hvqYtlpGRzKCIpDyZq09XLNaFDMU4QUVh6sfZK8c8d1sAJ0RB27dmyE6vZ4O81mi6AwsicJQIQFNQui1/ctG6nPVS1gIiExi3fLF3vxnzBeONtwlRLFzIeHd4/g9v7GkJ8OpbWUurXgp+s0YV9Bqr199IFRQChLHh2olLz+Yt+mOlI+iQKT8938Z/6BJAGJm2QIh3aRnoqgqOa3cvDc3KWnVTnS+plr4e0rcU2D3Sz91vUp8jrLvcD/MW5ThCgCgA/SXtz7XnKz6BWlH956cZ18zwXaeFulFtuHBFF89ZbWDOA2zlvYBJ3UUSCgFmneD8wcVx+Vte3Wjvgf1twMSYdmN7jfCdFLQTk41Am60ORFOmjStBKxQLWsNZQc9raQXrQssZX1rOdARKBFEwgOzqaJCXTwYQWaDlLFQW7P4+c0XUhIai428FJkb5TQmZ2e6B7stFA0ktdhb86x4HVLdzRzLQDTkMmKoFpjYEnCueA11Jec7xn54Ypjl96MptC0wM67lwyFSXHp6fIpqSYZvdD0fvMVkAkMwAQqnX4bIvSx8uzthR1NiYv93DZuO6zVZFuPb1WMa6KwaYPEn2Zx1YTsIeCxhrL1xdwZ/UzstLSXe4Ry0JOCI25QkMmGzx1MtjgDUa0XVG7uYYaZ8vDl0FEDotlK31dn1U1tFlKqOUhSGGourCGNdVj6bwJi4FEPX8NUOlbndNYcXHBUsz0iSorytKpAhGxCSPxwjIhzkpPMjU5DP0S4Mb/3pzt3gczRvw8qBgyoUJl7kretNusk6IRpxoFKsNlbpzxnLtEaFSe+Cv5YcvONLTrDzcVKW3s7wkD9/OAE217Q5wU5/YP03+jof/aR5rqr13PNzUJ/ZPk7/j4X+ax5pqr10Ph0VGd1B4+3jdUMYBVavF+ecLC0qytlvtTAYPmzC6e3DkbM7Z1ZemWSUgRJFza9Gor7xWeeloXvrWF/Nz1MX2DAt/6KlenJMrA3CjHOeAg+orZZqDO78821QYKfJ2gWPnpZxQuLj2xCLZcq5riGbw1bJzGZlbNg8vKlLXXyAZ+NDMx7oEDlgkd1Z2Fk2n+HXXT0iRz8oUkJ+95/V93yxbZGvMgLFTpgWGj/pM5I20VR/57BXEi+sS48le+C1vdoFHTl30badufeN4IzntujEnw8rgxP4f4zNSkzdYWhI4cEzQ3VGPZCKKllt+xNMsB+dPZX7469q3rDboQ0NDWf/IqUeUHu2DBLI5bWkFxkBRdM2aBeNttmRvDbtd4OB7xoaE3Df5MAYgu9z1M9EMCxWlhQd++GTuIKvt/uhoOqbr8FxnpWcPUbxx64E8oD+P7l+8b8PSBZbmhoyYNDZk6PgfBf7ms3Qy5mLhia2pXyx4+NYgWmtpcJUeNf2dbR39A8fwRuvDKwKdvfvbB47+vulnS1XRL67McGnj1b8urOsakS3Oz3lj15rENy1lx81ett+jo/9gW2ByiiAY9Jr0H5bfXZCTlv8/Be59z4SIsKj4NBGL9VugZoiKsnOZF/74KiIrK6veReOe/Ujt0cE33BLCBHwmZ8GulMTFZuNDhsePDxkW851d73JyOLZ/y9OHU79c3hqwprWoMcWjpr+9taN/7wdtvcxwMjiZnjpLvW3VZ+bxD8/5VO3m5R0umg+MTB7m4Ozx9Bd/+2bJB0Su7X8GKIePT8h2dvfsJvLWd2FYTg5FedmbdqYkxrYWrEPgoIhRd9098olDCAGLLd5liqLBoNdW/rF15d3nj6cVREdH0+A/IsfFzSPI9h0+lbHz+QNbV5DrEjBs0vyV/n1U040G6xNAEgmayrJ8deqnqqLc3Iq/DZhMPOKxBUldAgck8LZGshyUF/+Vlp353X1OBk/n/qPjChiWc7V8MAzLQXH+0VU7UxKnh4+dPiMwPGqFUJ+66rBI2hZFvvbg9tWR+Yf3HG5NWIceJgIBwSrvsHEzj7IyZ09ssQKb32dNRdkho0Fb7e7Veajp2NKyIQSC0VCtqbyc1qadTxThs5Uh3j11IHWOenvSR60NKwmYCA0YPeXp3oPHfMYbbr5uQNGkbkBg+e5aMyOgaAZM+dZmo528GrqaquL8XZ/7Wy6ArQku9eOBHvvMkj2ePgFDBJs01RLjSDgLgkFz6Od1g/Iydh5riS6pY6UCg19oZM/BY6Zl0KxMaRvaUiezJ0e8X1tVfuZ0+o7ROWlbWyX3WkVcU4ztNyJ+0l3DYr8SeSNYLk6OdBAo0hoKe5K+dDVV5zJ3fzMu/9CuHEf6WtIv2cPmSQZOePrtXv3vf8WoJ6nF8W0HUj1dvXRhF2AQ2nb0G1VXcNw8jixeBm1N8YHUVSMLsvYfbwlUY2ObDEyUDZ88/xPf3uGzBCPxdMNXLcmiVH318unLhzf02bt3L3/vxJeWdu07cK5tIWM2kHi65lr5X+nfJw8pyrf/SdnSB9EsYDLp0EnzXu7co9+bNMNy9lbgurTFQfGZIyt3pSycaTZ0xOML1vgGhj9u1Nv/iQLDyeHS2ZOp21fMG91SOHvjmw1MlPUb+Ui4b0DYG25ePvdTDANYEEAUTQe4prmI8edOHnz717WLX62fPCiIGzkofoN3t+CHSJqzFyE0y/Ep8x60vIx+y9hbBGy2Iuy+SRFtfbqNV3p1GqhQKDsjmpGT82uB5zUn9v2YcOT3DVaXS8j3sHuvEa916NZnMstySssFkNzyqK2uPLXpvWmDbxmlhaJbAtwahrWWzjvArfVkbxe9dzx8u3iitez4L5mrro4ZDNboAAAAAElFTkSuQmCC);
+    background: url(data:image/png;base64,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) no-repeat;
 }
 
 .sprite-facebook {
@@ -1152,7 +1096,6 @@ textarea {
 
 .form__label-reg {
     color: #626161;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 12px;
     font-weight: 400;
 }
@@ -1179,7 +1122,6 @@ textarea {
 
 .sidebar {
     position: relative;
-    font-family: "Helvetica Neue Cyr - Roman";
     color: #dee3ff;
     font-size: 14px;
     font-weight: 400;
@@ -1219,7 +1161,6 @@ textarea {
     position: relative;
     display: block;
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 10px;
     font-weight: 400;
     z-index: 0;
@@ -1250,7 +1191,6 @@ textarea {
 .header__lead-exchange-page {
     color: #dee3ff;
     background: #232323;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     padding-right: 20px;
@@ -1305,7 +1245,6 @@ textarea {
 
 .header__logo {
     margin-left: 10px;
-    /*width: 176px;*/
     height: 32px;
     display: block;
 
@@ -1313,7 +1252,6 @@ textarea {
 
 .lead__title {
     color: #4a4a4a;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 22px;
     font-weight: 400;
 }
@@ -1325,7 +1263,6 @@ textarea {
     padding-top: 12px;
     padding-bottom: 12px;
     color: #4b4b4b;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     position: relative;
@@ -1364,7 +1301,6 @@ td.table__cell {}
 
 .lead__button {
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     padding: 9px 34px;
@@ -1435,7 +1371,6 @@ td.table__cell {}
     background-image: -webkit-linear-gradient(right, #ffb000 0%, #ffc200 100%);
     padding: 3px 14px;
     border-radius: 3px;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 12px;
     font-weight: 500;
 }
@@ -1537,7 +1472,6 @@ td.table__cell {}
 
 .tabs__header {
     color: #4a4a4a;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 22px;
     font-weight: 400;
     margin-top: 26px;
@@ -1599,7 +1533,6 @@ td.table__cell {}
 
 .tabs-arbitrate__item {
     color: #4a4a4a;
-    font-family: "Helvetica Neue Cyr - Roman";
     font-size: 14px;
     font-weight: 400;
     background-color: #e5e5e5;
@@ -3577,7 +3510,7 @@ input.is-tel-correct:invalid ~ .error-note {
     margin-bottom: 99px;
     height: 32px;
     color: #2d2d2d;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 16px;
     font-weight: 400;
 }
@@ -3626,7 +3559,7 @@ input.is-tel-correct:invalid ~ .error-note {
     background-color: #dcdcdc;
     padding: 23px 0 20px 69px;
     color: #414141;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 16px;
     font-weight: 400;
     font-style: italic;
@@ -3693,7 +3626,7 @@ input.is-tel-correct:invalid ~ .error-note {
     box-shadow: none;
     border: none;
     color: #414141;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 16px;
     font-weight: 400;
     font-style: italic;
@@ -3712,7 +3645,7 @@ input.is-tel-correct:invalid ~ .error-note {
     border: none;
     cursor: pointer;
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 16px;
     font-weight: 400;
 }
@@ -3786,7 +3719,7 @@ input.is-tel-correct:invalid ~ .error-note {
 
 .ref_advantage_layout_promo ul li p {
     color: #5c5c5c;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 12px;
     font-weight: 400;
 }
@@ -3802,7 +3735,7 @@ input.is-tel-correct:invalid ~ .error-note {
     height: 38px;
     background-color: #00a368;
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 14px;
     font-weight: 400;
     display: flex;
@@ -4105,7 +4038,7 @@ input.is-tel-correct:invalid ~ .error-note {
 
 .exposed_leads_title h2 {
     color: #4a4a4a;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 22px;
     font-weight: 400;
     margin-top: 8px;
@@ -4116,7 +4049,7 @@ input.is-tel-correct:invalid ~ .error-note {
     height: 32px;
     background-color: #00a368;
     color: #ffffff;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 14px;
     font-weight: 400;
     border-radius: 3px;
@@ -4130,7 +4063,7 @@ input.is-tel-correct:invalid ~ .error-note {
 .table_leads_block table th {
     color: #4b4b4b;
     font-size: 14px;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-weight: bold;
     height: 39px;
     min-width: 119px;
@@ -4148,14 +4081,14 @@ input.is-tel-correct:invalid ~ .error-note {
 
 .table_leads_block table tr td:nth-child(5) {
     color: #00a368;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 14px;
 }
 
 .table_leads_block table tr td {
     height: 42px;
     color: #4b4b4b;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 14px;
     font-weight: 400;
 }
@@ -4182,7 +4115,7 @@ input.is-tel-correct:invalid ~ .error-note {
 .label {
     width: 96px;
     height: 23px;
-    font-family: "Helvetica Neue Cyr - Roman";
+    font-family: "Helvetica Neue Cyr - Roman", sans-serif;
     font-size: 12px;
     font-weight: 500;
     margin: auto;
@@ -4248,51 +4181,6 @@ input.is-tel-correct:invalid ~ .error-note {
     margin-top: 20px;
     margin-left: 20px;
 }
-
-/*.lead_exchange,*/
-/*.lead_sale,*/
-/*.lead_arbitration,*/
-/*.lead_nottar,*/
-/*.lead_active {*/
-    /*width: 96px;*/
-    /*height: 23px;*/
-    /*background-color: #00a368;*/
-    /*color: #ffffff;*/
-    /*font-family: "Helvetica Neue Cyr - Roman";*/
-    /*font-size: 12px;*/
-    /*font-weight: 500;*/
-    /*margin: auto;*/
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
-    /*cursor: pointer;*/
-    /*border-radius: 3px;*/
-/*}*/
-
-/*.lead_exchange {*/
-    /*background-color: #ffd964;*/
-    /*color: #545454;*/
-/*}*/
-
-/*.lead_arbitration {*/
-    /*background-color: #ff7f85;*/
-/*}*/
-
-/*.lead_nottar {*/
-    /*background-color: #ff3a3a;*/
-/*}*/
-
-/*.lead_readily {*/
-    /*color: #00a368;*/
-    /*font-family: "Helvetica Neue Cyr - Roman";*/
-    /*font-size: 14px;*/
-    /*font-weight: 400;*/
-/*}*/
-
-/*.lead_active {*/
-    /*background-color: #8bf811;*/
-    /*color: #000;*/
-/*}*/
 
 .table_link {
     display: flex;
