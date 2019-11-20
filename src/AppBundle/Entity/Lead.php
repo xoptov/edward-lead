@@ -265,7 +265,19 @@ class Lead implements IdentifiableInterface
     }
 
     /**
-     * @return null|User
+     * @return User|null
+     */
+    public function getSeller(): ?User
+    {
+        if ($this->trade) {
+            return $this->trade->getSeller();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return User|null
      */
     public function getBuyer(): ?User
     {
