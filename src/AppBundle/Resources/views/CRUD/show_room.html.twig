@@ -33,7 +33,7 @@
                             {% for member in members %}
                                 <tr class="sonata-ba-view-container">
                                     <td class="sonata-ba-list-field">
-                                        {{ member.user.id }}
+                                        <a href="{{ path('admin_app_user_show', {'id': member.user.id}) }}">{{ member.user.id }}</a>
                                     </td>
                                     <td class="sonata-ba-list-field">
                                         {{ member.user.name }}
