@@ -7,7 +7,7 @@
 
 define('DEBUG_MODE', false);
 
-define('API_KEY', '77826e8bc72600cc6be514fc9d6c507c70253c76'); // Необходимо указать ключь API внутри ''
+define('API_KEY', 'bdb9e181a5cd7edd2a11ea61cbf417b3d6dc5871'); // Необходимо указать ключь API внутри ''
 define('ROOM_ID', 1057); // Идентификатор комнаты в которую будет добавляться лид.
 
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
@@ -17,7 +17,7 @@ define('API_TIMEOUT', 60);
 
 ini_set('error_reporting', E_ERROR);
 
-$formFields = ['name', 'phone', 'hasAgreement', 'email']; // Список полей в формы.
+$formFields = ['name', 'phone', 'hasAgreement']; // Список полей в формы.
 
 if (!extension_loaded('json')) {
     sendResponse('Необходимо подключить json расширение к php', 500, ['Content-Type: text/html; charset=UTF-8']);
@@ -84,7 +84,7 @@ $responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 
 curl_close($ch);
 
-if (500 === $responseCode) {
+if (500 === $responseCode || !$response) {
     sendResponse(json_encode(['error' => 'Произошла ошибка при отправки лида на платформу']), 500);
 }
 

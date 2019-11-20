@@ -185,4 +185,13 @@ class LeadController extends Controller
 
         return $this->redirectToRoute('app_lead_show', ['id' => $lead->getId()]);
     }
+
+    /**
+     * @Route("/lead/external-form", name="app_lead_external_form", methods={"GET"})
+     * @return Response
+     */
+    public function showExternalForm(): Response
+    {
+        return $this->render('@App/Lead/external_form.html.twig');
+    }
 }
