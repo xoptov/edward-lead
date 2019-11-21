@@ -92,6 +92,7 @@ services:
         public: true
         calls:
             - [setUserManager, ['@AppBundle\Service\UserManager']]
+            - [setAccountManager, ['@AppBundle\Service\AccountManager']]
     
     app.admin.country:
         class: AppBundle\Admin\CountryAdmin

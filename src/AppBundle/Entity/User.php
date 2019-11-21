@@ -749,11 +749,13 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @param int $divisor
+     *
      * @return float
      */
-    public function getHumanBalance(): float
+    public function getHumanBalance(int $divisor = Account::DIVISOR): float
     {
-        return $this->getBalance() / Account::DIVISOR;
+        return $this->getBalance() / $divisor;
     }
 
     /**
