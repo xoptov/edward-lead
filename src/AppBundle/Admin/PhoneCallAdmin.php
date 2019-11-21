@@ -2,14 +2,14 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Entity\PBX\Shoulder;
 use AppBundle\Entity\PhoneCall;
+use AppBundle\Entity\PBX\Shoulder;
+use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
-use Sonata\AdminBundle\Show\ShowMapper;
 
 class PhoneCallAdmin extends AbstractAdmin
 {
@@ -54,19 +54,21 @@ class PhoneCallAdmin extends AbstractAdmin
             ->add('getLastCallbackFirstShoulderStatus', 'choice', [
                 'label' => 'Абонент 1',
                 'choices' => [
-                    Shoulder::STATUS_NO_ANSWER => 'Не ответил',
-                    Shoulder::STATUS_ANSWER    => 'Ответил',
-                    Shoulder::STATUS_BUSY      => 'Занят',
-                    Shoulder::STATUS_CANCEL    => 'Сбросил'
+                    Shoulder::STATUS_NO_ANSWER           => 'Не ответил',
+                    Shoulder::STATUS_ANSWER              => 'Ответил',
+                    Shoulder::STATUS_BUSY                => 'Занят',
+                    Shoulder::STATUS_CANCEL              => 'Сбросил',
+                    Shoulder::STATUS_CHANNEL_UNAVAILABLE => 'Канал не доступен'
                 ]
             ])
             ->add('getLastCallbackSecondShoulderStatus', 'choice', [
                 'label' => 'Абонент 2',
                 'choices' => [
-                    Shoulder::STATUS_NO_ANSWER => 'Не ответил',
-                    Shoulder::STATUS_ANSWER    => 'Ответил',
-                    Shoulder::STATUS_BUSY      => 'Занят',
-                    Shoulder::STATUS_CANCEL    => 'Сбросил'
+                    Shoulder::STATUS_NO_ANSWER           => 'Не ответил',
+                    Shoulder::STATUS_ANSWER              => 'Ответил',
+                    Shoulder::STATUS_BUSY                => 'Занят',
+                    Shoulder::STATUS_CANCEL              => 'Сбросил',
+                    Shoulder::STATUS_CHANNEL_UNAVAILABLE => 'Канал не доступен'
                 ]
             ])
             ->add('caller.name')

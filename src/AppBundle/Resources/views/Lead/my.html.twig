@@ -16,6 +16,7 @@
                     {% if leads is defined %}
                         <tr>
                             <th>Дата создания</th>
+                            <th>#</th>
                             <th>Имя</th>
                             <th>Телефон</th>
                             <th>Стоимость</th>
@@ -28,6 +29,7 @@
                             {% for lead in leads %}
                                 <tr>
                                     <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
+                                    <td>{{ lead.id }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
                                     <td>{{ lead.price|money_format }}</td>
@@ -57,7 +59,7 @@
                                             {% if lead.trade is not empty and lead.trade.lastPhoneCall is not empty and lead.trade.lastPhoneCall.id is not empty %}
                                                 <a href="{{ path('app_telephony_listen_record', {'id': lead.trade.lastPhoneCall.id }) }}" class="speaker" target="_blank"></a>
                                             {% endif %}
-                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link"></a>
                                         </div>
                                     </td>
                                 </tr>
@@ -71,6 +73,7 @@
                     {% elseif trades is defined %}
                         <tr>
                             <th>Дата создания</th>
+                            <th>#</th>
                             <th>Имя</th>
                             <th>Телефон</th>
                             <th>Стоимость</th>
@@ -83,6 +86,7 @@
                                 {% set lead = trade.lead %}
                                 <tr>
                                     <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
+                                    <td>{{ lead.id }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>
                                         {% set show_number = false %}
@@ -119,7 +123,7 @@
                                             {% if trade.lastPhoneCall is not empty and trade.lastPhoneCall.id is not empty %}
                                                 <a href="{{ path('app_telephony_listen_record', {'id': trade.lastPhoneCall.id }) }}" class="speaker" target="_blank"></a>
                                             {% endif %}
-                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link" target="_blank"></a>
+                                            <a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="transition_link"></a>
                                         </div>
                                     </td>
                                 </tr>

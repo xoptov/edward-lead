@@ -33,7 +33,7 @@
                             {% for member in members %}
                                 <tr class="sonata-ba-view-container">
                                     <td class="sonata-ba-list-field">
-                                        {{ member.user.id }}
+                                        <a href="{{ path('admin_app_user_show', {'id': member.user.id}) }}">{{ member.user.id }}</a>
                                     </td>
                                     <td class="sonata-ba-list-field">
                                         {{ member.user.name }}
@@ -83,13 +83,19 @@
                                 <th class="sonata-ba-list-field-header-text">
                                     {{ 'Created At'|trans }}
                                 </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Seller'|trans }}
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    {{ 'Buyer'|trans }}
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for lead in leads %}
                                 <tr class="sonata-ba-view-container">
                                     <td class="sonata-ba-list-field">
-                                        <a target="_blank" href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.id }}</a>
+                                        <a href="{{ path('app_lead_show', {'id': lead.id}) }}">{{ lead.id }}</a>
                                     </td>
                                     <td class="sonata-ba-list-field">
                                         {{ lead.name }}
@@ -111,6 +117,18 @@
                                     <td class="sonata-ba-list-field">
                                         {{ lead.createdAt|date_format('d.m.Y H:i:s') }}
                                     </td>
+                                    {% if lead.hasTrade %}
+                                        <td class="sonata-ba-list-field">
+                                            <a href="{{ path('admin_app_user_show', {'id': lead.seller.id}) }}">{{ lead.seller.name }}</a>
+                                        </td>
+                                        <td class="sonata-ba-list-field">
+                                            <a href="{{ path('admin_app_user_show', {'id': lead.buyer.id}) }}">{{ lead.buyer.name }}</a>
+                                        </td>
+                                    {% else %}
+                                        <td class="sonata-ba-list-field" colspan="2">
+                                            Нет сделки
+                                        </td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
                             </tbody>

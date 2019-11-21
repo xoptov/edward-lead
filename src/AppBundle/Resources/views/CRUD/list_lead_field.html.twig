@@ -1,0 +1,10 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {% if value.name is not empty %}
+        {% set label = value.id ~ ': ' ~ value.name %}
+    {% else %}
+        {% set label = value.id %}
+    {% endif %}
+    <a class="btn btn-default btn-sm" target="_blank" href="{{ path('admin_app_lead_show', {'id': value.id}) }}">{{ label }}</a>
+{% endblock %}

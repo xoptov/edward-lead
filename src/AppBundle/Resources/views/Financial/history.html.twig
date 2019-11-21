@@ -43,11 +43,11 @@
                                     <td>{{ operation.description }}</td>
                                     <td>
                                         {% if operation.lead is defined and operation.lead is not empty %}
-                                            <a class="id_lids" href="{{ path('app_lead_show', {'id': operation.lead.id}) }}" target="_blank">
+                                            <a class="id_lids" href="{{ path('app_lead_show', {'id': operation.lead.id}) }}">
                                                 #{{ operation.lead.id }}
                                             </a>
                                         {% elseif operation.trade is defined and operation.trade is not empty %}
-                                            <a class="id_lids" href="{{ path('app_lead_show', {'id': operation.trade.leadId}) }}" target="_blank">
+                                            <a class="id_lids" href="{{ path('app_lead_show', {'id': operation.trade.leadId}) }}">
                                                 #{{ operation.trade.leadId }}
                                             </a>
                                         {% else %}

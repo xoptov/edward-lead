@@ -10,7 +10,6 @@
                     <img src="{{ asset('bundles/app/img/logo.png') }}">
                 </a>
             {% endif %}
-            <div style="color:#fff;padding-top:8px;margin-left:20px;">Closed Beta Testing</div>
         </div>
     </div>
     <div class="col-lg-8 header_main">
@@ -20,7 +19,7 @@
                 {% if is_granted('ROLE_COMPANY') %}
                     <p>Холд: <span>{{ balance_hold(app.user)|money_format }}</span></p>
                 {% elseif is_granted('ROLE_WEBMASTER') %}
-                    <p>В сделках: <span>{{ pending_amount(app.user)|money_format }}</span></p>
+                    <p>Холд: <span>{{ pending_amount(app.user)|money_format }}</span></p>
                 {% endif %}
             </div>
             {% include '@App/v2/top_menu.html.twig' %}

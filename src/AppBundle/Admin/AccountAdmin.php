@@ -33,19 +33,14 @@ class AccountAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $list)
     {
-        $typeField = new AccountTypeFieldDescription();
-        $typeField->setName('type');
-
         $balanceField = new MoneyFieldDescription();
         $balanceField->setName('balance');
 
         $list
             ->addIdentifier('id', 'number')
-            ->add($typeField, null, ['virtual_field' => true])
             ->add('description')
             ->add($balanceField, 'number')
             ->add('enabled')
-            ->add('updatedAt', 'datetime', ['format' => 'd.m.Y H:i:m'])
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],

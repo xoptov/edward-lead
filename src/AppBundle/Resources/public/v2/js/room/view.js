@@ -47,7 +47,7 @@ const vm = new Vue({
         },
         dateFormat: function(value) {
             const createdAt = new Date(value);
-            return createdAt.format('dd.mm.yyyy');
+            return createdAt.format('dd.mm.yyyy HH:MM:s');
         },
         getLogotype: function(member) {
             if (member.user.logotype) {
@@ -101,7 +101,7 @@ const vm = new Vue({
                     this.deactivationError = null;
                     this.activated = false;
                 })
-                .catch(response => this.deactivationError = response.data.error);
+                .catch(response => this.deactivationError = response.data[0]);
         },
         onRevokeMemberClick: function(member) {
             this.$http.delete('/api/v1/room/' + roomId + '/revoke/' + member.id)

@@ -1,0 +1,7 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value is not empty %}
+        <a href="{{ admin.generateObjectUrl('show', value) }}">{{ value.id }}: {{ value.name }}</a>
+    {% endif %}
+{% endblock %}

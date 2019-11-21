@@ -2,15 +2,18 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Admin\Field\AccountHoldFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserManager;
+use AppBundle\Service\AccountManager;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Doctrine\ORM\OptimisticLockException;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use AppBundle\Admin\Field\MoneyFieldDescription;
+use AppBundle\Admin\Field\LastLoginAtFieldDescription;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class UserAdmin extends AbstractAdmin
@@ -21,6 +24,11 @@ class UserAdmin extends AbstractAdmin
     private $userManager;
 
     /**
+     * @var AccountManager
+     */
+    private $accountManager;
+
+    /**
      * @param UserManager $userManager
      */
     public function setUserManager(UserManager $userManager): void
@@ -29,8 +37,15 @@ class UserAdmin extends AbstractAdmin
     }
 
     /**
-     * @param $object
-     * @throws OptimisticLockException
+     * @param AccountManager $accountManager
+     */
+    public function setAccountManager(AccountManager $accountManager): void
+    {
+        $this->accountManager = $accountManager;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function prePersist($object)
     {
@@ -38,8 +53,7 @@ class UserAdmin extends AbstractAdmin
     }
 
     /**
-     * @param $object
-     * @throws OptimisticLockException
+     * @inheritdoc
      */
     public function preUpdate($object)
     {
@@ -70,19 +84,32 @@ class UserAdmin extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
+        $lastLoginAtField = new LastLoginAtFieldDescription();
+        $lastLoginAtField->setName('lastLoginAt');
+
+        $balanceField = new MoneyFieldDescription(['divisor' => 1]);
+        $balanceField->setName('balance');
+        $balanceField->setFieldName('humanBalance');
+
+        $holdAmountField = new AccountHoldFieldDescription($this->accountManager);
+        $holdAmountField->setName('hold');
+        $holdAmountField->setFieldName('account');
+
         $listMapper
             ->addIdentifier('id', 'number')
             ->add('name')
-            ->add('phone')
+            ->add('phone', null, ['template' => '@App/CRUD/list_phone_number.html.twig'])
             ->add('email')
-            ->add('skype')
-            ->add('telegram')
-            ->add('roles', "array", ['template' => '@App/CRUD/list_array.html.twig'])
-            ->add("saleLeadLimit")
+            ->add('roles', 'array', ['template' => '@App/CRUD/list_array.html.twig'])
             ->add('enabled')
-            ->add('typeSelected')
-            ->add('createdAt')
-            ->add('updatedAt')
+            ->add('createdAt', 'datetime', [
+                'format' => 'd.m.Y H:i:s'
+            ])
+            ->add($lastLoginAtField, 'datetime', [
+                'format' => 'd.m.Y H:i:s'
+            ])
+            ->add($balanceField)
+            ->add($holdAmountField)
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
@@ -134,6 +161,9 @@ class UserAdmin extends AbstractAdmin
             ->add('typeSelected')
             ->add('createdAt')
             ->add('updatedAt')
+            ->add('referrer', null, [
+                'template' => '@App/CRUD/show_referrer_field.html.twig'
+            ])
         ;
     }
 
