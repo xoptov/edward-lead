@@ -34,9 +34,9 @@ class Member implements IdentifiableInterface
     private $user;
 
     /**
-     * @return Room
+     * @return Room|null
      */
-    public function getRoom(): Room
+    public function getRoom(): ?Room
     {
         return $this->room;
     }
@@ -54,9 +54,9 @@ class Member implements IdentifiableInterface
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
