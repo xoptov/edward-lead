@@ -95,6 +95,7 @@ services:
         public: true
         calls:
             - [setUserManager, ['@AppBundle\Service\UserManager']]
+            - [setAccountManager, ['@AppBundle\Service\AccountManager']]
     
     app.admin.country:
         class: AppBundle\Admin\CountryAdmin
@@ -217,6 +218,13 @@ services:
         arguments: [~, AppBundle\Entity\Lead, AppBundle\Controller\Admin\LeadController]
         tags:
             - { name: sonata.admin, manager_type: orm, group: exchange, label: Lead }
+        public: true
+
+    app.admin.member:
+        class: AppBundle\Admin\MemberAdmin
+        arguments: [~, AppBundle\Entity\Member, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Member }
         public: true
 
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'

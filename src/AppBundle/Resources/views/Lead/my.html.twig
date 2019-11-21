@@ -16,6 +16,7 @@
                     {% if leads is defined %}
                         <tr>
                             <th>Дата создания</th>
+                            <th>#</th>
                             <th>Имя</th>
                             <th>Телефон</th>
                             <th>Стоимость</th>
@@ -28,6 +29,7 @@
                             {% for lead in leads %}
                                 <tr>
                                     <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
+                                    <td>{{ lead.id }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>{{ lead.phone }}</td>
                                     <td>{{ lead.price|money_format }}</td>
@@ -71,6 +73,7 @@
                     {% elseif trades is defined %}
                         <tr>
                             <th>Дата создания</th>
+                            <th>#</th>
                             <th>Имя</th>
                             <th>Телефон</th>
                             <th>Стоимость</th>
@@ -83,6 +86,7 @@
                                 {% set lead = trade.lead %}
                                 <tr>
                                     <td>{{ lead.createdAt|date('d.m.Y H:i:s') }}</td>
+                                    <td>{{ lead.id }}</td>
                                     <td>{{ lead.name }}</td>
                                     <td>
                                         {% set show_number = false %}

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
@@ -217,10 +219,15 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
-     * User constructor.
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\HistoryAction", mappedBy="user")
      */
+    private $historyActions;
+
     public function __construct()
     {
+        $this->historyActions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
     }
 
@@ -747,11 +754,13 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @param int $divisor
+     *
      * @return float
      */
-    public function getHumanBalance(): float
+    public function getHumanBalance(int $divisor = Account::DIVISOR): float
     {
-        return $this->getBalance() / Account::DIVISOR;
+        return $this->getBalance() / $divisor;
     }
 
     /**
@@ -820,6 +829,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function hasReferrer(): bool
     {
         return $this->referrer instanceof User;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getHistoryActions(): Collection
+    {
+        return $this->historyActions;
     }
 
     /**

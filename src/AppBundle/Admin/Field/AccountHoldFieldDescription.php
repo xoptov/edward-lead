@@ -2,11 +2,12 @@
 
 namespace AppBundle\Admin\Field;
 
+use AppBundle\Service\AccountManager;
 use Sonata\AdminBundle\Exception\NoValueException;
 use AppBundle\Form\DataTransformer\MoneyTransformer;
 use Sonata\DoctrineORMAdminBundle\Admin\FieldDescription;
 
-class MoneyFieldDescription extends FieldDescription
+class AccountHoldFieldDescription extends FieldDescription
 {
     /**
      * @inheritdoc
@@ -14,22 +15,33 @@ class MoneyFieldDescription extends FieldDescription
     protected $options = ['divisor' => 100];
 
     /**
-     * @param array|null $options
+     * @var AccountManager
      */
-    public function __construct(array $options = array())
+    private $accountManager;
+
+    /**
+     * @param AccountManager $accountManager
+     * @param array          $options
+     */
+    public function __construct(AccountManager $accountManager, array $options = array())
     {
         parent::__construct();
+
+        $this->accountManager = $accountManager;
         $this->options = array_merge_recursive($this->options, $options);
     }
 
     /**
-     * @inheritdoc
+     * @param $object
+     * @param $fieldName
+     *
+     * @return float|int
      *
      * @throws NoValueException
      */
     public function getFieldValue($object, $fieldName)
     {
-        $value = parent::getFieldValue($object, $fieldName);
+        $value = $this->accountManager->getHoldAmount(parent::getFieldValue($object, $fieldName));
         $divisor = (int)$this->getOption('divisor');
 
         $transformer = new MoneyTransformer($divisor);

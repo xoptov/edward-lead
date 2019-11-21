@@ -177,11 +177,11 @@ class TemplateExtension extends \Twig_Extension
     /**
      * @param User $user
      *
-     * @return int
+     * @return float
      */
-    public function getBalanceHold(User $user): int
+    public function getBalanceHold(User $user): float
     {
-        return (int)$this->accountManager->getHoldAmount($user->getAccount());
+        return $this->accountManager->getHoldAmount($user->getAccount());
     }
 
     /**

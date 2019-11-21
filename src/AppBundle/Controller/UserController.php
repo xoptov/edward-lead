@@ -128,9 +128,7 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Компания создана');
 
-                return $this->redirectToRoute('app_updating_office', [
-                    'id' => $company->getId()
-                ]);
+                return $this->redirectToRoute('app_room_list');
             }
         }
 

@@ -2,10 +2,11 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/modal.css') }}">
 {% endblock %}
 
 {% block content %}
-    <div class="lead-view office-settings u-w-100">
+    <div id="lead-description" class="lead-view office-settings u-w-100">
         {% include '@App/flash_messages.html.twig' %}
         <h3 class="office-settings__title">Лид #{{ lead.id }}</h3>
         {% if can_show_timer(lead) %}
@@ -176,5 +177,40 @@
             {% endif %}
         </div>
         {% include '@App/block_copyright.html.twig' %}
+        <!-- Описание модалки -->
+        <div class="overlay" v-show="archiveConfirmShowed">
+            <div class="modal">
+                <ul class="modal__list">
+                    <li class="modal__item modal__item_hello modal-item">
+                        <div class="modal-item__wrap">
+                            <div class="modal_row">
+                                <div class="modal_row_item">
+                                    Вы действительно хотите отправить лида в архив?
+                                </div>
+                                <div class="modal_row_item">
+                                    <button class="btn" @click.prevent="sendToArchive({{ lead.id }})">Да</button>
+                                    <div class="error-note" v-text="error" :style="{display: isError ? 'block': null}"></div>
+                                </div>
+                                <div class="modal_row_item">
+                                    <button class="btn" @click.prevent="hideArchiveConfirm">Нет</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--/ Описание модалки -->
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/lead/before_buy.js') }}"></script>
 {% endblock %}
