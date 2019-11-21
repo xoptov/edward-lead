@@ -85,11 +85,11 @@ $responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 curl_close($ch);
 
 if (500 === $responseCode || !$response) {
-    sendResponse(json_encode(['error' => 'Произошла ошибка при отправки лида на платформу']), 500);
+    sendResponse(json_encode(['Произошла ошибка при отправки лида на платформу']), 500);
 }
 
 if (403 === $responseCode) {
-    sendResponse(json_encode(['error' => 'У сайта нет прав отправлять информацию на платформу Edward']), 403);
+    sendResponse(json_encode(['У сайта нет прав отправлять информацию на платформу Edward']), 403);
 }
 
 if (400 === $responseCode) {
@@ -119,22 +119,22 @@ function sendResponse(string $content, int $code = 200, array $headers = [])
 function checkConfigs()
 {
     if (empty(API_KEY)) {
-        $content = ['error' => 'Необходимо указать API_KEY'];
+        $content = ['Необходимо указать API_KEY'];
         sendResponse(json_encode($content), 500);
     }
 
     if (empty(API_URL)) {
-        $content = ['error' => 'Необходимо указать API_URL'];
+        $content = ['Необходимо указать API_URL'];
         sendResponse(json_encode($content), 500);
     }
 
     if (empty(ROOM_ID)) {
-        $content = ['error' => 'Необходимо указать ROOM_ID'];
+        $content = ['Необходимо указать ROOM_ID'];
         sendResponse(json_encode($content), 500);
     }
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        $content = ['error' => 'Данные необходимо отправлять методом POST'];
+        $content = ['Данные необходимо отправлять методом POST'];
         sendResponse(json_encode($content), 400);
     }
 }
