@@ -6,18 +6,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
     <style>
     
     @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
     body { font-family:'Roboto', sans-serif;}
     /* Блок формы */
-    .ext_form { width:440px; height:502px; border: 2px solid #afafaf; border-radius: 5px; 
+    .ext_form { width:440px; border: 2px solid #afafaf; border-radius: 5px; 
         background-color: white; color: #333333; margin: 0 auto;}
     /* Основной заголовок */
     .ext_form h1 { margin: 24px auto 14px; text-align: center; font-size: 22px; font-weight: normal;}
     /*Абзац после заголовка*/
     .ext_form h1+p{ color:#6b6b6b; font-size: 16px; text-align: center; line-height: 1.2em;}
+    /* основная ошибка */
+    .ext_form_main_error { display:none; position: relative; color: tomato; font-size:14px; text-align:center; margin-bottom:10px;}  
     /*Группа полей для заполнения*/
     .ext_form_fields{ display: block; width: 296px; margin: 0 auto;}
     /* Метка полей */
@@ -46,7 +48,7 @@
 
     a:hover{ color:#00b478; text-decoration: underline; }
 
-    .ext_form_footer > p { margin: 100px auto; font-size:13px; display: block; width:400px; color: #6b6b6b; 
+    .ext_form_footer > p { margin: 20px auto 30px; font-size:13px; display: block; width:400px; color: #6b6b6b; 
         text-align: center; position:relative; }
 
     .ext_form_redsign { display: none; position: absolute; top:236px; left:390px; height: 44px; width: 10px; 
@@ -58,19 +60,22 @@
     .ext_form_redsign:after { content:"!"; position: absolute; font-family: serif; font-weight: bolder; 
         font-size: 30px; font-style: normal; color: white; top:5px; left:3px; }
 
-    .ext_form_err_msg { display:none; position: absolute; background-color:red; color:white; 
-        font-family:sans-serif; font-weight: bold; font-size:14px; padding:10px 25px 10px 25px; }  
+    .ext_form_err_msg { display:block; position: absolute; background-color:red; color:white; 
+        font-family:sans-serif; font-size:14px; padding:5px 15px 5px 15px; }
     
     </style>
 </head>
 <body style="background-color: darkslategray;">
 <!-- Код формы -->
 <div class="ext_form">
-    <div style="margin-bottom: 30px;">
+    <div style="margin-bottom: 20px;">
         <h1>Оставьте свои контактные данные</h1>
         <p>и&nbsp;наш менеджер свяжется с&nbsp;Вами<br>в&nbsp;ближайшее время</p>
     </div>
+    <!-- заголовок с общими ошибками -->
+    <div id="main_error" class="ext_form_main_error"><p>Общая ошибка</p></div>
     <div class="ext_form_fields">    
+        
         <form novalidate>
             <div>
                 <label for="nm">Ваше имя:</label>
@@ -89,10 +94,12 @@
     <div class="ext_form_footer">
         <p>Отправляя сведенья через электронную форму, вы&nbsp;соглашаетесь с условиями <a href="http://wiki.edward-lead.ru/?anchor=Politika%20konfidentsialynosti" target="_blank">Политики конфиденциальности</a></p>
     </div>
+    
     <!-- Знак ошибки -->
     <div id="sign" class="ext_form_redsign"></div>
     <!-- Всплывающее сообщение -->
-    <div id="msg" class="ext_form_err_msg">Сообщение об ошибке</div>
+    <div id="tooltip" class="ext_form_err_msg">1.Сообщение об ошибке<br>2.Другая ошибка<br>3.Еще одна ошибка</div>
+
 </div>
 <!--/ Код формы  -->
 
@@ -110,25 +117,79 @@
         
         $('#btn').click(function(){
             var form_valid = false;
-
-            $.post('//edward.local:8000/edward.php',
-            {
+            let url = '//edward.local:8000/edward.php';
+            let data = {
                 name: $('#nm').val(),
                 phone: $('#ph').val(),
                 hasAgreement: true
-            },
-            function(data,status){
-                alert(data + ':' + status);
+            };
+            let errName, errMsg;
+            
+            $.post('//edward.local:8000/edward.php', data,
+                function(response,status){
+                    //debugger;
+                    alert(response.id);
+                /*if(status=='success'){
+                    alert(JSON.strinfy(response));
+                } else {
+                    alert('faild');
+                }*/
+                }
+            ).fail(function(xhr){
+                debugger;
+                let obj = xhr.responseJSON;
+                let msgMain = "";
+                let msgTooltip = "";
+                if(typeof obj == 'array'){ //Если это массив
+                    for(o in obj){ //Для всех элементов массива
+                        if(typeof o == 'text'){ // Если это просто текст
+                            //добавить ошибку в заголовок
+                            if(!msgMain.length()){
+                                msgMain += o;
+                            }else{
+                                msgMain +='<br>'+o;
+                            }
+                        }
+                        if(typeof o == 'object'){ //Если это объект
+                            //показать ошибку в тултипе поля
+                            if(typeof o['phone'] == 'array'){
+                                for(p in o['phone']){
+                                    if(!msgTooltip.length()){
+                                        msgTooltip = p;
+                                    }else{
+                                        msgTooltip += '<br>'+p;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(!msgMain.length()){ //Если основные ошибки заполнены
+                        let obj = document.getElementById('main_error');
+                        obj.style['content'] = msgMain;
+                        obj.style['display'] = 'block';
+                    }
+                    if(!msgTooltip.length()){ //Если ошибки поля заполнены
+
+                    }
+                }
+                /*
+                if(typeof xhr.responseJSON.errors != 'undefined'){
+                    for(i in xhr.responseJSON.errors){
+                        if(i=='phone'){
+                            console.log(xhr.responseJSON.errors[i][0]);
+                        }
+                    }
+                }*/
             });
         });
     });
 </script>
 <!--/ Validator-->
 <!-- TODO:
-1)Выпилить из контроллера html
-2)Переключиться к нативному JS
-3)Отказаться внешних библиотек
-4)Сделать проверку ответа от Бэкэнда
+1)-Выпилить из контроллера html
+2)-Переключиться к нативному JS
+3)-Отказаться внешних библиотек
+4)+Сделать проверку ответа от Бэкэнда
 5)Вынести стили в общий /web/lead_external_form.css
 5+)Проверить подгрузку инлайн скриптов
  -->
