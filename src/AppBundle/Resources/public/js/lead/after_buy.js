@@ -14,8 +14,8 @@ new Vue({
                     this.$data.requestCallResult = 'success';
                 },
                 error: function(xhr) {
-                    if (xhr.responseJSON && 'message' in xhr.responseJSON) {
-                        this.$data.requestCallResult = xhr.responseJSON['message'];
+                    if (xhr.responseJSON.length) {
+                        this.$data.requestCallResult = xhr.responseJSON[0];
                     } else {
                         this.$data.requestCallResult = 'Произошла ошибка запроса соединения с лидом';
                     }

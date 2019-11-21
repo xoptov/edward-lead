@@ -198,8 +198,7 @@ var vm = new Vue({
                 this.form.children.images.data = [];
             })
             .catch((event) => {
-                this.form.errors = [];
-                this.form.errors = event.target.response.errors;
+                this.form.errors = event.target.response;
             });
         },
         onImageUploaded: function(imageData) {
@@ -220,14 +219,14 @@ var vm = new Vue({
             }
 
             this.$http.post('/api/v1/support')
-                .then((response) => {
+                .then(response => {
                     this.openNewThreadError = null;
                     this.openedThreads.push(response.data);
                     this.currentThread = response.data;
                     this.$emit('thread-changed');
                 })
-                .catch((event) => {
-                    this.openNewThreadError = event.body.error;
+                .catch(response => {
+                    this.openNewThreadError = response.body[0];
                     if (!this.errorShowTimer) {
                         this.errorShowTimer = setTimeout(() => {
                             this.openNewThreadError = this.errorShowTimer = null;

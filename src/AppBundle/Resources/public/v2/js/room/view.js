@@ -101,7 +101,7 @@ const vm = new Vue({
                     this.deactivationError = null;
                     this.activated = false;
                 })
-                .catch(response => this.deactivationError = response.data.error);
+                .catch(response => this.deactivationError = response.data[0]);
         },
         onRevokeMemberClick: function(member) {
             this.$http.delete('/api/v1/room/' + roomId + '/revoke/' + member.id)
