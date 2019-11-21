@@ -258,6 +258,10 @@ services:
         arguments:
             $rewardInterest: '%referrer_reward%'
 
+    AppBundle\Service\WithdrawManager:
+        arguments:
+            $minimalAmount: '%minimal_withdraw%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'
