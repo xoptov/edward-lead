@@ -2,15 +2,18 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Admin\Field\LastLoginAtFieldDescription;
+use AppBundle\Admin\Field\AccountHoldFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserManager;
+use AppBundle\Service\AccountManager;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use AppBundle\Admin\Field\MoneyFieldDescription;
+use AppBundle\Admin\Field\LastLoginAtFieldDescription;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class UserAdmin extends AbstractAdmin
@@ -21,11 +24,24 @@ class UserAdmin extends AbstractAdmin
     private $userManager;
 
     /**
+     * @var AccountManager
+     */
+    private $accountManager;
+
+    /**
      * @param UserManager $userManager
      */
     public function setUserManager(UserManager $userManager): void
     {
         $this->userManager = $userManager;
+    }
+
+    /**
+     * @param AccountManager $accountManager
+     */
+    public function setAccountManager(AccountManager $accountManager): void
+    {
+        $this->accountManager = $accountManager;
     }
 
     /**
@@ -71,6 +87,14 @@ class UserAdmin extends AbstractAdmin
         $lastLoginAtField = new LastLoginAtFieldDescription();
         $lastLoginAtField->setName('lastLoginAt');
 
+        $balanceField = new MoneyFieldDescription(['divisor' => 1]);
+        $balanceField->setName('balance');
+        $balanceField->setFieldName('humanBalance');
+
+        $holdAmountField = new AccountHoldFieldDescription($this->accountManager);
+        $holdAmountField->setName('hold');
+        $holdAmountField->setFieldName('account');
+
         $listMapper
             ->addIdentifier('id', 'number')
             ->add('name')
@@ -84,6 +108,8 @@ class UserAdmin extends AbstractAdmin
             ->add($lastLoginAtField, 'datetime', [
                 'format' => 'd.m.Y H:i:s'
             ])
+            ->add($balanceField)
+            ->add($holdAmountField)
             ->add('_action', null, [
                 'actions' => [
                     'show' => [],
