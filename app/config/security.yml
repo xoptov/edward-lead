@@ -21,7 +21,7 @@ security:
         ROLE_WEBMASTER:   ROLE_USER
 
     firewalls:
-        test:
+        notifiactions:
             pattern: ^/notifiactions/telegram/hook
             security: false
         dev:
