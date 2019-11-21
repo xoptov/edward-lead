@@ -2,19 +2,16 @@
 
 namespace NotificationBundle\tests\Functional\Channels;
 
-use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Exception;
+use AppBundle\Entity\User;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use NotificationBundle\Clients\TelegramClient;
 use NotificationBundle\ChannelModels\Telegram;
 use NotificationBundle\Channels\TelegramChannel;
-use NotificationBundle\Clients\TelegramClient;
 use NotificationBundle\Event\ConfigureTelegramEvent;
-use NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber;
 use NotificationBundle\tests\Functional\BaseFunctional;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
+use NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber;
 
 class TelegramChannelTest extends BaseFunctional
 {
@@ -53,7 +50,7 @@ class TelegramChannelTest extends BaseFunctional
 
         ///////////// fire api with token, and set chat id to user
 
-        $this->client->request('POST', '/notifiactions/telegram/hook', [
+        $this->client->request('POST', '/notifications/telegram/hook', [
             'message' => [
                 'chat' => [
                     'id' => '13r445hg356'
