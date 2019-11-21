@@ -17,17 +17,26 @@ abstract class APIController extends Controller
     protected function responseErrors(FormErrorIterator $formErrors): JsonResponse
     {
         $errors = [];
+        $fieldErrors = [];
 
         foreach ($formErrors as $error) {
+
             $origin = $error->getOrigin();
 
-            if (!isset($errors[$origin->getName()])) {
-                $errors[$origin->getName()] = [];
+            if (empty($origin) || '' === $origin->getName()) {
+                $errors[] = $error->getMessage();
+                continue;
             }
 
-            $errors[$origin->getName()][] = $error->getMessage();
+            if (!isset($fieldErrors[$origin->getName()])) {
+                $fieldErrors[$origin->getName()] = [];
+            }
+
+            $fieldErrors[$origin->getName()][] = $error->getMessage();
         }
 
-        return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+        $errors[] = $fieldErrors;
+
+        return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
     }
 }

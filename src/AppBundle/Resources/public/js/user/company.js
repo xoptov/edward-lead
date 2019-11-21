@@ -63,8 +63,8 @@ $(function() {
                     if (413 === xhr.status) {
                         view.errorsArea.append($('<li>Файл слишком большой для загрузки</li>'));
                     }
-                    for (let i = 0; i < xhr.responseJSON.errors.length; i++) {
-                        view.errorsArea.append('<li>' + xhr.responseJSON.errors[i]  + '</li>');
+                    for (let i = 0; i < xhr.responseJSON.length; i++) {
+                        view.errorsArea.append('<li>' + xhr.responseJSON[i]  + '</li>');
                     }
                 },
                 complete: function() {

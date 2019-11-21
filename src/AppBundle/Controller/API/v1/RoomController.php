@@ -67,7 +67,10 @@ class RoomController extends APIController
     public function getMembersAction(Room $room, CacheManager $cacheManager): JsonResponse
     {
         if (!$this->isGranted(RoomVoter::VIEW, $room)) {
-            return new JsonResponse(['error' => 'Нет прав на просмотр списка членов группы'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Нет прав на просмотр списка членов группы'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $members = $this->getDoctrine()->getRepository(Member::class)
@@ -122,9 +125,10 @@ class RoomController extends APIController
         EntityManagerInterface $entityManager
     ): JsonResponse {
         if (!$this->isGranted(MemberVoter::DELETE, $member)) {
-            return new JsonResponse([
-                'error' => 'Нет прав на удаление пользователя, а так же нельзя удалить самого себя из комнаты'
-            ], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Нет прав на удаление пользователя, а так же нельзя удалить самого себя из комнаты'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $user = $member->getUser();
@@ -155,7 +159,10 @@ class RoomController extends APIController
     ): JsonResponse {
 
         if (!$this->isGranted(RoomVoter::DEACTIVATE, $room)) {
-            return new JsonResponse(['error' => 'Нет прав для деактивации комнаты'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Нет прав для деактивации комнаты'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $leads = $entityManager
@@ -163,7 +170,10 @@ class RoomController extends APIController
             ->getOffersByRooms([$room], [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]);
 
         if (count($leads)) {
-            return new JsonResponse(['error' => 'Нельзя деактиваровать комнату с активными лидами']);
+            return new JsonResponse(
+                ['Нельзя деактиваровать комнату с активными лидами'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $room->setEnabled(false);
@@ -225,7 +235,10 @@ class RoomController extends APIController
         ]);
 
         if (!$room) {
-            return new JsonResponse(['error' => 'Невалидный токен приглашения'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Невалидный токен приглашения'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $content = $this->renderView('@App/v2/Room/invite_email.txt.twig', [
@@ -242,6 +255,8 @@ class RoomController extends APIController
 
         $mailer->send($message);
 
-        return new JsonResponse(['message' => 'Приглашение в комнату принято в очередь на отправку']);
+        return new JsonResponse(
+            ['Приглашение в комнату принято в очередь на отправку']
+        );
     }
 }
