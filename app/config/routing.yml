@@ -29,3 +29,7 @@ app_logout:
 app_uploaded_path:
     path: /uploads/{directory}/{filename}
     methods: GET
+
+notification:
+    resource: '@NotificationBundle/Controller/'
+    type: annotation

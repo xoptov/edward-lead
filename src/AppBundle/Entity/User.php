@@ -6,9 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use FOS\MessageBundle\Model\ParticipantInterface;
+use NotificationBundle\Entity\UserNotificationInterface;
+use NotificationBundle\Entity\UserNotificationTrait;
+use NotificationBundle\Entity\UserWithTelegramInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Table(name="user")
@@ -16,18 +20,18 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже существует")
  */
-class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface
+class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface, UserNotificationInterface, UserWithTelegramInterface
 {
+    use IdentificatorTrait,
+        UserNotificationTrait,
+        TimeTrackableTrait;
+
     const ROLE_USER        = 'ROLE_USER';
     const ROLE_COMPANY     = 'ROLE_COMPANY';
     const ROLE_WEBMASTER   = 'ROLE_WEBMASTER';
     const ROLE_ADMIN       = 'ROLE_ADMIN';
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const DEFAULT_ROLE     = self::ROLE_USER;
-
-    use IdentificatorTrait;
-
-    use TimeTrackableTrait;
 
     /**
      * @var Company|null
@@ -211,6 +215,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @ORM\JoinColumn(name="referrer_id", referencedColumnName="id")
      */
     private $referrer;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->notifications = new ArrayCollection();
+    }
 
     /**
      * @param int $id
