@@ -2,16 +2,17 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
-use NotificationBundle\Entity\UserNotificationInterface;
 use NotificationBundle\Entity\UserNotificationTrait;
-use NotificationBundle\Entity\UserWithTelegramInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use NotificationBundle\Entity\UserNotificationInterface;
+use NotificationBundle\Entity\UserWithTelegramInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
