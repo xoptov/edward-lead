@@ -1,18 +1,16 @@
 <?php
 
-namespace Tests\Functionsl\Channels;
+namespace Tests\Unit\Channels;
 
 use NotificationBundle\ChannelModels\Email;
 use NotificationBundle\Channels\EmailChannel;
 use NotificationBundle\Clients\EsputnikClient;
-use NotificationBundle\tests\Functional\BaseFunctional;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
-class EmailChannelTest extends BaseFunctional
+class EmailChannelTest extends TestCase
 {
     public function testSuccessSend()
     {
-
         $mock = $this->getMockBuilder(EsputnikClient::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -20,23 +18,14 @@ class EmailChannelTest extends BaseFunctional
         $mock->expects($this->once())
             ->method('sendEmail');
 
-        $this->client->getContainer()->set(EsputnikClient::class, $mock);
-
         $model = new Email();
 
         $model->setTemplateId('2031908');
         $model->setToEmail('atsutavictor.dev@gmail.com');
-        $model->setParams(
-            [
-                "name" => "Test"
-            ]
-        );
+        $model->setParams(["name" => "Test"]);
 
-        $chanel = $this->client->getContainer()->get(EmailChannel::class);
+        $chanel = new EmailChannel($mock);
 
         $chanel->send($model);
-
-        $this->assertTrue(true);
-
     }
 }

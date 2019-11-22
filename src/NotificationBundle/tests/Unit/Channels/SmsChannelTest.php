@@ -3,32 +3,32 @@
 namespace Tests\Unit\Channels;
 
 use NotificationBundle\ChannelModels\Sms;
+use NotificationBundle\Channels\SmsChannel;
 use NotificationBundle\Clients\SmsRuClient;
-use NotificationBundle\Exceptions\ValidationChannelModelException;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 use Zelenin\SmsRu\Api;
 use Zelenin\SmsRu\Auth\ApiIdAuth;
 
-class SmsChannelTest extends KernelTestCase
+class SmsChannelTest extends TestCase
 {
-    private $client;
 
-    protected function setUp()
+    public function testSuccessSend()
     {
-        $this->client = self::bootKernel();
-    }
+        $mock = $this->getMockBuilder(SmsRuClient::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-    public function testValidation()
-    {
-        $this->expectException(ValidationChannelModelException::class);
-        $validator = $this->client->getContainer()->get('validator');
-        $client = new SmsRuClient($validator, new Api(new ApiIdAuth('string')));
+        $mock->expects($this->once())
+            ->method('sendSMS');
 
         $model = new Sms();
+
+        $model->setPhone('+79787151111');
         $model->setBody('Test');
         $model->setFrom('testsender');
 
-        $client->validate($model);
+        $chanel = new SmsChannel($mock);
 
+        $chanel->send($model);
     }
 }

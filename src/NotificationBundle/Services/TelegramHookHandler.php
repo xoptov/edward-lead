@@ -1,12 +1,11 @@
 <?php
 
-
 namespace NotificationBundle\Services;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use NotificationBundle\Entity\UserNotificationTrait;
+use NotificationBundle\Exceptions\NoUserWithTelegramTokenException;
+use NotificationBundle\Exceptions\ValidationTelegramHookException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -35,7 +34,8 @@ class TelegramHookHandler
 
     /**
      * @param array $data
-     * @throws Exception
+     * @throws NoUserWithTelegramTokenException
+     * @throws ValidationTelegramHookException
      */
     public function handle(array $data)
     {
@@ -48,7 +48,7 @@ class TelegramHookHandler
         $user = $this->entityManager->getRepository(User::class)->findOneBy(["telegramAuthToken" => $token]);
 
         if (!$user instanceof User) {
-            throw new Exception('No user found with token ' . $token);
+            throw new NoUserWithTelegramTokenException('No user found with token ' . $token);
         }
 
         $user->setTelegramChatId($chantId);
@@ -58,7 +58,7 @@ class TelegramHookHandler
 
     /**
      * @param array $data
-     * @throws Exception
+     * @throws ValidationTelegramHookException
      */
     private function validate(array $data): void
     {
@@ -67,7 +67,7 @@ class TelegramHookHandler
         $violations = $this->validator->validate($data, $constraint);
 
         if (count($violations) > 0) {
-            throw new Exception($violations);
+            throw new ValidationTelegramHookException($violations);
         }
     }
 

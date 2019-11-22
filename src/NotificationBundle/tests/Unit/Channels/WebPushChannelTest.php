@@ -1,26 +1,22 @@
 <?php
 
-namespace Tests\Functionsl\Channels;
+namespace Tests\Unit\Channels;
 
 use NotificationBundle\ChannelModels\WebPush;
 use NotificationBundle\Channels\WebPushChannel;
 use NotificationBundle\Clients\EsputnikClient;
-use NotificationBundle\tests\Functional\BaseFunctional;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use PHPUnit\Framework\TestCase;
 
-class WebPushChannelTest extends BaseFunctional
+class WebPushChannelTest extends TestCase
 {
     public function testSuccessSend()
     {
-
         $mock = $this->getMockBuilder(EsputnikClient::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $mock->expects($this->once())
             ->method('sendWebPush');
-
-        $this->client->getContainer()->set(EsputnikClient::class, $mock);
 
         $model = new WebPush();
 
@@ -29,7 +25,8 @@ class WebPushChannelTest extends BaseFunctional
         $model->setLink('https://cabinet.edward-lead.ru');
         $model->setPushToken('fk3UW95xaHY:APA91bE0m7h42yYhEwlIpOgL-8n4JzFLiDtKvHB3kdBOKkJCOXSo_-4Fy0COW1emaMFcazEfW0TuYwEozmlDFb47WDW4u7v4Hq85FZHDoIAxPUU24PCX0dE2PcXQ3Wc4Bp9AhlYgeOdf');
 
-        $chanel = $this->client->getContainer()->get(WebPushChannel::class);
+
+        $chanel = new WebPushChannel($mock);
 
         $chanel->send($model);
     }
