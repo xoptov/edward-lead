@@ -6,8 +6,6 @@ use NotificationBundle\ChannelModels\Sms;
 use NotificationBundle\Channels\SmsChannel;
 use NotificationBundle\Clients\SmsRuClient;
 use PHPUnit\Framework\TestCase;
-use Zelenin\SmsRu\Api;
-use Zelenin\SmsRu\Auth\ApiIdAuth;
 
 class SmsChannelTest extends TestCase
 {

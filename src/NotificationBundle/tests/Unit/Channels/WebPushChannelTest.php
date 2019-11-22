@@ -25,7 +25,6 @@ class WebPushChannelTest extends TestCase
         $model->setLink('https://cabinet.edward-lead.ru');
         $model->setPushToken('fk3UW95xaHY:APA91bE0m7h42yYhEwlIpOgL-8n4JzFLiDtKvHB3kdBOKkJCOXSo_-4Fy0COW1emaMFcazEfW0TuYwEozmlDFb47WDW4u7v4Hq85FZHDoIAxPUU24PCX0dE2PcXQ3Wc4Bp9AhlYgeOdf');
 
-
         $chanel = new WebPushChannel($mock);
 
         $chanel->send($model);

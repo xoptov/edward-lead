@@ -3,25 +3,12 @@
 namespace Tests\Unit\Channels;
 
 use AppBundle\Entity\User;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use NotificationBundle\ChannelModels\Telegram;
 use NotificationBundle\Channels\TelegramChannel;
 use NotificationBundle\Clients\TelegramClient;
 use NotificationBundle\Event\ConfigureTelegramEvent;
 use NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber;
-use NotificationBundle\Exceptions\NoUserWithTelegramTokenException;
-use NotificationBundle\Exceptions\ValidationTelegramHookException;
-use NotificationBundle\Services\TelegramHookHandler;
-use NotificationBundle\tests\Functional\BaseFunctional;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Validator\Validation;
-use Doctrine\ORM\EntityManagerInterface;
 
 class TelegramChannelTest extends TestCase
 {
