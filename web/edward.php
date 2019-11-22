@@ -8,7 +8,7 @@
 define('DEBUG_MODE', false);
 
 define('API_KEY', 'bdb9e181a5cd7edd2a11ea61cbf417b3d6dc5871'); // Необходимо указать ключь API внутри ''
-define('ROOM_ID', 1057); // Идентификатор комнаты в которую будет добавляться лид.
+define('ROOM_ID', 1); // Идентификатор комнаты в которую будет добавляться лид.
 
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
 define('API_URL', 'http://edward.local/api/v1/lead');
@@ -47,8 +47,7 @@ foreach ($formFields as $field)
 }
 
 if (count($errors)) {
-    $content = ['errors' => $errors];
-    sendResponse(json_encode($content), 400);
+    sendResponse(json_encode([$errors]), 400);
 }
 
 $dataForSubmit = [];
