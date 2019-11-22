@@ -41,14 +41,7 @@ class PBXShoulderType extends AbstractType
                 'empty_data' => null
             ])
             ->add('billSec', IntegerType::class)
-            ->add('status', ChoiceType::class, [
-                'choices' => [
-                    Shoulder::STATUS_NO_ANSWER,
-                    Shoulder::STATUS_ANSWER,
-                    Shoulder::STATUS_BUSY,
-                    Shoulder::STATUS_CANCEL
-                ]
-            ]);
+            ->add('status', TextType::class);
 
         $builder->get('phone')
             ->addViewTransformer(new PhoneTransformer());
