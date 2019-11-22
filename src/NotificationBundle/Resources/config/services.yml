@@ -6,6 +6,26 @@ parameters:
   nb_esputik_password: 'Qwerty271205'
   nb_smsru_esputik_event_push_key: 'q4g245h245j53wj357j'
 
+<<<<<<< HEAD
+=======
+  nb_esputik_tempalte_email_registration: '2031908'
+  nb_esputik_tempalte_email_api_change: '2032880'
+  nb_esputik_tempalte_email_balance_charge: '2032909'
+  nb_esputik_tempalte_email_balance_lower_1500: '2032951'
+  nb_esputik_tempalte_email_balance_lower_40: '2032994'
+  nb_esputik_tempalte_email_support_response: '2033036'
+  nb_esputik_tempalte_email_new_lead_in_room: '2033067'
+  nb_esputik_tempalte_email_no_visiting_for_14_days: '2033106'
+  nb_esputik_tempalte_email_new_arbitraj: '2033137'
+  nb_esputik_tempalte_email_new_support_contact: '2033457'
+  nb_esputik_tempalte_email_balance_withdrawl_for_user: '2034441'
+  nb_esputik_tempalte_email_request_balance_withdrawl: '2033480'
+  nb_esputik_tempalte_email_balance_withdrawl_fail: '2034460'
+  nb_esputik_tempalte_email_balance_withdrawl_success: '2034473'
+  nb_esputik_tempalte_email_password_change_request: '2034484'
+  nb_esputik_tempalte_email_password_change_success: '2034499'
+
+>>>>>>> add sample and init structure
   telegram_bot_id: ""
   telegram_bot_name: ""
 

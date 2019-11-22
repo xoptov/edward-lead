@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use NotificationBundle\Notifications\OnUserRegisterNotification;
 use Psr\Log\LoggerInterface;
 use AppBundle\Event\UserEvent;
 use Doctrine\DBAL\DBALException;
@@ -58,18 +59,19 @@ class SecurityController extends Controller
     /**
      * @Route("/registration", name="app_registration", methods={"POST", "GET"})
      *
-     * @param Request                        $request
-     * @param LoggerInterface                $logger
+     * @param Request $request
+     * @param LoggerInterface $logger
      * @param AuthenticationManagerInterface $authenticationManager
-     * @param TokenStorageInterface          $tokenStorage
-     *
+     * @param TokenStorageInterface $tokenStorage
+     * @param OnUserRegisterNotification $notification
      * @return Response
      */
     public function registrationAction(
         Request $request,
         LoggerInterface $logger,
         AuthenticationManagerInterface $authenticationManager,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        OnUserRegisterNotification $notification
     ): Response {
 
         $form = $this->createForm(RegistrationType::class);
@@ -94,6 +96,8 @@ class SecurityController extends Controller
 
                 $this->entityManager->persist($user);
                 $this->userManager->updateUser($user, false);
+
+                $notification->send($user);
 
                 //todo надо подумать куда вынести этот код в лучшее место.
                 if ($request->cookies->has('referrer')) {
