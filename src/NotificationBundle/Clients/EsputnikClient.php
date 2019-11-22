@@ -51,12 +51,12 @@ class EsputnikClient extends BaseClient implements WebPushClientInterface, Email
 
     /**
      * @param Email $model
-     * @return object
+     * @return array
      * @throws ValidationChannelModelException
      * @throws InvalidCodeException
      * @throws JsonException
      */
-    public function sendEmail(Email $model): object
+    public function sendEmail(Email $model): array
     {
 
         $this->validate($model);

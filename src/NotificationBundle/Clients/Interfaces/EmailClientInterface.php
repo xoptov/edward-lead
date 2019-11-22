@@ -8,7 +8,7 @@ interface EmailClientInterface
 {
     /**
      * @param Email $model
-     * @return object
+     * @return array
      */
-    public function sendEmail(Email $model): object;
+    public function sendEmail(Email $model): array;
 }
