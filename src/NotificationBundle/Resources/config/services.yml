@@ -29,7 +29,6 @@ services:
       - '%telegram_bot_name%'
 
   NotificationBundle\Clients\SmsRuClient:
-    public: true
 
   Brownie\ESputnik\Config:
     arguments:
@@ -42,15 +41,12 @@ services:
   Brownie\ESputnik\HTTPClient\HTTPClient:
 
   NotificationBundle\Clients\TelegramClient:
-    public: true
 
   NotificationBundle\Clients\EsputnikClient:
-    public: true
     arguments:
       $eventPushKey: '%nb_smsru_esputik_event_push_key%'
 
   NotificationBundle\Clients\InternalClient:
-    public: true
 
   NotificationBundle\Clients\Interfaces\EmailClientInterface: '@NotificationBundle\Clients\EsputnikClient'
   NotificationBundle\Clients\Interfaces\SmsClientInterface: '@NotificationBundle\Clients\SmsRuClient'
@@ -60,19 +56,14 @@ services:
   Brownie\ESputnik\HTTPClient\Client: '@Brownie\ESputnik\HTTPClient\CurlClient'
 
   NotificationBundle\Channels\EmailChannel:
-    public: true
 
   NotificationBundle\Channels\SmsChannel:
-    public: true
 
   NotificationBundle\Channels\WebPushChannel:
-    public: true
 
   NotificationBundle\Channels\TelegramChannel:
-    public: true
 
   NotificationBundle\Channels\InternalChannel:
-    public: true
 
   NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber:
     autowire: true
@@ -82,5 +73,4 @@ services:
   NotificationBundle\Services\TelegramHookHandler:
 
   NotificationBundle\Controller\TelegramHookController:
-    public: true
 
