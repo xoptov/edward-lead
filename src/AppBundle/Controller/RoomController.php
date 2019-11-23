@@ -3,16 +3,18 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
-use AppBundle\Exception\RoomException;
+use AppBundle\Entity\Member;
+use AppBundle\Event\RoomEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
+use AppBundle\Exception\RoomException;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,12 +47,15 @@ class RoomController extends Controller
     /**
      * @Route("/room/create", name="app_room_create", methods={"GET", "POST"})
      *
-     * @param Request $request
+     * @param Request                  $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function createAction(Request $request): Response
-    {
+    public function createAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher
+    ): Response {
         if ($request->isMethod(Request::METHOD_POST)) {
             $form = $this->createForm(RoomType::class);
             $form->handleRequest($request);
@@ -60,28 +65,33 @@ class RoomController extends Controller
                 /** @var User $user */
                 $user = $this->getUser();
 
-                /** @var Room $data */
-                $data = $form->getData();
-                $data
+                /** @var Room $room */
+                $room = $form->getData();
+                $room
                     ->setOwner($user)
                     ->setEnabled(true);
 
-                $this->entityManager->persist($data);
+                $this->entityManager->persist($room);
 
                 try {
-                    $this->roomManager->joinInRoom($data, $user);
+                    $this->roomManager->joinInRoom($room, $user);
                 } catch (\Exception $e) {
                     $this->addFlash('error', $e->getMessage());
 
                     return $this->redirectToRoute('app_room_list');
                 }
 
-                $this->roomManager->updateInviteToken($data);
+                $this->roomManager->updateInviteToken($room);
                 $this->entityManager->flush();
 
                 $this->addFlash('success', 'Новая комната успешно создана');
 
-                return $this->redirectToRoute('app_room_view', ['id' => $data->getId()]);
+                $eventDispatcher->dispatch(
+                    RoomEvent::NEW_CREATED,
+                    new RoomEvent($room)
+                );
+
+                return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
             }
         } else {
             $form = $this->createForm(RoomType::class, null, ['timer' => true]);
