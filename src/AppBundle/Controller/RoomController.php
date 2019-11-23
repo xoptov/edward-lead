@@ -7,6 +7,7 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Event\MemberEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
@@ -14,11 +15,11 @@ use AppBundle\Service\AccountManager;
 use AppBundle\Exception\RoomException;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomController extends Controller
 {
@@ -191,7 +192,7 @@ class RoomController extends Controller
 
         $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
 
-        $totalAvailableMoney = 0.0;
+        $totalAvailableMoney = 0;
 
         foreach ($buyers as $buyer) {
             $totalAvailableMoney += $accountManager->getAvailableBalance($buyer->getAccount());
@@ -254,13 +255,16 @@ class RoomController extends Controller
 
     /**
      * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
-     *
-     * @param string $token
+     * 
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string                   $token
      *
      * @return Response
      */
-    public function acceptInviteAction(string $token): Response
-    {
+    public function acceptInviteAction(
+        EventDispatcherInterface $eventDispatcher,
+        string $token
+    ): Response{
         $room = $this->entityManager->getRepository(Room::class)->findOneBy([
             'inviteToken' => $token,
             'enabled' => true
@@ -299,12 +303,14 @@ class RoomController extends Controller
         }
 
         try {
-            $this->roomManager->joinInRoom($room, $user);
+            $member = $this->roomManager->joinInRoom($room, $user);
             $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (RoomException $e) {
             return $this->redirectToRoute('app_room_invite_invalid');
         }
+
+        $eventDispatcher->dispatch(MemberEvent::JOINED, new MemberEvent($member));
 
         return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
     }

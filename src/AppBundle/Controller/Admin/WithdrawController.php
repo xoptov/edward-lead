@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use AppBundle\Event\WithdrawEvent;
 use AppBundle\Service\WithdrawManager;
 use AppBundle\Form\Type\WithdrawProcessType;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class WithdrawController extends CRUDController
@@ -21,11 +23,20 @@ class WithdrawController extends CRUDController
     private $withdrawManager;
 
     /**
-     * @param WithdrawManager $withdrawManager
+     * @var EventDispatcherInterface
      */
-    public function __construct(WithdrawManager $withdrawManager)
-    {
+    private $eventDispatcher;
+
+    /**
+     * @param WithdrawManager $withdrawManager
+     * 
+     */
+    public function __construct(
+        WithdrawManager $withdrawManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->withdrawManager = $withdrawManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -140,6 +151,11 @@ class WithdrawController extends CRUDController
                         )
                     );
                 }
+
+                $this->eventDispatcher->dispatch(
+                    WithdrawEvent::ACCEPTED, 
+                    new WithdrawEvent($object)
+                );
 
                 return new RedirectResponse($this->admin->generateUrl('list'));
             }
