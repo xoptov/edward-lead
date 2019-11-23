@@ -188,7 +188,7 @@ class FinancialController extends Controller
                 }
 
                 $this->eventDispatcher->dispatch(
-                    WithdrawEvent::CREATED,
+                    WithdrawEvent::NEW_CREATED,
                     new WithdrawEvent($withdraw)
                 );
 

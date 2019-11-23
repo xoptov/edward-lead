@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class RoomEvent extends Event
 {
+    const NEW_CREATED = 'room.new_created';
     const DEACTIVATED = 'room.deactivated';
 
     /**

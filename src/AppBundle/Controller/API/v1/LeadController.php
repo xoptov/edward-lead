@@ -293,6 +293,7 @@ class LeadController extends APIController
         }
 
         $this->entityManager->flush();
+
         $eventDispatcher->dispatch(LeadEvent::EDITED, new LeadEvent($lead));
 
         return new JsonResponse(['id' => $lead->getId()]);
