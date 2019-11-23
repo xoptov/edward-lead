@@ -1,9 +1,9 @@
 <?php
 
-use AppBundle\Util\Formatter;
-
 class Money
 {
+    const PENNIES_IN_RUBLE = 100;
+
     /**
      * @var int
      */
@@ -14,14 +14,30 @@ class Money
      */
     private $pennies = 0;
 
-    public static function createFromFloat(float $amount): self
+    /**
+     * @param float $value
+     * 
+     * @return Money
+     */
+    public static function createFromFloat(float $value): self
     {
-        //todo: Необходимо имплементировать логику создания.
+        $rubles = intval($value);
+        $pennies = $value * self::PENNIES_IN_RUBLE % self::PENNIES_IN_RUBLE;
+
+        return new Money($rubles, $pennies);
     }
 
-    public static function createFromInteger(int $amount): self
+    /**
+     * @param int $value
+     * 
+     * @return Money
+     */
+    public static function createFromInteger(int $value): self
     {
-        //todo: Необходимо имплементировать логику создания.
+        $rubles = intdiv($value, self::PENNIES_IN_RUBLE);
+        $pennies = $value % self::PENNIES_IN_RUBLE;
+
+        return new Money($rubles, $pennies);
     }
 
     /**
@@ -51,80 +67,102 @@ class Money
     }
 
     /**
+     * @return int
+     */
+    public function inPennies(): int
+    {
+        return $this->rubles * self::PENNIES_IN_RUBLE + $this->pennies;
+    }
+
+    /**
      * @param Money $money
      * 
      * @return Money
      */
-    public function addAsMoney(Money $money): self
+    public function add(Money $money): self
     {
-    
+        $value1 = $this->inPennies();
+        $value2 = $money->inPennies();
+
+        $this->setPennies($value1 + $value2);
+        
         return $this;
     }
 
     /**
-     * @param float $amount
+     * @param float $value
      * 
      * @return Money
      */
-    public function addAsFloat(flaot $amount): self
+    public function addFloat(float $value): self
     {
-        $rubles = intval($amount);
-        $pennies = $amount % 1;
+        $money = Money::createFromFloat($value);
 
-        $money = new Money($rubles, $pennies);
-
-        return $this->addAsMoney($money);
+        return $this->add($money);
     }
 
     /**
-     * @param int $amount
+     * @param int $value
      * 
      * @return Money
      */
-    public function addAsInteger(int $amount): self
+    public function addInteger(int $value): self
     {
-        $rubles = intdiv($amount, Formatter::MONEY_DIVISOR);
-        $pennies = $amount % Formatter::MONEY_DIVISOR;
+        $money = Money::createFromInteger($value);
 
-        $money = new Money($rubles, $pennies);
-
-        return $this->addAsMoney($money);
+        return $this->add($money);
     }
 
     /**
-     * @param int $pennies
-     * 
-     * @return Money
+     * @param Money $money
      */
-    public function addPennies(int $pennies): self
+    public function substract(Money $money): self
     {
-        $this->addRublesByPennies($pennies);
-        $this->pennies += $pennies % Formatter::MONEY_DIVISOR;
+        $value1 = $this->inPennies();
+        $value2 = $money->inPennies();
 
-        return $this;
-    }
-
-    /**
-     * @param int $pennies
-     * @param int $round
-     */
-    private function setPennies(int $pennies): self
-    {
-        $this->addRublesByPennies($pennies);
-        $this->pennies = $pennies % Formatter::MONEY_DIVISOR;
+        $this->setPennies($value1 - $value2);
 
         return $this;
     }
 
     /**
+     * @param float $value
+     * 
+     * @return Money
+     */
+    public function substractFloat(float $value): self
+    {
+        $money = Money::createFromFloat($value);
+        $this->substract($money);
+
+        return $this;
+    }
+
+    /**
+     * @param int $value
+     * 
+     * @return Money
+     */
+    public function substractInteger(int $value): self
+    {
+        $money = Money::createFromInteger($value);
+        $this->substract($money);
+
+        return $this;
+    }
+
+    /**
      * @param int $pennies
      */
-    private function addRublesByPennies(int $pennies): void
+    private function setPennies(int $pennies): void
     {
-        $rubles = intdiv($pennies, Formatter::MONEY_DIVISOR);
+        $rubles = intdiv($pennies, self::PENNIES_IN_RUBLE);
 
         if ($rubles) {
             $this->rubles += $rubles;
         }
+
+        $this->pennies = $pennies % self::PENNIES_IN_RUBLE;
     }
 }
