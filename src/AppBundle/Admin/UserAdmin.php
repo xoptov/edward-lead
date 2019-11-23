@@ -2,7 +2,6 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Admin\Field\AccountHoldFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserManager;
 use AppBundle\Service\AccountManager;
@@ -14,6 +13,7 @@ use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
 use AppBundle\Admin\Field\LastLoginAtFieldDescription;
+use AppBundle\Admin\Field\AccountHoldFieldDescription;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class UserAdmin extends AbstractAdmin
@@ -87,7 +87,7 @@ class UserAdmin extends AbstractAdmin
         $lastLoginAtField = new LastLoginAtFieldDescription();
         $lastLoginAtField->setName('lastLoginAt');
 
-        $balanceField = new MoneyFieldDescription(['divisor' => 1]);
+        $balanceField = new MoneyFieldDescription();
         $balanceField->setName('balance');
         $balanceField->setFieldName('humanBalance');
 

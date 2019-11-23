@@ -10,41 +10,32 @@ use Sonata\DoctrineORMAdminBundle\Admin\FieldDescription;
 class AccountHoldFieldDescription extends FieldDescription
 {
     /**
-     * @inheritdoc
-     */
-    protected $options = ['divisor' => 100];
-
-    /**
      * @var AccountManager
      */
     private $accountManager;
 
     /**
      * @param AccountManager $accountManager
-     * @param array          $options
      */
-    public function __construct(AccountManager $accountManager, array $options = array())
+    public function __construct(AccountManager $accountManager)
     {
         parent::__construct();
 
         $this->accountManager = $accountManager;
-        $this->options = array_merge_recursive($this->options, $options);
     }
 
     /**
-     * @param $object
-     * @param $fieldName
+     * @param mixed  $object
+     * @param string $fieldName
      *
-     * @return float|int
+     * @return float
      *
      * @throws NoValueException
      */
     public function getFieldValue($object, $fieldName)
     {
         $value = $this->accountManager->getHoldAmount(parent::getFieldValue($object, $fieldName));
-        $divisor = (int)$this->getOption('divisor');
-
-        $transformer = new MoneyTransformer($divisor);
+        $transformer = new MoneyTransformer();
 
         return $transformer->transform($value);
     }

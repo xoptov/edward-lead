@@ -4,6 +4,8 @@ namespace AppBundle\Util;
 
 abstract class Formatter
 {
+    const MONEY_DIVISOR = 100;
+
     /**
      * @param string|null $phone
      *
@@ -113,10 +115,10 @@ abstract class Formatter
      */
     public static function humanizeMoney(int $money): string
     {
-        $result = intdiv($money, 100) . ' руб.';
+        $result = intdiv($money, self::MONEY_DIVISOR) . ' руб.';
 
-        if ($end = $money % 100) {
-            $result .= ' ' . $money % 100 . ' коп.';
+        if ($end = $money % self::MONEY_DIVISOR) {
+            $result .= ' ' . $money % self::MONEY_DIVISOR . ' коп.';
         }
 
         return $result;

@@ -2,42 +2,34 @@
 
 namespace AppBundle\Form\DataTransformer;
 
+use AppBundle\Util\Formatter;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class MoneyTransformer implements DataTransformerInterface
 {
     /**
-     * @var int
-     */
-    private $divisor;
-
-    /**
-     * @param int $divisor
-     */
-    public function __construct(?int $divisor = 100)
-    {
-        $this->divisor = $divisor;
-    }
-
-    /**
-     * @inheritdoc
+     * @param mixed $value
+     * 
+     * @return float
      */
     public function transform($value)
     {
         if ($value) {
-            return (float)$value / $this->divisor;
+            return floatval($value / Formatter::MONEY_DIVISOR);
         }
 
-        return 0;
+        return 0.0;
     }
 
     /**
-     * @inheritdoc
+     * @param mixed $value
+     * 
+     * @return int
      */
     public function reverseTransform($value)
     {
         if ($value) {
-            return $this->divisor * $value;
+            return intval($value * Formatter::MONEY_DIVISOR);
         }
 
         return 0;
