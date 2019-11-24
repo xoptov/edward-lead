@@ -1,18 +1,23 @@
 <?php
 
-class Money
+namespace AppBundle\Entity;
+
+use RuntimeException;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Embeddable
+ */
+final class Money
 {
     const PENNIES_IN_RUBLE = 100;
 
     /**
      * @var int
+     * 
+     * @ORM\Column(type="bigint")
      */
-    private $rubles = 0;
-
-    /**
-     * @var int
-     */
-    private $pennies = 0;
+    private $value = 0;
 
     /**
      * @param float $value
@@ -21,33 +26,45 @@ class Money
      */
     public static function createFromFloat(float $value): self
     {
-        $rubles = intval($value);
-        $pennies = $value * self::PENNIES_IN_RUBLE % self::PENNIES_IN_RUBLE;
+        return new self(intval($value * self::PENNIES_IN_RUBLE));
+    }
 
-        return new Money($rubles, $pennies);
+    /**
+     * @param Money|float|int $value
+     * 
+     * @return Money
+     */
+    public static function create($value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+        
+        if (is_float($value)) {
+            return self::createFromFloat($value);
+        }
+        
+        if (is_integer($value)) {
+            return new self($value);
+        }
+
+        throw new RuntimeException('Тип значение не поддреживается');
     }
 
     /**
      * @param int $value
-     * 
-     * @return Money
      */
-    public static function createFromInteger(int $value): self
+    public function __construct(int $value = 0)
     {
-        $rubles = intdiv($value, self::PENNIES_IN_RUBLE);
-        $pennies = $value % self::PENNIES_IN_RUBLE;
-
-        return new Money($rubles, $pennies);
+        $this->value = $value;
     }
 
     /**
-     * @param int $rubles
-     * @param int $pennies
+     * @return int
      */
-    public function __construct(int $rubles = 0, int $pennies = 0)
+    public function getValue(): int
     {
-        $this->rubles = $rubles;
-        $this->setPennies($pennies);
+        return $this->value;
     }
 
     /**
@@ -55,7 +72,7 @@ class Money
      */
     public function getRubles(): int
     {
-        return $this->rubles;
+        return abs(intdiv($this->value, self::PENNIES_IN_RUBLE));
     }
 
     /**
@@ -63,106 +80,130 @@ class Money
      */
     public function getPennies(): int
     {
-        return $this->pennies;
+        return abs($this->value % self::PENNIES_IN_RUBLE);
     }
 
     /**
+     * @param Money|float|int $money
+     * 
+     * @return Money
+     */
+    public function add($value): self
+    {
+        $operand = self::create($value);
+
+        return new self($this->getValue() + $operand->getValue());
+    }
+
+    /**
+     * @param Money|float|int $money
+     */
+    public function substract($value): self
+    {
+        $operand = self::create($value);
+
+        return new self($this->getValue() - $operand->getValue());
+    }
+
+    /**
+     * @param float $value
+     * 
+     * @return Money
+     */
+    public function multiple(float $value): self
+    {
+        return new self($this->getValue() * $value);
+    }
+
+    /**
+     * @param Money|float|int $value
+     * 
+     * @return float
+     */
+    public function divide($value): float
+    {
+        $operand = self::create($value);
+
+        return $this->getValue() / $operand->getValue();
+    }
+
+    /**
+     * @param Money|float|int
+     */
+    public function isEqual($value): bool
+    {
+        $operand = self::create($value);
+
+        return $this->getValue() === $operand->getValue();
+    }
+
+    /**
+     * @param Money|float|int
+     * 
+     * @return bool
+     */
+    public function isLess($value): bool
+    {
+        $operand = self::create($value);
+
+        return $this->getValue() < $operand->getValue();
+    }
+
+    /**
+     * @param Money|float|int
+     * 
+     * @return bool
+     */
+    public function isGreater($value): bool
+    {
+        $operand = self::create($value);
+
+        return $this->getValue() > $operand->getValue();
+    }
+
+    /**
+     * @param Money|float|int
+     * 
+     * @return bool
+     */
+    public function isLessOrEqual($value): bool
+    {
+        return $this->isLess($value) || $this->isEqual($value);
+    }
+
+    /**
+     * @param Money|float|int
+     * 
+     * @return bool
+     */
+    public function isGreaterOrEqual($value): bool
+    {
+        return $this->isGreater($value) || $this->isEqual($value);
+    }
+
+    /**
+     * @param Money|float|int
+     * 
      * @return int
      */
-    public function inPennies(): int
+    public function compare($value): int
     {
-        return $this->rubles * self::PENNIES_IN_RUBLE + $this->pennies;
-    }
-
-    /**
-     * @param Money $money
-     * 
-     * @return Money
-     */
-    public function add(Money $money): self
-    {
-        $value1 = $this->inPennies();
-        $value2 = $money->inPennies();
-
-        $this->setPennies($value1 + $value2);
-        
-        return $this;
-    }
-
-    /**
-     * @param float $value
-     * 
-     * @return Money
-     */
-    public function addFloat(float $value): self
-    {
-        $money = Money::createFromFloat($value);
-
-        return $this->add($money);
-    }
-
-    /**
-     * @param int $value
-     * 
-     * @return Money
-     */
-    public function addInteger(int $value): self
-    {
-        $money = Money::createFromInteger($value);
-
-        return $this->add($money);
-    }
-
-    /**
-     * @param Money $money
-     */
-    public function substract(Money $money): self
-    {
-        $value1 = $this->inPennies();
-        $value2 = $money->inPennies();
-
-        $this->setPennies($value1 - $value2);
-
-        return $this;
-    }
-
-    /**
-     * @param float $value
-     * 
-     * @return Money
-     */
-    public function substractFloat(float $value): self
-    {
-        $money = Money::createFromFloat($value);
-        $this->substract($money);
-
-        return $this;
-    }
-
-    /**
-     * @param int $value
-     * 
-     * @return Money
-     */
-    public function substractInteger(int $value): self
-    {
-        $money = Money::createFromInteger($value);
-        $this->substract($money);
-
-        return $this;
-    }
-
-    /**
-     * @param int $pennies
-     */
-    private function setPennies(int $pennies): void
-    {
-        $rubles = intdiv($pennies, self::PENNIES_IN_RUBLE);
-
-        if ($rubles) {
-            $this->rubles += $rubles;
+        if ($this->isLess($value)) {
+            return -1;
         }
+        
+        if ($this->isGreater($value)) {
+            return 1;
+        }
+        
+        return 0;
+    }
 
-        $this->pennies = $pennies % self::PENNIES_IN_RUBLE;
+    /**
+     * @return bool
+     */
+    public function isNegative(): bool
+    {
+        return $this->value < 0;
     }
 }
