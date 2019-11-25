@@ -8,23 +8,27 @@ use Doctrine\ORM\EntityManagerInterface;
 use NotificationBundle\Exceptions\NoUserWithTelegramTokenException;
 use NotificationBundle\Exceptions\ValidationTelegramHookException;
 use NotificationBundle\Services\TelegramHookHandler;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validation;
-use \ReflectionException;
 
 class TelegramHookHandlerTest extends KernelTestCase
 {
+    /**
+     * @throws NoUserWithTelegramTokenException
+     * @throws ReflectionException
+     * @throws ValidationTelegramHookException
+     */
     public function testTelegramHookHandlerValidationError()
     {
         $this->expectException(ValidationTelegramHookException::class);
 
-        $validator = $validator = Validation::createValidator();
+        $validator = Validation::createValidator();
         $objectManager = $this->createMock(EntityManagerInterface::class);
 
         $handler = new TelegramHookHandler($validator, $objectManager);
 
         $handler->handle([]);
-
     }
 
     /**
@@ -34,10 +38,9 @@ class TelegramHookHandlerTest extends KernelTestCase
      */
     public function testTelegramHookHandlerNoUserError()
     {
-
         $this->expectException(NoUserWithTelegramTokenException::class);
 
-        $validator = $validator = Validation::createValidator();
+        $validator = Validation::createValidator();
         $mock = $this->getMockBuilder(EntityManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,7 +64,6 @@ class TelegramHookHandlerTest extends KernelTestCase
                 'text' => '/start ' . 'token'
             ]
         ]);
-
     }
 
     /**
@@ -71,7 +73,7 @@ class TelegramHookHandlerTest extends KernelTestCase
      */
     public function testTelegramHookHandler()
     {
-        $validator = $validator = Validation::createValidator();
+        $validator = Validation::createValidator();
 
         $user = new User();
         $user->setTelegramAuthToken('token');
@@ -99,6 +101,5 @@ class TelegramHookHandlerTest extends KernelTestCase
         ]);
 
         $this->assertEquals($user->getTelegramChatId(), $chatId);
-
     }
 }
