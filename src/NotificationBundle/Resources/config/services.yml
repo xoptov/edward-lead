@@ -1,4 +1,5 @@
 parameters:
+
   nb_smsru_api_id: '07eb00aa-e1d0-5664-09af-0a454feb3aa7'
 
   nb_esputik_login: 'info@cuba-web.ru'
