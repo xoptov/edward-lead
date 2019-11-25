@@ -150,7 +150,7 @@ var vm = new Vue({
     data: data,
     computed: {
         isCurrentThreadOpen: function() {
-            return this.currentThread && this.currentThread.status !== 'closed';
+            return this.currentThread.id && this.currentThread.status !== 'closed';
         },
         isOpenNewThreadError: function() {
             return this.openNewThreadError;

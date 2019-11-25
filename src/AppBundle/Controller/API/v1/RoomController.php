@@ -6,6 +6,7 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
+use AppBundle\Event\MemberEvent;
 use AppBundle\Event\RoomEvent;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -110,16 +111,18 @@ class RoomController extends APIController
     /**
      * @Route("/room/{room}/revoke/{member}", name="api_v1_room_revoke_member", methods={"DELETE"}, defaults={"_format":"json"})
      *
-     * @param Room                   $room
-     * @param Member                 $member
-     * @param EntityManagerInterface $entityManager
+     * @param Room                     $room
+     * @param Member                   $member
+     * @param EntityManagerInterface   $entityManager
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
     public function deleteMemberAction(
         Room $room,
         Member $member,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher
     ): JsonResponse {
         if (!$this->isGranted(MemberVoter::DELETE, $member)) {
             return new JsonResponse([
@@ -131,6 +134,11 @@ class RoomController extends APIController
 
         $entityManager->remove($member);
         $entityManager->flush();
+
+        $eventDispatcher->dispatch(
+            MemberEvent::REMOVED, 
+            new MemberEvent($member)
+        );
 
         return new JsonResponse([
             'message' => 'Отозвано участие у пользователя в комнате',
@@ -170,7 +178,10 @@ class RoomController extends APIController
 
         $entityManager->flush();
 
-        $eventDispatcher->dispatch(RoomEvent::DEACTIVATED, new RoomEvent($room));
+        $eventDispatcher->dispatch(
+            RoomEvent::DEACTIVATED, 
+            new RoomEvent($room)
+        );
 
         return new JsonResponse([
             'message' => 'Комната успешно деактивирована',

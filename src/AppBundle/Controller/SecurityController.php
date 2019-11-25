@@ -298,6 +298,11 @@ class SecurityController extends Controller
 
             $this->userManager->updateUser($user);
 
+            $this->eventDispatcher->dispatch(
+                UserEvent::PASSWORD_CHANGED,
+                new UserEvent($user)
+            );
+
             return new Response('Пароль пользователя успешно изменен');
         }
 
