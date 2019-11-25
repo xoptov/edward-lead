@@ -1,0 +1,41 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Part\CreatedAtTrait;
+use AppBundle\Entity\Part\IdentificatorTrait;
+
+/**
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\AuthenticationFailureRepository")
+ * @ORM\HasLifecycleCallbacks
+ */
+class AuthenticationFailure
+{
+    use IdentificatorTrait;
+
+    use CreatedAtTrait;
+
+    /**
+     * @var int
+     * 
+     * @ORM\Column(type="integer", options={"unsigned":"true"})
+     */
+    private $ip;
+
+    /**
+     * @param int $ip
+     */
+    public function __construct(int $ip)
+    {
+        $this->ip = $ip;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIp(): int
+    {
+        return $this->ip;
+    }
+}
