@@ -5,6 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
@@ -220,6 +221,48 @@ class LeadRepository extends EntityRepository
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
+    }
+
+    /**
+     * @param string    $phone
+     * @param Room|null $room
+     *
+     * @return int
+     *
+     * @throws DBALException
+     */
+    public function getCountByPhoneAndWithNoFinishStatus(string $phone, ?Room $room = null): int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $query = <<<SQL
+SELECT COUNT(l.id)
+FROM lead AS l
+WHERE l.phone = :phone
+  AND l.status IN (:status_expect, :status_in_work, :status_arbitration)
+SQL;
+
+        if ($room) {
+            $query .= ' AND l.room_id = :room_id';
+        } else {
+            $query .= ' AND l.room_id IS NULL';
+        }
+
+        $stmt = $conn->prepare($query);
+        $stmt->bindValue('phone', $phone);
+        $stmt->bindValue('status_expect', Lead::STATUS_EXPECT);
+        $stmt->bindValue('status_in_work', Lead::STATUS_IN_WORK);
+        $stmt->bindValue('status_arbitration', Lead::STATUS_ARBITRATION);
+
+        if ($room) {
+            $stmt->bindValue('room_id', $room->getId());
+        }
+
+        if($stmt->execute()) {
+            return $stmt->fetchColumn();
+        }
+
+        return 0;
     }
 
     /**

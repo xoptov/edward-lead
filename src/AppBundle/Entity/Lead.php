@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="lead")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
- * @UniqueLead
+ * @UniqueLead(groups={"Create"})
  */
 class Lead implements IdentifiableInterface
 {

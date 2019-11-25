@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Lead;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -26,6 +27,8 @@ class UniqueLeadValidator extends ConstraintValidator
     /**
      * @param mixed      $value
      * @param Constraint $constraint
+     *
+     * @throws DBALException
      */
     public function validate($value, Constraint $constraint)
     {
@@ -37,25 +40,11 @@ class UniqueLeadValidator extends ConstraintValidator
             throw new UnexpectedTypeException($value, Lead::class);
         }
 
-        $leads = $this->entityManager
+        $founded = $this->entityManager
             ->getRepository(Lead::class)
-            ->getByPhoneAndWithNoFinishStatus($value->getPhone(), $value->getRoom());
+            ->getCountByPhoneAndWithNoFinishStatus($value->getPhone(), $value->getRoom());
 
-        $violation = false;
-
-        if ($value->getId()) {
-            /** @var Lead $lead */
-            foreach ($leads as $lead) {
-                if ($lead->getId() === $value->getId()) {
-                    continue;
-                }
-                $violation = true;
-            }
-        } elseif (count($leads)) {
-            $violation = true;
-        }
-
-        if ($violation) {
+        if ($founded) {
             if ($value->hasRoom()) {
                 $this->context
                     ->buildViolation($constraint->messageForRoom)

@@ -53,7 +53,7 @@ class UniqueLeadTest extends KernelTestCase
         $lead2 = new Lead();
         $lead2->setPhone('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -70,7 +70,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -87,7 +87,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -104,7 +104,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -121,7 +121,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -138,7 +138,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001');
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -155,7 +155,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead);
+        $violations = $this->validator->validate($lead, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -176,7 +176,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -197,7 +197,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -218,7 +218,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertCount(1, $violations);
 
         $this->entityManager->rollback();
@@ -239,7 +239,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -260,7 +260,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();
@@ -281,7 +281,7 @@ class UniqueLeadTest extends KernelTestCase
 
         $lead2 = $this->createLead('79000000001', $room, Lead::STATUS_EXPECT);
 
-        $violations = $this->validator->validate($lead2);
+        $violations = $this->validator->validate($lead2, null, ['Create']);
         $this->assertEmpty($violations);
 
         $this->entityManager->rollback();

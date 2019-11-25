@@ -195,7 +195,8 @@ class LeadController extends APIController
         }
 
         $form = $this->createForm(LeadType::class, null, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
+            'validation_groups' => ['Create']
         ]);
         $form->handleRequest($request);
 
