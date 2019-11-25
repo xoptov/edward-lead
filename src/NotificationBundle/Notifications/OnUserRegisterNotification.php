@@ -33,7 +33,7 @@ class OnUserRegisterNotification implements Notification
         $this->sendEmail($user);
     }
 
-    private function sendEmail(User $user)
+    private function sendEmail(User $user): void
     {
         $email = new Email;
 
