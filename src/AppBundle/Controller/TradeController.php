@@ -88,12 +88,12 @@ class TradeController extends Controller
 
             if ($lead->hasRoom() && !$lead->getRoom()->isPlatformWarranty()) {
                 $this->tradeManager->reject($trade);
-                $eventDispatcher->dispatch(TradeEvent::REJECTED, new TradeEvent($trade));
                 $this->addFlash('success', 'Статус у лида назначен как "не целевой"');
+                $eventDispatcher->dispatch(TradeEvent::REJECTED, new TradeEvent($trade));
             } else {
                 $this->tradeManager->arbitrage($trade);
-                $eventDispatcher->dispatch(TradeEvent::PROCEEDING, new TradeEvent($trade));
                 $this->addFlash('success', 'Лид заморожен и переден в арбитраж. Ожидайте ответа поддержки');
+                $eventDispatcher->dispatch(TradeEvent::PROCEEDING, new TradeEvent($trade));
             }
         } catch(OperationException $e) {
             $this->addFlash('error', $e->getMessage());
@@ -120,8 +120,8 @@ class TradeController extends Controller
 
         try {
             $this->tradeManager->askCallback($trade);
-            $eventDispatcher->dispatch(TradeEvent::ASK_CALLBACK, new TradeEvent($trade));
             $this->addFlash('success', 'Не забудьте перезвонить в течении 48 часов. Иначе лид будет засчитан как "целевой"');
+            $eventDispatcher->dispatch(TradeEvent::ASK_CALLBACK, new TradeEvent($trade));
         } catch (OperationException $e) {
             $this->addFlash('error', $e->getMessage());
         }

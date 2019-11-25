@@ -6,10 +6,12 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
+use AppBundle\Event\MessageEvent;
 use AppBundle\Service\Uploader;
 use AppBundle\Form\Type\ReplayType;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,16 +107,18 @@ class ArbitrationController extends Controller
     /**
      * @Route("/arbitration/reply", name="app_arbitration_reply", methods={"POST"})
      *
-     * @param Request                $request
-     * @param CacheManager           $cacheManager
-     * @param EntityManagerInterface $entityManager
+     * @param Request                  $request
+     * @param CacheManager             $cacheManager
+     * @param EntityManagerInterface   $entityManager
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
     public function reply(
         Request $request,
         CacheManager $cacheManager,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher
     ): JsonResponse {
 
         $form = $this->createForm(ReplayType::class);
@@ -188,6 +192,11 @@ class ArbitrationController extends Controller
                 'path' => $image->getPath()
             ];
         }
+
+        $eventDispatcher->dispatch(
+            MessageEvent::NEW_CREATED,
+            new MessageEvent($message)
+        );
 
         return new JsonResponse([
             'target_in' => false,

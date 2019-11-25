@@ -15,6 +15,7 @@ use AppBundle\Form\Type\ProfileType;
 use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\MonetaryTransaction;
+use AppBundle\Event\UserEvent;
 use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -321,12 +323,16 @@ class UserController extends Controller
     /**
      * @Route("/profile/password/update", name="app_profile_update_password", methods={"POST"})
      *
-     * @param Request $request
+     * @param Request                  $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
-    public function updatePasswordAction(Request $request): Response
-    {
+    public function updatePasswordAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher
+    ): Response {
+
         $passwordForm = $this->createForm(PasswordUpdateType::class);
         $passwordForm->handleRequest($request);
 
@@ -337,6 +343,11 @@ class UserController extends Controller
             $data = $passwordForm->getData();
             $user->setPlainPassword($data['password']);
             $this->userManager->updateUser($user);
+
+            $eventDispatcher->dispatch(
+                UserEvent::PASSWORD_CHANGED, 
+                new UserEvent($user)
+            );
 
             $this->addFlash('success', 'Новый пароль успешно установлен');
         }

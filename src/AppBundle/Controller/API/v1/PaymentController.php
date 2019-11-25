@@ -224,6 +224,11 @@ class PaymentController extends Controller
                 'user' => $userOwner
             ];
 
+            $this->eventDispatcher->dispatch(
+                InvoiceEvent::PROCESSED,
+                new InvoiceEvent($invoice[0])
+            );
+
             return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => $infoArray]);
         } catch (\Exception $ex) {
             // TODO: Какая то ошибка....
