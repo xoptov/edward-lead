@@ -42,7 +42,11 @@ class UniqueLeadValidator extends ConstraintValidator
 
         $founded = $this->entityManager
             ->getRepository(Lead::class)
-            ->getCountByPhoneAndWithNoFinishStatus($value->getPhone(), $value->getRoom());
+            ->getCountByPhoneAndWithNoFinishStatusOrTradePeriod(
+                $value->getPhone(),
+                $value->getRoom(),
+                $constraint->tradePeriod
+            );
 
         if ($founded) {
             if ($value->hasRoom()) {

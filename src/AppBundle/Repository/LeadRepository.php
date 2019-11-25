@@ -226,20 +226,29 @@ class LeadRepository extends EntityRepository
     /**
      * @param string    $phone
      * @param Room|null $room
+     * @param int       $tradePeriod
      *
      * @return int
      *
      * @throws DBALException
      */
-    public function getCountByPhoneAndWithNoFinishStatus(string $phone, ?Room $room = null): int
-    {
+    public function getCountByPhoneAndWithNoFinishStatusOrTradePeriod(
+        string $phone,
+        ?Room $room = null,
+        int $tradePeriod = 30
+    ): int {
+
         $conn = $this->getEntityManager()->getConnection();
 
         $query = <<<SQL
 SELECT COUNT(l.id)
 FROM lead AS l
+LEFT JOIN trade AS t ON l.id = t.lead_id
+LEFT JOIN operation AS o ON t.id = o.id
 WHERE l.phone = :phone
-  AND l.status IN (:status_expect, :status_in_work, :status_arbitration)
+  AND (l.status IN (:status_expect, :status_in_work, :status_arbitration)
+    OR (o.id IS NOT NULL AND DATE(o.created_at) > :expire_date)
+  )
 SQL;
 
         if ($room) {
@@ -248,11 +257,14 @@ SQL;
             $query .= ' AND l.room_id IS NULL';
         }
 
+        $expireDate = new \DateTime('-' . $tradePeriod . ' days');
+
         $stmt = $conn->prepare($query);
         $stmt->bindValue('phone', $phone);
         $stmt->bindValue('status_expect', Lead::STATUS_EXPECT);
         $stmt->bindValue('status_in_work', Lead::STATUS_IN_WORK);
         $stmt->bindValue('status_arbitration', Lead::STATUS_ARBITRATION);
+        $stmt->bindValue('expire_date', $expireDate->format('Y-m-d'));
 
         if ($room) {
             $stmt->bindValue('room_id', $room->getId());
