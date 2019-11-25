@@ -6,6 +6,7 @@ use Twig\Environment;
 use Twig\Error\RuntimeError;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
+use AppBundle\Event\MessageEvent;
 use AppBundle\Form\Type\AdminThreadType;
 use FOS\MessageBundle\Composer\Composer;
 use Symfony\Component\Form\FormRenderer;
@@ -17,9 +18,23 @@ use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
 use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ThreadController extends CRUDController
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @return Response
      *
@@ -40,6 +55,7 @@ class ThreadController extends CRUDController
         $this->admin->setSubject($existingObject);
         $objectId = $this->admin->getNormalizedIdentifier($existingObject);
 
+        /** @var Message $message */
         $message = new Message();
         $message->setThread($existingObject);
         $form = $this->createForm(AdminMessageType::class, $message);
@@ -73,6 +89,11 @@ class ThreadController extends CRUDController
                             ['%name%' => $this->escapeHtml($this->admin->toString($existingObject))],
                             'message'
                         )
+                    );
+
+                    $this->eventDispatcher->dispatch(
+                        MessageEvent::SUPPORT_REPLY,
+                        new MessageEvent($message)
                     );
 
                     return $this->redirectTo($existingObject);
