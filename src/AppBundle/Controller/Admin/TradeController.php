@@ -69,7 +69,6 @@ class TradeController extends CRUDController
             $this->tradeManager->accept($object, $feesAccount);
             $this->admin->update($object);
 
-            $this->eventDispatcher->dispatch(Trade::STATUS_ACCEPTED, new TradeEvent($object));
 
             $this->addFlash(
                 'sonata_flash_success',
@@ -79,6 +78,9 @@ class TradeController extends CRUDController
                     'SonataAdminBundle'
                 )
             );
+
+            $this->eventDispatcher->dispatch(TradeEvent::ACCEPTED, new TradeEvent($object));
+
         } catch (\Exception $e) {
             $this->handleModelManagerException($e);
 
@@ -125,7 +127,6 @@ class TradeController extends CRUDController
             $this->tradeManager->reject($object);
             $this->admin->update($object);
 
-            $this->eventDispatcher->dispatch(Trade::STATUS_REJECTED, new TradeEvent($object));
 
             $this->addFlash(
                 'sonata_flash_success',
@@ -135,6 +136,9 @@ class TradeController extends CRUDController
                     'SonataAdminBundle'
                 )
             );
+
+            $this->eventDispatcher->dispatch(TradeEvent::REJECTED, new TradeEvent($object));
+
         } catch (\Exception $e) {
             $this->handleModelManagerException($e);
 

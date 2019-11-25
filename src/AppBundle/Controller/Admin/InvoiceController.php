@@ -3,6 +3,8 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Invoice;
+use AppBundle\Event\AccountEvent;
+use AppBundle\Event\InvoiceEvent;
 use AppBundle\Service\InvoiceManager;
 use AppBundle\Form\Type\InvoiceProcessType;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Exception\ModelManagerException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class InvoiceController extends CRUDController
@@ -20,11 +23,20 @@ class InvoiceController extends CRUDController
     private $invoiceManager;
 
     /**
-     * @param InvoiceManager $invoiceManager
+     * @var EventDispatcherInterface
      */
-    public function __construct(InvoiceManager $invoiceManager)
-    {
+    private $eventDispatcher;
+
+    /**
+     * @param InvoiceManager           $invoiceManager
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(
+        InvoiceManager $invoiceManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->invoiceManager = $invoiceManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -65,6 +77,12 @@ class InvoiceController extends CRUDController
                     'SonataAdminBundle'
                 )
             );
+
+            $this->eventDispatcher->dispatch(
+                InvoiceEvent::PROCESSED,
+                new InvoiceEvent($object)
+            );
+
         } catch (ModelManagerException $e) {
             $this->handleModelManagerException($e);
 
