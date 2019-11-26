@@ -57,4 +57,9 @@ parameters:
     landing_url: 'https://edward-lead.ru'
 
     minimal_withdraw: 200000
+
+    auth_time_frame: 300
+    auth_fail_retry: 7
+
+    # Notifications
     admin_email: 'log@edward-lead.ru'
