@@ -15,6 +15,7 @@ class UserResetTokenUpdatedNotification implements Notification
      * @var EmailChannel
      */
     private $emailChannel;
+
     /**
      * @var UrlGeneratorInterface
      */
@@ -55,11 +56,7 @@ class UserResetTokenUpdatedNotification implements Notification
 
         $email->setToEmail($object->getEmail());
         $email->setTemplateId($this->getEmailTemplate());
-        $email->setParams(
-            [
-                "URL_PASSWORD" => $url,
-            ]
-        );
+        $email->setParams(["URL_PASSWORD" => $url]);
 
         $this->emailChannel->send($email);
     }
