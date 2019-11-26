@@ -3,37 +3,11 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\MessageEvent;
-use AppBundle\Notifications\MessageCreatedNotification;
-use AppBundle\Notifications\MessageSupportReplyNotification;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MessageEventListener implements EventSubscriberInterface
+class MessageEventListener extends BaseEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var MessageCreatedNotification
-     */
-    private $messageCreatedNotification;
-    /**
-     * @var MessageSupportReplyNotification
-     */
-    private $messageSupportReplyNotification;
-
-    /**
-     * MessageEventListener constructor.
-     *
-     * @param MessageCreatedNotification      $messageCreatedNotification
-     * @param MessageSupportReplyNotification $messageSupportReplyNotification
-     */
-    public function __construct(
-        MessageCreatedNotification $messageCreatedNotification,
-        MessageSupportReplyNotification $messageSupportReplyNotification
-    )
-    {
-        $this->messageCreatedNotification = $messageCreatedNotification;
-        $this->messageSupportReplyNotification = $messageSupportReplyNotification;
-    }
-
     /**
      * @inheritdoc
      */
@@ -52,7 +26,7 @@ class MessageEventListener implements EventSubscriberInterface
      */
     public function handleNewCreated(MessageEvent $event): void
     {
-        $this->messageCreatedNotification->send($event->getMessage());
+        $this->emailNotificationContainer->messageCreated($event->getMessage());
     }
 
     /**
@@ -62,6 +36,6 @@ class MessageEventListener implements EventSubscriberInterface
      */
     public function handleSupportReply(MessageEvent $event): void
     {
-        $this->messageSupportReplyNotification->send($event->getMessage());
+        $this->emailNotificationContainer->messageSupportReply($event->getMessage());
     }
 }
