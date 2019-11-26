@@ -3,27 +3,11 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\InvoiceEvent;
-use AppBundle\Notifications\InvoiceProcessedNotification;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class InvoiceEventListener implements EventSubscriberInterface
+class InvoiceEventListener extends BaseEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var InvoiceProcessedNotification
-     */
-    private $invoiceProcessedNotification;
-
-    /**
-     * InvoiceEventListener constructor.
-     *
-     * @param InvoiceProcessedNotification $invoiceProcessedNotification
-     */
-    public function __construct(InvoiceProcessedNotification $invoiceProcessedNotification)
-    {
-        $this->invoiceProcessedNotification = $invoiceProcessedNotification;
-    }
-
     /**
      * @inheritdoc
      */
@@ -41,6 +25,6 @@ class InvoiceEventListener implements EventSubscriberInterface
      */
     public function handleProcessed(InvoiceEvent $event): void
     {
-        $this->invoiceProcessedNotification->send($event->getInvoice());
+        $this->emailNotificationContainer->invoiceProcessed($event->getInvoice());
     }
 }

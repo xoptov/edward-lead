@@ -333,14 +333,6 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    AppBundle\Notifications\WithdrawAdminNotification:
-        arguments:
-            $adminEmail: '%admin_email%'
-
-    AppBundle\Notifications\MessageCreatedNotification:
-        arguments:
-            $adminEmail: '%admin_email%'
-
-    AppBundle\Notifications\TradeProceedingNotification:
+    AppBundle\Notifications\EmailNotificationContainer:
         arguments:
             $adminEmail: '%admin_email%'

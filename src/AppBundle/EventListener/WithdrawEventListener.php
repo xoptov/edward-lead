@@ -3,53 +3,11 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\WithdrawEvent;
-use AppBundle\Notifications\WithdrawAcceptedNotification;
-use AppBundle\Notifications\WithdrawAdminNotification;
-use AppBundle\Notifications\WithdrawRejectedNotification;
-use AppBundle\Notifications\WithdrawUserNotification;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class WithdrawEventListener implements EventSubscriberInterface
+class WithdrawEventListener extends BaseEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var WithdrawAcceptedNotification
-     */
-    private $withdrawAcceptedNotification;
-    /**
-     * @var WithdrawAdminNotification
-     */
-    private $withdrawAdminNotification;
-    /**
-     * @var WithdrawRejectedNotification
-     */
-    private $withdrawRejectedNotification;
-    /**
-     * @var WithdrawUserNotification
-     */
-    private $withdrawUserNotification;
-
-    /**
-     * WithdrawEventListener constructor.
-     *
-     * @param WithdrawAcceptedNotification $withdrawAcceptedNotification
-     * @param WithdrawAdminNotification    $withdrawAdminNotification
-     * @param WithdrawRejectedNotification $withdrawRejectedNotification
-     * @param WithdrawUserNotification     $withdrawUserNotification
-     */
-    public function __construct(
-        WithdrawAcceptedNotification $withdrawAcceptedNotification,
-        WithdrawAdminNotification $withdrawAdminNotification,
-        WithdrawRejectedNotification $withdrawRejectedNotification,
-        WithdrawUserNotification $withdrawUserNotification
-    )
-    {
-        $this->withdrawAcceptedNotification = $withdrawAcceptedNotification;
-        $this->withdrawAdminNotification = $withdrawAdminNotification;
-        $this->withdrawRejectedNotification = $withdrawRejectedNotification;
-        $this->withdrawUserNotification = $withdrawUserNotification;
-    }
-
     /**
      * @inheritdoc
      */
@@ -69,8 +27,8 @@ class WithdrawEventListener implements EventSubscriberInterface
      */
     public function handleNewCreated(WithdrawEvent $event): void
     {
-        $this->withdrawUserNotification->send($event->getWithdraw());
-        $this->withdrawAdminNotification->send($event->getWithdraw());
+        $this->emailNotificationContainer->withdrawUser($event->getWithdraw());
+        $this->emailNotificationContainer->withdrawAdmin($event->getWithdraw());
     }
 
     /**
@@ -80,7 +38,7 @@ class WithdrawEventListener implements EventSubscriberInterface
      */
     public function handleAccepted(WithdrawEvent $event): void
     {
-        $this->withdrawAcceptedNotification->send($event->getWithdraw());
+        $this->emailNotificationContainer->withdrawAccepted($event->getWithdraw());
     }
 
     /**
@@ -90,6 +48,6 @@ class WithdrawEventListener implements EventSubscriberInterface
      */
     public function handleRejected(WithdrawEvent $event): void
     {
-        $this->withdrawRejectedNotification->send($event->getWithdraw());
+        $this->emailNotificationContainer->withdrawRejected($event->getWithdraw());
     }
 }
