@@ -2,7 +2,7 @@
 
 curl -v \
     -H "Content-Type: application/json" \
-    --data '{"action":"addsip","login":"1234","password":"12345678"}' \
+    --data '{"action":"addsip","login":"123456","password":"11223344"}' \
     http://localhost:8081/account.php
 
 # < HTTP/1.1 200 OK
