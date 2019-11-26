@@ -7,6 +7,7 @@ parameters:
   nb_smsru_esputik_event_push_key: 'q4g245h245j53wj357j'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   nb_esputik_tempalte_email_registration: '2031908'
   nb_esputik_tempalte_email_api_change: '2032880'
@@ -26,6 +27,8 @@ parameters:
   nb_esputik_tempalte_email_password_change_success: '2034499'
 
 >>>>>>> add sample and init structure
+=======
+>>>>>>> init
   telegram_bot_id: ""
   telegram_bot_name: ""
 

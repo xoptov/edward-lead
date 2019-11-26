@@ -3,6 +3,7 @@
 namespace AppBundle\Event;
 
 use AppBundle\Entity\Account;
+use AppBundle\Entity\ClientAccount;
 use Symfony\Component\EventDispatcher\Event;
 
 class AccountEvent extends Event
@@ -16,17 +17,17 @@ class AccountEvent extends Event
     private $account;
 
     /**
-     * @param Account $account
+     * @param ClientAccount $account
      */
-    public function __construct(Account $account)
+    public function __construct(ClientAccount $account)
     {
         $this->account = $account;
     }
 
     /**
-     * @return Account
+     * @return ClientAccount
      */
-    public function getAccount(): Account
+    public function getAccount(): ClientAccount
     {
         return $this->account;
     }

@@ -2,7 +2,6 @@
 
 namespace AppBundle\EventListener;
 
-use AppBundle\Event\LeadEvent;
 use AppBundle\Event\MemberEvent;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
