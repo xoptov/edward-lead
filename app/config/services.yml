@@ -295,6 +295,15 @@ services:
         arguments:
             $userProvider: '@app.security.token_user_provider'
 
+    AppBundle\Security\AuthenticationFailureHandler:
+        arguments:
+            $httpUtils: '@security.http_utils'
+
+    AppBundle\Security\BannedChecker:
+        arguments:
+            $timeFrame: '%auth_time_frame%'
+            $retryLimit: '%auth_fail_retry%'
+
     AppBundle\Controller\ArbitrationController:
         arguments:
             $composer: '@fos_message.composer.default'

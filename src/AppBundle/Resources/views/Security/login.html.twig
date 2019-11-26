@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     {% if error is not empty %}
-                        <div style="color:#ff0000">Не удалось выполнить вход с указанными email и паролем.</div>
+                        <div style="color:#ff0000">{{ error.message|trans }}</div>
                     {% endif %}
                     {{ form_widget(form.submit, {'label': 'Войти в личный кабинет', 'attr': {'class': 'btn btn--green btn--form'}}) }}
                     {{ form_end(form) }}
