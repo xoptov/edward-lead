@@ -15,6 +15,7 @@ class LeadNewPlacedNotification implements Notification
      * @var EmailChannel
      */
     private $emailChannel;
+
     /**
      * @var UrlGeneratorInterface
      */

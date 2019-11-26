@@ -14,6 +14,7 @@ class WithdrawAdminNotification implements Notification
      * @var EmailChannel
      */
     private $emailChannel;
+
     /**
      * @var string
      */
