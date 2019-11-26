@@ -332,3 +332,15 @@ services:
     AppBundle\Validator\Constraints\UniqueLeadValidator:
         tags:
             - { name: validator.constraint_validator }
+
+    AppBundle\Notifications\WithdrawAdminNotification:
+        arguments:
+            $adminEmail: '%admin_email%'
+
+    AppBundle\Notifications\MessageCreatedNotification:
+        arguments:
+            $adminEmail: '%admin_email%'
+
+    AppBundle\Notifications\TradeProceedingNotification:
+        arguments:
+            $adminEmail: '%admin_email%'

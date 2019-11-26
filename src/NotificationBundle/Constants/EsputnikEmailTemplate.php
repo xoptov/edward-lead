@@ -1,0 +1,23 @@
+<?php
+
+namespace NotificationBundle\Constants;
+
+class EsputnikEmailTemplate
+{
+    const REGISTRATION = '2031908';
+    const API_KEY_CHANGE = '2032880';
+    const BALANCE_CHARGED = '2032909';
+    const BALANCE_LOW = '2032951';
+    const BALANCE_LOWER_THEN_MINIMAL = '2032994';
+    const SUPPORT_RESPONSE = '2033036';
+    const NEW_LEAD_IN_ROOM = '2033067';
+    const NO_VISITING_FOR_TOO_LONG = '2033106';
+    const NEW_ARBITRAJ = '2033137';
+    const NEW_SUPPORT_CONTACT = '2033457';
+    const BALANCE_WITHDRAW_FOR_USER = '2034441';
+    const BALANCE_WITHDRAW_FOR_ADMIN = '2033480';
+    const BALANCE_WITHDRAW_FAIL = '2034460';
+    const BALANCE_WITHDRAW_SUCCESS = '2034473';
+    const PASSWORD_CHANGE_REQUEST = '2034484';
+    const PASSWORD_CHANGE_SUCCESS = '2034499';
+}
