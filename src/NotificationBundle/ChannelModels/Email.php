@@ -21,10 +21,9 @@ class Email implements ChannelInterface
 
 
     /**
-     * @Assert\NotBlank
      * @var array
      */
-    private $params;
+    private $params = [];
 
     /**
      * @return string

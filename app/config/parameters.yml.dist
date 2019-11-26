@@ -57,3 +57,4 @@ parameters:
     landing_url: 'https://edward-lead.ru'
 
     minimal_withdraw: 200000
+    admin_email: 'log@edward-lead.ru'
