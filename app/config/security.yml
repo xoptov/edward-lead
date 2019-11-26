@@ -49,7 +49,6 @@ security:
         - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/registered, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/banned, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/v1/confirm/links, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/v1/telephony/callback, roles: IS_AUTHENTICATED_ANONYMOUSLY }

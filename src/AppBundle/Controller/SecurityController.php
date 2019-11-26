@@ -351,14 +351,4 @@ class SecurityController extends Controller
 
         return $this->render('@App/Security/confirm_links.html.twig', $data);
     }
-
-    /**
-     * @Route("/banned", name="app_banned", methods={"GET"})
-     * 
-     * @return Response
-     */
-    public function bannedAction(): Response
-    {
-        return new Response('Вы заблокированы на 5 минут из-за того что превысили количество попыток аутентификации');
-    }
 }
