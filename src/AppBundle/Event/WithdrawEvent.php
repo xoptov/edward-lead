@@ -9,6 +9,7 @@ class WithdrawEvent extends Event
 {
     const NEW_CREATED = 'withdraw.new_created';
     const ACCEPTED    = 'withdraw.accepted';
+    const REJECTED    = 'withdraw.rejected';
 
     /**
      * @var Withdraw
