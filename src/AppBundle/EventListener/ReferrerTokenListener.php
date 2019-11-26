@@ -2,6 +2,8 @@
 
 namespace AppBundle\EventListener;
 
+use DateTime;
+use Exception;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -21,6 +23,8 @@ class ReferrerTokenListener implements EventSubscriberInterface
 
     /**
      * @param FilterResponseEvent $event
+     *
+     * @throws Exception
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
@@ -45,7 +49,7 @@ class ReferrerTokenListener implements EventSubscriberInterface
         $cookie = new Cookie(
             'referrer',
             $referrer,
-            new \DateTime('+1 week'),
+            new DateTime('+1 week'),
             '/',
             null,
             false,

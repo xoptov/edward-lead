@@ -3,37 +3,11 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\AccountEvent;
-use AppBundle\Notifications\AccountBalanceApproachingZeroNotification;
-use AppBundle\Notifications\AccountBalanceLowerThenMinimalNotification;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class AccountEventListener implements EventSubscriberInterface
+class AccountEventListener extends BaseEventListener implements EventSubscriberInterface
 {
-    /**
-     * @var AccountBalanceApproachingZeroNotification
-     */
-    private $accountBalanceApproachingZeroNotification;
-    /**
-     * @var AccountBalanceLowerThenMinimalNotification
-     */
-    private $accountBalanceLowerThenMinimalNotification;
-
-    /**
-     * AccountEventListener constructor.
-     *
-     * @param AccountBalanceApproachingZeroNotification  $accountBalanceApproachingZeroNotification
-     * @param AccountBalanceLowerThenMinimalNotification $accountBalanceLowerThenMinimalNotification
-     */
-    public function __construct(
-        AccountBalanceApproachingZeroNotification $accountBalanceApproachingZeroNotification,
-        AccountBalanceLowerThenMinimalNotification $accountBalanceLowerThenMinimalNotification
-    )
-    {
-        $this->accountBalanceApproachingZeroNotification = $accountBalanceApproachingZeroNotification;
-        $this->accountBalanceLowerThenMinimalNotification = $accountBalanceLowerThenMinimalNotification;
-    }
-
     /**
      * @inheritdoc
      */
@@ -52,7 +26,7 @@ class AccountEventListener implements EventSubscriberInterface
      */
     public function handleBalanceApproachingZero(AccountEvent $event): void
     {
-        $this->accountBalanceApproachingZeroNotification->send($event->getAccount());
+        $this->emailNotificationContainer->accountBalanceApproachingZero($event->getAccount());
 
     }
 
@@ -63,6 +37,6 @@ class AccountEventListener implements EventSubscriberInterface
      */
     public function handleBalanceLowerThenMinimal(AccountEvent $event): void
     {
-        $this->accountBalanceLowerThenMinimalNotification->send($event->getAccount());
+        $this->emailNotificationContainer->accountBalanceLowerThenMinimal($event->getAccount());
     }
 }
