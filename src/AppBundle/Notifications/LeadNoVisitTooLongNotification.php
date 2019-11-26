@@ -46,7 +46,6 @@ class LeadNoVisitTooLongNotification implements Notification
 
         $email->setToEmail($object->getUser()->getEmail());
         $email->setTemplateId($this->getEmailTemplate());
-        $email->setParams([]);
 
         $this->emailChannel->send($email);
     }

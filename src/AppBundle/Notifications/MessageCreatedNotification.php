@@ -14,6 +14,7 @@ class MessageCreatedNotification implements Notification
      * @var EmailChannel
      */
     private $emailChannel;
+
     /**
      * @var string
      */
