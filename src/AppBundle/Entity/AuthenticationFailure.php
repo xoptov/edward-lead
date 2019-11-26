@@ -21,21 +21,21 @@ class AuthenticationFailure
      * 
      * @ORM\Column(type="integer", options={"unsigned":"true"})
      */
-    private $ip;
+    private $ipAddress;
 
     /**
-     * @param int $ip
+     * @param int $ipAddress
      */
-    public function __construct(int $ip)
+    public function __construct(int $ipAddress)
     {
-        $this->ip = $ip;
+        $this->ipAddress = $ipAddress;
     }
 
     /**
      * @return int
      */
-    public function getIp(): int
+    public function getIpAddress(): int
     {
-        return $this->ip;
+        return $this->ipAddress;
     }
 }

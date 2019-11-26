@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityRepository;
 
 class AuthenticationFailureRepository extends EntityRepository
@@ -11,6 +12,8 @@ class AuthenticationFailureRepository extends EntityRepository
      * @param int $seconds
      * 
      * @return int
+     *
+     * @throws DBALException
      */
     public function getCountByIPAndSecureTimeFrame(int $ip, int $seconds): int
     {
@@ -19,11 +22,11 @@ class AuthenticationFailureRepository extends EntityRepository
         $query = <<<SQL
 SELECT COUNT(id)
 FROM authentication_failure
-WHERE ip = :ip
-AND DATE_FORMAT(created_at, '%Y-%m-%d %H:%m:%s') > :start_time_frame
+WHERE ip_address = :ip_address
+AND DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') > :start_time_frame
 SQL;
 
-        $startTimeFrame = new \DateTime('-' . $seconds . 'seconds');
+        $startTimeFrame = new \DateTime('-' . $seconds . ' seconds');
 
         $stmt = $conn->prepare($query);
         $stmt->bindValue('ip', $ip);

@@ -26,6 +26,7 @@ security:
             security: false
         main:
             anonymous: ~
+            user_checker: AppBundle\Security\BannedChecker
             remember_me:
                 name: rememberme
                 secret: '%secret%'
