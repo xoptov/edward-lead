@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>TestInjections</title>
+    </head>
+    <body>
+        <div id="external-form"></div>
+        <script>
+            let obj = document.getElementById("external-form");
+            let div = document.createElement("div");
+            div.append("Hello");
+            obj.appendChild(div);
+        </script>
+    </body>
+</html>

@@ -6,9 +6,10 @@
  */
 
 define('DEBUG_MODE', false);
-
-define('API_KEY', 'bdb9e181a5cd7edd2a11ea61cbf417b3d6dc5871'); // Необходимо указать ключь API внутри ''
-define('ROOM_ID', 1); // Идентификатор комнаты в которую будет добавляться лид.
+//ffd6a331e0fd4b2848f22435ca4ef8e05ed5abf6  - @notebook
+//bdb9e181a5cd7edd2a11ea61cbf417b3d6dc5871 - @work
+define('API_KEY', 'ffd6a331e0fd4b2848f22435ca4ef8e05ed5abf6'); // Необходимо указать ключь API внутри ''
+define('ROOM_ID', 1047); // Идентификатор комнаты в которую будет добавляться лид.
 
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
 define('API_URL', 'http://edward.local/api/v1/lead');
