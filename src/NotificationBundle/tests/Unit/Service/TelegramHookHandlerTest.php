@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationBundle\tests\Unit\Services;
+namespace NotificationBundle\tests\Unit\Service;
 
 use AppBundle\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -16,8 +16,8 @@ class TelegramHookHandlerTest extends KernelTestCase
 {
     /**
      * @throws NoUserWithTelegramTokenException
-     * @throws ReflectionException
      * @throws ValidationTelegramHookException
+     * @throws ReflectionException
      */
     public function testTelegramHookHandlerValidationError()
     {

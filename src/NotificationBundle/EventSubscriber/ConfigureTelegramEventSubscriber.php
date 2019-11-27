@@ -25,7 +25,7 @@ class ConfigureTelegramEventSubscriber implements EventSubscriberInterface
      */
     public function setTelegramAuthToken(ConfigureTelegramEvent $event): void
     {
-        $user = $event->getUserWithTelegram();
+        $user = $event->getUser();
         $randomString = bin2hex(random_bytes(10));
         $user->setTelegramAuthToken($randomString);
     }

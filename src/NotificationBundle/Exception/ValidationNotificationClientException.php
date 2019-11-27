@@ -4,7 +4,7 @@ namespace NotificationBundle\Exception;
 
 use Throwable;
 
-class ValidationChannelModelException extends \Exception
+class ValidationNotificationClientException extends \Exception
 {
 
 }

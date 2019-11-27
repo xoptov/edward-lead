@@ -42,13 +42,13 @@ services:
 
   Brownie\ESputnik\HTTPClient\HTTPClient:
 
-  NotificationBundle\Client\EsputnikClient:
+  NotificationBundle\Client\EsputnikWebPushClient:
     arguments:
       $eventPushKey: '%nb_smsru_esputik_event_push_key%'
 
-  NotificationBundle\Client\Interfaces\EmailClientInterface: '@NotificationBundle\Client\EsputnikClient'
+  NotificationBundle\Client\Interfaces\EmailClientInterface: '@NotificationBundle\Client\EsputnikEmailClient'
   NotificationBundle\Client\Interfaces\SmsClientInterface: '@NotificationBundle\Client\SmsRuClient'
-  NotificationBundle\Client\Interfaces\WebPushClientInterface: '@NotificationBundle\Client\EsputnikClient'
+  NotificationBundle\Client\Interfaces\WebPushClientInterface: '@NotificationBundle\Client\EsputnikWebPushClient'
   NotificationBundle\Client\Interfaces\InternalClientInterface: '@NotificationBundle\Client\InternalClient'
   NotificationBundle\Client\Interfaces\TelegramClientInterface: '@NotificationBundle\Client\TelegramClient'
   Brownie\ESputnik\HTTPClient\Client: '@Brownie\ESputnik\HTTPClient\CurlClient'

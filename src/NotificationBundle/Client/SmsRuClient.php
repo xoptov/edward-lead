@@ -2,17 +2,16 @@
 
 namespace NotificationBundle\Client;
 
-use NotificationBundle\ChannelModel\Sms as SmsModel;
 use NotificationBundle\Client\Interfaces\SmsClientInterface;
-use NotificationBundle\Exception\NoApiClientException;
 use NotificationBundle\Exception\NotificationClientErrorException;
-use NotificationBundle\Exception\ValidationChannelModelException;
+use NotificationBundle\Exception\ValidationNotificationClientException;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Zelenin\SmsRu\Api;
 use Zelenin\SmsRu\Entity\Sms;
 use Zelenin\SmsRu\Exception\Exception;
 
-class SmsRuClient extends BaseClient implements SmsClientInterface
+class SmsRuClient extends Client implements SmsClientInterface
 {
     /**
      * @var Api
@@ -26,17 +25,18 @@ class SmsRuClient extends BaseClient implements SmsClientInterface
     }
 
     /**
-     * @param SmsModel $model
+     * @param array $model
+     *
      * @return object
-     * @throws NotificationClientErrorException
-     * @throws ValidationChannelModelException
      * @throws Exception
+     * @throws NotificationClientErrorException
+     * @throws ValidationNotificationClientException
      */
-    public function sendSMS(SmsModel $model): object
+    public function send(array $model): object
     {
        $this->validate($model);
 
-        $sms = new Sms($model->getPhone(), $model->getBody());
+        $sms = new Sms($model['phone'], $model['body']);
         $result = $this->client->smsSend($sms);
 
         if ($result->code !== 100) {
@@ -44,6 +44,14 @@ class SmsRuClient extends BaseClient implements SmsClientInterface
         }
 
         return $result;
+    }
+
+    protected function getValidationRules(): Assert\Collection
+    {
+        return new Assert\Collection([
+            'phone' => new Assert\NotBlank(),
+            'body' => new Assert\NotBlank(),
+        ]);
     }
 
 }

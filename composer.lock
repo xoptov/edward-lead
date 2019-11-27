@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "379c54a22024353faa015effbfa67daa",
+    "content-hash": "9ab9fb93b39d550803dfb067fdb55cc8",
     "packages": [
         {
             "name": "cocur/slugify",
@@ -2450,6 +2450,52 @@
                 "service proxies"
             ],
             "time": "2019-08-10T08:37:15+00:00"
+        },
+        {
+            "name": "ossbrownie/esputnik",
+            "version": "0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ossbrownie/esputnik.git",
+                "reference": "657a4562996de9a0dc7a255f434be5f116dd717f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ossbrownie/esputnik/zipball/657a4562996de9a0dc7a255f434be5f116dd717f",
+                "reference": "657a4562996de9a0dc7a255f434be5f116dd717f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpdocumentor/reflection-docblock": "2.0. *",
+                "phpunit/phpunit": "4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Brownie\\ESputnik\\": "src/Brownie/ESputnik/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "brownie",
+                    "email": "oss.brownie@gmail.com"
+                }
+            ],
+            "description": "Marketing automation system ESputnik.",
+            "homepage": "https://github.com/ossbrownie/esputnik",
+            "keywords": [
+                "brownie",
+                "esputnik"
+            ],
+            "time": "2018-08-14T17:14:41+00:00"
         },
         {
             "name": "paragonie/random_compat",

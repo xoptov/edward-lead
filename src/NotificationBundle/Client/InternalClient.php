@@ -8,7 +8,7 @@ use NotificationBundle\Client\Interfaces\InternalClientInterface;
 use NotificationBundle\Entity\Notification;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class InternalClient extends BaseClient implements InternalClientInterface
+class InternalClient implements InternalClientInterface
 {
     /**
      * @var EntityManager
@@ -16,7 +16,7 @@ class InternalClient extends BaseClient implements InternalClientInterface
     private $entityManager;
 
     /**
-     * InternalChannel constructor.
+     * InternalClient constructor.
      * @param ValidatorInterface $validator
      * @param EntityManagerInterface $entityManager
      */
@@ -27,14 +27,12 @@ class InternalClient extends BaseClient implements InternalClientInterface
         parent::__construct($validator);
     }
 
-    public function sendToDb(Notification $model): void
+    public function send(Notification $model): void
     {
-
         $this->validate($model);
 
         $this->entityManager->persist($model);
         $this->entityManager->flush();
-
     }
 
 }

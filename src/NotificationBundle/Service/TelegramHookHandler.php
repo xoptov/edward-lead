@@ -62,7 +62,6 @@ class TelegramHookHandler
      */
     private function validate(array $data): void
     {
-
         $constraint = $this->getConstraints();
         $violations = $this->validator->validate($data, $constraint);
 

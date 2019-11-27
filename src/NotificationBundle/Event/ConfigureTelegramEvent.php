@@ -12,7 +12,7 @@ class ConfigureTelegramEvent extends Event
     /**
      * @var UserWithTelegramInterface
      */
-    private $userWithTelegram;
+    private $user;
 
     /**
      * ConfigureTelegramEvent constructor.
@@ -20,22 +20,22 @@ class ConfigureTelegramEvent extends Event
      */
     public function __construct(UserWithTelegramInterface $userWithTelegram)
     {
-        $this->userWithTelegram = $userWithTelegram;
+        $this->user = $userWithTelegram;
     }
 
     /**
      * @return UserWithTelegramInterface
      */
-    public function getUserWithTelegram(): UserWithTelegramInterface
+    public function getUser(): UserWithTelegramInterface
     {
-        return $this->userWithTelegram;
+        return $this->user;
     }
 
     /**
-     * @param UserWithTelegramInterface $userWithTelegram
+     * @param UserWithTelegramInterface $user
      */
-    public function setUserWithTelegram(UserWithTelegramInterface $userWithTelegram): void
+    public function setUser(UserWithTelegramInterface $user): void
     {
-        $this->userWithTelegram = $userWithTelegram;
+        $this->user = $user;
     }
 }
