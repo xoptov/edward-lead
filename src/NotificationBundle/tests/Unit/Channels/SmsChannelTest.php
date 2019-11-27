@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Channels;
 
-use NotificationBundle\ChannelModels\Sms;
-use NotificationBundle\Channels\SmsChannel;
-use NotificationBundle\Clients\SmsRuClient;
+use NotificationBundle\ChannelModel\Sms;
+use NotificationBundle\Channel\SmsChannel;
+use NotificationBundle\Client\SmsRuClient;
 use PHPUnit\Framework\TestCase;
 
 class SmsChannelTest extends TestCase
@@ -12,9 +12,7 @@ class SmsChannelTest extends TestCase
 
     public function testSuccessSend()
     {
-        $mock = $this->getMockBuilder(SmsRuClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(SmsRuClient::class);
 
         $mock->expects($this->once())
             ->method('sendSMS');

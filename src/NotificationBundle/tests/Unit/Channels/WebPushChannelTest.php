@@ -2,18 +2,16 @@
 
 namespace Tests\Unit\Channels;
 
-use NotificationBundle\ChannelModels\WebPush;
-use NotificationBundle\Channels\WebPushChannel;
-use NotificationBundle\Clients\EsputnikClient;
+use NotificationBundle\ChannelModel\WebPush;
+use NotificationBundle\Channel\WebPushChannel;
+use NotificationBundle\Client\EsputnikClient;
 use PHPUnit\Framework\TestCase;
 
 class WebPushChannelTest extends TestCase
 {
     public function testSuccessSend()
     {
-        $mock = $this->getMockBuilder(EsputnikClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(EsputnikClient::class);
 
         $mock->expects($this->once())
             ->method('sendWebPush');

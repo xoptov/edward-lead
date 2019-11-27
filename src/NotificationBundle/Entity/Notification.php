@@ -3,7 +3,6 @@
 namespace NotificationBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use NotificationBundle\ChannelModels\ChannelInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="notification")
  * @ORM\Entity(repositoryClass="NotificationBundle\Repository\NotificationRepository")
  */
-class Notification implements ChannelInterface
+class Notification
 {
 
     const READ_STATUS_NEW = 'NEW';

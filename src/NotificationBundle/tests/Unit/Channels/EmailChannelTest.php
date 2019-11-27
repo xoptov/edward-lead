@@ -2,18 +2,16 @@
 
 namespace Tests\Unit\Channels;
 
-use NotificationBundle\ChannelModels\Email;
-use NotificationBundle\Channels\EmailChannel;
-use NotificationBundle\Clients\EsputnikClient;
+use NotificationBundle\ChannelModel\Email;
+use NotificationBundle\Channel\EmailChannel;
+use NotificationBundle\Client\EsputnikClient;
 use PHPUnit\Framework\TestCase;
 
 class EmailChannelTest extends TestCase
 {
     public function testSuccessSend()
     {
-        $mock = $this->getMockBuilder(EsputnikClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(EsputnikClient::class);
 
         $mock->expects($this->once())
             ->method('sendEmail');

@@ -3,9 +3,9 @@
 namespace Tests\Unit\Channels;
 
 use AppBundle\Entity\User;
-use NotificationBundle\ChannelModels\Telegram;
-use NotificationBundle\Channels\TelegramChannel;
-use NotificationBundle\Clients\TelegramClient;
+use NotificationBundle\ChannelModel\Telegram;
+use NotificationBundle\Channel\TelegramChannel;
+use NotificationBundle\Client\TelegramClient;
 use NotificationBundle\Event\ConfigureTelegramEvent;
 use NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber;
 use PHPUnit\Framework\TestCase;
@@ -37,9 +37,7 @@ class TelegramChannelTest extends TestCase
      */
     public function testSuccessSend()
     {
-        $mock = $this->getMockBuilder(TelegramClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(TelegramClient::class);
 
         $mock->expects($this->once())
             ->method('sendTelegram');
