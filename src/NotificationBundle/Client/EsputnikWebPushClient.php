@@ -5,17 +5,18 @@ namespace NotificationBundle\Client;
 use Brownie\ESputnik\ESputnik;
 use Brownie\ESputnik\HTTPClient\HTTPClient;
 use Brownie\ESputnik\Model\Event;
-use NotificationBundle\Client\Interfaces\WebPushClientInterface;
 use NotificationBundle\Exception\ValidationNotificationClientException;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class EsputnikWebPushClient extends EsputnikClient implements WebPushClientInterface
+class EsputnikWebPushClient extends EsputnikClient
 {
     /**
      * @var string
      */
     private $eventPushKey;
+    
     /**
      * @var ESputnik
      */
@@ -70,12 +71,15 @@ class EsputnikWebPushClient extends EsputnikClient implements WebPushClientInter
         return $result;
     }
 
-    protected function getValidationRules(): Assert\Collection
+    /**
+     * @return Collection
+     */
+    protected function getValidationRules(): Collection
     {
-        return new Assert\Collection([
-            'body' => new Assert\NotBlank(),
-            'link' => new Assert\NotBlank(),
-            'push_token' => new Assert\NotBlank(),
+        return new Collection([
+            'body' => new NotBlank(),
+            'link' => new NotBlank(),
+            'push_token' => new NotBlank(),
         ]);
     }
 

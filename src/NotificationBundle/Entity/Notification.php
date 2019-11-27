@@ -3,7 +3,7 @@
 namespace NotificationBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Notification
@@ -29,7 +29,7 @@ class Notification
     private $id;
 
     /**
-     * @Assert\NotBlank
+     * @NotBlank
      *
      * @var UserNotificationInterface
      *
@@ -39,7 +39,7 @@ class Notification
     private $user;
 
     /**
-     * @Assert\NotBlank
+     * @NotBlank
      *
      * @var string
      *

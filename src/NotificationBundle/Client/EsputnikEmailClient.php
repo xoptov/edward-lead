@@ -5,11 +5,11 @@ namespace NotificationBundle\Client;
 use Brownie\ESputnik\Exception\InvalidCodeException;
 use Brownie\ESputnik\Exception\JsonException;
 use Brownie\ESputnik\HTTPClient\HTTPClient;
-use NotificationBundle\Client\Interfaces\EmailClientInterface;
 use NotificationBundle\Exception\ValidationNotificationClientException;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-class EsputnikEmailClient extends EsputnikClient implements EmailClientInterface
+class EsputnikEmailClient extends EsputnikClient
 {
     const SMART_SEND_URL_TEMPLATE = 'message/{tempalteId}/smartsend';
 
@@ -46,12 +46,15 @@ class EsputnikEmailClient extends EsputnikClient implements EmailClientInterface
         return $result;
     }
 
-    protected function getValidationRules(): Assert\Collection
+    /**
+     * @return Collection
+     */
+    protected function getValidationRules(): Collection
     {
-        return new Assert\Collection([
-            'to_email' => new Assert\NotBlank(),
-            'template_id' => new Assert\NotBlank(),
-            'params' => new Assert\NotBlank(),
+        return new Collection([
+            'to_email' => new NotBlank(),
+            'template_id' => new NotBlank(),
+            'params' => new NotBlank(),
         ]);
     }
 

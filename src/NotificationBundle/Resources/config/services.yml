@@ -17,7 +17,7 @@ services:
 
   NotificationBundle\:
     resource: '../../*'
-    exclude: '../../{Entity,Repository,Event,tests}'
+    exclude: '../../{Entity,Repository,Event,Client,tests}'
 
   Zelenin\SmsRu\Auth\ApiIdAuth:
     arguments:
@@ -42,15 +42,23 @@ services:
 
   Brownie\ESputnik\HTTPClient\HTTPClient:
 
-  NotificationBundle\Client\EsputnikWebPushClient:
+  notification_bundle.web_push_client:
+    class: NotificationBundle\Client\EsputnikWebPushClient
     arguments:
       $eventPushKey: '%nb_smsru_esputik_event_push_key%'
 
-  NotificationBundle\Client\Interfaces\EmailClientInterface: '@NotificationBundle\Client\EsputnikEmailClient'
-  NotificationBundle\Client\Interfaces\SmsClientInterface: '@NotificationBundle\Client\SmsRuClient'
-  NotificationBundle\Client\Interfaces\WebPushClientInterface: '@NotificationBundle\Client\EsputnikWebPushClient'
-  NotificationBundle\Client\Interfaces\InternalClientInterface: '@NotificationBundle\Client\InternalClient'
-  NotificationBundle\Client\Interfaces\TelegramClientInterface: '@NotificationBundle\Client\TelegramClient'
+  notification_bundle.email_client:
+    class: NotificationBundle\Client\EsputnikEmailClient
+
+  notification_bundle.sms_client:
+    class: NotificationBundle\Client\SmsRuClient
+
+  notification_bundle.internal_client:
+    class: NotificationBundle\Client\InternalClient
+
+  notification_bundle.telegram_client:
+    class: NotificationBundle\Client\TelegramClient
+
   Brownie\ESputnik\HTTPClient\Client: '@Brownie\ESputnik\HTTPClient\CurlClient'
 
   NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber:

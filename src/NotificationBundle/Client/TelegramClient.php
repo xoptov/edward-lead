@@ -4,11 +4,11 @@ namespace NotificationBundle\Client;
 
 use Longman\TelegramBot\Exception\TelegramException;
 use Longman\TelegramBot\Request;
-use NotificationBundle\Client\Interfaces\TelegramClientInterface;
 use NotificationBundle\Exception\ValidationNotificationClientException;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-class TelegramClient extends Client implements TelegramClientInterface
+class TelegramClient extends Client
 {
     /**
      * @param array $model
@@ -27,11 +27,14 @@ class TelegramClient extends Client implements TelegramClientInterface
         ]);
     }
 
-    protected function getValidationRules(): Assert\Collection
+    /**
+     * @return Collection
+     */
+    protected function getValidationRules(): Collection
     {
-        return new Assert\Collection([
-            'chat_id' => new Assert\NotBlank(),
-            'text' => new Assert\NotBlank(),
+        return new Collection([
+            'chat_id' => new NotBlank(),
+            'text' => new NotBlank(),
         ]);
     }
 

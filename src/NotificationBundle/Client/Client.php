@@ -3,15 +3,15 @@
 namespace NotificationBundle\Client;
 
 use NotificationBundle\Exception\ValidationNotificationClientException;
+use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class Client
 {
     /**
-     * @return  Assert\Collection
+     * @return  Collection
      */
-    abstract protected function getValidationRules(): Assert\Collection;
+    abstract protected function getValidationRules(): Collection;
 
     /**
      * @param array $model

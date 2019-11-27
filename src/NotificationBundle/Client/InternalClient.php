@@ -4,11 +4,12 @@ namespace NotificationBundle\Client;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use NotificationBundle\Client\Interfaces\InternalClientInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use NotificationBundle\Entity\Notification;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class InternalClient implements InternalClientInterface
+class InternalClient
 {
     /**
      * @var EntityManager
@@ -27,6 +28,12 @@ class InternalClient implements InternalClientInterface
         parent::__construct($validator);
     }
 
+    /**
+     * @param Notification $model
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function send(Notification $model): void
     {
         $this->validate($model);

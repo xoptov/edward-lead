@@ -2,16 +2,16 @@
 
 namespace NotificationBundle\Client;
 
-use NotificationBundle\Client\Interfaces\SmsClientInterface;
 use NotificationBundle\Exception\NotificationClientErrorException;
 use NotificationBundle\Exception\ValidationNotificationClientException;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Zelenin\SmsRu\Api;
 use Zelenin\SmsRu\Entity\Sms;
 use Zelenin\SmsRu\Exception\Exception;
 
-class SmsRuClient extends Client implements SmsClientInterface
+class SmsRuClient extends Client
 {
     /**
      * @var Api
@@ -46,11 +46,14 @@ class SmsRuClient extends Client implements SmsClientInterface
         return $result;
     }
 
-    protected function getValidationRules(): Assert\Collection
+    /**
+     * @return Collection
+     */
+    protected function getValidationRules(): Collection
     {
-        return new Assert\Collection([
-            'phone' => new Assert\NotBlank(),
-            'body' => new Assert\NotBlank(),
+        return new Collection([
+            'phone' => new NotBlank(),
+            'body' => new NotBlank(),
         ]);
     }
 
