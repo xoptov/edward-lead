@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
@@ -177,6 +178,13 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
      */
     private $leadsPerDay;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Member", mappedBy="room")
+     */
+    private $members;
 
     /**
      * @return User|null
@@ -508,5 +516,21 @@ class Room implements IdentifiableInterface
     public function getLeadsPerDay(): ?int
     {
         return $this->leadsPerDay;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMembers(): ArrayCollection
+    {
+        return $this->members;
+    }
+
+    /**
+     * @param ArrayCollection $members
+     */
+    public function setMembers(ArrayCollection $members): void
+    {
+        $this->members = $members;
     }
 }

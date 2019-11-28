@@ -4,8 +4,10 @@ namespace AppBundle\Notifications;
 
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Trade;
+use AppBundle\Entity\User;
 use Exception;
 use NotificationBundle\Client\Client;
 
@@ -50,9 +52,14 @@ class WebPushNotificationContainer
      */
     public function messageSupportReply(Message $object): void
     {
+
+        $user = $object->getSender();
+
+        if(!$user instanceof User) return;
+
         $this->client->send([
-            "body" => "",
-            "push_token" => ""
+            "body" => "У вас имееться новое сообщение от службы поддержки",
+            "push_token" => $user->getWebPushToken()
         ]);
     }
 
@@ -64,36 +71,9 @@ class WebPushNotificationContainer
     public function leadNewPlaced(Lead $object): void
     {
         $this->client->send([
-            "body" => "",
-            "push_token" => ""
+            "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
+            "push_token" => $object->getBuyer()->getWebPushToken()
         ]);
-    }
-
-    /**
-     * @param Trade $object
-     *
-     * @throws Exception
-     */
-    public function tradeProceeding(Trade $object): void
-    {
-        $this->client->send([
-            "body" => "",
-            "push_token" => ""
-        ]);
-    }
-
-    /**
-     * @param Message $object
-     *
-     * @throws Exception
-     */
-    public function messageCreated(Message $object): void
-    {
-        // TODO
-//        $this->client->send([
-//            "body" => "",
-//            "push_token" => $object->setSender()->getWebPushToken()
-//        ]);
     }
 
     /**
@@ -103,10 +83,19 @@ class WebPushNotificationContainer
      */
     public function leadExpectTooLong(Lead $object): void
     {
-//        $this->client->send([
-//            "body" => "",
-//            "push_token" => $object->getUser()->getWebPushToken()
-//        ]);
+        foreach ($object->getRoom()->getMembers() as $member){
+
+            /** @var Member $member */
+            if(!$member->getUser()->isWebmaster()) continue;
+
+            $this->client->send([
+                "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
+                "push_token" => $member->getUser()->getWebPushToken()
+            ]);
+
+        }
+
+
     }
 
     /**
@@ -116,9 +105,9 @@ class WebPushNotificationContainer
      */
     public function leadInWorkTooLong(Lead $object): void
     {
-//        $this->client->send([
-//            "body" => "",
-//            "push_token" => $object->getUser()->getWebPushToken()
-//        ]);
+        $this->client->send([
+            "body" => "Лид {$object->getId()} уже более 24 часов находиться в статусе - В Работе",
+            "push_token" => $object->getBuyer()->getWebPushToken()
+        ]);
     }
 }
