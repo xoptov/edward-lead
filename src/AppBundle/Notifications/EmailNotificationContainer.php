@@ -2,13 +2,8 @@
 
 namespace AppBundle\Notifications;
 
+use AppBundle\Entity\Account;
 use AppBundle\Entity\ClientAccount;
-use AppBundle\Entity\Invoice;
-use AppBundle\Entity\Lead;
-use AppBundle\Entity\Message;
-use AppBundle\Entity\Trade;
-use AppBundle\Entity\User;
-use AppBundle\Entity\Withdraw;
 use Exception;
 use NotificationBundle\ChannelModels\Email;
 use NotificationBundle\Channels\EmailChannel;
@@ -45,44 +40,43 @@ class EmailNotificationContainer
     }
 
     /**
-     * @param ClientAccount $object
+     * @param Account $object
      *
      * @throws Exception
      */
-    public function accountBalanceApproachingZero(ClientAccount $object): void
+    public function accountBalanceApproachingZero(Account $object): void
     {
-        $email = new Email;
+        if (!$object instanceof ClientAccount) return;
 
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_LOW);
-        $email->setParams(
-            [
-                "NAME" => $object->getUser()->getName(),
-                "BALANCE" => $object->getBalance()
+        $this->emailClient->send([
+                "to_email" => $object->getUser()->getEmail(),
+                "template_id" => EsputnikEmailTemplate::BALANCE_LOW,
+                "params" => [
+                    "NAME" => $object->getUser()->getName(),
+                    "BALANCE" => $object->getBalance()
+                ]
             ]
         );
-
-        $this->emailChannel->send($email);
     }
 
     /**
-     * @param ClientAccount $object
+     * @param Account $object
      *
      * @throws Exception
      */
-    public function accountBalanceLowerThenMinimal(ClientAccount $object): void
+    public function accountBalanceLowerThenMinimal(Account $object): void
     {
-        $email = new Email;
+        if (!$object instanceof ClientAccount) return;
 
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_LOWER_THEN_MINIMAL);
-        $email->setParams(
-            [
-                "NAME" => $object->getUser()->getName(),
+        $this->emailClient->send([
+                "to_email" => $object->getUser()->getEmail(),
+                "template_id" => EsputnikEmailTemplate::BALANCE_LOWER_THEN_MINIMAL,
+                "params" => [
+                    "NAME" => $object->getUser()->getName(),
+                ]
             ]
         );
 
-        $this->emailChannel->send($email);
     }
 
     /**
