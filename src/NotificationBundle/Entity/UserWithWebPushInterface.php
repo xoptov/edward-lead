@@ -2,26 +2,15 @@
 
 namespace NotificationBundle\Entity;
 
-interface UserWithTelegramInterface
+interface UserWithWebPushInterface
 {
     /**
      * @return string
      */
-    public function getTelegramChatId(): string;
+    public function getWebPushToken(): string;
 
     /**
-     * @param string $telegramChatId
+     * @param string $webPushToken
      */
-    public function setTelegramChatId(string $telegramChatId): void;
-
-    /**
-     * @return string
-     */
-    public function getTelegramAuthToken(): string;
-
-    /**
-     * @param string $telegramAuthToken
-     */
-    public function setTelegramAuthToken(string $telegramAuthToken): void;
-
+    public function setWebPushToken(string $webPushToken): void;
 }
