@@ -335,4 +335,5 @@ services:
 
     AppBundle\Notifications\EmailNotificationContainer:
         arguments:
+            $client: '@notification_bundle.email_client'
             $adminEmail: '%admin_email%'

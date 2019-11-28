@@ -12,7 +12,7 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Notifications\EmailNotificationContainer;
-use NotificationBundle\Channels\EmailChannel;
+use NotificationBundle\Client\Client;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,11 +27,11 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
     /**
      * @var MockObject
      */
-    private $emailChanelMock;
+    private $emailClientMock;
 
     public function setUp()
     {
-        $this->emailChanelMock = $this->getMockBuilder(EmailChannel::class)
+        $this->emailClientMock = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -40,24 +40,24 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->service = new EmailNotificationContainer($this->emailChanelMock, $urlGenerator, 'admin@mail.com');
+        $this->service = new EmailNotificationContainer($this->emailClientMock, $urlGenerator, 'admin@mail.com');
     }
 
     public function testAccountBalanceApproachingZero()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->accountBalanceApproachingZero($this->getAccount());
     }
 
     public function testAccountBalanceLowerThenMinimal()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->accountBalanceLowerThenMinimal($this->getAccount());
     }
 
     public function testInvoiceProcessed()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
 
         $user = new User();
         $user
@@ -78,37 +78,37 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
     public function testLeadNewPlaced()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->leadNewPlaced($this->getLead());
     }
 
     public function testNoVisitTooLong()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->noVisitTooLong($this->getLead());
     }
 
     public function testMessageCreated()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->messageCreated($this->getMessage());
     }
 
     public function testMessageSupportReply()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->messageSupportReply($this->getMessage());
     }
 
     public function testNewUserRegistered()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->newUserRegistered($this->getUser());
     }
 
     public function testTradeProceeding()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
 
         $user = new User();
         $user
@@ -137,43 +137,43 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
     public function testUserApiTokenChanged()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->userApiTokenChanged($this->getUser());
     }
 
     public function testUserPasswordChanged()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->userPasswordChanged($this->getUser());
     }
 
     public function testUserResetTokenUpdated()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->userResetTokenUpdated($this->getUser());
     }
 
     public function testWithdrawAccepted()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->withdrawAccepted($this->getWithdraw());
     }
 
     public function testWithdrawAdmin()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->withdrawAdmin($this->getWithdraw());
     }
 
     public function testWithdrawRejected()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->withdrawRejected($this->getWithdraw());
     }
 
     public function testWithdrawUser()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
+        $this->emailClientMock->expects($this->once())->method('send');
         $this->service->withdrawUser($this->getWithdraw());
     }
 

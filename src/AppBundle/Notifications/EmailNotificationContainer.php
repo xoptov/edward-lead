@@ -19,7 +19,7 @@ class EmailNotificationContainer
     /**
      * @var Client
      */
-    private $emailClient;
+    private $client;
 
     /**
      * @var UrlGeneratorInterface
@@ -34,13 +34,13 @@ class EmailNotificationContainer
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client                $emailClient
+     * @param Client                $client
      * @param UrlGeneratorInterface $router
      * @param string                $adminEmail
      */
-    public function __construct(Client $emailClient, UrlGeneratorInterface $router, string $adminEmail)
+    public function __construct(Client $client, UrlGeneratorInterface $router, string $adminEmail)
     {
-        $this->emailClient = $emailClient;
+        $this->client = $client;
         $this->router = $router;
         $this->adminEmail = $adminEmail;
     }
@@ -52,7 +52,7 @@ class EmailNotificationContainer
      */
     public function accountBalanceApproachingZero(ClientAccount $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_LOW,
             "params" => [
@@ -69,7 +69,7 @@ class EmailNotificationContainer
      */
     public function accountBalanceLowerThenMinimal(ClientAccount $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_LOWER_THEN_MINIMAL,
             "params" => [
@@ -85,7 +85,7 @@ class EmailNotificationContainer
      */
     public function invoiceProcessed(Invoice $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_CHARGED,
             "params" => [
@@ -103,7 +103,7 @@ class EmailNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
             "params" => [
@@ -122,7 +122,7 @@ class EmailNotificationContainer
      */
     public function noVisitTooLong(Lead $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::NO_VISITING_FOR_TOO_LONG,
             "params" => [],
@@ -136,7 +136,7 @@ class EmailNotificationContainer
      */
     public function messageCreated(Message $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $this->adminEmail,
             "template_id" => EsputnikEmailTemplate::NEW_SUPPORT_CONTACT,
             "params" => [
@@ -153,7 +153,7 @@ class EmailNotificationContainer
      */
     public function messageSupportReply(Message $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getSender()->getEmail(),
             "template_id" => EsputnikEmailTemplate::SUPPORT_RESPONSE,
             "params" => [
@@ -170,7 +170,7 @@ class EmailNotificationContainer
      */
     public function newUserRegistered(User $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::REGISTRATION,
             "params" => ["name" => $object->getName()],
@@ -184,7 +184,7 @@ class EmailNotificationContainer
      */
     public function tradeProceeding(Trade $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $this->adminEmail,
             "template_id" => EsputnikEmailTemplate::NEW_ARBITRAJ,
             "params" => [
@@ -205,7 +205,7 @@ class EmailNotificationContainer
      */
     public function userApiTokenChanged(User $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
             "params" => ["KEYAPI" => $object->getToken()],
@@ -219,7 +219,7 @@ class EmailNotificationContainer
      */
     public function userPasswordChanged(User $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_SUCCESS,
             "params" => [],
@@ -235,7 +235,7 @@ class EmailNotificationContainer
     {
         $url = $this->router->generate('app_password_reset_confirm', ['token' => $object->getResetToken()]);
 
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_REQUEST,
             "params" => ["URL_PASSWORD" => $url],
@@ -249,7 +249,7 @@ class EmailNotificationContainer
      */
     public function withdrawAccepted(Withdraw $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_SUCCESS,
             "params" => [
@@ -267,7 +267,7 @@ class EmailNotificationContainer
      */
     public function withdrawAdmin(Withdraw $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $this->adminEmail,
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN,
             "params" => [
@@ -285,7 +285,7 @@ class EmailNotificationContainer
      */
     public function withdrawRejected(Withdraw $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FAIL,
             "params" => [
@@ -302,7 +302,7 @@ class EmailNotificationContainer
      */
     public function withdrawUser(Withdraw $object): void
     {
-        $this->emailClient->send([
+        $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_USER,
             "params" => [
