@@ -5,6 +5,7 @@ namespace AppBundle\Notifications;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
@@ -116,11 +117,11 @@ class EmailNotificationContainer
     }
 
     /**
-     * @param Lead $object
+     * @param Member $object
      *
      * @throws Exception
      */
-    public function noVisitTooLong(Lead $object): void
+    public function noVisitTooLong(Member $object): void
     {
         $this->client->send([
             "to_email" => $object->getUser()->getEmail(),

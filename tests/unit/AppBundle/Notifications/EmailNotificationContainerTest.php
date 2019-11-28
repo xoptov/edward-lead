@@ -5,6 +5,7 @@ namespace Tests\unit\AppBundle\Notifications;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Thread;
@@ -85,7 +86,7 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
     public function testNoVisitTooLong()
     {
         $this->emailClientMock->expects($this->once())->method('send');
-        $this->service->noVisitTooLong($this->getLead());
+        $this->service->noVisitTooLong($this->getMember());
     }
 
     public function testMessageCreated()
@@ -256,6 +257,22 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
             ->setPlainPassword(123456);
 
         $object = new Withdraw();
+        $object->setUser($user);
+
+        return $object;
+    }
+
+    private function getMember()
+    {
+
+        $user = new User();
+        $user
+            ->setName('Company 1')
+            ->setEmail('company1@xoptov.ru')
+            ->setPhone('79000000001')
+            ->setPlainPassword(123456);
+
+        $object = new Member();
         $object->setUser($user);
 
         return $object;
