@@ -10,6 +10,8 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use AppBundle\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use NotificationBundle\Client\Client;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
@@ -26,24 +28,23 @@ class EmailNotificationContainer
      * @var UrlGeneratorInterface
      */
     private $router;
-
     /**
-     * @var string
+     * @var EntityManagerInterface
      */
-    private $adminEmail;
+    private $entityManager;
 
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client                $client
-     * @param UrlGeneratorInterface $router
-     * @param string                $adminEmail
+     * @param Client                 $client
+     * @param UrlGeneratorInterface  $router
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client, UrlGeneratorInterface $router, string $adminEmail)
+    public function __construct(Client $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->router = $router;
-        $this->adminEmail = $adminEmail;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -137,14 +138,22 @@ class EmailNotificationContainer
      */
     public function messageCreated(Message $object): void
     {
-        $this->client->send([
-            "to_email" => $this->adminEmail,
-            "template_id" => EsputnikEmailTemplate::NEW_SUPPORT_CONTACT,
-            "params" => [
-                "ID_SUPPORT" => $object->getThread()->getId(),
-                "ID_USER" => $object->getSender()->getId(),
-            ],
-        ]);
+        $users = $this->getNotificationOperators();
+
+        /** @var User $user */
+        foreach ($users as $user) {
+
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_SUPPORT_CONTACT,
+                "params" => [
+                    "ID_SUPPORT" => $object->getThread()->getId(),
+                    "ID_USER" => $object->getSender()->getId(),
+                ],
+            ]);
+
+        }
+
     }
 
     /**
@@ -185,18 +194,26 @@ class EmailNotificationContainer
      */
     public function tradeProceeding(Trade $object): void
     {
-        $this->client->send([
-            "to_email" => $this->adminEmail,
-            "template_id" => EsputnikEmailTemplate::NEW_ARBITRAJ,
-            "params" => [
-                "ID_ARBITRATION" => $object->getId(),
-                "ID_LEAD" => $object->getLead()->getId(),
-                "ID_WEBMASTER" => $object->getSellerId(),
-                "ID_COMPANY" => $object->getBuyerId(),
-                "SUMM_DEAL" => $object->getAmount(),
-                "ID_ROOM" => $object->getLead()->getRoom()->getId(),
-            ],
-        ]);
+        $users = $this->getNotificationOperators();
+
+        /** @var User $user */
+        foreach ($users as $user) {
+
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_ARBITRAJ,
+                "params" => [
+                    "ID_ARBITRATION" => $object->getId(),
+                    "ID_LEAD" => $object->getLead()->getId(),
+                    "ID_WEBMASTER" => $object->getSellerId(),
+                    "ID_COMPANY" => $object->getBuyerId(),
+                    "SUMM_DEAL" => $object->getAmount(),
+                    "ID_ROOM" => $object->getLead()->getRoom()->getId(),
+                ],
+            ]);
+
+        }
+
     }
 
     /**
@@ -268,15 +285,22 @@ class EmailNotificationContainer
      */
     public function withdrawAdmin(Withdraw $object): void
     {
-        $this->client->send([
-            "to_email" => $this->adminEmail,
-            "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN,
-            "params" => [
-                "ID_USER" => $object->getUser()->getId(),
-                "BALANCE_LOGOUT" => $object->getAmount(),
-                "ID_BALANCE_LOGOUT" => $object->getId(),
-            ],
-        ]);
+        $users = $this->getNotificationOperators();
+
+        /** @var User $user */
+        foreach ($users as $user) {
+
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN,
+                "params" => [
+                    "ID_USER" => $object->getUser()->getId(),
+                    "BALANCE_LOGOUT" => $object->getAmount(),
+                    "ID_BALANCE_LOGOUT" => $object->getId(),
+                ],
+            ]);
+        }
+
     }
 
     /**
@@ -311,5 +335,17 @@ class EmailNotificationContainer
                 "ID_BALANCE_LOGOUT" => $object->getId(),
             ],
         ]);
+    }
+
+    /**
+     * @return array
+     */
+    private function getNotificationOperators()
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->entityManager->getRepository(User::class);
+
+        return $repository->getByRole(User::ROLE_NOTIFICATION_OPERATOR);
+
     }
 }

@@ -61,5 +61,3 @@ parameters:
     auth_time_frame: 300
     auth_fail_retry: 7
 
-    admin_email: 'log@edward-lead.ru'
-
