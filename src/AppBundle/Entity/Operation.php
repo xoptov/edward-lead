@@ -103,17 +103,13 @@ class Operation implements IdentifiableInterface
     }
 
     /**
-     * @param int|null $divisor
+     * @param int $divisor
      *
      * @return int|null
      */
-    public function getAmount(?int $divisor = null): ?int
+    public function getAmount(int $divisor = 1): ?int
     {
-        if ($divisor) {
-            return $this->amount / $divisor;
-        }
-
-        return $this->amount;
+        return $this->amount / $divisor;
     }
 
     /**
