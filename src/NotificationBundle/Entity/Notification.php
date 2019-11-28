@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class Notification
 {
-
     const READ_STATUS_NEW = 'NEW';
     const READ_STATUS_VIEWED = 'VIEWED';
 
