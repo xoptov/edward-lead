@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Unit\Channels;
+namespace Tests\Unit\Client;
 
 use AppBundle\Entity\User;
-use NotificationBundle\ChannelModels\Telegram;
-use NotificationBundle\Channels\TelegramChannel;
-use NotificationBundle\Clients\TelegramClient;
+use NotificationBundle\Client\TelegramClient;
 use NotificationBundle\Event\ConfigureTelegramEvent;
 use NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber;
+use NotificationBundle\Exception\ValidationNotificationClientException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Validation;
 
-class TelegramChannelTest extends TestCase
+class TelegramClientTest extends TestCase
 {
     /**
      * @throws \Exception
@@ -35,22 +35,15 @@ class TelegramChannelTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testSuccessSend()
+    public function testSendValidationFail()
     {
-        $mock = $this->getMockBuilder(TelegramClient::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->expectException(ValidationNotificationClientException::class);
 
-        $mock->expects($this->once())
-            ->method('sendTelegram');
+        $client = new TelegramClient(Validation::createValidator());
 
-        $model = new Telegram();
-        $model->setChatId('chatId');
-        $model->setMessage('some notification message');
-
-        $chanel = new TelegramChannel($mock);
-
-        $chanel->send($model);
+        $client->send([
+            "text" => "Test",
+        ]);
     }
 
 }

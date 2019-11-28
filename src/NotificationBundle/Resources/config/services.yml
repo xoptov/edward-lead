@@ -14,6 +14,10 @@ services:
   _defaults:
     autowire: true
 
+  NotificationBundle\:
+    resource: '../../*'
+    exclude: '../../{Entity,Repository,Event,Client,tests}'
+
   Zelenin\SmsRu\Auth\ApiIdAuth:
     arguments:
       - '%nb_smsru_api_id%'
@@ -27,8 +31,6 @@ services:
       - '%telegram_bot_id%'
       - '%telegram_bot_name%'
 
-  NotificationBundle\Clients\SmsRuClient:
-
   Brownie\ESputnik\Config:
     arguments:
       - { login: '%nb_esputik_login%', password: '%nb_esputik_password%'}
@@ -39,37 +41,27 @@ services:
 
   Brownie\ESputnik\HTTPClient\HTTPClient:
 
-  NotificationBundle\Clients\TelegramClient:
-
-  NotificationBundle\Clients\EsputnikClient:
+  notification_bundle.web_push_client:
+    class: NotificationBundle\Client\EsputnikWebPushClient
     arguments:
       $eventPushKey: '%nb_smsru_esputik_event_push_key%'
 
-  NotificationBundle\Clients\InternalClient:
+  notification_bundle.email_client:
+    class: NotificationBundle\Client\EsputnikEmailClient
 
-  NotificationBundle\Clients\Interfaces\EmailClientInterface: '@NotificationBundle\Clients\EsputnikClient'
-  NotificationBundle\Clients\Interfaces\SmsClientInterface: '@NotificationBundle\Clients\SmsRuClient'
-  NotificationBundle\Clients\Interfaces\WebPushClientInterface: '@NotificationBundle\Clients\EsputnikClient'
-  NotificationBundle\Clients\Interfaces\InternalClientInterface: '@NotificationBundle\Clients\InternalClient'
-  NotificationBundle\Clients\Interfaces\TelegramClientInterface: '@NotificationBundle\Clients\TelegramClient'
+  notification_bundle.sms_client:
+    class: NotificationBundle\Client\SmsRuClient
+
+  notification_bundle.internal_client:
+    class: NotificationBundle\Client\InternalClient
+
+  notification_bundle.telegram_client:
+    class: NotificationBundle\Client\TelegramClient
+
   Brownie\ESputnik\HTTPClient\Client: '@Brownie\ESputnik\HTTPClient\CurlClient'
-
-  NotificationBundle\Channels\EmailChannel:
-
-  NotificationBundle\Channels\SmsChannel:
-
-  NotificationBundle\Channels\WebPushChannel:
-
-  NotificationBundle\Channels\TelegramChannel:
-
-  NotificationBundle\Channels\InternalChannel:
 
   NotificationBundle\EventSubscriber\ConfigureTelegramEventSubscriber:
     autowire: true
     tags:
       - { name: kernel.event_subscriber }
-
-  NotificationBundle\Services\TelegramHookHandler:
-
-  NotificationBundle\Controller\TelegramHookController:
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace NotificationBundle\tests\Unit\Services;
+namespace NotificationBundle\tests\Unit\Service;
 
 use AppBundle\Entity\User;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use NotificationBundle\Exceptions\NoUserWithTelegramTokenException;
-use NotificationBundle\Exceptions\ValidationTelegramHookException;
-use NotificationBundle\Services\TelegramHookHandler;
+use NotificationBundle\Exception\NoUserWithTelegramTokenException;
+use NotificationBundle\Exception\ValidationTelegramHookException;
+use NotificationBundle\Service\TelegramHookHandler;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validation;
@@ -16,8 +16,8 @@ class TelegramHookHandlerTest extends KernelTestCase
 {
     /**
      * @throws NoUserWithTelegramTokenException
-     * @throws ReflectionException
      * @throws ValidationTelegramHookException
+     * @throws ReflectionException
      */
     public function testTelegramHookHandlerValidationError()
     {
@@ -41,9 +41,7 @@ class TelegramHookHandlerTest extends KernelTestCase
         $this->expectException(NoUserWithTelegramTokenException::class);
 
         $validator = Validation::createValidator();
-        $mock = $this->getMockBuilder(EntityManagerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $mock = $this->createMock(EntityManagerInterface::class);
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->any())

@@ -1,12 +1,13 @@
 <?php
 
-namespace NotificationBundle\Services;
+namespace NotificationBundle\Service;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use NotificationBundle\Exceptions\NoUserWithTelegramTokenException;
-use NotificationBundle\Exceptions\ValidationTelegramHookException;
-use Symfony\Component\Validator\Constraints as Assert;
+use NotificationBundle\Exception\NoUserWithTelegramTokenException;
+use NotificationBundle\Exception\ValidationTelegramHookException;
+use Symfony\Component\Validator\Constraints\Collection;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TelegramHookHandler
@@ -62,7 +63,6 @@ class TelegramHookHandler
      */
     private function validate(array $data): void
     {
-
         $constraint = $this->getConstraints();
         $violations = $this->validator->validate($data, $constraint);
 
@@ -72,16 +72,16 @@ class TelegramHookHandler
     }
 
     /**
-     * @return Assert\Collection
+     * @return Collection
      */
     private function getConstraints()
     {
-        return new Assert\Collection([
-            'message' => new Assert\Collection([
-                'chat' => new Assert\Collection([
-                    'id' => new Assert\NotBlank()
+        return new Collection([
+            'message' => new Collection([
+                'chat' => new Collection([
+                    'id' => new NotBlank()
                 ]),
-                'text' => new Assert\NotBlank()
+                'text' => new NotBlank()
             ]),
         ]);
     }

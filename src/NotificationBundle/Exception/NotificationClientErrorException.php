@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationBundle\Exceptions;
+namespace NotificationBundle\Exception;
 
 use Throwable;
 
