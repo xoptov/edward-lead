@@ -337,3 +337,7 @@ services:
         arguments:
             $emailClient: '@notification_bundle.email_client'
             $adminEmail: '%admin_email%'
+
+    AppBundle\Notifications\SmsNotificationContainer:
+        arguments:
+            $smsClient: '@notification_bundle.sms_client'
