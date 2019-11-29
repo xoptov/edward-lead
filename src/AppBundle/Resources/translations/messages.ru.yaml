@@ -174,9 +174,14 @@ Work time: Рабочее время
 Start at: Начало в
 End at: Конец в
 Work days: Рабочие дни
-
+Offer: Оффер
+Public Offer: Публичный оффер
+Auto Connect: Авто подключение
 Decision Maker: Лицо принимающее решение
 Interest Assessment: Оценка заинтересованость в покупке
+Channels: Каналы
+Allowed: Разрешён
+Main: Главная
 
 lead:
     status:
@@ -219,3 +224,42 @@ Member: Участник
 Member List: Список участников
 Member Create: Добавить участника
 Room Id: ID Комнаты
+Bad credentials.: Неверные учетные данные.
+User temporarily banned.: Пользователь временно забанен.
+
+Upload Logotype: Загрузить логотип
+Logotype: Логотип
+
+# Для новой вёрстки
+
+common:
+    balance: Баланс
+    hold: Холд
+    rate: Ставка
+    logotype: Логотип
+    and: '%before%и%after%'
+header:
+    already_have_an_account: Уже есть аккаунт?
+    login: Войти
+menu:
+    admin_panel: Админ панель
+    dashboard: Панель управления
+    rooms: Комнаты
+    offers: Офферы
+    my_leads: Мои лиды
+    arbitration_and_support: Арбитраж / поддержка
+    billing: Биллинг
+    personal_account: Личный счёт
+    operations_history: История операций
+    invoices_and_acts: Счета и акты
+    referral_program: Реферальная программа
+    integrations: Интеграции
+    telephony: Телефония
+    advertiser_cabinet: Кабинет рекламодателя
+    my_profile: Мой профиль
+    knowledge_base: База знаний
+    logout: Выход
+
+macros:
+    room:
+        lead_price_depend_on_locality: Зависит от населенного пункта

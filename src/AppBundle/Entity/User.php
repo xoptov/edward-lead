@@ -2,11 +2,12 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -215,15 +216,23 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|HistoryAction[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\HistoryAction", mappedBy="user")
      */
     private $historyActions;
 
+    /**
+     * @var ArrayCollection|OfferRequest[]
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
+     */
+    private $offerRequests;
+
     public function __construct()
     {
         $this->historyActions = new ArrayCollection();
+        $this->offerRequests = new ArrayCollection();
     }
 
     /**
@@ -270,6 +279,18 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getCompany(): ?Company
     {
         return $this->company;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCompanyId(): ?int
+    {
+        if ($this->company) {
+            return $this->company->getId();
+        }
+
+        return null;
     }
 
     /**
@@ -832,6 +853,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getHistoryActions(): Collection
     {
         return $this->historyActions;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOfferRequests(): Collection
+    {
+        return clone $this->offerRequests;
     }
 
     /**

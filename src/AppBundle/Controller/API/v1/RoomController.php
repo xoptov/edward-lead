@@ -10,10 +10,12 @@ use AppBundle\Event\RoomEvent;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\MemberVoter;
+use AppBundle\Service\RoomManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -258,5 +260,30 @@ class RoomController extends APIController
         return new JsonResponse(
             ['Приглашение в комнату принято в очередь на отправку']
         );
+    }
+
+    /**
+     * @Route("/room/{room}/join", name="api_v1_room_join", methods={"GET"})
+     * 
+     * @param Room        $room
+     * @param RoomManager $roomManager
+     * @param 
+     * 
+     * @return JsonResponse
+     */
+    public function joinMemberAction(
+        Room $room,
+        RoomManager $roomManager
+    ): JsonResponse {
+        
+        $user = $this->getUser();
+
+        try {
+            $member = $roomManager->joinInRoom($room, $user);
+        } catch (\Exception $e) {
+            return new JsonResponse([$e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+
+        return new JsonResponse(['id' => $member->getId()]);
     }
 }

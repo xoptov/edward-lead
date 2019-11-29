@@ -2,7 +2,7 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # https://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
-    database_host: 127.0.0.1
+    database_host: mysql
     database_port: ~
     database_name: edward
     database_user: root
@@ -49,6 +49,7 @@ parameters:
     max_asks_callback: 2
 
     message_limit_in_minute: 5
+    offer_limit_in_seconds: 3600
 
     # Statistics
     google_tag_manager: false

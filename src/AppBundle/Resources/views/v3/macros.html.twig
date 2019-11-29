@@ -1,0 +1,11 @@
+{% macro room_lead_price(room) -%}
+    {%- if room.leadPrice -%}
+        {%- if is_granted('ROLE_COMPANY') and room.hasHiddenMargin -%}
+            {{- (room.leadPrice + room.hiddenMargin)|money_format -}}
+        {%- else -%}
+            {{- room.leadPrice|money_format -}}
+        {%- endif -%}
+    {%- else -%}
+        {{ 'macros.room.lead_price_depend_on_locality'|trans }}
+    {%- endif -%}
+{%- endmacro %}

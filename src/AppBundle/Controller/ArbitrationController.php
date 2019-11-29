@@ -22,7 +22,8 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\Constraints\Image as ConstrainImage;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\Constraints\Image as ConstraintImage;
 
 class ArbitrationController extends Controller
 {
@@ -224,7 +225,7 @@ class ArbitrationController extends Controller
         }
 
         $file = $request->files->get('file');
-        $constraint = new ConstrainImage([
+        $constraint = new ConstraintImage([
             'mimeTypes' => ['image/png', 'image/jpeg'],
             'mimeTypesMessage' => 'Поддерживаются только PNG и JPEG изображения',
             'maxSize' => $this->getParameter('upload_max_size'),

@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\Company;
+use AppBundle\Event\UserEvent;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\CompanyType;
@@ -128,7 +129,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Компания создана');
 
-                return $this->redirectToRoute('app_room_list');
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -186,7 +190,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о компании обновлена');
 
-                return $this->redirectToRoute('app_updating_office', ['id' => $company->getId()]);
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -224,7 +231,7 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о офисе сохранена');
 
-                return $this->redirectToRoute('app_profile');
+                return $this->redirectToRoute('app_room_list');
             }
         }
 

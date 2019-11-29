@@ -1,0 +1,15 @@
+<div class="head fx fx-between align-center">
+    <div class="logo fx fx-between align-center">
+        <a href="{{ path('app_index') }}">
+            <img src="{{ asset('bundles/app/v3/img/logo.png') }}" alt="{{ 'common.logotype'|trans }}">
+        </a>
+    </div>
+    {% block header_widget -%}
+        <div class="head__account fx align-center">
+            {% block header_widget_content -%}
+                <span>{{ 'header.already_have_an_account'|trans }}</span>
+                <a href="{{ path('app_login') }}">{{ 'header.login'|trans }}</a>
+            {%- endblock %}
+        </div>
+    {%- endblock %}
+</div>
