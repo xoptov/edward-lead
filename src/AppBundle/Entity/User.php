@@ -33,6 +33,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_WEBMASTER   = 'ROLE_WEBMASTER';
     const ROLE_ADMIN       = 'ROLE_ADMIN';
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
+    const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE     = self::ROLE_USER;
 
     /**

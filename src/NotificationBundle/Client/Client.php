@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
      *
      * @return mixed
      */
-    abstract protected function send(array $model);
+    abstract public function send(array $model);
 
     /**
      * @var ValidatorInterface

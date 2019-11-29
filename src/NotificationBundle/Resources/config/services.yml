@@ -1,11 +1,10 @@
 parameters:
+
   nb_smsru_api_id: '07eb00aa-e1d0-5664-09af-0a454feb3aa7'
 
   nb_esputik_login: 'info@cuba-web.ru'
   nb_esputik_password: 'Qwerty271205'
   nb_smsru_esputik_event_push_key: 'q4g245h245j53wj357j'
-
-  nb_esputik_tempalte_email_welcome: '2031908'
 
   telegram_bot_id: ""
   telegram_bot_name: ""
@@ -65,4 +64,3 @@ services:
     autowire: true
     tags:
       - { name: kernel.event_subscriber }
-

@@ -332,3 +332,7 @@ services:
     AppBundle\Validator\Constraints\UniqueLeadValidator:
         tags:
             - { name: validator.constraint_validator }
+
+    AppBundle\Notifications\EmailNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.email_client'
