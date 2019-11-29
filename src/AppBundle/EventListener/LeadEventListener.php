@@ -28,6 +28,7 @@ class LeadEventListener extends BaseEventListener implements EventSubscriberInte
     public function handleNewPlaced(LeadEvent $event): void
     {
         $this->emailNotificationContainer->leadNewPlaced($event->getLead());
+        $this->webPushNotificationContainer->leadNewPlaced($event->getLead());
     }
 
     /**

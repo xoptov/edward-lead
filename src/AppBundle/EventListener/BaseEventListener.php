@@ -3,6 +3,7 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Notifications\EmailNotificationContainer;
+use AppBundle\Notifications\WebPushNotificationContainer;
 
 abstract class BaseEventListener
 {
@@ -12,12 +13,22 @@ abstract class BaseEventListener
     public $emailNotificationContainer;
 
     /**
+     * @var WebPushNotificationContainer
+     */
+    public $webPushNotificationContainer;
+
+    /**
      * BaseEventListener constructor.
      *
-     * @param EmailNotificationContainer $emailNotificationContainer
+     * @param EmailNotificationContainer   $emailNotificationContainer
+     * @param WebPushNotificationContainer $webPushNotificationContainer
      */
-    public function __construct(EmailNotificationContainer $emailNotificationContainer)
+    public function __construct(
+        EmailNotificationContainer $emailNotificationContainer,
+        WebPushNotificationContainer $webPushNotificationContainer
+    )
     {
         $this->emailNotificationContainer = $emailNotificationContainer;
+        $this->webPushNotificationContainer = $webPushNotificationContainer;
     }
 }
