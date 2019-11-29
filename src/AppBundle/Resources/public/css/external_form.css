@@ -109,7 +109,7 @@
         text-decoration: underline; }
     /* --/ссылки-- */
 
-    .ext-form-footer > p { 
+    .ext-form-footer { 
         margin: 20px auto 30px; 
         font-size:13px; 
         display: block; 
