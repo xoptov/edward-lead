@@ -17,10 +17,15 @@ function drawForm(){
     p$1$1.appendChild(br$2$1);
     p$1$1.appendChild(document.createTextNode("в ближайшее время"));
 
+    const div$1 = document.createElement("div");
+    div$1.setAttribute("class","div-main-error");
+    
     const text_main_error$1$0 = document.createElement("span");
     text_main_error$1$0.classList.add("text-error");
     text_main_error$1$0.setAttribute("id", "text-main-error");
-    div$0$0.appendChild(text_main_error$1$0);
+    
+    div$1.appendChild(text_main_error$1$0);
+    div$0$0.appendChild(div$1);
 
     const div$0$1 = document.createElement("div");
     div$0$1.classList.add("external-form-fields");
@@ -118,7 +123,7 @@ function drawForm(){
     // -- form submit event --
     submit$3$0.addEventListener("click" , function() // Событие по клику кнопки
     {
-        let elmsByClassTextError = {text_main_error$1$0, text_name_error$4$1, phone_error$4$1};
+        //let elmsByClassTextError = {text_main_error$1$0, text_name_error$4$1, phone_error$4$1};
         let elmMainError = text_main_error$1$0;
         let elmNameError = text_name_error$4$1;
         let elmPhoneError = phone_error$4$1;
@@ -126,28 +131,31 @@ function drawForm(){
         let elmPhone = phone$4$0;
 
         //document.getElementsByClassName("text-error") .html("");
-        document.querySelectorAll("text-error").innerText = "";
-        /*for(let i in elmsByClassTextError) {
-            elmsByClassTextError[i].innerText = "";
-            elmsByClassTextError[i].style.cssText = "display:none;";
-        }*/
-        
-        // document.getElementById("text-main-error").css("display:none;");
-        // document.getElementById("text-phone-error").css("display:none;");
-        // document.getElementById("text-name-error").css("display:none;");
-        
+        elmMainError.innerText = "";
+        elmMainError.style.cssText = "display:none;";
+
+        elmNameError.innerHTML = "";
+        elmNameError.style.cssText = "display:none;";
+
+        elmPhoneError.innerHTML = "";
+        elmPhoneError.style.cssText = "display:none;";
+
         let xhr = new XMLHttpRequest();
-        let formData = JSON.stringify({
-            name: elmName.value,
-            phone: elmPhone.value,
-            hasAgreement: true
-        });
+        let formData = new FormData();
+
+        formData.append("name",elmName.value);
+        formData.append("phone",elmPhone.value);
+        formData.append("hasAgreement",true);
         
         xhr.open("POST","/edward.php", true);
-        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        //xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
         xhr.onreadystatechange = function (event) 
         {
             if(event.target.readyState === XMLHttpRequest.DONE){
+                let msgMain = "";
+                let msgName = "";
+                let msgPhone = "";
+
                 if (event.target.status === 200) { //if 200
                     //document.getElementsByClassName("text-error").html("");
                     document.querySelectorAll("text-error").innerText = "";
@@ -160,14 +168,17 @@ function drawForm(){
                     elmMainError.style.cssText = "color:green; display:block;";
                 } 
                 
-                if(event.target.status === 400) { //if other ERROR cases
+                if( event.target.status === 400 || event.target.status === 403 || event.target.status ===500 ) { //if other ERROR cases
 
                     let obj = JSON.parse( event.target.response );
-
-                    let msgMain = "";
-                    let msgName = "";
-                    let msgPhone = "";
                     
+                    console.log(obj);
+
+                    msgMain = "";
+                    msgName = "";
+                    msgPhone = "";
+    
+                   
                     if(obj == null) return;
                     
                     for(let i in obj){ //Для всех элементов массива
@@ -223,7 +234,7 @@ function drawForm(){
                 }
             }
         };
-        debugger;
+        
         xhr.send(formData);
     });//end of button.click()
 

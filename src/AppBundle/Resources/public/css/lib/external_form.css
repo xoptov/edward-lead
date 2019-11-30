@@ -120,8 +120,14 @@
     }
     
     span.text-error {
-        position: relative;
         font-size: 14px;
+    }
+    
+    .div-main-error {
+        display: block;
+        width: 400px;
+        position: relative;
+        text-align: center;
         margin: 5px auto;
     }
     
