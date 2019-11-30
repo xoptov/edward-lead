@@ -209,3 +209,30 @@ Member Create: Добавить участника
 Room Id: ID Комнаты
 Bad credentials.: Неверные учетные данные.
 User temporarily banned.: Пользователь временно забанен.
+
+# Для новой вёрстки
+
+common:
+    balance: Баланс
+    hold: Холд
+    logotype: Логотип
+header:
+    already_have_an_account: Уже есть аккаунт? 
+    login: Войти
+menu:
+    admin_panel: Админ панель
+    dashboard: Панель управления
+    rooms: Комнаты
+    my_leads: Мои лиды
+    arbitration_and_support: Арбитраж / поддержка
+    billing: Биллинг
+    personal_account: Личный счёт
+    operations_history: История операций
+    invoices_and_acts: Счета и акты
+    referral_program: Реферальная программа
+    integrations: Интеграции
+    telephony: Телефония
+    advertiser_cabinet: Кабинет рекламодателя
+    my_profile: Мой профиль
+    knowledge_base: База знаний
+    logout: Выход

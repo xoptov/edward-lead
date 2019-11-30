@@ -1,0 +1,46 @@
+<nav class="nav">
+    <ul class="nav__list">
+        {% if is_granted('ROLE_WEBMASTER') -%}
+            <li class="nav__item">
+                <a href="{{ path('app_dashboard') }}" class="nav__link"><span class="nav__icon i-panel"></span>{{ 'menu.dashboard'|trans }}</a>
+            </li>
+        {%- endif %}
+        <li class="nav__item">
+            <a href="{{ path('app_room_list') }}" class="nav__link"><span class="nav__icon i-rooms"></span>{{ 'menu.rooms'|trans }}</a>
+        </li>
+        <li class="nav__item">
+            <a href="{{ path('app_leads_my') }}" class="nav__link"><span class="nav__icon i-leads"></span>{{ 'menu.my_leads'|trans }}</a>
+        </li>
+        <li class="nav__item">
+            <a href="{{ path('app_arbitration') }}" class="nav__link"><span class="nav__icon i-support"></span>{{ 'menu.arbitration_and_support'|trans }} <span class="notice__quantity">1111</span></a>
+        </li>
+        <li class="nav__item nav__drop">
+            <span class="nav__icon i-billing"></span> {{ 'menu.billing'|trans }}
+            <ul class="nav__subnav">
+                <li class="nav__item">
+                    <a href="{{ path('app_financial_billing') }}" class="nav__link">{{ 'menu.personal_account'|trans }}</a>
+                </li>
+                <li class="nav__item">
+                    <a href="{{ path('app_financial_history') }}" class="nav__link">{{ 'menu.operations_history'|trans }}</a>
+                </li>
+                <li class="nav__item">
+                    <a href="{{ path('app_financial_invoices') }}" class="nav__link">{{ 'menu.invoices_and_acts'|trans }}</a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav__item">
+            <a href="{{ path('app_referral_index') }}" class="nav__link"><span class="nav__icon i-referral"></span>{{ 'menu.referral_program'|trans }}</a>
+        </li>
+        <li class="nav__item">
+            <a href="#" class="nav__link"><span class="nav__icon i-integration"></span>{{ 'menu.integrations'|trans }}</a>
+        </li>
+        {% if is_granted('ROLE_ADVERTISER') -%}
+            <li class="nav__item">
+                <a href="{{ path('app_telephony_calls') }}" class="nav__link"><span class="nav__icon i-telephony"></span>{{ 'menu.telephony'|trans }}</a>
+            </li>
+            <li class="nav__item">
+                <a href="{{ path('app_updating_company', {'id': app.user.companyId}) }}" class="nav__link"><span class="nav__icon i-panel"></span>{{ 'menu.advertiser_cabinet'|trans }}</a>
+            </li>
+        {%- endif %}
+    </ul>
+</nav>

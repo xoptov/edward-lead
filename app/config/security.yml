@@ -17,8 +17,9 @@ security:
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_COMPANY:     ROLE_USER
+        ROLE_COMPANY:     ROLE_ADVERTISER
         ROLE_WEBMASTER:   ROLE_USER
+        ROLE_ADVERTISER:  ROLE_USER
 
     firewalls:
         dev:

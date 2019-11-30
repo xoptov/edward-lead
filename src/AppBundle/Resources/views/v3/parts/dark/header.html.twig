@@ -1,0 +1,63 @@
+{%- block header -%}
+    <div class="header">
+        <div class="container fx align-center">
+            <div class="col-3">
+                <div class="logo fx">
+                    <a href="{{ path('app_index') }}">
+                        <img src="{{ asset('bundles/app/v3/img/logo.png') }}" alt="{{ 'common.logotype'|trans }}">
+                    </a>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="info fx fx-between">
+                    <div class="info__left fx align-center">
+                        {# Тут нужно будет вызывать NotificationController::widgetAction #}
+                        {%- include('@App\Notification\widget.html.twig') -%}
+                        
+                        {# Тут нужно будет вызывать ManagerController::widgetAction (Логики с назначением менеджера пока нет, как будет тогда будет и виджет) #}
+                        {%- include('@App\Manager\widget.html.twig') -%}
+                    </div>
+                    <div class="user fx align-center">
+                        <div class="user__balance">
+                            <p>{{ 'common.balance'|trans }}: {{ app.user.balance|money_format }}</p>
+                            <p>{{ 'comman.hold'|trans }}: {% if is_granted('ROLE_ADVERTISER') %}{{ balance_hold(app.user)|money_format }}{% elseif (is_granted('ROLE_WEBMASTER') %}{{ pending_amount(app.user)|money_format }}{% endif %}</p>
+                        </div>
+                        <div class="user__panel">
+                            <span class="user__panel__img"><img src="img/other/user-default-header.png"></span>
+                            <div class="user__panel__nav__box">
+                                <ul class="user__panel__nav">
+                                `   {% if is_granted('ROLE_ADMIN') -%}
+                                        <li class="user__panel__nav__item">
+                                            <a href="{{ path('sonata_admin_dashboard') }}" class="user__panel__nav__link">{{ 'menu.admin_panel'|trans }}</a>
+                                        </li>
+                                    {%- elseif is_granted('ROLE_ADVERTISER') and app.user.hasCompany -%}
+                                        <li class="user__panel__nav__item">
+                                            <a href="{{ path('app_company_update', {'id': app.user.companyId}) }}" class="user__panel__nav__link">{{ 'menu.advertiser_cabinet'|trans }}</a>
+                                        </li>    
+                                    {%- endif %}
+                                    <li class="user__panel__nav__item">
+                                        <a href="{{ path('app_profile')}}" class="user__panel__nav__link">{{ 'menu.my_profile'|trans }}</a>
+                                    </li>
+                                    <li class="user__panel__nav__item">
+                                        <a href="{{ path('app_financial_billing') }}" class="user__panel__nav__link">{{ 'menu.billing'|trans }}</a>
+                                    </li>
+                                    <li class="user__panel__nav__item">
+                                        <a href="http://wiki.edward-lead.ru" class="user__panel__nav__link">{{ 'menu.knowledge_base'|trans }}</a>
+                                    </li>
+                                    <li class="user__panel__nav__item">
+                                        <a href="{{ path('app_logout') }}" class="user__panel__nav__link">{{ 'menu.logout'|trans }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="navbar-toggle">
+                    <span class="icon-bar speed"></span>
+                    <span class="icon-bar speed"></span>
+                    <span class="icon-bar speed"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+{%- endblock -%}
