@@ -279,6 +279,18 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @return int|null
+     */
+    public function getCompanyId(): ?int
+    {
+        if ($this->company) {
+            return $this->company->getId();
+        }
+
+        return null;
+    }
+
+    /**
      * @return null|string
      */
     public function getOfficePhone(): ?string
