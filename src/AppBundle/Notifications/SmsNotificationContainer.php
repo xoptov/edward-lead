@@ -17,11 +17,11 @@ class SmsNotificationContainer
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client $smsClient
+     * @param Client $client
      */
-    public function __construct(Client $smsClient)
+    public function __construct(Client $client)
     {
-        $this->client = $smsClient;
+        $this->client = $client;
     }
 
     /**
