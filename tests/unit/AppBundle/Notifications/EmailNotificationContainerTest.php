@@ -262,4 +262,3 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
         return $object;
     }
 }
-
