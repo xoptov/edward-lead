@@ -2,10 +2,10 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ReferrerReward;
 use AppBundle\Entity\User;
-use AppBundle\Service\ReferrerManager;
 use Doctrine\DBAL\DBALException;
+use AppBundle\Entity\ReferrerReward;
+use AppBundle\Service\ReferrerManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

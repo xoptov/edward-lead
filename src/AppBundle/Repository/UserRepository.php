@@ -112,6 +112,22 @@ class UserRepository extends EntityRepository
     }
 
     /**
+     * @param string $role
+     *
+     * @return array
+     */
+    public function getByRole(string $role): array
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+
+        $query = $queryBuilder
+            ->where("u.roles LIKE '%{$role}%'")
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
      * @param string $accessToken
      * @return null|string
      *

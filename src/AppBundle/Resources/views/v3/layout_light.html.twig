@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html lang="ru" class="lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html lang="ru" class="lt-ie9 lt-ie8"><![endif]-->
+<!--[if IE 8]><html lang="ru" class="lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="ru">
+<!--<![endif]-->
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block page_title %}{% endblock %}</title>
+        <meta name="description" content="{% block page_description %}{% endblock %}" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        {% block stylesheets -%}
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/lib/nice-select.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/stylesheet.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/reset.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/grid.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/main.css') }}" />
+            <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/media.css') }}" />
+        {%- endblock %}
+    </head>
+    <body class="body-gray p-external">
+        <div class="wrapper">
+            <div class="container">
+                {% block conatiner -%}
+                    {% include '@App\parts\light\header.html.twig' %}
+                    <div class="p-external__box login">
+                        {% block content %}{% endblock %}
+                    </div>
+                    <div class="foot">
+                        <span class="footer__copyright">© 2019 Edward</span>
+                    </div>
+                {%- endblock container %}
+            </div>
+        </div>
+        <!--[if lt IE 9]>
+        {% if app.environment == 'prod' -%}
+            <script src="{{ asset('bundles/app/v3/js/lib/es5-shim.min.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/html5shiv.min.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/html5shiv-printshiv.min.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/respond.min.js') }}"></script>
+        {%- else -%}
+            <script src="{{ asset('bundles/app/v3/js/lib/es5-shim.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/html5shiv.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/html5shiv-printshiv.js') }}"></script>
+            <script src="{{ asset('bundles/app/v3/js/lib/respond.src.js') }}"></script>
+        {%- endif %}
+        <![endif]-->
+        {% block javascripts -%}
+            {% if app.environment == 'prod' -%}
+                <script src="{{ asset('bundles/app/v3/js/lib/jquery-3.4.1.min.js') }}"></script>
+                <script src="{{ asset('bundles/app/v3/js/lib/jquery.nice-select.min.js') }}"></script>
+            {%- else -%}
+                <script src="{{ asset('bundles/app/v3/js/lib/jquery-3.4.1.js') }}"></script>
+                <script src="{{ asset('bundles/app/v3/js/lib/jquery.nice-select.js') }}"></script>
+            {%- endif %}
+            <script src="{{ asset('bundles/app/v3/js/lib/main.js') }}"></script>
+        {%- endblock %}
+    </body>
+</html>

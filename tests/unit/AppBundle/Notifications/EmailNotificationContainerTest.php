@@ -261,4 +261,8 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
         return $object;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> master

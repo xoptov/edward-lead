@@ -15,7 +15,6 @@ class LeadEventListener extends BaseEventListener implements EventSubscriberInte
     {
         return [
             LeadEvent::NEW_PLACED => 'handleNewPlaced',
-            LeadEvent::NO_VISIT_TOO_LONG => 'handleNoVisitTooLong',
             LeadEvent::EXPECT_TOO_LONG => 'handleExpectTooLong',
             LeadEvent::IN_WORK_TOO_LONG => 'handleInWorkTooLong',
         ];
@@ -29,16 +28,6 @@ class LeadEventListener extends BaseEventListener implements EventSubscriberInte
     public function handleNewPlaced(LeadEvent $event): void
     {
         $this->emailNotificationContainer->leadNewPlaced($event->getLead());
-    }
-
-    /**
-     * @param LeadEvent $event
-     *
-     * @throws Exception
-     */
-    public function handleNoVisitTooLong(LeadEvent $event): void
-    {
-        $this->emailNotificationContainer->noVisitTooLong($event->getLead());
     }
 
     /**
