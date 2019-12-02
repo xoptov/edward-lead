@@ -180,13 +180,6 @@ class Room implements IdentifiableInterface
     private $leadsPerDay;
 
     /**
-     * @var ArrayCollection|null
-     *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Member", mappedBy="room")
-     */
-    private $members;
-
-    /**
      * @return User|null
      */
     public function getOwner(): ?User
@@ -516,21 +509,5 @@ class Room implements IdentifiableInterface
     public function getLeadsPerDay(): ?int
     {
         return $this->leadsPerDay;
-    }
-
-    /**
-     * @return ArrayCollection|null
-     */
-    public function getMembers(): ?ArrayCollection
-    {
-        return $this->members;
-    }
-
-    /**
-     * @param ArrayCollection $members
-     */
-    public function setMembers(ArrayCollection $members): void
-    {
-        $this->members = $members;
     }
 }

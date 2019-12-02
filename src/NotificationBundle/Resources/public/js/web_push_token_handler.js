@@ -61,7 +61,7 @@ function ready(callback){
         else document.attachEvent('onreadystatechange', function(){
                 if (document.readyState=='complete') callback();
             });
-        
+
     }, 3000) // delay 3 sec
 
 

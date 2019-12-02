@@ -13,6 +13,7 @@ use AppBundle\Entity\User;
 use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Notifications\WebPushNotificationContainer;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use NotificationBundle\Client\Client;
 use PHPUnit\Framework\TestCase;
 
@@ -29,13 +30,19 @@ class WebPushNotificationContainerTest extends TestCase
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject
      */
+
     private $clientMock;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    private $entityManagerMock;
 
     public function setUp()
     {
         $this->clientMock = $this->createMock(Client::class);
+        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
 
-        $this->service = new WebPushNotificationContainer($this->clientMock);
+        $this->service = new WebPushNotificationContainer($this->clientMock, $this->entityManagerMock);
     }
 
     public function testAccountBalanceApproachingZero()
@@ -53,12 +60,23 @@ class WebPushNotificationContainerTest extends TestCase
     public function testLeadNewPlaced()
     {
         $this->clientMock->expects($this->once())->method('send');
+
+        $this->entityManagerMock->expects($this->any())
+            ->method('getByRooms')
+            ->willReturn([$this->getMembers()]);
+
+
         $this->service->leadNewPlaced($this->getLead());
     }
 
     public function testLeadExpectTooLong()
     {
         $this->clientMock->expects($this->exactly(self::MEMBERS_COUNT))->method('send');
+
+        $this->entityManagerMock->expects($this->any())
+            ->method('getByRooms')
+            ->willReturn([$this->getMembers()]);
+
         $this->service->leadExpectTooLong($this->getLead());
     }
 
@@ -95,25 +113,9 @@ class WebPushNotificationContainerTest extends TestCase
             ->setPhone('79000000001')
             ->setPlainPassword(123456);
 
-        $members = new ArrayCollection();
-
-        for ($i = 0; $i < self::MEMBERS_COUNT; $i++) {
-
-            $user = new User();
-            $user
-                ->setEmail("company{$i}@xoptov.ru")
-                ->setRoles([User::ROLE_WEBMASTER]);
-
-            $member = new Member();
-            $member->setUser($user);
-
-            $members->add($member);
-        }
-
         $room = new Room();
         $room->setName(' комната')
-            ->setSphere(' сфера')
-            ->setMembers($members);
+            ->setSphere(' сфера');
 
         $trade = new Trade();
         $trade->setBuyer($user);
@@ -146,6 +148,27 @@ class WebPushNotificationContainerTest extends TestCase
         $object->setSender($user);
 
         return $object;
+    }
+
+    private function getMembers()
+    {
+
+        $members = new ArrayCollection();
+
+        for ($i = 0; $i < self::MEMBERS_COUNT; $i++) {
+
+            $user = new User();
+            $user
+                ->setEmail("company{$i}@xoptov.ru")
+                ->setRoles([User::ROLE_WEBMASTER]);
+
+            $member = new Member();
+            $member->setUser($user);
+
+            $members->add($member);
+        }
+
+        return $members;
 
     }
 

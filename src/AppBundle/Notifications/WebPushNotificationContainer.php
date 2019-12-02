@@ -7,6 +7,7 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use NotificationBundle\Client\Client;
 
@@ -18,13 +19,20 @@ class WebPushNotificationContainer
     private $client;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * WebPushNotificationContainer constructor.
      *
-     * @param Client $client
+     * @param Client                 $client
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -69,6 +77,22 @@ class WebPushNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
+        if (!$object->getRoom()) return;
+
+        $members = $this->entityManager->getRepository(Member::class)->getByRooms([$object->getRoom()->getId()]);
+
+        foreach ($members as $member){
+
+            /** @var Member $member */
+            if(!$member->getUser()->isCompany()) continue;
+
+            $this->client->send([
+                "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
+                "push_token" => $member->getUser()->getWebPushToken()
+            ]);
+
+        }
+
         $this->client->send([
             "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
             "push_token" => $object->getBuyer()->getWebPushToken()
@@ -82,7 +106,11 @@ class WebPushNotificationContainer
      */
     public function leadExpectTooLong(Lead $object): void
     {
-        foreach ($object->getRoom()->getMembers() as $member){
+        if (!$object->getRoom()) return;
+
+        $members = $this->entityManager->getRepository(Member::class)->getByRooms([$object->getRoom()->getId()]);
+
+        foreach ($members as $member){
 
             /** @var Member $member */
             if(!$member->getUser()->isWebmaster()) continue;
