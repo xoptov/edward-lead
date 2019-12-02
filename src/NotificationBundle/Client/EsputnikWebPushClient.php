@@ -45,6 +45,8 @@ class EsputnikWebPushClient extends EsputnikClient
      */
     public function send(array $model): bool
     {
+        if(!$model['push_token']) return false;
+
         $this->validate($model);
 
         $params = [
