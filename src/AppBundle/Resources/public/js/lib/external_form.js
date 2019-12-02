@@ -119,10 +119,16 @@ function drawForm(){
         "mask": '(+7|8)(###)###-##-##',
         "definitions": {"#" : { validator: "[0-9]"}}
     }).mask(phone$4$0);
-    
+
+    let xhr = new XMLHttpRequest();
+
     // -- form submit event --
-    submit$3$0.addEventListener("click" , function() // Событие по клику кнопки
-    {
+    submit$3$0.addEventListener("click" , function() {
+
+        if (xhr.readyState !== 0 && xhr.readyState !== 4) {
+            return false;
+        }
+
         //let elmsByClassTextError = {text_main_error$1$0, text_name_error$4$1, phone_error$4$1};
         let elmMainError = text_main_error$1$0;
         let elmNameError = text_name_error$4$1;
@@ -140,18 +146,18 @@ function drawForm(){
         elmPhoneError.innerHTML = "";
         elmPhoneError.style.cssText = "display:none;";
 
-        let xhr = new XMLHttpRequest();
         let formData = new FormData();
 
-        formData.append("name",elmName.value);
-        formData.append("phone",elmPhone.value);
-        formData.append("hasAgreement",true);
+        formData.append("name", elmName.value);
+        formData.append("phone", elmPhone.value);
+        formData.append("hasAgreement", true);
         
-        xhr.open("POST","/edward.php", true);
-        //xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-        xhr.onreadystatechange = function (event) 
-        {
-            if(event.target.readyState === XMLHttpRequest.DONE){
+        xhr.open("POST", "/edward.php", true);
+        // xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=utf-8');
+
+        xhr.onreadystatechange = function (event) {
+
+            if(event.target.readyState === XMLHttpRequest.DONE) {
                 let msgMain = "";
                 let msgName = "";
                 let msgPhone = "";
@@ -182,7 +188,7 @@ function drawForm(){
                     if(obj == null) return;
                     
                     for(let i in obj){ //Для всех элементов массива
-                        if(typeof obj[i] == "string"){ // Если это просто текст
+                        if(typeof obj[i] === "string"){ // Если это просто текст
                             //добавить ошибку в заголовок
                             if(!msgMain.length){
                                 msgMain = obj[i];
@@ -191,9 +197,9 @@ function drawForm(){
                             }
                         }
 
-                        if(typeof obj[i] == "object"){ //Если это объект
+                        if(typeof obj[i] === "object"){ //Если это объект
                             //показать ошибку в имени
-                            if(typeof obj[i]["name"] == "object"){
+                            if(typeof obj[i]["name"] === "object"){
                                 for(p in obj[i]["name"]){ //содержание массива
                                     if(!msgName.length){
                                         msgName = obj[i]["name"][p];
@@ -204,7 +210,7 @@ function drawForm(){
                             }
 
                             //показать ошибку в телефоне
-                            if(typeof obj[i]["phone"] == "object"){
+                            if(typeof obj[i]["phone"] === "object"){
                                 for(p in obj[i]["phone"]){ //содержание массива
                                     if(!msgPhone.length){
                                         msgPhone = obj[i]["phone"][p];
@@ -232,16 +238,18 @@ function drawForm(){
                     elmPhoneError.innerText = msgPhone;
                     elmPhoneError.style.cssText = "color:red;display:block;";
                 }
+            //todo: Резблокировать кнопку отправки!
             }
         };
-        
+
+        //todo: Болкировать кнопку отправки!
         xhr.send(formData);
+
     });//end of button.click()
 
     ext$from.appendChild(div$0$0);
     ext$from.appendChild(div$0$1);
     ext$from.appendChild(div$footer);
-
-};                
+}
 
 window.addEventListener("load", (event) => { drawForm(); });

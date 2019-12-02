@@ -2,19 +2,16 @@
 
 /**
  * @author Maksim Khortov <xoptov@mail.ru>
- * @version 1.0.0
+ * @version 1.0.1
  */
 
-define('DEBUG_MODE', false);
-//ffd6a331e0fd4b2848f22435ca4ef8e05ed5abf6  - @notebook
-//bdb9e181a5cd7edd2a11ea61cbf417b3d6dc5871 - @work
-define('API_KEY', 'ffd6a331e0fd4b2848f22435ca4ef8e05ed5abf6'); // Необходимо указать ключь API внутри ''
-define('ROOM_ID', 1047); // Идентификатор комнаты в которую будет добавляться лид.
+define('API_KEY', ''); // Необходимо указать ключь API внутри ''
+define('ROOM_ID', null); // Идентификатор комнаты в которую будет добавляться лид.
 
 //define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
-define('API_URL', 'http://edward.local/api/v1/lead');
+define('API_URL', 'http://stage.edward.local/api/v1/lead');
 
-define('API_TIMEOUT', 60);
+define('API_TIMEOUT', 5);
 
 ini_set('error_reporting', E_ERROR);
 
@@ -66,10 +63,6 @@ $headers = [
     'Content-Type: application/x-www-form-urlencoded; charset=UTF-8',
     'X-Auth-Token: ' . API_KEY
 ];
-
-if (DEBUG_MODE) {
-    $headers[] = 'Cookie: XDEBUG_SESSION=PHPSTORM';
-}
 
 $ch = curl_init(API_URL);
 

@@ -2,6 +2,7 @@
     @import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
     
     /* Блок формы */
+    /* Лучше заменить на edward-lead-form */
     .external-form { 
         width:440px; 
         border: 2px solid #afafaf; 
@@ -21,7 +22,7 @@
     }
     
     /*Абзац после заголовка*/
-    .external-form h1+p{ 
+    .external-form h1+p {
         color:#6b6b6b; 
         font-size: 16px; 
         text-align: center; 
@@ -29,7 +30,7 @@
     }
     
     /*Группа полей для заполнения*/
-    .external-form-fields{ 
+    .external-form-fields {
         display: block; 
         width: 296px; 
         margin: 0 auto;
