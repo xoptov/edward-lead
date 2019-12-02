@@ -16,11 +16,18 @@ class AccountEvent extends Event
     private $account;
 
     /**
-     * @param Account $account
+     * @var int
      */
-    public function __construct(Account $account)
+    private $bound;
+
+    /**
+     * @param Account  $account
+     * @param int|null $bound
+     */
+    public function __construct(Account $account, ?int $bound = null)
     {
         $this->account = $account;
+        $this->bound = $bound;
     }
 
     /**
@@ -29,5 +36,13 @@ class AccountEvent extends Event
     public function getAccount(): Account
     {
         return $this->account;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBound(): ?int
+    {
+        return $this->bound;
     }
 }

@@ -265,6 +265,11 @@ services:
         arguments:
             $minimalAmount: '%minimal_withdraw%'
 
+    AppBundle\Service\TransactionManager:
+        arguments:
+            $firstMinimalBound: '%first_minimal_bound%'
+            $secondMinimalBound: '%second_minimal_bound%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'

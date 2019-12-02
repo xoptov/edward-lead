@@ -61,3 +61,5 @@ parameters:
     auth_time_frame: 300
     auth_fail_retry: 7
 
+    first_minimal_bound: 150000
+    second_minimal_bound: 4000

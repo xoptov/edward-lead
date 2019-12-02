@@ -4,10 +4,13 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Operation;
+use AppBundle\Entity\ClientAccount;
+use AppBundle\Event\AccountEvent;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\AccountException;
 use AppBundle\Entity\MonetaryTransaction;
 use AppBundle\Exception\TransactionException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TransactionManager
 {
@@ -17,11 +20,36 @@ class TransactionManager
     private $entityManager;
 
     /**
-     * @param EntityManagerInterface $entityManager
+     * @var EventDispatcherInterface
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $eventDispatcher;
+
+    /**
+     * @var int
+     */
+    private $firstMinimalBound;
+
+    /**
+     * @var int
+     */
+    private $secondMinimalBound;
+
+    /**
+     * @param EntityManagerInterface   $entityManager
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param int                      $firstMinimalBound
+     * @param int                      $secondMinimalBound
+     */
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        int $firstMinimalBound,
+        int $secondMinimalBound
+    ) {
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->firstMinimalBound = $firstMinimalBound;
+        $this->secondMinimalBound = $secondMinimalBound;
     }
 
     /**
@@ -51,13 +79,21 @@ class TransactionManager
 
         $result = [];
 
-        $outgoing = $this->createOutgoing($source, $operation);
+        $outgoing = $this->createObject(
+            $source,
+            $operation,
+            -$operation->getAmount()
+        );
 
         if ($outgoing) {
             $result[] = $outgoing;
         }
 
-        $income = $this->createIncome($destination, $operation);
+        $income = $this->createObject(
+            $destination,
+            $operation,
+            $operation->getAmount()
+        );
 
         if ($income) {
             $result[] = $income;
@@ -83,61 +119,59 @@ class TransactionManager
             }
 
             $account = $transaction->getAccount();
+
+            $amountBefore = $account->getBalance();
+
             $account->changeBalance($transaction->getAmount());
             $transaction->setProcessed(true);
+
+            $amountAfter = $account->getBalance();
+
+            //todo: ну потом куда нибудь перенесём при рефакторинге.
+
+            if ($transaction->isOutcome() && $account instanceof ClientAccount) {
+                if (
+                    $this->firstMinimalBound < $amountBefore
+                    && $this->firstMinimalBound >= $amountAfter
+                    && $this->secondMinimalBound < $amountAfter
+                ) {
+                    $this->eventDispatcher->dispatch(
+                        AccountEvent::BALANCE_APPROACHING_ZERO,
+                        new AccountEvent($account, $this->firstMinimalBound)
+                    );
+                }
+
+                if (
+                    $this->secondMinimalBound < $amountBefore
+                    && $this->secondMinimalBound >= $amountAfter
+                ) {
+                    $this->eventDispatcher->dispatch(
+                        AccountEvent::BALANCE_LOWER_THEN_MINIMAL,
+                        new AccountEvent($account, $this->secondMinimalBound)
+                    );
+                }
+            }
         }
     }
 
     /**
      * @param Account   $account
      * @param Operation $operation
+     * @param int       $amount
      * @param bool      $persist
      *
      * @return MonetaryTransaction|null
      */
-    private function createOutgoing(
+    private function createObject(
         Account $account,
         Operation $operation,
+        int $amount,
         bool $persist = true
     ): ?MonetaryTransaction {
 
-        $amount = -$operation->getAmount();
-
-        if (empty($amount)) {
-            return null;
-        }
-
-        $transaction = new MonetaryTransaction();
-        $transaction
-            ->setAccount($account)
-            ->setOperation($operation)
-            ->setAmount($amount);
-
-        if ($persist) {
-            $this->entityManager->persist($transaction);
-        }
-
-        return $transaction;
-    }
-
-    /**
-     * @param Account   $account
-     * @param Operation $operation
-     * @param bool      $persist
-     *
-     * @return MonetaryTransaction|null
-     */
-    private function createIncome(
-        Account $account,
-        Operation $operation,
-        bool $persist = true
-    ): ?MonetaryTransaction {
-
-        $amount = $operation->getAmount();
-
-        if (empty($amount)) {
-            return null;
-        }
+       if (empty($amount)) {
+           return null;
+       }
 
         $transaction = new MonetaryTransaction();
         $transaction
