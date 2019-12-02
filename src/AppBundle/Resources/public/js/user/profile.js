@@ -30,7 +30,7 @@ $(function() {
                 $tokenRenewButton.attr('disabled', false);
             },
             error: function(xhr) {
-                $tokenField.text(xhr.error);
+                console.log(xhr);
                 $tokenRenewButton.attr('disabled', false);
             }
         });
