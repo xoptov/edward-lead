@@ -4,6 +4,9 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Notifications\EmailNotificationContainer;
 
+use AppBundle\Notifications\SmsNotificationContainer;
+
+
 abstract class BaseEventListener
 {
     /**
@@ -12,12 +15,25 @@ abstract class BaseEventListener
     public $emailNotificationContainer;
 
     /**
+     * @var SmsNotificationContainer
+     */
+    public $smsNotificationContainer;
+
+
+
+    /**
      * BaseEventListener constructor.
      *
      * @param EmailNotificationContainer $emailNotificationContainer
+
+     * @param SmsNotificationContainer   $smsNotificationContainer
      */
-    public function __construct(EmailNotificationContainer $emailNotificationContainer)
+    public function __construct(
+        EmailNotificationContainer $emailNotificationContainer,
+        SmsNotificationContainer $smsNotificationContainer
+    )
     {
         $this->emailNotificationContainer = $emailNotificationContainer;
+        $this->smsNotificationContainer = $smsNotificationContainer;
     }
 }

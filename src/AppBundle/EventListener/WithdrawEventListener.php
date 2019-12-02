@@ -28,6 +28,7 @@ class WithdrawEventListener extends BaseEventListener implements EventSubscriber
     public function handleNewCreated(WithdrawEvent $event): void
     {
         $this->emailNotificationContainer->withdrawUser($event->getWithdraw());
+        $this->smsNotificationContainer->withdrawUser($event->getWithdraw());
         $this->emailNotificationContainer->withdrawAdmin($event->getWithdraw());
     }
 

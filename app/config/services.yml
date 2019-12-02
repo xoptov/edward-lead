@@ -336,3 +336,7 @@ services:
     AppBundle\Notifications\EmailNotificationContainer:
         arguments:
             $client: '@notification_bundle.email_client'
+
+    AppBundle\Notifications\SmsNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.sms_client'
