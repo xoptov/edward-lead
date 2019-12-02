@@ -6,7 +6,6 @@ use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Notifications\SmsNotificationContainer;
 use AppBundle\Notifications\WebPushNotificationContainer;
 
-
 abstract class BaseEventListener
 {
     /**
