@@ -5,9 +5,9 @@ namespace NotificationBundle\Entity;
 interface UserWithWebPushInterface
 {
     /**
-     * @return string
+     * @return string|null
      */
-    public function getWebPushToken(): string;
+    public function getWebPushToken(): ?string;
 
     /**
      * @param string $webPushToken

@@ -28,7 +28,7 @@ trait UserNotificationTrait
     private $telegramAuthToken;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="web_push_token", type="string", length=255, nullable=true)
      */
@@ -83,9 +83,9 @@ trait UserNotificationTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getWebPushToken(): string
+    public function getWebPushToken(): ?string
     {
         return $this->webPushToken;
     }

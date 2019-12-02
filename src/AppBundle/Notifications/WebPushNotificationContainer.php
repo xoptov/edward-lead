@@ -6,7 +6,6 @@ use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use Exception;
 use NotificationBundle\Client\Client;
@@ -94,8 +93,6 @@ class WebPushNotificationContainer
             ]);
 
         }
-
-
     }
 
     /**

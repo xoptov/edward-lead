@@ -180,7 +180,7 @@ class Room implements IdentifiableInterface
     private $leadsPerDay;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|null
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Member", mappedBy="room")
      */
@@ -519,9 +519,9 @@ class Room implements IdentifiableInterface
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection|null
      */
-    public function getMembers(): ArrayCollection
+    public function getMembers(): ?ArrayCollection
     {
         return $this->members;
     }
