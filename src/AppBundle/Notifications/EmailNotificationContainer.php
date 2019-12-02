@@ -5,43 +5,46 @@ namespace AppBundle\Notifications;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use AppBundle\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use NotificationBundle\ChannelModels\Email;
-use NotificationBundle\Channels\EmailChannel;
+use NotificationBundle\Client\Client;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EmailNotificationContainer
 {
     /**
-     * @var EmailChannel
+     * @var Client
      */
-    private $emailChannel;
+    private $client;
+
     /**
      * @var UrlGeneratorInterface
      */
     private $router;
     /**
-     * @var string
+     * @var EntityManagerInterface
      */
-    private $adminEmail;
+    private $entityManager;
 
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param EmailChannel          $emailChannel
-     * @param UrlGeneratorInterface $router
-     * @param string                $adminEmail
+     * @param Client                 $client
+     * @param UrlGeneratorInterface  $router
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EmailChannel $emailChannel, UrlGeneratorInterface $router, string $adminEmail)
+    public function __construct(Client $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
     {
-        $this->emailChannel = $emailChannel;
+        $this->client = $client;
         $this->router = $router;
-        $this->adminEmail = $adminEmail;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -51,18 +54,14 @@ class EmailNotificationContainer
      */
     public function accountBalanceApproachingZero(ClientAccount $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_LOW);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_LOW,
+            "params" => [
                 "NAME" => $object->getUser()->getName(),
                 "BALANCE" => $object->getBalance()
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -72,17 +71,13 @@ class EmailNotificationContainer
      */
     public function accountBalanceLowerThenMinimal(ClientAccount $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_LOWER_THEN_MINIMAL);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_LOWER_THEN_MINIMAL,
+            "params" => [
                 "NAME" => $object->getUser()->getName(),
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -92,19 +87,15 @@ class EmailNotificationContainer
      */
     public function invoiceProcessed(Invoice $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_CHARGED);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_CHARGED,
+            "params" => [
                 "NAME" => $object->getUser()->getName(),
                 "SUMM_BALANCE" => $object->getAmount(),
                 "TYPE_BALANCE" => $object->getDescription(),
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -114,35 +105,30 @@ class EmailNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::NEW_LEAD_IN_ROOM);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
+            "params" => [
                 "ID_ROOM" => $object->getRoom()->getId(),
                 "NAME_ROOM" => $object->getRoom()->getName(),
                 "URL_ROOM" => $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]),
                 "ID_LEAD" => $object->getId()
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
-     * @param Lead $object
+     * @param Member $object
      *
      * @throws Exception
      */
-    public function noVisitTooLong(Lead $object): void
+    public function noVisitTooLong(Member $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::NO_VISITING_FOR_TOO_LONG);
-
-        $this->emailChannel->send($email);
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::NO_VISITING_FOR_TOO_LONG,
+            "params" => [],
+        ]);
     }
 
     /**
@@ -152,18 +138,22 @@ class EmailNotificationContainer
      */
     public function messageCreated(Message $object): void
     {
-        $email = new Email;
+        $users = $this->getNotificationOperators();
 
-        $email->setToEmail($this->adminEmail);
-        $email->setTemplateId(EsputnikEmailTemplate::NEW_SUPPORT_CONTACT);
-        $email->setParams(
-            [
-                "ID_SUPPORT" => $object->getThread()->getId(),
-                "ID_USER" => $object->getSender()->getId(),
-            ]
-        );
+        /** @var User $user */
+        foreach ($users as $user) {
 
-        $this->emailChannel->send($email);
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_SUPPORT_CONTACT,
+                "params" => [
+                    "ID_SUPPORT" => $object->getThread()->getId(),
+                    "ID_USER" => $object->getSender()->getId(),
+                ],
+            ]);
+
+        }
+
     }
 
     /**
@@ -173,18 +163,14 @@ class EmailNotificationContainer
      */
     public function messageSupportReply(Message $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getSender()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::SUPPORT_RESPONSE);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getSender()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::SUPPORT_RESPONSE,
+            "params" => [
                 "ID_SUPPORT" => $object->getThread()->getId(),
                 "TEXT_SUPPORT" => $object->getBody(),
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -194,13 +180,11 @@ class EmailNotificationContainer
      */
     public function newUserRegistered(User $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::REGISTRATION);
-        $email->setParams(["name" => $object->getName()]);
-
-        $this->emailChannel->send($email);
+        $this->client->send([
+            "to_email" => $object->getEmail(),
+            "template_id" => EsputnikEmailTemplate::REGISTRATION,
+            "params" => ["name" => $object->getName()],
+        ]);
     }
 
     /**
@@ -210,22 +194,26 @@ class EmailNotificationContainer
      */
     public function tradeProceeding(Trade $object): void
     {
-        $email = new Email;
+        $users = $this->getNotificationOperators();
 
-        $email->setToEmail($this->adminEmail);
-        $email->setTemplateId(EsputnikEmailTemplate::NEW_ARBITRAJ);
-        $email->setParams(
-            [
-                "ID_ARBITRATION" => $object->getId(),
-                "ID_LEAD" => $object->getLead()->getId(),
-                "ID_WEBMASTER" => $object->getSellerId(),
-                "ID_COMPANY" => $object->getBuyerId(),
-                "SUMM_DEAL" => $object->getAmount(),
-                "ID_ROOM" => $object->getLead()->getRoom()->getId(),
-            ]
-        );
+        /** @var User $user */
+        foreach ($users as $user) {
 
-        $this->emailChannel->send($email);
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_ARBITRAJ,
+                "params" => [
+                    "ID_ARBITRATION" => $object->getId(),
+                    "ID_LEAD" => $object->getLead()->getId(),
+                    "ID_WEBMASTER" => $object->getSellerId(),
+                    "ID_COMPANY" => $object->getBuyerId(),
+                    "SUMM_DEAL" => $object->getAmount(),
+                    "ID_ROOM" => $object->getLead()->getRoom()->getId(),
+                ],
+            ]);
+
+        }
+
     }
 
     /**
@@ -235,13 +223,11 @@ class EmailNotificationContainer
      */
     public function userApiTokenChanged(User $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::API_KEY_CHANGE);
-        $email->setParams(["KEYAPI" => $object->getToken()]);
-
-        $this->emailChannel->send($email);
+        $this->client->send([
+            "to_email" => $object->getEmail(),
+            "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
+            "params" => ["KEYAPI" => $object->getToken()],
+        ]);
     }
 
     /**
@@ -251,12 +237,11 @@ class EmailNotificationContainer
      */
     public function userPasswordChanged(User $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::PASSWORD_CHANGE_SUCCESS);
-
-        $this->emailChannel->send($email);
+        $this->client->send([
+            "to_email" => $object->getEmail(),
+            "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_SUCCESS,
+            "params" => [],
+        ]);
     }
 
     /**
@@ -267,13 +252,12 @@ class EmailNotificationContainer
     public function userResetTokenUpdated(User $object): void
     {
         $url = $this->router->generate('app_password_reset_confirm', ['token' => $object->getResetToken()]);
-        $email = new Email;
 
-        $email->setToEmail($object->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::PASSWORD_CHANGE_REQUEST);
-        $email->setParams(["URL_PASSWORD" => $url]);
-
-        $this->emailChannel->send($email);
+        $this->client->send([
+            "to_email" => $object->getEmail(),
+            "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_REQUEST,
+            "params" => ["URL_PASSWORD" => $url],
+        ]);
     }
 
     /**
@@ -283,19 +267,15 @@ class EmailNotificationContainer
      */
     public function withdrawAccepted(Withdraw $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_WITHDRAW_SUCCESS);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_SUCCESS,
+            "params" => [
                 "BALANCE_LOGOUT" => $object->getAmount(),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
                 "TYPE_BALANCE_LOGOUT" => $object->getDescription(),
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -305,19 +285,22 @@ class EmailNotificationContainer
      */
     public function withdrawAdmin(Withdraw $object): void
     {
-        $email = new Email;
+        $users = $this->getNotificationOperators();
 
-        $email->setToEmail($this->adminEmail);
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN);
-        $email->setParams(
-            [
-                "ID_USER" => $object->getUser()->getId(),
-                "BALANCE_LOGOUT" => $object->getAmount(),
-                "ID_BALANCE_LOGOUT" => $object->getId(),
-            ]
-        );
+        /** @var User $user */
+        foreach ($users as $user) {
 
-        $this->emailChannel->send($email);
+            $this->client->send([
+                "to_email" => $user->getEmail(),
+                "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN,
+                "params" => [
+                    "ID_USER" => $object->getUser()->getId(),
+                    "BALANCE_LOGOUT" => $object->getAmount(),
+                    "ID_BALANCE_LOGOUT" => $object->getId(),
+                ],
+            ]);
+        }
+
     }
 
     /**
@@ -327,18 +310,14 @@ class EmailNotificationContainer
      */
     public function withdrawRejected(Withdraw $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_WITHDRAW_FAIL);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FAIL,
+            "params" => [
                 "BALANCE_LOGOUT" => $object->getAmount(),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
-            ]
-        );
-
-        $this->emailChannel->send($email);
+            ],
+        ]);
     }
 
     /**
@@ -348,17 +327,25 @@ class EmailNotificationContainer
      */
     public function withdrawUser(Withdraw $object): void
     {
-        $email = new Email;
-
-        $email->setToEmail($object->getUser()->getEmail());
-        $email->setTemplateId(EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_USER);
-        $email->setParams(
-            [
+        $this->client->send([
+            "to_email" => $object->getUser()->getEmail(),
+            "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_USER,
+            "params" => [
                 "BALANCE_LOGOUT" => $object->getAmount(),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
-            ]
-        );
+            ],
+        ]);
+    }
 
-        $this->emailChannel->send($email);
+    /**
+     * @return array
+     */
+    private function getNotificationOperators()
+    {
+        /** @var UserRepository $repository */
+        $repository = $this->entityManager->getRepository(User::class);
+
+        return $repository->getByRole(User::ROLE_NOTIFICATION_OPERATOR);
+
     }
 }

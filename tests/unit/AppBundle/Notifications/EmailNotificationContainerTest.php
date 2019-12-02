@@ -5,6 +5,7 @@ namespace Tests\unit\AppBundle\Notifications;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Thread;
@@ -12,8 +13,9 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Notifications\EmailNotificationContainer;
-use NotificationBundle\Channels\EmailChannel;
-use PHPUnit\Framework\MockObject\MockObject;
+use AppBundle\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use NotificationBundle\Client\Client;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -24,41 +26,38 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
      */
     private $service;
 
-    /**
-     * @var MockObject
-     */
-    private $emailChanelMock;
-
     public function setUp()
     {
-        $this->emailChanelMock = $this->getMockBuilder(EmailChannel::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $emailClientMock = $this->createMock(Client::class);
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $repositoryMock = $this->createMock(UserRepository::class);
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
-        /** @var UrlGeneratorInterface $urlGenerator */
-        $urlGenerator = $this->getMockBuilder(UrlGeneratorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $emailClientMock->expects($this->once())->method('send');
 
-        $this->service = new EmailNotificationContainer($this->emailChanelMock, $urlGenerator, 'admin@mail.com');
+        $repositoryMock->expects($this->any())
+            ->method('getByRole')
+            ->willReturn([$this->getUser()]);
+
+        $entityManagerMock->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repositoryMock);
+
+        $this->service = new EmailNotificationContainer($emailClientMock, $urlGenerator, $entityManagerMock);
     }
 
     public function testAccountBalanceApproachingZero()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->accountBalanceApproachingZero($this->getAccount());
     }
 
     public function testAccountBalanceLowerThenMinimal()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->accountBalanceLowerThenMinimal($this->getAccount());
     }
 
     public function testInvoiceProcessed()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
-
         $user = new User();
         $user
             ->setName('Company 1')
@@ -78,38 +77,31 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
     public function testLeadNewPlaced()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->leadNewPlaced($this->getLead());
     }
 
     public function testNoVisitTooLong()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
-        $this->service->noVisitTooLong($this->getLead());
+        $this->service->noVisitTooLong($this->getMember());
     }
 
     public function testMessageCreated()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->messageCreated($this->getMessage());
     }
 
     public function testMessageSupportReply()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->messageSupportReply($this->getMessage());
     }
 
     public function testNewUserRegistered()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->newUserRegistered($this->getUser());
     }
 
     public function testTradeProceeding()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
-
         $user = new User();
         $user
             ->setName('Company 1')
@@ -137,43 +129,36 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
     public function testUserApiTokenChanged()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->userApiTokenChanged($this->getUser());
     }
 
     public function testUserPasswordChanged()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->userPasswordChanged($this->getUser());
     }
 
     public function testUserResetTokenUpdated()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->userResetTokenUpdated($this->getUser());
     }
 
     public function testWithdrawAccepted()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->withdrawAccepted($this->getWithdraw());
     }
 
     public function testWithdrawAdmin()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->withdrawAdmin($this->getWithdraw());
     }
 
     public function testWithdrawRejected()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->withdrawRejected($this->getWithdraw());
     }
 
     public function testWithdrawUser()
     {
-        $this->emailChanelMock->expects($this->once())->method('send');
         $this->service->withdrawUser($this->getWithdraw());
     }
 
@@ -256,6 +241,22 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
             ->setPlainPassword(123456);
 
         $object = new Withdraw();
+        $object->setUser($user);
+
+        return $object;
+    }
+
+    private function getMember()
+    {
+
+        $user = new User();
+        $user
+            ->setName('Company 1')
+            ->setEmail('company1@xoptov.ru')
+            ->setPhone('79000000001')
+            ->setPlainPassword(123456);
+
+        $object = new Member();
         $object->setUser($user);
 
         return $object;

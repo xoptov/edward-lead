@@ -12,7 +12,7 @@ class SmsNotificationContainer
     /**
      * @var Client
      */
-    private $smsClient;
+    private $client;
 
     /**
      * EmailNotificationContainer constructor.
@@ -21,7 +21,7 @@ class SmsNotificationContainer
      */
     public function __construct(Client $smsClient)
     {
-        $this->smsClient = $smsClient;
+        $this->client = $smsClient;
     }
 
     /**
@@ -33,7 +33,7 @@ class SmsNotificationContainer
     {
         $message = 'Ваш баланс приблежается к нулю. Не забудьте его пополнить. Текущий - ' . $object->getBalance();
 
-        $this->smsClient->send([
+        $this->client->send([
             "phone" => $object->getUser()->getEmail(),
             "body" => $message,
         ]);
@@ -48,7 +48,7 @@ class SmsNotificationContainer
     {
         $message = 'Запрос на вывод средств отправлен. Ожидайте ответа администрации';
 
-        $this->smsClient->send([
+        $this->client->send([
             "phone" => $object->getUser()->getEmail(),
             "body" => $message,
         ]);
