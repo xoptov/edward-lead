@@ -6,7 +6,7 @@ use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-    abstract class Client
+abstract class Client
 {
     /**
      * @return  Collection
@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
      *
      * @throws ValidationNotificationClientException
      */
-    public function validate(array $model)
+    protected function validate(array $model)
     {
         $errors = $this->validator->validate($model, $this->getValidationRules());
 
