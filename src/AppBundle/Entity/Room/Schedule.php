@@ -22,8 +22,6 @@ class Schedule
     /**
      * @var WorkTime|null
      *
-     * @Assert\NotBlank(message="Необходимо указать рабочее время")
-     *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
      */
     private $workTime;
@@ -31,7 +29,6 @@ class Schedule
     /**
      * @var int|null
      *
-     * @Assert\NotBlank(message="Необходимо указать рабочие дни")
      * @Assert\Range(min=1, max=127)
      *
      * @ORM\Column(name="work_days", type="smallint", nullable=true, options={"unsigned":true})

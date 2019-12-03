@@ -13,16 +13,12 @@ class WorkTime
     /**
      * @var \DateTime|null
      *
-     * @Assert\NotBlank
-     *
      * @ORM\Column(name="start_at", type="time", nullable=true)
      */
     private $startAt;
 
     /**
      * @var \DateTime|null
-     *
-     * @Assert\NotBlank
      *
      * @ORM\Column(name="end_at", type="time", nullable=true)
      */

@@ -7,12 +7,15 @@ use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Validator\Constraints\RoomTimer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="room",options={"auto_increment"="1000"})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RoomRepository")
  * @ORM\HasLifecycleCallbacks
+ *
+ * @RoomTimer()
  */
 class Room implements IdentifiableInterface
 {
@@ -64,7 +67,7 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="999900", maxMessage="Максимальная стоимость 9999")
+     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="9999.99", maxMessage="Максимальная стоимость 9999.99")
      *
      * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
      */
@@ -110,22 +113,12 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
-     * @Assert\Expression(
-     *     "!(!this.isPlatformWarranty() and value)",
-     *     message="Включить таймер можно только с включенной гарантией платформы"
-     * )
-     *
      * @ORM\Column(name="timer", type="boolean")
      */
     private $timer = false;
 
     /**
      * @var City|null
-     *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать город"
-     * )
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinColumn(name="city_id", referencedColumnName="id")
@@ -135,8 +128,6 @@ class Room implements IdentifiableInterface
     /**
      * @var Schedule|null
      *
-     * @Assert\Valid
-     *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
     private $schedule;
@@ -144,10 +135,6 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать время в часах на обработку лида"
-     * )
      * @Assert\Range(
      *     min=1,
      *     max=24,
@@ -161,11 +148,6 @@ class Room implements IdentifiableInterface
 
     /**
      * @var int|null
-     *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать количество лидов в день по таймеру"
-     * )
      *
      * @Assert\Range(
      *     min=1,
