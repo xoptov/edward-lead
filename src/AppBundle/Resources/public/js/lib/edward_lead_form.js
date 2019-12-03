@@ -18,7 +18,7 @@ function drawForm(){
     p$1$1.appendChild(document.createTextNode("в ближайшее время"));
 
     const div$1 = document.createElement("div");
-    div$1.setAttribute("class","edward-lead-div-main-error");
+    div$1.setAttribute("class", "edward-lead-div-main-error");
     
     const text_main_error$1$0 = document.createElement("span");
     text_main_error$1$0.classList.add("text-error");
@@ -69,7 +69,7 @@ function drawForm(){
     div$2$1.appendChild(label$3$1);
 
     const span$4$2 = document.createElement("span");
-    span$4$2.setAttribute("style", "font-size: 14px; color:#6b6b6b;");
+    span$4$2.setAttribute("style", "font-size: 14px;color:#6b6b6b;");
     label$3$1.appendChild(span$4$2);
 
     span$4$2.appendChild(document.createTextNode("(обязательное поле)"));
@@ -103,13 +103,13 @@ function drawForm(){
     form$1$0.appendChild(div$2$2);
 
     const div$footer = document.createElement("div");
-    div$footer.setAttribute("id","edward-lead-form-footer");
+    div$footer.setAttribute("id", "edward-lead-form-footer");
     div$footer.classList.add("edward-lead-form-footer");
     div$footer.appendChild(document.createTextNode("Отправляя сведенья через электронную форму, вы соглашаетесь с условиями "));
 
     const a$agree = document.createElement("a");
-    a$agree.setAttribute("href","#");
-    a$agree.setAttribute("target","_blank");
+    a$agree.setAttribute("href", "http://wiki.edward-lead.ru/?anchor=Politika%20konfidentsialynosti");
+    a$agree.setAttribute("target", "_blank");
     a$agree.appendChild(document.createTextNode("политики конфиденциальности"));
     
     div$footer.appendChild(a$agree);
@@ -117,7 +117,7 @@ function drawForm(){
     /* input mask */
     Inputmask({ 
         "mask": '(+7|8)(###)###-##-##',
-        "definitions": {"#" : { validator: "[0-9]"}}
+        "definitions": {"#": { validator: "[0-9]"}}
     }).mask(phone$4$0);
 
     let xhr = new XMLHttpRequest();
@@ -239,13 +239,11 @@ function drawForm(){
                     elmPhoneError.style.cssText = "color:red;display:block;";
                 }
                 
-                //todo: Резблокировать кнопку отправки!
                 //Снятие блокировки с кнопки
                 elmSubmit.disabled = false;
             }
         };
 
-        //todo: Болкировать кнопку отправки!
         //Блокировка кнопки на время выполнения запроса
         elmSubmit.disabled = true;
 

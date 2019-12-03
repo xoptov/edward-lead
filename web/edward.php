@@ -8,8 +8,7 @@
 define('API_KEY', ''); // Необходимо указать ключь API внутри ''
 define('ROOM_ID', null); // Идентификатор комнаты в которую будет добавляться лид.
 
-//define('API_URL', 'https://cabinet.edward-lead.ru/api/v1/lead');
-define('API_URL', 'http://stage.edward.local/api/v1/lead');
+define('API_URL', 'http://stage.edward-lead.ru/api/v1/lead');
 
 define('API_TIMEOUT', 5);
 
