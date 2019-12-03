@@ -126,11 +126,12 @@ class ArbitrationController extends Controller
 
         if (!$form->isValid()) {
             $errors = [];
+
             foreach ($form->getErrors(true) as $error) {
                 $errors[] = $error->getMessage();
             }
 
-            return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
         }
 
         /** @var User $user */
@@ -142,13 +143,17 @@ class ArbitrationController extends Controller
                 ->getCountInTimeFrameBySender($user, 60);
 
             if ($messageInTimeFrame >= $this->messageLimitInMinute) {
-                return new JsonResponse([
-                    'errors' => ['Вы слишком часто пишите сообщения. Подождите 10 минут']
-                ], Response::HTTP_BAD_REQUEST);
+                return new JsonResponse(
+                    ['Вы слишком часто пишите сообщения. Подождите 10 минут'],
+                    Response::HTTP_BAD_REQUEST
+                );
             }
 
         } catch (DBALException $e) {
-            return new JsonResponse(['errors' => ['Произошла ошибка при приёме сообщения']], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Произошла ошибка при приёме сообщения'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         /** @var Message $message */
@@ -221,7 +226,10 @@ class ArbitrationController extends Controller
     public function fileUpload(Request $request, Uploader $uploader, ValidatorInterface $validator) : JsonResponse
     {
         if (!$request->files->has('file')) {
-            return new JsonResponse(['errors' => ['Файл не отправлен']], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Файл не отправлен'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $file = $request->files->get('file');
@@ -240,14 +248,13 @@ class ArbitrationController extends Controller
             foreach ($violations as $violation) {
                 $errors[] = $violation->getMessage();
             }
-            return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($errors, Response::HTTP_BAD_REQUEST);
         }
 
         try {
             $file = $uploader->store($file, Uploader::DIRECTORY_IMAGE);
         } catch (\Exception $e) {
-            $errors[] = $e->getMessage();
-            return new JsonResponse(['errors' => $errors], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([$e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         $image = new Image();
@@ -276,11 +283,17 @@ class ArbitrationController extends Controller
         $image = $this->getDoctrine()->getRepository(Image::class)->find($id);
 
         if (!$image) {
-            return new JsonResponse(['errors' => ['Такого файла не существует!']], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Такого файла не существует!'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if ($image->getFilename() != $fileName) {
-            return new JsonResponse(['errors' => ['Вы не можете удалить этот файл!']], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Вы не можете удалить этот файл!'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $filename = $this->getParameter('upload_store_path')
@@ -295,7 +308,7 @@ class ArbitrationController extends Controller
             $this->getDoctrine()->getManager()->remove($image);
             $this->getDoctrine()->getManager()->flush();
         } catch (IOException $exception) {
-            return new JsonResponse(['errors' => [$exception->getMessage()]], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([$exception->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         return new JsonResponse(['id' => $image->getId()]);

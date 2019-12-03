@@ -110,7 +110,7 @@ const vm = new Vue({
                 this.channels = response.data.channels;
                 this.cities = response.data.cities;
             })
-            .catch(error => console.debug(error));
+            .catch(response => console.debug(response));
     },
     created: function() {
         if (this.leadId) {
@@ -253,7 +253,7 @@ const vm = new Vue({
                             }
                         )
                         .catch(
-                            response => this.submitErrors = response.data.errors
+                            response => this.$model.submitErrors = response.data
                         );
                 } else {
                     this.$http.post('/api/v1/lead', this.lead)
@@ -270,7 +270,7 @@ const vm = new Vue({
                             }
                         )
                         .catch(
-                            response => this.submitErrors = response.data.errors
+                            response => this.$model.submitErrors = response.data
                         );
                 }
             }

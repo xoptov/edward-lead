@@ -11,18 +11,23 @@ new Vue({
     },
     methods: {
         showArchiveConfirm() {
-            this.archiveConfirmShowed = true;
+            this.$model.archiveConfirmShowed = true;
         },
         hideArchiveConfirm() {
-            this.archiveConfirmShowed = false;
+            this.$model.archiveConfirmShowed = false;
         },
         sendToArchive(leadId) {
             this.$http.get('/api/v1/lead/' + leadId + '/archive')
-                .then(resp => {
+                .then(response => {
+                    this.$model.error = null;
                     window.location.href = '/leads/my';
                 })
-                .catch(resp => {
-                    this.error = resp.data.error;
+                .catch(response => {
+                    if (response.data.length) {
+                        this.error = response.data[0];
+                    } else {
+                        this.error = 'Ошибка отправки лида в архив';
+                    }
                 });
         }
     }

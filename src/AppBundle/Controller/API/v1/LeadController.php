@@ -69,9 +69,10 @@ class LeadController extends APIController
     public function getViewAction(Lead $lead): JsonResponse
     {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
-            return new JsonResponse([
-                'error' => 'У Вас нет прав на просмотр информации по указанному лиду'
-            ], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['У Вас нет прав на просмотр информации по указанному лиду'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $numToBoolTransformer = new NumberToBooleanTransformer();
@@ -191,12 +192,15 @@ class LeadController extends APIController
     ): Response {
 
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['error' => 'Вы должны быть вэбмастером для того чтобы создавать лидов'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Вы должны быть вэбмастером для того чтобы создавать лидов'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $form = $this->createForm(LeadType::class, null, [
             'csrf_protection' => false,
-            'validation_groups' => ['Create']
+            'validation_groups' => ['Default', 'Create']
         ]);
         $form->handleRequest($request);
 
@@ -208,9 +212,10 @@ class LeadController extends APIController
         $user = $this->getUser();
 
         if (!$this->leadManager->checkActiveLeadPerUser($user)) {
-            return new JsonResponse([
-                'error' => 'Привышено количество активных лидов для пользователя'
-            ], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Привышено количество активных лидов для пользователя'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         /** @var Lead $newLead */
@@ -218,7 +223,10 @@ class LeadController extends APIController
         $newLead->setUser($user);
 
         if (!$this->isGranted(LeadCreateVoter::OPERATION, $newLead)) {
-            return new JsonResponse(['error' => 'Вы не имеете прав создавать нового лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Вы не имеете прав создавать нового лида'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $this->leadManager->postCreate($newLead);
@@ -241,7 +249,10 @@ class LeadController extends APIController
     public function postEstimateAction(Request $request): JsonResponse
     {
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['error' => 'Вы должны быть вэбмастером для получения оценки лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['Вы должны быть вэбмастером для получения оценки лида'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $form = $this->createForm(LeadType::class, null, [
@@ -260,7 +271,10 @@ class LeadController extends APIController
             ]);
         }
 
-        return new JsonResponse(['error' => 'Не удалось расчитать стоимость']);
+        return new JsonResponse(
+            ['Не удалось расчитать стоимость'],
+            Response::HTTP_BAD_REQUEST
+        );
     }
 
     /**
@@ -279,7 +293,10 @@ class LeadController extends APIController
     ): Response {
 
         if (!$this->isGranted(LeadEditVoter::OPERATION, $lead)) {
-            return new JsonResponse(['error' => 'У Вас нет прав на редактирование чужего лида'], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['У Вас нет прав на редактирование чужего лида'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         $form = $this->createForm(LeadType::class, $lead, [
@@ -401,15 +418,17 @@ class LeadController extends APIController
     ): JsonResponse {
 
         if (!$this->isGranted(LeadEditVoter::OPERATION, $lead)) {
-            return new JsonResponse([
-                'error' => 'У вас нет прав на архивирование лида'
-            ], Response::HTTP_FORBIDDEN);
+            return new JsonResponse(
+                ['У вас нет прав на архивирование лида'],
+                Response::HTTP_FORBIDDEN
+            );
         }
 
         if (!$lead->isExpected()) {
-            return new JsonResponse([
-                'error' => 'Нельзя отправлять лида в архив с другими статусами кроме "ожидает"'
-            ], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Нельзя отправлять лида в архив с другими статусами кроме "ожидает"'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $lead->setStatus(Lead::STATUS_ARCHIVE);
