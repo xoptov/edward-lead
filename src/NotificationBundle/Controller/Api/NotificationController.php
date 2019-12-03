@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class NotificationController extends Controller
 {
     /**
-     * @Route("/api/notifications", methods={"GET"})
+     * @Route("/api/v1/notifications", methods={"GET"})
      */
     public function indexAction(): Response
     {
@@ -20,7 +20,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/api/notifications/unread/{id}", methods={"PATCH"})
+     * @Route("/api/v1/notifications/unread/{id}", methods={"PATCH"})
      *
      * @param int $id
      *
@@ -34,7 +34,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/api/notifications", methods={"POST"})
+     * @Route("/api/v1/notifications", methods={"POST"})
      *
      * @param Request $request
      *
@@ -48,7 +48,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/api/notifications/switch", methods={"PATCH"})
+     * @Route("/api/v1/notifications/switch", methods={"PATCH"})
      *
      * @param Request $request
      *

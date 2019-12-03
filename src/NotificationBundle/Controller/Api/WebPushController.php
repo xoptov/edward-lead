@@ -27,7 +27,7 @@ class WebPushController extends Controller
     }
 
     /**
-     * @Route("/api/notifications/push", methods={"POST"})
+     * @Route("/api/v1/notifications/push", methods={"POST"})
      *
      * @param Request $request
      *

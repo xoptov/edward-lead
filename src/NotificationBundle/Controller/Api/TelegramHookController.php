@@ -25,7 +25,7 @@ class TelegramHookController extends Controller
     }
 
     /**
-     * @Route("/api/notifications/telegram/hook", methods={"POST"})
+     * @Route("/api/v1/notifications/telegram/hook", methods={"POST"})
      *
      * @param Request $request
      *

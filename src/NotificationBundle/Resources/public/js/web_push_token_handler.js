@@ -17,7 +17,7 @@ ready(function(){
             if(isTokenExpired()){
 
                 var xhr = new XMLHttpRequest();
-                var url = "/api/notifications/push";
+                var url = "/api/v1/notifications/push";
                 xhr.open("POST", url, true);
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.onreadystatechange = function () {
