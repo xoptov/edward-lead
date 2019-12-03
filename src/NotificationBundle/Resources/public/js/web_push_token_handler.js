@@ -50,7 +50,6 @@ ready(function(){
 
 function ready(callback){
 
-
     setTimeout(() => {
 
         // in case the document is already rendered
@@ -63,7 +62,6 @@ function ready(callback){
             });
 
     }, 3000) // delay 3 sec
-
 
 }
 

@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 class WebPushNotificationContainerTest extends TestCase
 {
-
     const MEMBERS_COUNT = 10;
 
     /**
@@ -74,7 +73,7 @@ class WebPushNotificationContainerTest extends TestCase
         $this->clientMock->expects($this->exactly(self::MEMBERS_COUNT))->method('send');
 
         $this->entityManagerMock->expects($this->any())
-            ->method('getByRooms')
+            ->method('findBy')
             ->willReturn([$this->getMembers()]);
 
         $this->service->leadExpectTooLong($this->getLead());

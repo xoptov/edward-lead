@@ -17,7 +17,6 @@ use Symfony\Component\Validator\Validation;
 
 class WebPushTokenHandlerTest extends KernelTestCase
 {
-
     /**
      * @throws ReflectionException
      */
@@ -33,7 +32,6 @@ class WebPushTokenHandlerTest extends KernelTestCase
 
         $handler->handle([]);
     }
-
 
     public function testTelegramHookHandler()
     {
@@ -54,9 +52,6 @@ class WebPushTokenHandlerTest extends KernelTestCase
             "token" => $token
         ]);
 
-
         $this->assertEquals($user->getWebPushToken(), $token);
-
-
     }
 }

@@ -50,8 +50,6 @@ class WebPushNotificationContainer
         ]);
     }
 
-
-
     /**
      * @param Message $object
      *
@@ -59,10 +57,11 @@ class WebPushNotificationContainer
      */
     public function messageSupportReply(Message $object): void
     {
-
         $user = $object->getSender();
 
-        if(!$user instanceof User) return;
+        if (!$user instanceof User) {
+            return;
+        }
 
         $this->client->send([
             "body" => "У вас имееться новое сообщение от службы поддержки",
@@ -77,26 +76,24 @@ class WebPushNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        if (!$object->getRoom()) return;
-
-        $members = $this->entityManager->getRepository(Member::class)->getByRooms([$object->getRoom()->getId()]);
-
-        foreach ($members as $member){
-
-            /** @var Member $member */
-            if(!$member->getUser()->isCompany()) continue;
-
-            $this->client->send([
-                "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
-                "push_token" => $member->getUser()->getWebPushToken()
-            ]);
-
+        if (!$object->getRoom()) {
+            return;
         }
 
-        $this->client->send([
-            "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
-            "push_token" => $object->getBuyer()->getWebPushToken()
-        ]);
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
+
+        foreach ($members as $member) {
+
+            /** @var Member $member */
+            if (!$member->isCompany()) {
+                continue;
+            }
+
+            $this->client->send([
+                "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
+                "push_token" => $member->getUser()->getWebPushToken()
+            ]);
+        }
     }
 
     /**
@@ -106,20 +103,23 @@ class WebPushNotificationContainer
      */
     public function leadExpectTooLong(Lead $object): void
     {
-        if (!$object->getRoom()) return;
+        if (!$object->getRoom()) {
+            return;
+        }
 
-        $members = $this->entityManager->getRepository(Member::class)->getByRooms([$object->getRoom()->getId()]);
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
 
-        foreach ($members as $member){
+        foreach ($members as $member) {
 
             /** @var Member $member */
-            if(!$member->getUser()->isWebmaster()) continue;
+            if (!$member->isWebmaster()) {
+                continue;
+            }
 
             $this->client->send([
                 "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
                 "push_token" => $member->getUser()->getWebPushToken()
             ]);
-
         }
     }
 

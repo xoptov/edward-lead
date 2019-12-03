@@ -43,6 +43,10 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
             ->method('getRepository')
             ->willReturn($repositoryMock);
 
+        $urlGenerator->expects($this->any())
+            ->method('generate')
+            ->willReturn('/room/1');
+
         $this->service = new EmailNotificationContainer($emailClientMock, $urlGenerator, $entityManagerMock);
     }
 
@@ -184,17 +188,21 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
     {
         $user = new User();
         $user
+            ->setId(1)
             ->setName('Company 1')
             ->setEmail('company1@xoptov.ru')
             ->setPhone('79000000001')
             ->setPlainPassword(123456);
 
         $room = new Room();
-        $room->setName(' комната')
+        $room
+            ->setId(1)
+            ->setName(' комната')
             ->setSphere(' сфера');
 
         $lead = new Lead();
         $lead
+            ->setId(1)
             ->setPhone('79000000003')
             ->setStatus(Lead::STATUS_EXPECT)
             ->setPrice(10000)

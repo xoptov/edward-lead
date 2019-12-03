@@ -2,12 +2,11 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
-use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
-use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
+use AppBundle\Entity\Room\Schedule;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -178,6 +177,18 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
      */
     private $leadsPerDay;
+
+    /**
+     * @param int $id
+     *
+     * @return Room
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @return User|null

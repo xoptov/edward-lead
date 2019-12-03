@@ -1,8 +1,6 @@
 <?php
 
-
 namespace NotificationBundle\Service;
-
 
 use Doctrine\ORM\EntityManagerInterface;
 use NotificationBundle\Entity\UserWithWebPushInterface;
@@ -24,6 +22,7 @@ class WebPushTokenHandler
      * @var EntityManagerInterface
      */
     private $entityManager;
+
     /**
      * @var Security
      */
@@ -53,7 +52,6 @@ class WebPushTokenHandler
         $user->setWebPushToken($data['token']);
 
         $this->entityManager->flush();
-
     }
 
     /**

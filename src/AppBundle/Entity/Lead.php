@@ -157,6 +157,18 @@ class Lead implements IdentifiableInterface
     private $timer;
 
     /**
+     * @param int $id
+     *
+     * @return Lead
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
      * @param Room|null $room
      *
      * @return Lead
