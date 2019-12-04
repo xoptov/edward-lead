@@ -38,6 +38,8 @@
                             <td>
                                 {% if phoneCall.amount %}
                                     {{ phoneCall.amount|money_format }}
+                                {% else %}
+                                    0 руб.
                                 {% endif %}
                             </td>
                             <td>

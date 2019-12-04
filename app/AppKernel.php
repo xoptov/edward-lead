@@ -27,6 +27,7 @@ class AppKernel extends Kernel
             new EightPoints\Bundle\GuzzleBundle\EightPointsGuzzleBundle(),
             new FOS\RestBundle\FOSRestBundle(),
             new AppBundle\AppBundle(),
+            new NotificationBundle\NotificationBundle()
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

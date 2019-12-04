@@ -17,8 +17,9 @@ security:
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_COMPANY:     ROLE_USER
+        ROLE_COMPANY:     ROLE_ADVERTISER
         ROLE_WEBMASTER:   ROLE_USER
+        ROLE_ADVERTISER:  ROLE_USER
 
     firewalls:
         dev:
@@ -26,6 +27,7 @@ security:
             security: false
         main:
             anonymous: ~
+            user_checker: AppBundle\Security\BannedChecker
             remember_me:
                 name: rememberme
                 secret: '%secret%'
@@ -38,6 +40,7 @@ security:
                 password_parameter: login[password]
                 provider: database_email_user_provider
                 default_target_path: app_index
+                failure_handler: AppBundle\Security\AuthenticationFailureHandler
             guard:
                 authenticators:
                     - AppBundle\Security\AccessTokenAuthenticator
@@ -53,6 +56,7 @@ security:
         - { path: ^/api/v1/app/status, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/v1/payment, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/stub, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/v1/notifications/telegram/hook, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: ROLE_WEBMASTER }
         - { path: ^/telephony/calls, roles: ROLE_COMPANY }

@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="lead")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\LeadRepository")
  * @ORM\HasLifecycleCallbacks
- * @UniqueLead
+ * @UniqueLead(groups={"Create"}, tradePeriod=30)
  */
 class Lead implements IdentifiableInterface
 {
@@ -155,6 +155,18 @@ class Lead implements IdentifiableInterface
      * @ORM\Embedded(class="AppBundle\Entity\Lead\Timer")
      */
     private $timer;
+
+    /**
+     * @param int $id
+     *
+     * @return Lead
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @param Room|null $room

@@ -199,7 +199,8 @@ class LeadController extends APIController
         }
 
         $form = $this->createForm(LeadType::class, null, [
-            'csrf_protection' => false
+            'csrf_protection' => false,
+            'validation_groups' => ['Default', 'Create']
         ]);
         $form->handleRequest($request);
 
@@ -310,6 +311,7 @@ class LeadController extends APIController
         }
 
         $this->entityManager->flush();
+
         $eventDispatcher->dispatch(LeadEvent::EDITED, new LeadEvent($lead));
 
         return new JsonResponse(['id' => $lead->getId()]);

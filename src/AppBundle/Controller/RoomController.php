@@ -6,6 +6,8 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
+use AppBundle\Event\RoomEvent;
+use AppBundle\Event\MemberEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomController extends Controller
 {
@@ -45,7 +48,8 @@ class RoomController extends Controller
     /**
      * @Route("/room/create", name="app_room_create", methods={"GET", "POST"})
      *
-     * @param Request $request
+     * @param Request                  $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return Response
      */
@@ -80,7 +84,12 @@ class RoomController extends Controller
 
             $this->addFlash('success', 'Новая комната успешно создана');
 
-            return $this->redirectToRoute('app_room_view', ['id' => $data->getId()]);
+            $eventDispatcher->dispatch(
+                RoomEvent::NEW_CREATED,
+                new RoomEvent($room)
+            );
+
+            return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
         }
 
         return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
@@ -177,7 +186,7 @@ class RoomController extends Controller
 
         $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
 
-        $totalAvailableMoney = 0.0;
+        $totalAvailableMoney = 0;
 
         foreach ($buyers as $buyer) {
             $totalAvailableMoney += $accountManager->getAvailableBalance($buyer->getAccount());
@@ -240,13 +249,16 @@ class RoomController extends Controller
 
     /**
      * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
-     *
-     * @param string $token
+     * 
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string                   $token
      *
      * @return Response
      */
-    public function acceptInviteAction(string $token): Response
-    {
+    public function acceptInviteAction(
+        EventDispatcherInterface $eventDispatcher,
+        string $token
+    ): Response{
         $room = $this->entityManager->getRepository(Room::class)->findOneBy([
             'inviteToken' => $token,
             'enabled' => true
@@ -285,12 +297,14 @@ class RoomController extends Controller
         }
 
         try {
-            $this->roomManager->joinInRoom($room, $user);
+            $member = $this->roomManager->joinInRoom($room, $user);
             $this->roomManager->updateInviteToken($room);
             $this->entityManager->flush();
         } catch (RoomException $e) {
             return $this->redirectToRoute('app_room_invite_invalid');
         }
+
+        $eventDispatcher->dispatch(MemberEvent::JOINED, new MemberEvent($member));
 
         return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
     }
@@ -323,3 +337,4 @@ class RoomController extends Controller
         return $this->render('@App/v2/Room/invite_reject.html.twig');
     }
 }
+

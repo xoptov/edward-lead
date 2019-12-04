@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Account;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Entity\ClientAccount;
@@ -34,21 +35,29 @@ class WithdrawManager
     private $transactionManager;
 
     /**
+     * @var int
+     */
+    private $minimalAmount;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param AccountManager         $accountManager
      * @param HoldManager            $holdManager
      * @param TransactionManager     $transactionManager
+     * @param int                    $minimalAmount
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         AccountManager $accountManager,
         HoldManager $holdManager,
-        TransactionManager $transactionManager
+        TransactionManager $transactionManager,
+        int $minimalAmount
     ) {
         $this->entityManager = $entityManager;
         $this->accountManager = $accountManager;
         $this->holdManager = $holdManager;
         $this->transactionManager = $transactionManager;
+        $this->minimalAmount = $minimalAmount;
     }
 
     /**
@@ -65,6 +74,12 @@ class WithdrawManager
         int $amount,
         bool $flush = true
     ): Withdraw {
+
+        if ($amount < $this->minimalAmount) {
+            throw new FinancialException(
+                'Минимальная сумма вывода составляет ' . (int)ceil($this->minimalAmount / Account::DIVISOR) . ' руб'
+            );
+        }
 
         $balance = $this->accountManager->getAvailableBalance($user->getAccount());
 

@@ -4184,7 +4184,7 @@ input.is-tel-correct:invalid ~ .error-note {
 
 .table_link {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 
@@ -4192,26 +4192,30 @@ input.is-tel-correct:invalid ~ .error-note {
     width: 18px;
     height: 17px;
     display: block;
-    margin: auto;
-    background: transparent url(../img/transition_link.png) no-repeat center;
+    background: transparent url("../img/transition_link.png") no-repeat center;
 }
 
 .speaker {
     width: 19px;
     height: 18px;
-    background: transparent url(../img/speaker.png) no-repeat center;
+    background: transparent url("../img/speaker.png") no-repeat center;
 }
 
 .phone_link {
     width: 24px;
     height: 24px;
-    background: transparent url(../img/phone_link.png) no-repeat center;
+    background: transparent url("../img/phone_link.png") no-repeat center;
+}
+
+.phone_connect {
+    width: 28px;
+    height: 29px;
+    background: transparent url("../img/phone_connect.png") no-repeat center;
 }
 
 .phone_link,
 .speaker {
     display: block;
-    margin: auto;
     cursor: pointer;
 }
 

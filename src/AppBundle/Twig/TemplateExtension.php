@@ -3,17 +3,18 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Operation;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
+use AppBundle\Entity\Operation;
+use Doctrine\DBAL\DBALException;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TimerManager;
 use AppBundle\Entity\Room\Schedule;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
+use AppBundle\Service\PhoneCallManager;
 use AppBundle\Entity\MonetaryTransaction;
-use Doctrine\DBAL\DBALException;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -33,18 +34,26 @@ class TemplateExtension extends \Twig_Extension
     private $timerManager;
 
     /**
-     * @param AccountManager $accountManager
-     * @param TradeManager   $tradeManager
-     * @param TimerManager   $timerManager
+     * @var PhoneCallManager
+     */
+    private $phoneCallManager;
+
+    /**
+     * @param AccountManager   $accountManager
+     * @param TradeManager     $tradeManager
+     * @param TimerManager     $timerManager
+     * @param PhoneCallManager $phoneCallManager
      */
     public function __construct(
         AccountManager $accountManager,
         TradeManager $tradeManager,
-        TimerManager $timerManager
+        TimerManager $timerManager,
+        PhoneCallManager $phoneCallManager
     ) {
         $this->accountManager = $accountManager;
         $this->tradeManager = $tradeManager;
         $this->timerManager = $timerManager;
+        $this->phoneCallManager = $phoneCallManager;
     }
 
     /**
@@ -70,6 +79,7 @@ class TemplateExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
             new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
+            new \Twig_SimpleFunction('can_make_call', [$this, 'canMakeCall']),
             new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
             new \Twig_SimpleFunction('destination_of_money', [$this, 'getDestinationOfMoney']),
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
@@ -207,6 +217,17 @@ class TemplateExtension extends \Twig_Extension
     public function canShowPhone(Lead $lead, User $user): bool
     {
         return LeadManager::isCanShowPhone($lead, $user);
+    }
+
+    /**
+     * @param User $user
+     * @param Lead $lead
+     *
+     * @return bool
+     */
+    public function canMakeCall(User $user, Lead $lead): bool
+    {
+        return $this->phoneCallManager->isCanMakeCall($user, $lead);
     }
 
     /**

@@ -1,3 +1,6 @@
+imports:
+    - { resource: "@NotificationBundle/Resources/config/services.yml" }
+
 # Learn more about services, parameters and containers at
 # https://symfony.com/doc/current/service_container.html
 parameters:
@@ -258,6 +261,10 @@ services:
         arguments:
             $rewardInterest: '%referrer_reward%'
 
+    AppBundle\Service\WithdrawManager:
+        arguments:
+            $minimalAmount: '%minimal_withdraw%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'
@@ -291,6 +298,15 @@ services:
         arguments:
             $userProvider: '@app.security.token_user_provider'
 
+    AppBundle\Security\AuthenticationFailureHandler:
+        arguments:
+            $httpUtils: '@security.http_utils'
+
+    AppBundle\Security\BannedChecker:
+        arguments:
+            $timeFrame: '%auth_time_frame%'
+            $retryLimit: '%auth_fail_retry%'
+
     AppBundle\Controller\ArbitrationController:
         arguments:
             $composer: '@fos_message.composer.default'
@@ -316,3 +332,16 @@ services:
     AppBundle\Validator\Constraints\UniqueLeadValidator:
         tags:
             - { name: validator.constraint_validator }
+
+    AppBundle\Notifications\EmailNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.email_client'
+
+    AppBundle\Notifications\WebPushNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.web_push_client'
+
+    AppBundle\Notifications\SmsNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.sms_client'
+
