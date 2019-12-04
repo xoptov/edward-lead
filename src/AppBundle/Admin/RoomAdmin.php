@@ -2,10 +2,12 @@
 
 namespace AppBundle\Admin;
 
+use AppBundle\Entity\City;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Account;
 use AppBundle\Service\RoomManager;
+use AppBundle\Form\Type\ScheduleType;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -13,6 +15,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 
@@ -77,6 +80,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('sphere')
             ->add('leadCriteria')
             ->add('platformWarranty')
+            ->add('timer')
             ->add($leadPrice)
             ->add('buyerFee', null, [
                 'template' => '@App/CRUD/list_buyer_fee.html.twig'
@@ -108,12 +112,29 @@ class RoomAdmin extends AbstractAdmin
             ])
             ->add('sphere')
             ->add('leadCriteria')
-            ->add('platformWarranty', null, [
-                'required' => false
-            ])
             ->add('leadPrice', MoneyType::class, [
                 'currency' => 'RUB',
                 'divisor' => Account::DIVISOR,
+                'required' => false
+            ])
+            ->add('platformWarranty', null, [
+                'required' => false
+            ])
+            ->add('timer', null, [
+                'required' => false
+            ])
+            ->add('city', EntityType::class, [
+                'class' => City::class,
+                'choice_label' => 'name',
+                'required' => false
+            ])
+            ->add('schedule', ScheduleType::class, [
+                'required' => false
+            ])
+            ->add('executionHours', null, [
+                'required' => false
+            ])
+            ->add('leadsPerDay', null, [
                 'required' => false
             ])
             ->add('buyerFee')
@@ -123,7 +144,6 @@ class RoomAdmin extends AbstractAdmin
                 'required' => false
             ])
             ->add('hideFee')
-            ->add('timer')
             ->add('enabled');
     }
 
@@ -151,15 +171,30 @@ class RoomAdmin extends AbstractAdmin
             ->add($hiddenMargin)
             ->add('hideFee')
             ->add('timer')
-            ->ifTrue('timer')
-                ->add('schedule.city.name')
-                ->add('schedule.startHour')
-                ->add('schedule.endHour')
-                ->add('schedule.daysOfWeek')
-                ->add('schedule.executionHours')
-                ->add('schedule.leadsPerDay')
-            ->ifEnd()
             ->add('enabled');
+
+        if ($this->subject instanceof Room) {
+            $show
+                ->ifTrue($this->subject->isTimer())
+                    ->add('city.name', null, [
+                        'label' => 'Work City'
+                    ])
+                    ->add('schedule.workTime.startAt', 'datetime', [
+                        'label' => 'Work Start At',
+                        'format' => 'H:i'
+                    ])
+                    ->add('schedule.workTime.endAt', 'datetime', [
+                        'label' => 'Work End At',
+                        'format' => 'H:i'
+                    ])
+                    ->add('schedule.workDays', null, [
+                        'label' => 'Work Days',
+                        'template' => '@App/CRUD/show_work_days_field.html.twig'
+                    ])
+                    ->add('executionHours')
+                    ->add('leadsPerDay')
+                ->ifEnd();
+        }
     }
 
     /**

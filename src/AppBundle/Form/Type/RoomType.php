@@ -6,6 +6,7 @@ use AppBundle\Entity\City;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Account;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -68,12 +69,18 @@ class RoomType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver
-            ->setDefined('timer')
-            ->setAllowedValues('timer', [false, true])
-            ->setDefaults([
-                'data_class' => Room::class,
-                'timer' => false
-            ]);
+        $resolver->setDefaults([
+            'data_class' => Room::class,
+            'validation_groups' => function(FormInterface $form) {
+                $groups = ['Default'];
+                $data = $form->getData();
+                /** @var Room $data */
+                if ($data->isTimer()) {
+                    $groups[] = 'timer';
+                }
+
+                return $groups;
+            }
+        ]);
     }
 }

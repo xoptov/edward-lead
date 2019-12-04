@@ -13,12 +13,22 @@ class WorkTime
     /**
      * @var \DateTime|null
      *
+     * @Assert\NotBlank(
+     *     message="Необходимо указать начало рабочего времени",
+     *     groups={"timer"}
+     * )
+     *
      * @ORM\Column(name="start_at", type="time", nullable=true)
      */
     private $startAt;
 
     /**
      * @var \DateTime|null
+     *
+     * @Assert\NotBlank(
+     *     message="Необходимо указать конец рабочего времени",
+     *     groups={"timer"}
+     * )
      *
      * @ORM\Column(name="end_at", type="time", nullable=true)
      */

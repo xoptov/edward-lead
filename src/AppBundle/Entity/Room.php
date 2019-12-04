@@ -7,15 +7,12 @@ use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
-use AppBundle\Validator\Constraints\RoomTimer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="room",options={"auto_increment"="1000"})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\RoomRepository")
  * @ORM\HasLifecycleCallbacks
- *
- * @RoomTimer()
  */
 class Room implements IdentifiableInterface
 {
@@ -67,7 +64,12 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="9999.99", maxMessage="Максимальная стоимость 9999.99")
+     * @Assert\Range(
+     *     min="100",
+     *     minMessage="Минимальная стоимость 1",
+     *     max="999999",
+     *     maxMessage="Максимальная стоимость 9999.99"
+     * )
      *
      * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
      */
@@ -75,6 +77,11 @@ class Room implements IdentifiableInterface
 
     /**
      * @var bool
+     *
+     * @Assert\IsTrue(
+     *     message="Гарантия должна быть включена если включен таймер",
+     *     groups={"timer"}
+     * )
      *
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
@@ -90,7 +97,10 @@ class Room implements IdentifiableInterface
     /**
      * @var int
      *
-     * @Assert\GreaterThan(value=0, message="Значение должно быть положительным или пустым")
+     * @Assert\GreaterThan(
+     *     value=0,
+     *     message="Значение должно быть положительным или пустым"
+     * )
      *
      * @ORM\Column(name="hidden_margin", type="integer", nullable=true, options={"unsigned":"true"})
      */
@@ -120,6 +130,11 @@ class Room implements IdentifiableInterface
     /**
      * @var City|null
      *
+     * @Assert\NotBlank(
+     *     message="Для таймера необходимо указать город",
+     *     groups={"timer"}
+     * )
+     *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
      * @ORM\JoinColumn(name="city_id", referencedColumnName="id")
      */
@@ -128,6 +143,8 @@ class Room implements IdentifiableInterface
     /**
      * @var Schedule|null
      *
+     * @Assert\Valid(groups={"timer"})
+     *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
     private $schedule;
@@ -135,11 +152,16 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
+     * @Assert\NotBlank(
+     *     message="Необходимо указать рабочии часы комнаты",
+     *     groups={"timer"}
+     * )
      * @Assert\Range(
      *     min=1,
      *     max=24,
      *     minMessage="Минимальное кол-во {{ limit }} часов на обработку",
-     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку"
+     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку",
+     *     groups={"timer"}
      * )
      *
      * @ORM\Column(name="execution_hours", type="smallint", nullable=true, options={"unsigned":true})
@@ -149,11 +171,16 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
+     * @Assert\NotBlank(
+     *     message="Необходимо указать количество лидов",
+     *     groups={"timer"}
+     * )
      * @Assert\Range(
      *     min=1,
      *     max=1000,
      *     minMessage="Минимальное кол-во {{ limit }} лидов в день по таймеру",
-     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру"
+     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру",
+     *     groups={"timer"}
      * )
      *
      * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
