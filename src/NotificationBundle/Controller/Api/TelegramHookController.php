@@ -1,14 +1,15 @@
 <?php
 
-namespace NotificationBundle\Controller;
+namespace NotificationBundle\Controller\Api;
 
 use Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use NotificationBundle\Service\TelegramHookHandler;
 
-class TelegramHookController
+class TelegramHookController extends Controller
 {
     /**
      * @var TelegramHookHandler
@@ -24,7 +25,7 @@ class TelegramHookController
     }
 
     /**
-     * @Route("/notifications/telegram/hook", methods={"POST"})
+     * @Route("/api/v1/notifications/telegram/hook", methods={"POST"})
      *
      * @param Request $request
      *
