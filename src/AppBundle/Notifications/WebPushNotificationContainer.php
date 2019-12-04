@@ -80,7 +80,7 @@ class WebPushNotificationContainer
             return;
         }
 
-        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
 
         foreach ($members as $member) {
 
@@ -107,7 +107,7 @@ class WebPushNotificationContainer
             return;
         }
 
-        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
 
         foreach ($members as $member) {
 

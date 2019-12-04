@@ -29,20 +29,19 @@ abstract class BaseEventListener
      */
     public $internalNotificationContainer;
 
-
     /**
      * BaseEventListener constructor.
      *
-     * @param InternalNotificationContainer $internalNotificationContainer
      * @param EmailNotificationContainer    $emailNotificationContainer
      * @param WebPushNotificationContainer  $webPushNotificationContainer
      * @param SmsNotificationContainer      $smsNotificationContainer
+     * @param InternalNotificationContainer $internalNotificationContainer
      */
     public function __construct(
-        InternalNotificationContainer $internalNotificationContainer,
         EmailNotificationContainer $emailNotificationContainer,
         WebPushNotificationContainer $webPushNotificationContainer,
-        SmsNotificationContainer $smsNotificationContainer
+        SmsNotificationContainer $smsNotificationContainer,
+        InternalNotificationContainer $internalNotificationContainer
 
     )
     {

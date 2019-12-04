@@ -9,10 +9,11 @@ use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Trade;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use NotificationBundle\Client\Client;
 use NotificationBundle\Client\InternalClient;
 use NotificationBundle\Entity\Notification;
 use NotificationBundle\Exception\ValidationNotificationClientException;
@@ -24,21 +25,29 @@ class InternalNotificationContainer
      * @var InternalClient
      */
     private $client;
+
     /**
      * @var UrlGeneratorInterface
      */
     private $router;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * EmailNotificationContainer constructor.
      *
-     * @param InternalClient        $client
-     * @param UrlGeneratorInterface $router
+     * @param InternalClient         $client
+     * @param UrlGeneratorInterface  $router
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(InternalClient $client, UrlGeneratorInterface $router)
+    public function __construct(InternalClient $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->router = $router;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -51,7 +60,7 @@ class InternalNotificationContainer
     public function newRoomCreated(Room $object): void
     {
         $message = "Вы создали комнату #{$object->getId()} - {$object->getName()}";
-        $link = $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]);
+        $link = $this->router->generate('app_room_view', ['id' => $object->getId()]);
         $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Перейти</a></div>";
         $user = $object->getOwner();
 
@@ -107,7 +116,7 @@ class InternalNotificationContainer
     public function accountBalanceApproachingZero(ClientAccount $object): void
     {
         $message = "Ваш баланс приближается к нулю. Не забудьте его пополнить.";
-        $link = null; // TODO get link
+        $link = $this->router->generate('app_financial_deposit');
         $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Пополнить баланс</a></div>";
         $user = $object->getUser();
         $type = Notification::TYPE_IMPORTANT;
@@ -127,7 +136,7 @@ class InternalNotificationContainer
     public function accountBalanceLowerThenMinimal(ClientAccount $object): void
     {
         $message = "Ваш баланс менее 40 рублей. Пополните баланс для дальнейшей работы.";
-        $link = null; // TODO get link
+        $link = $this->router->generate('app_financial_deposit');
         $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Пополнить баланс</a></div>";
         $user = $object->getUser();
         $type = Notification::TYPE_IMPORTANT;
@@ -152,6 +161,10 @@ class InternalNotificationContainer
         $user = $object->getThread()->getCreatedBy();
         $type = Notification::TYPE_IMPORTANT;
 
+        if(!$user instanceof User){
+            return;
+        }
+
         $notification = new Notification($user, $html, $type);
 
         $this->client->send($notification);
@@ -166,10 +179,10 @@ class InternalNotificationContainer
      */
     public function tradeAccepted(Trade $trade): void
     {
-        // TODO status translate
-        $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус {$trade->getStatus()}. Подробнее в разделе \"арбитраж\"";
+        // TODO кажеться неправильыне тут события вообще
+        $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус \"Завершена Успешно\". Подробнее в разделе \"Арбитраж\"";
         $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = $trade->getSeller()->getId();
+        $user = $trade->getSeller();
 
         $notification = new Notification($user, $html);
 
@@ -185,10 +198,12 @@ class InternalNotificationContainer
      */
     public function tradeRejected(Trade $trade): void
     {
+        // TODO кажеться неправильыне тут события вообще
+
         $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$trade->getLead()->getId()}";
         $link = null; // TODO get link
         $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
-        $user = $trade->getSeller()->getId();
+        $user = $trade->getSeller();
         $type = Notification::TYPE_IMPORTANT;
 
         $notification = new Notification($user, $html, $type);
@@ -197,17 +212,47 @@ class InternalNotificationContainer
     }
 
     /**
-     * @param Member $trade
+     * @param Member $object
      *
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws ValidationNotificationClientException
      */
-    public function someOneJoinedToYou(Member $trade): void
+    public function someOneJoinedToYou(Member $object): void
     {
-        $message = "";
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
+
+        /** @var Member $member */
+        foreach ($members as $member) {
+
+            if ($member->getId() === $object->getId()) {
+                continue;
+            }
+
+            $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$member->getUser()->getAccount()->getType()}";
+            $html = "<div class='notification'><p>{$message}</p></div>";
+            $user = $member->getUser();
+
+            $notification = new Notification($user, $html);
+
+            $this->client->send($notification);
+
+        }
+
+    }
+
+    /**
+     * @param Member $object
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ValidationNotificationClientException
+     */
+    public function youJoinedToRoom(Member $object): void
+    {
+        $message = "Вы успешно присоединились к комнате #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
         $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = "";
+        $user = $object->getUser();
 
         $notification = new Notification($user, $html);
 
@@ -215,35 +260,17 @@ class InternalNotificationContainer
     }
 
     /**
-     * @param Member $trade
+     * @param Member $object
      *
      * @throws ORMException
      * @throws OptimisticLockException
      * @throws ValidationNotificationClientException
      */
-    public function youJoinedToRoom(Member $trade): void
+    public function youRemovedFromRoom(Member $object): void
     {
-        $message = "";
+        $message = "Вы были изключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
         $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = "";
-
-        $notification = new Notification($user, $html);
-
-        $this->client->send($notification);
-    }
-
-    /**
-     * @param Member $trade
-     *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
-     */
-    public function youRemovedFromRoom(Member $trade): void
-    {
-        $message = "";
-        $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = "";
+        $user = $object->getUser();
 
         $notification = new Notification($user, $html);
 
@@ -259,13 +286,30 @@ class InternalNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        $message = "";
-        $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = "";
 
-        $notification = new Notification($user, $html);
+        if (!$object->getRoom()) {
+            return;
+        }
 
-        $this->client->send($notification);
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
+
+        foreach ($members as $member) {
+
+            /** @var Member $member */
+            if (!$member->isCompany()) {
+                continue;
+            }
+
+            $message = "В комнате #{$object->getRoom()->getId()} появился новый лид - #{$object->getId()}";
+            $html = "<div class='notification'><p>{$message}</p></div>";
+            $user = $member->getUser();
+
+            $notification = new Notification($user, $html);
+
+            $this->client->send($notification);
+        }
+
+
     }
 
     /**
@@ -277,9 +321,9 @@ class InternalNotificationContainer
      */
     public function withdrawUser(Withdraw $object): void
     {
-        $message = "";
+        $message = "Запрос на вывод средств отправлен. Ожидайте ответа администрации";
         $html = "<div class='notification'><p>{$message}</p></div>";
-        $user = "";
+        $user = $object->getUser();
 
         $notification = new Notification($user, $html);
 

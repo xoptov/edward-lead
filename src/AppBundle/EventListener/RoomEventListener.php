@@ -3,6 +3,9 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\RoomEvent;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class RoomEventListener extends BaseEventListener implements EventSubscriberInterface
@@ -20,6 +23,10 @@ class RoomEventListener extends BaseEventListener implements EventSubscriberInte
 
     /**
      * @param RoomEvent $event
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ValidationNotificationClientException
      */
     public function handleNewCreated(RoomEvent $event): void
     {
@@ -28,6 +35,10 @@ class RoomEventListener extends BaseEventListener implements EventSubscriberInte
 
     /**
      * @param RoomEvent $event
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ValidationNotificationClientException
      */
     public function handleDeactivated(RoomEvent $event): void
     {

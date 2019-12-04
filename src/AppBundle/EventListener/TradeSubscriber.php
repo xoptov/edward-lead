@@ -8,6 +8,7 @@ use AppBundle\Event\TradeEvent;
 use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Notifications\InternalNotificationContainer;
 use AppBundle\Notifications\SmsNotificationContainer;
+use AppBundle\Notifications\WebPushNotificationContainer;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Composer\ComposerInterface;
 use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
@@ -50,6 +51,7 @@ class TradeSubscriber extends BaseEventListener implements EventSubscriberInterf
      * @param ComposerInterface             $fosComposer
      * @param SenderInterface               $fosSender
      * @param EmailNotificationContainer    $emailNotificationContainer
+     * @param WebPushNotificationContainer  $webPushNotificationContainer
      * @param SmsNotificationContainer      $smsNotificationContainer
      * @param InternalNotificationContainer $internalNotificationContainer
      */
@@ -58,6 +60,7 @@ class TradeSubscriber extends BaseEventListener implements EventSubscriberInterf
         ComposerInterface $fosComposer,
         SenderInterface $fosSender,
         EmailNotificationContainer $emailNotificationContainer,
+        WebPushNotificationContainer $webPushNotificationContainer,
         SmsNotificationContainer $smsNotificationContainer,
         InternalNotificationContainer $internalNotificationContainer
     )
@@ -65,7 +68,7 @@ class TradeSubscriber extends BaseEventListener implements EventSubscriberInterf
         $this->entityManager = $entityManager;
         $this->fosComposer = $fosComposer;
         $this->fosSender = $fosSender;
-        parent::__construct($emailNotificationContainer, $smsNotificationContainer, $internalNotificationContainer);
+        parent::__construct($emailNotificationContainer, $webPushNotificationContainer, $smsNotificationContainer, $internalNotificationContainer);
     }
 
     /**
