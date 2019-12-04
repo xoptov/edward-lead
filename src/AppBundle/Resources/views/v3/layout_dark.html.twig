@@ -24,13 +24,13 @@
     <body class="body-gray">
         <div class="wrapper fx-column">
             <div class="main fx-column">
-                {% include '@App/parts/dark/header.html.twig' %}
+                {% include '@App/v3/parts/dark/header.html.twig' %}
                 <div class="wrap fx">
                     <div class="nav__bg"></div>
-                        <div class="container fx {% if container_class %}{{ container_class }}{% endif %}">  
+                        <div class="container fx {% if container_class is defined %}{{ container_class }}{% endif %}">  
                             {% block container -%}
                                 <div class="col-3 nav-wrap">
-                                    {% include('@App/parts/dark/menu.html.twig') %}
+                                    {% include('@App/v3/parts/dark/menu.html.twig') %}
                                 </div>
                                 <div class="col-9 fx-column content-wrap">
                                     <div class="content {% if content_class is defined %}{{ content_class }}{% endif %}">
