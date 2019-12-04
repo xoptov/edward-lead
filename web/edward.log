@@ -1,4 +1,0 @@
-[04-Dec-2019 08:31:10 UTC] PHP Fatal error:  Uncaught Exception: Просто ошибка для примера! in /var/www/html/stage/web/edward.php:18
-Stack trace:
-#0 {main}
-  thrown in /var/www/html/stage/web/edward.php on line 18
