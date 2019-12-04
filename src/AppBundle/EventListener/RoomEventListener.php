@@ -5,7 +5,7 @@ namespace AppBundle\EventListener;
 use AppBundle\Event\RoomEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class RoomEventListener implements EventSubscriberInterface
+class RoomEventListener extends BaseEventListener implements EventSubscriberInterface
 {
     /**
      * @inheritdoc
@@ -23,7 +23,7 @@ class RoomEventListener implements EventSubscriberInterface
      */
     public function handleNewCreated(RoomEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->newRoomCreated($event->getRoom());
     }
 
     /**
@@ -31,6 +31,6 @@ class RoomEventListener implements EventSubscriberInterface
      */
     public function handleDeactivated(RoomEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->roomDeactivated($event->getRoom());
     }
 }

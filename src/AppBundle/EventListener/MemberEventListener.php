@@ -25,7 +25,8 @@ class MemberEventListener extends BaseEventListener implements EventSubscriberIn
      */
     public function handleJoined(MemberEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->someOneJoinedToYou($event->getMember());
+        $this->internalNotificationContainer->youJoinedToRoom($event->getMember());
     }
 
     /**
@@ -33,7 +34,7 @@ class MemberEventListener extends BaseEventListener implements EventSubscriberIn
      */
     public function handleRemoved(MemberEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->youRemovedFromRoom($event->getMember());
     }
 
     /**

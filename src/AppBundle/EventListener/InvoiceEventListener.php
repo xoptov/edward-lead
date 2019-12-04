@@ -26,5 +26,6 @@ class InvoiceEventListener extends BaseEventListener implements EventSubscriberI
     public function handleProcessed(InvoiceEvent $event): void
     {
         $this->emailNotificationContainer->invoiceProcessed($event->getInvoice());
+        $this->internalNotificationContainer->invoiceProcessed($event->getInvoice());
     }
 }

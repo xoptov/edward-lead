@@ -29,6 +29,8 @@ class WithdrawEventListener extends BaseEventListener implements EventSubscriber
     {
         $this->emailNotificationContainer->withdrawUser($event->getWithdraw());
         $this->smsNotificationContainer->withdrawUser($event->getWithdraw());
+        $this->smsNotificationContainer->withdrawUser($event->getWithdraw());
+
         $this->emailNotificationContainer->withdrawAdmin($event->getWithdraw());
     }
 

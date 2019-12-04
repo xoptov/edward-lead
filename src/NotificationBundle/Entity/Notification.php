@@ -2,6 +2,7 @@
 
 namespace NotificationBundle\Entity;
 
+use AppBundle\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -16,7 +17,23 @@ class Notification
     const READ_STATUS_NEW = 'NEW';
     const READ_STATUS_VIEWED = 'VIEWED';
 
-    const TYPE_DEFAULT = 'DEFAULT';
+    const TYPE_NOTIFICATION= 'NOTIFICATION';
+    const TYPE_IMPORTANT= 'TYPE_IMPORTANT';
+    const TYPE_DEFAULT = self::TYPE_NOTIFICATION;
+
+    /**
+     * Notification constructor.
+     *
+     * @param User   $user
+     * @param string $message
+     * @param string $type
+     */
+    public function __construct(User $user, string $message, string $type = self::TYPE_DEFAULT)
+    {
+        $this->user = $user;
+        $this->message = $message;
+        $this->type = $type;
+    }
 
     /**
      * @var int
@@ -58,7 +75,7 @@ class Notification
      *
      * @ORM\Column(name="type", type="string", length=10)
      */
-    private $type = self::TYPE_DEFAULT;
+    private $type;
 
 
     /**
