@@ -53,49 +53,43 @@ class RoomController extends Controller
      *
      * @return Response
      */
-    public function createAction(
-        Request $request,
-        EventDispatcherInterface $eventDispatcher
-    ): Response {
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form = $this->createForm(RoomType::class);
-            $form->handleRequest($request);
+    public function createAction(Request $request): Response
+    {
+        $form = $this->createForm(RoomType::class);
+        $form->handleRequest($request);
 
-            if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
-                /** @var User $user */
-                $user = $this->getUser();
+            /** @var User $user */
+            $user = $this->getUser();
 
-                /** @var Room $room */
-                $room = $form->getData();
-                $room
-                    ->setOwner($user)
-                    ->setEnabled(true);
+            /** @var Room $data */
+            $data = $form->getData();
+            $data
+                ->setOwner($user)
+                ->setEnabled(true);
 
-                $this->entityManager->persist($room);
+            $this->entityManager->persist($data);
 
-                try {
-                    $this->roomManager->joinInRoom($room, $user);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', $e->getMessage());
+            try {
+                $this->roomManager->joinInRoom($data, $user);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
 
-                    return $this->redirectToRoute('app_room_list');
-                }
-
-                $this->roomManager->updateInviteToken($room);
-                $this->entityManager->flush();
-
-                $this->addFlash('success', 'Новая комната успешно создана');
-
-                $eventDispatcher->dispatch(
-                    RoomEvent::NEW_CREATED,
-                    new RoomEvent($room)
-                );
-
-                return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
+                return $this->redirectToRoute('app_room_list');
             }
-        } else {
-            $form = $this->createForm(RoomType::class, null, ['timer' => true]);
+
+            $this->roomManager->updateInviteToken($data);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Новая комната успешно создана');
+
+            $eventDispatcher->dispatch(
+                RoomEvent::NEW_CREATED,
+                new RoomEvent($room)
+            );
+
+            return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
         }
 
         return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
@@ -343,3 +337,4 @@ class RoomController extends Controller
         return $this->render('@App/v2/Room/invite_reject.html.twig');
     }
 }
+

@@ -159,3 +159,8 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/v2/js/room/create.js') }}" ></script>
+{% endblock %}

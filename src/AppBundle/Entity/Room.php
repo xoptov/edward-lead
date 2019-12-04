@@ -64,7 +64,12 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="999900", maxMessage="Максимальная стоимость 9999")
+     * @Assert\Range(
+     *     min="100",
+     *     minMessage="Минимальная стоимость 1",
+     *     max="999999",
+     *     maxMessage="Максимальная стоимость 9999.99"
+     * )
      *
      * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
      */
@@ -72,6 +77,11 @@ class Room implements IdentifiableInterface
 
     /**
      * @var bool
+     *
+     * @Assert\IsTrue(
+     *     message="Гарантия должна быть включена если включен таймер",
+     *     groups={"timer"}
+     * )
      *
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
@@ -87,7 +97,10 @@ class Room implements IdentifiableInterface
     /**
      * @var int
      *
-     * @Assert\GreaterThan(value=0, message="Значение должно быть положительным или пустым")
+     * @Assert\GreaterThan(
+     *     value=0,
+     *     message="Значение должно быть положительным или пустым"
+     * )
      *
      * @ORM\Column(name="hidden_margin", type="integer", nullable=true, options={"unsigned":"true"})
      */
@@ -110,11 +123,6 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
-     * @Assert\Expression(
-     *     "!(!this.isPlatformWarranty() and value)",
-     *     message="Включить таймер можно только с включенной гарантией платформы"
-     * )
-     *
      * @ORM\Column(name="timer", type="boolean")
      */
     private $timer = false;
@@ -122,9 +130,9 @@ class Room implements IdentifiableInterface
     /**
      * @var City|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать город"
+     * @Assert\NotBlank(
+     *     message="Для таймера необходимо указать город",
+     *     groups={"timer"}
      * )
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
@@ -135,7 +143,7 @@ class Room implements IdentifiableInterface
     /**
      * @var Schedule|null
      *
-     * @Assert\Valid
+     * @Assert\Valid(groups={"timer"})
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
@@ -144,15 +152,16 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать время в часах на обработку лида"
+     * @Assert\NotBlank(
+     *     message="Необходимо указать рабочии часы комнаты",
+     *     groups={"timer"}
      * )
      * @Assert\Range(
      *     min=1,
      *     max=24,
      *     minMessage="Минимальное кол-во {{ limit }} часов на обработку",
-     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку"
+     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку",
+     *     groups={"timer"}
      * )
      *
      * @ORM\Column(name="execution_hours", type="smallint", nullable=true, options={"unsigned":true})
@@ -162,16 +171,16 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать количество лидов в день по таймеру"
+     * @Assert\NotBlank(
+     *     message="Необходимо указать количество лидов",
+     *     groups={"timer"}
      * )
-     *
      * @Assert\Range(
      *     min=1,
      *     max=1000,
      *     minMessage="Минимальное кол-во {{ limit }} лидов в день по таймеру",
-     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру"
+     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру",
+     *     groups={"timer"}
      * )
      *
      * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
