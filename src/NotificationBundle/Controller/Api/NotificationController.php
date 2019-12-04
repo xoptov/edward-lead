@@ -1,6 +1,6 @@
 <?php
 
-namespace NotificationBundle\Controller;
+namespace NotificationBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class NotificationController extends Controller
 {
     /**
-     * @Route("/notifications", methods={"GET"})
+     * @Route("/api/v1/notifications", methods={"GET"})
      */
     public function indexAction(): Response
     {
@@ -20,7 +20,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/notifications/unread/{id}", methods={"PATCH"})
+     * @Route("/api/v1/notifications/unread/{id}", methods={"PATCH"})
      *
      * @param int $id
      *
@@ -34,7 +34,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/notifications", methods={"POST"})
+     * @Route("/api/v1/notifications", methods={"POST"})
      *
      * @param Request $request
      *
@@ -48,7 +48,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/notifications/switch", methods={"PATCH"})
+     * @Route("/api/v1/notifications/switch", methods={"PATCH"})
      *
      * @param Request $request
      *

@@ -38,5 +38,6 @@ class MessageEventListener extends BaseEventListener implements EventSubscriberI
     public function handleSupportReply(MessageEvent $event): void
     {
         $this->emailNotificationContainer->messageSupportReply($event->getMessage());
+        $this->webPushNotificationContainer->messageSupportReply($event->getMessage());
     }
 }

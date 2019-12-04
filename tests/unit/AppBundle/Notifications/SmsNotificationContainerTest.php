@@ -25,10 +25,7 @@ class SmsNotificationContainerTest extends TestCase
 
     public function setUp()
     {
-        $this->smsClientMock = $this->getMockBuilder(Client::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->smsClientMock = $this->createMock(Client::class);
         $this->service = new SmsNotificationContainer($this->smsClientMock);
     }
 

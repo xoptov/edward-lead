@@ -29,22 +29,27 @@ class LeadEventListener extends BaseEventListener implements EventSubscriberInte
     {
         $this->emailNotificationContainer->leadNewPlaced($event->getLead());
         $this->internalNotificationContainer->leadNewPlaced($event->getLead());
+        $this->webPushNotificationContainer->leadNewPlaced($event->getLead());
     }
 
     /**
      * @param LeadEvent $event
+     *
+     * @throws Exception
      */
     public function handleExpectTooLong(LeadEvent $event): void
     {
-        //
+        $this->webPushNotificationContainer->leadExpectTooLong($event->getLead());
     }
 
     /**
      * @param LeadEvent $event
+     *
+     * @throws Exception
      */
     public function handleInWorkTooLong(LeadEvent $event): void
     {
-        //
+        $this->webPushNotificationContainer->leadInWorkTooLong($event->getLead());
     }
 
 }

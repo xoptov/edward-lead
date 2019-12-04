@@ -45,16 +45,14 @@ class EsputnikWebPushClient extends EsputnikClient
      */
     public function send(array $model): bool
     {
+        if(!$model['push_token']) return false;
+
         $this->validate($model);
 
         $params = [
             [
                 "name" => "body",
                 "value" => $model['body'],
-            ],
-            [
-                "name" => "link",
-                "value" => $model['link'],
             ],
             [
                 "name" => "pushToken",
@@ -78,7 +76,6 @@ class EsputnikWebPushClient extends EsputnikClient
     {
         return new Collection([
             'body' => new NotBlank(),
-            'link' => new NotBlank(),
             'push_token' => new NotBlank(),
         ]);
     }

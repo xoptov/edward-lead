@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @author Maksim Khortov <xoptov@mail.ru>
- * @version 1.0.1
+ * @version 1.0.2
  */
 
-define('API_KEY', ''); // Необходимо указать ключь API внутри ''
+ini_set('error_reporting', E_ERROR);
+ini_set('log_errors', true);
+ini_set('error_log', 'edward.log');
+
+define('API_KEY', ''); // Необходимо указать ключ API внутри ''
 define('ROOM_ID', null); // Идентификатор комнаты в которую будет добавляться лид.
 
 define('API_URL', 'http://stage.edward-lead.ru/api/v1/lead');
-
 define('API_TIMEOUT', 5);
-
-ini_set('error_reporting', E_ERROR);
 
 $formFields = ['name', 'phone', 'hasAgreement']; // Список полей в формы.
 

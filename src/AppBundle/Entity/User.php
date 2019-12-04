@@ -10,6 +10,7 @@ use AppBundle\Entity\Part\TimeTrackableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use NotificationBundle\Entity\UserNotificationTrait;
+use NotificationBundle\Entity\UserWithWebPushInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use NotificationBundle\Entity\UserNotificationInterface;
 use NotificationBundle\Entity\UserWithTelegramInterface;
@@ -22,7 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже существует")
  */
-class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface, UserNotificationInterface, UserWithTelegramInterface
+class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface, UserNotificationInterface, UserWithTelegramInterface, UserWithWebPushInterface
 {
     use IdentificatorTrait,
         UserNotificationTrait,

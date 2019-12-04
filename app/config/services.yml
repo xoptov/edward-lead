@@ -337,6 +337,11 @@ services:
         arguments:
             $client: '@notification_bundle.email_client'
 
+    AppBundle\Notifications\WebPushNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.web_push_client'
+
     AppBundle\Notifications\SmsNotificationContainer:
         arguments:
             $client: '@notification_bundle.sms_client'
+
