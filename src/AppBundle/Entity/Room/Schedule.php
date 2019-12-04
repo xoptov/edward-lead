@@ -22,7 +22,11 @@ class Schedule
     /**
      * @var WorkTime|null
      *
-     * @Assert\NotBlank(message="Необходимо указать рабочее время")
+     * @Assert\NotBlank(
+     *     message="Необходимо указать рабочее время",
+     *     groups={"timer"}
+     * )
+     * @Assert\Valid(groups={"timer"})
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule\WorkTime")
      */
@@ -31,8 +35,11 @@ class Schedule
     /**
      * @var int|null
      *
-     * @Assert\NotBlank(message="Необходимо указать рабочие дни")
-     * @Assert\Range(min=1, max=127)
+     * @Assert\NotBlank(
+     *     message="Необходимо указать рабочие дни",
+     *     groups={"timer"}
+     * )
+     * @Assert\Range(min=1, max=127, groups={"timer"})
      *
      * @ORM\Column(name="work_days", type="smallint", nullable=true, options={"unsigned":true})
      */
