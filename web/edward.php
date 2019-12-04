@@ -97,7 +97,7 @@ function validatePhone(array &$errors)
     }
 }
 
-function sendResponse(string $content, int $code = 200, array $headers = [])
+function sendResponse($content, $code=200, array $headers=array())
 {
     http_response_code($code);
     header('Content-Type: application/json; charset=UTF-8');
