@@ -349,4 +349,53 @@ SQL;
             ->andWhere('l.status IN (:statuses)')
             ->setParameter('statuses', $statuses);
     }
+
+    /**
+     * @param int $user_id
+     * 
+     * @return array
+     */
+    private function getCountByUserIdLastMonth(int $user_id):array
+    {
+        $result = array([null,null,null,null]);
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql  <<< SQL
+        select (select count(l1.id) cnt 
+            from lead l1 
+            where l1.user_id=1 
+                and created_at >= date(date_sub(curdate(),interval 1 month))
+        ) total,
+        (select count(l2.id) cnt 
+            from lead l2 
+            where l2.user_id=1 
+                and created_at >= date(date_sub(curdate(),interval 1 month))
+                and status="target"
+        ) target,
+        (select count(l3.id) cnt 
+            from lead l3 
+            where l3.user_id=1 
+                and created_at >= date(date_sub(curdate(),interval 1 month))
+                and status="in_work"
+        ) in_work,
+        (select count(l4.id) cnt 
+            from lead l4 
+            where l4.user_id=1 
+                and created_at >= date(date_sub(curdate(),interval 1 month))
+                and status="not_target"
+        ) not_target;
+        SQL;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('user_id', $user_id);
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            $total = $stmt->fetchColumn();
+        }
+
+
+
+
+        return array();
+    }
 }
