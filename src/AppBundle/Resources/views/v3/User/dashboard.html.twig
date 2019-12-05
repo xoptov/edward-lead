@@ -19,22 +19,22 @@
         <div class="col-4">
             <div class="info-leads__item">
             <p class="info-leads__title">Лидов поступило за сегодня</p>
-            <span class="info-leads__quantity">{{data.addedLeadsToday|number_format(0)}} лидов</span>
+            <span class="info-leads__quantity">{{data.addedLeadsLastDay.total|number_format(0)}} лидов</span>
             <ul class="info-leads__list fx align-center">
-                <li class="info-leads__list__item">47 целевых</li><!--TODO:add data.addedToday.targeted-->
-                <li class="info-leads__list__item">3 в работе</li><!--TODO:add data.addedToday.inWork-->
-                <li class="info-leads__list__item">16 нецелевых</li><!--TODO:add data.addedToday.notTargeted-->
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.target|number_format(0)}} целевых</li>
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.in_work|number_format(0)}} в работе</li>
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.not_target|number_format(0)}} нецелевых</li>
             </ul>
             </div>
         </div>
         <div class="col-4">
             <div class="info-leads__item">
             <p class="info-leads__title">Лидов поступило за месяц</p>
-            <span class="info-leads__quantity">56 лидов</span><!--TODO:add data.addedLeadsLastMonth-->
+            <span class="info-leads__quantity">{{ data.addedLeadsLastMonth.total|number_format(0)}} лидов</span>
             <ul class="info-leads__list fx align-center">
-                <li class="info-leads__list__item">47 целевых</li><!--TODO:add data.addedLastMonth.targeted-->
-                <li class="info-leads__list__item">3 в работе</li><!--TODO:add data.addedLastMonth.inWork-->
-                <li class="info-leads__list__item">16 нецелевых</li><!--TODO:add data.addedLastMonth.notTargeted-->
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.target|number_format(0)}} целевых</li>
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.in_work|number_format(0)}} в работе</li>
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.not_target|number_format(0)}} нецелевых</li>
             </ul>
             </div>
         </div>

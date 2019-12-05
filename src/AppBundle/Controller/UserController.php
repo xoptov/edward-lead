@@ -408,6 +408,7 @@ class UserController extends Controller
         $result = [
             'list' => [],
             'addedLeadsToday' => 0,
+            'addedLeadsLastMonth' => [],
             'averageTarget' => 0
         ];
 
@@ -417,7 +418,9 @@ class UserController extends Controller
 
         $result['addedLeadsToday'] = $leadRepository->getAddedCountByDate($now);
 
+
         $totalTarget = $leadRepository->getCountByStatus(Lead::STATUS_TARGET);
+        
         $totalNotTarget = $leadRepository->getCountByStatus(Lead::STATUS_NOT_TARGET);
 
         if ($totalTarget && $totalNotTarget) {
@@ -436,7 +439,12 @@ class UserController extends Controller
             ->getByRooms($rooms);
 
         $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
+
         $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_TARGET, Lead::STATUS_NOT_TARGET]);
+        
+        $result['addedLeadsLastMonth'] = $leadRepository->getCountByUserLastMonth($user);
+
+        $result['addedLeadsLastDay'] = $leadRepository->getCountByUserLastDay($user);
 
         /** @var Room $room */
         foreach ($rooms as $room) {
