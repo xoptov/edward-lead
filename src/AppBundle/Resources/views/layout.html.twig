@@ -7,7 +7,8 @@
         <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/blocked-modal.css') }}">
-    {% endblock %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/notification.css') }}">
+        <script src="https://kit.fontawesome.com/b14865650d.js" crossorigin="anonymous"></script>    {% endblock %}
     <title>Edward лидогенерация</title>
     {% include '@App/google_tag_manager_head.html.twig' %}
     {%- if app.environment == 'prod' -%}
@@ -39,6 +40,9 @@
                         </a>
                     {% endif %}
                 </div>
+
+                {% include '@App/notification_menu.html.twig' %}
+
                 <div class="header__balance-box">
                     <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>
                     {% if is_granted('ROLE_COMPANY') %}
@@ -70,7 +74,7 @@
             <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.js') }}"></script>
         {%- endif -%}
         <script src="{{ asset('bundles/app/js/main.js') }}"></script>
-
+        <script src="{{ asset('bundles/app/js/notifiaction.js') }}"></script>
         <script src="{{ asset('bundles/notification/js/web_push_token_handler.js') }}"></script>
 
     {% endblock %}

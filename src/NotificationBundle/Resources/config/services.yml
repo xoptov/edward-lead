@@ -13,10 +13,11 @@ services:
 
   _defaults:
     autowire: true
+    autoconfigure: true
 
   NotificationBundle\:
     resource: '../../*'
-    exclude: '../../{Entity,Repository,Event,Client,tests}'
+    exclude: '../../{Entity,Event,Client,tests}'
 
   Zelenin\SmsRu\Auth\ApiIdAuth:
     arguments:

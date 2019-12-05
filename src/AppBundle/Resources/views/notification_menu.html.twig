@@ -1,0 +1,44 @@
+<div class="notifications">
+    <div class="notifications__menu">
+        Уведомления
+        {% if get_new_notifications_count() %}
+
+            <div class="notifications__menu__new_icon ">
+                {{ get_new_notifications_count() }}
+            </div>
+
+        {% endif %}
+
+    </div>
+    <div class="notifications__popup">
+        {% for notification in get_new_notifications() %}
+            <div class="notifications__popup__item {{ notification.readStatus == 'NEW' ? 'red-border' : '' }}" data-id="{{ notification.id }}">
+
+                <div class="notifications__popup__item_header">
+                    <div class="notifications__popup__item_type {{ notification.readStatus == 'NEW' ? 'green' : 'grey' }}">{{ get_notification_type(notification.type) }}</div>
+                    <div class="notifications__popup__item_date">{{ notification.createdAt | date("d.m.Y") }}</div>
+                </div>
+
+                <div class="notifications__popup__item_container">
+
+                    <div class="notifications__popup__item_message">
+                        {{ notification.message | raw }}
+                    </div>
+
+                    <div class="notifications__popup__item_button_container">
+
+                        <i class="fas fa-check  notifications__popup__item_read {{ notification.readStatus == 'NEW' ? 'show' : 'hide' }}"
+                           data-id="{{ notification.id }}"></i>
+                        <i class="fas fa-sync  notifications__popup__item_unread {{ notification.readStatus == 'NEW' ?'hide' :  'show' }}"
+                           data-id="{{ notification.id }}"></i>
+                        <i class="fas fa-spinner notifications__popup__item_preloader hide"></i>
+
+                    </div>
+                </div>
+
+            </div>
+        {% else %}
+            <div class="notifications__popup__empty">Нет уведомлений</div>
+        {% endfor %}
+    </div>
+</div>
