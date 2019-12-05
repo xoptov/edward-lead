@@ -502,6 +502,6 @@ class UserController extends Controller
             'user' => $user
         ], ['createdAt' => 'DESC'], 6);
 
-        return $this->render('@App/v3/dashboard.html.twig', ['data' => $result]);
+        return $this->render('@App/v3/User/dashboard.html.twig', ['data' => $result]);
     }
 }
