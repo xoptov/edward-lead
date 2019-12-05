@@ -349,4 +349,66 @@ SQL;
             ->andWhere('l.status IN (:statuses)')
             ->setParameter('statuses', $statuses);
     }
+
+    /**
+     * @param User $user
+     * 
+     * @return array
+     */
+    public function getCountByUserLastMonth(User $user):array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $userId = $user->getId();
+
+        $sql =  <<< SQL
+        SELECT ( SELECT COUNT(l1.id) cnt FROM lead l1 WHERE l1.user_id=:userId 
+        AND created_at >= DATE( DATE_SUB(CURDATE(),INTERVAL 1 MONTH)) ) 'total',
+        ( SELECT COUNT(l2.id) cnt FROM lead l2 WHERE l2.user_id=:userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(),INTERVAL 1 MONTH ) ) AND status="target" ) 'target',
+        ( SELECT COUNT(l3.id) cnt FROM lead l3 WHERE l3.user_id=:userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(),INTERVAL 1 MONTH ) ) AND status="in_work" ) 'in_work',
+        ( SELECT COUNT(l4.id) cnt FROM lead l4 WHERE l4.user_id=:userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(),INTERVAL 1 MONTH ) ) AND status="not_target" ) 'not_target';
+SQL;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue( 'userId', $user->getId() );
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            return $stmt->fetch();
+        }
+
+        return array();
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return array
+     */
+    public function getCountByUserLastDay(User $user):array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $userId = $user->getId();
+
+        $sql =  <<< SQL
+        SELECT ( SELECT COUNT(l1.id) cnt FROM lead l1 WHERE l1.user_id = :userId 
+        AND created_at >= DATE( DATE_SUB(CURDATE(), INTERVAL 24 HOUR ) ) ) 'total',
+        ( SELECT COUNT(l2.id) cnt FROM lead l2 WHERE l2.user_id = :userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(), INTERVAL 24 HOUR ) ) AND status="target" ) 'target',
+        ( SELECT COUNT(l3.id) cnt FROM lead l3 WHERE l3.user_id = :userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(), INTERVAL 24 HOUR ) ) AND status="in_work" ) 'in_work',
+        ( SELECT COUNT(l4.id) cnt FROM lead l4 WHERE l4.user_id = :userId 
+        AND created_at >= DATE( DATE_SUB( CURDATE(), INTERVAL 24 HOUR ) ) AND status="not_target" ) 'not_target';
+SQL;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue( 'userId', $user->getId() );
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            return $stmt->fetch();
+        }
+
+        return array();
+    }
 }

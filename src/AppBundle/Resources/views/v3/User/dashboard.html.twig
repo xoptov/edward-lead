@@ -1,0 +1,166 @@
+{% extends '@App/v3/layout_dark.html.twig' %}
+{% block content %}
+
+    <!-- Title -->
+        
+    <div class="title">
+    <h3 class="title__h3">Панель управления</h3>
+    </div>
+
+    <!-- Info leads -->
+
+    <div class="row fx fx-wrap info-leads">
+        <div class="col-4">
+            <div class="info-leads__item">
+            <p class="info-leads__title">Средний % целевых лидов</p>
+            <span class="info-leads__quantity">{{data.averageTarget|number_format(0)}}%</span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="info-leads__item">
+            <p class="info-leads__title">Лидов поступило за сегодня</p>
+            <span class="info-leads__quantity">{{data.addedLeadsLastDay.total|number_format(0)}} лидов</span>
+            <ul class="info-leads__list fx align-center">
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.target|number_format(0)}} целевых</li>
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.in_work|number_format(0)}} в работе</li>
+                <li class="info-leads__list__item">{{data.addedLeadsLastDay.not_target|number_format(0)}} нецелевых</li>
+            </ul>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="info-leads__item">
+            <p class="info-leads__title">Лидов поступило за месяц</p>
+            <span class="info-leads__quantity">{{ data.addedLeadsLastMonth.total|number_format(0)}} лидов</span>
+            <ul class="info-leads__list fx align-center">
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.target|number_format(0)}} целевых</li>
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.in_work|number_format(0)}} в работе</li>
+                <li class="info-leads__list__item">{{ data.addedLeadsLastMonth.not_target|number_format(0)}} нецелевых</li>
+            </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info room -->
+
+    <div class="info-room">
+        <div class="title">
+            <h4 class="title__h4">Список комнат</h4>
+        </div>
+        <div class="row">
+            <div class="table__box">
+                <table class="table info-room__table">
+                    <thead class="table__head table__row_white">
+                    <tr>
+                        <th class="table__cell">ID комнаты</th>
+                        <th class="table__cell">Название комнаты</th>
+                        <th class="table__cell">Лидов за сегодня</th>
+                        <th class="table__cell">Лидов ожидает</th>
+                        <th class="table__cell">Компания</th>
+                        <th class="table__cell">Вебмастер</th>
+                        <th class="table__cell table__cell__fix"><span class="dots dots__gray"></span></th>
+                        <th class="table__cell table__cell__fix"><img src="{{ asset('bundles/app/v3/img/link.png') }}"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="table__body">
+                        {% for item in data.list %}
+                            <tr class="table__row" data-room="{{ item.room.id }}">
+                                <td class="table__cell">{{ item.room.id }}</td>
+                                <td class="table__cell">{{ item.room.name }}</td>
+                                <td class="table__cell">{{ item.daily }}</td>
+                                <td class="table__cell">{{ item.averageTarget|number_format(0) }}</td>
+                                <td class="table__cell">{{ item.companies }}</td>
+                                <td class="table__cell">{{ item.webmasters }}</td>
+                                <td class="table__cell"><span class="dots dots__{% if item.room.enabled %}green{% else %}gray{% endif %}"></span></td>
+                                <td class="table__cell"><a href="{{ path('app_room_view', {'id': item.room.id}) }}" class="table__link"><img src="{{ asset('bundles/app/v3/img/icon_9.png') }}"></a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="table__info text-center">
+                {% if data.list is empty %}
+                <p>На данный момент у нас нет созданных комнат.</p>
+                <p><a href="/room/create">Создать первую комнату</a></p>
+                {% else %}
+                <p><a href="/room/list">СМОТРЕТЬ ВСЕ КОМНАТЫ</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Row -->
+
+    <div class="row info-last fx fx-wrap">
+    <div class="col-6">
+        <div class="title">
+        <h4 class="title__h4">Последние начисления</h4>
+        </div>
+        <div class="last-charges table__box">
+        <table class="table last-charges__table">
+            <thead class="table__head table__row_white">
+            <tr>
+                <th class="table__cell">Дата</th>
+                <th class="table__cell">Сумма</th>
+                <th class="table__cell table__cell__fix"></th>
+            </tr>
+            </thead>
+            <tbody class="table__body">
+
+            {% for income in data.lastIncomes %}
+            <tr class="table__row clickable-row" data-href='#'>
+                <td class="table__cell">{{ income.createdAt|date('d.m.Y в H:i') }}</td>
+                <td class="table__cell">{{ income.amount|money_format }}</td>
+                <th class="table__cell table__cell__fix"><a href="{{ path('app_financial_invoices') }}" class="table__link">
+                <img src="{{ asset('bundles/app/v3/img/icon_9.png') }}"></a></th>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <div class="table__info text-center text-t-uppercase">
+        <p><a href="/financial/history">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a></p>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="title">
+        <h4 class="title__h4">Последние лиды</h4>
+        </div>
+        <div class="last-leads table__box">
+        <table class="table last-leads__table">
+            <thead class="table__head table__row_white">
+            <tr>
+                <th class="table__cell">Дата</th>
+                <th class="table__cell">Направление</th>
+                <th class="table__cell table__cell__fix"></th>
+            </tr>
+            </thead>
+            <tbody class="table__body">
+            <!-- Таблица -->
+            {% for lead in data.lastLeads %}
+            <tr class="table__row clickable-row" data-lead="{{ lead.id }}">
+                <td class="table__cell">{{ lead.createdAt|date('d.m.Y в H:i') }}</td>
+                {% if lead.room is not empty %}
+                <td class="table__cell">Комната #{{ lead.room.id }}</td>
+                {% else %}
+                <td class="table__cell">Биржа</td>
+                {% endif %}
+                <th class="table__cell"><a href="{{ path('app_lead_show', {'id': lead.id}) }}" class="table__link">
+                    <img src="{{ asset('bundles/app/v3/img/icon_9.png') }}"></a></th>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        </div>
+        <div class="table__info text-center">
+        {% if data.lastLeads is empty %}
+        <p>На данный момент у нас нет лидов.</p>
+        <p class="text-t-uppercase"><a href="/room/list">ДОБАВИТЬ ЛИДА К КОМНАТЕ</a></p>
+        {% else %}
+        <p class="text-t-uppercase"><a href="/leads/my">СМОТРЕТЬ ВСЕХ ЛИДОВ</a></p>
+        {% endif %}
+        </div>
+    </div>
+    </div>
+
+{% endblock %}

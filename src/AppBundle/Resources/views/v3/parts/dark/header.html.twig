@@ -12,18 +12,19 @@
                 <div class="info fx fx-between">
                     <div class="info__left fx align-center">
                         {# Тут нужно будет вызывать NotificationController::widgetAction #}
-                        {%- include('@App\Notification\widget.html.twig') -%}
+                        {%- include('@App/v3/Notification/widget.html.twig') -%}
                         
                         {# Тут нужно будет вызывать ManagerController::widgetAction (Логики с назначением менеджера пока нет, как будет тогда будет и виджет) #}
-                        {%- include('@App\Manager\widget.html.twig') -%}
+                        {%- include('@App/v3/Manager/widget.html.twig') -%}
                     </div>
                     <div class="user fx align-center">
                         <div class="user__balance">
                             <p>{{ 'common.balance'|trans }}: {{ app.user.balance|money_format }}</p>
-                            <p>{{ 'comman.hold'|trans }}: {% if is_granted('ROLE_ADVERTISER') %}{{ balance_hold(app.user)|money_format }}{% elseif (is_granted('ROLE_WEBMASTER') %}{{ pending_amount(app.user)|money_format }}{% endif %}</p>
+                            <p>{{ 'common.hold'|trans }}: {% if is_granted('ROLE_ADVERTISER') %} {{ balance_hold(app.user)|money_format }}
+                            {% elseif is_granted('ROLE_WEBMASTER') %} {{ pending_amount(app.user)|money_format }} {% endif %}</p>
                         </div>
                         <div class="user__panel">
-                            <span class="user__panel__img"><img src="img/other/user-default-header.png"></span>
+                            <span class="user__panel__img"><img src="bundles/app/v3/img/icon_2.png"></span>
                             <div class="user__panel__nav__box">
                                 <ul class="user__panel__nav">
                                 `   {% if is_granted('ROLE_ADMIN') -%}
