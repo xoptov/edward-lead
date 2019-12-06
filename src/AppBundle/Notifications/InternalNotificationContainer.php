@@ -8,6 +8,7 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Member;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\Room;
+use AppBundle\Entity\Thread;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
@@ -156,7 +157,7 @@ class InternalNotificationContainer
     public function messageCreated(Message $object): void
     {
         $message = "У вас имеется новое сообщение от службы поддержки";
-        $link = null; // TODO get link
+        $link = $this->router->generate('app_arbitration');
         $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
         $user = $object->getThread()->getCreatedBy();
         $type = Notification::TYPE_IMPORTANT;
@@ -179,7 +180,6 @@ class InternalNotificationContainer
      */
     public function tradeAccepted(Trade $trade): void
     {
-        // TODO кажеться неправильыне тут события вообще
         $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус \"Завершена Успешно\". Подробнее в разделе \"Арбитраж\"";
         $html = "<div class='notification'><p>{$message}</p></div>";
         $user = $trade->getSeller();
@@ -198,12 +198,35 @@ class InternalNotificationContainer
      */
     public function tradeRejected(Trade $trade): void
     {
-        // TODO кажеться неправильыне тут события вообще
-
-        $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$trade->getLead()->getId()}";
-        $link = null; // TODO get link
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
+        $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус \"Откланена\". Подробнее в разделе \"Арбитраж\"";
+        $html = "<div class='notification'><p>{$message}</p></div>";
         $user = $trade->getSeller();
+
+        $notification = new Notification($user, $html);
+
+        $this->client->send($notification);
+
+    }
+
+
+    public function messageAboutLead(Message $object)
+    {
+        $thread = $object->getThread();
+        $user = $thread->getCreatedBy();
+
+        if (
+            !$user instanceof User ||
+            !$thread instanceof Thread ||
+            !$thread->getLead() instanceof Lead ||
+            $thread->getTypeAppeal() !== Thread::TYPE_ARBITRATION
+        ) {
+            return;
+        }
+
+        $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
+        $link = $this->router->generate('app_arbitration');
+        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
+
         $type = Notification::TYPE_IMPORTANT;
 
         $notification = new Notification($user, $html, $type);

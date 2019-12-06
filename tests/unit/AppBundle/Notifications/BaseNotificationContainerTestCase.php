@@ -46,6 +46,8 @@ abstract class BaseNotificationContainerTestCase extends TestCase
     {
         $thread = new Thread();
         $thread->setCreatedBy($this->getUser());
+        $thread->setTypeAppeal(Thread::TYPE_ARBITRATION);
+        $thread->setLead($this->getLead());
 
         $object = new Message();
         $object->setThread($thread);

@@ -85,14 +85,14 @@
 }
 
 .notifications .notifications__popup .notifications__popup__item .notifications__popup__item_button_container .notifications__popup__item_read{
-    font-size: 20px;
+    font-size: 16px;
     margin-right: 10px;
     cursor: pointer;
     color: #00a368;
 }
 
 .notifications .notifications__popup .notifications__popup__item .notifications__popup__item_button_container .notifications__popup__item_unread{
-    font-size: 20px;
+    font-size: 16px;
     margin-right: 10px;
     cursor: pointer;
     color: #00a368;

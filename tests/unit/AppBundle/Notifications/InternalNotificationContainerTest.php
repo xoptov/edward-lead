@@ -78,6 +78,12 @@ class InternalNotificationContainerTest extends BaseNotificationContainerTestCas
         $this->service->tradeAccepted($this->getTrade());
     }
 
+    public function testMessageAboutLead()
+    {
+        $this->clientMock->expects($this->once())->method('send');
+        $this->service->messageAboutLead($this->getMessage());
+    }
+
     public function testYouRemovedFromRoom()
     {
         $this->clientMock->expects($this->once())->method('send');
