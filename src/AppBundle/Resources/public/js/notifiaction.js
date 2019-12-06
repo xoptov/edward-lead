@@ -37,7 +37,7 @@ $('.notifications__popup__item_read').click(function () {
             hidePreloader(notificationId)
             hideRead(notificationId)
             showUnread(notificationId)
-            degressNotificationCount()
+            degreesNotificationCount()
 
         },
         error: function (error) {
@@ -109,7 +109,7 @@ function removeRedBorder(id) {
     $('.notifications__popup__item[data-id="' + id + '"]').removeClass('red-border')
 }
 
-function degressNotificationCount(){
+function degreesNotificationCount(){
 
     var count = $('.notifications__menu__new_icon').text()
 
