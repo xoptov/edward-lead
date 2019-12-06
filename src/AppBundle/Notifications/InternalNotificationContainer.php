@@ -68,7 +68,6 @@ class InternalNotificationContainer
         $notification = new Notification($user, $html);
 
         $this->client->send($notification);
-
     }
 
     /**
@@ -205,7 +204,6 @@ class InternalNotificationContainer
         $notification = new Notification($user, $html);
 
         $this->client->send($notification);
-
     }
 
 
@@ -259,9 +257,7 @@ class InternalNotificationContainer
             $notification = new Notification($user, $html);
 
             $this->client->send($notification);
-
         }
-
     }
 
     /**
@@ -331,8 +327,6 @@ class InternalNotificationContainer
 
             $this->client->send($notification);
         }
-
-
     }
 
     /**
