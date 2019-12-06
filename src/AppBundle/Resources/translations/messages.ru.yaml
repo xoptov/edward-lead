@@ -174,9 +174,13 @@ Work time: Рабочее время
 Start at: Начало в
 End at: Конец в
 Work days: Рабочие дни
-
+Offer: Оффер
+Public Offer: Публичный оффер
 Decision Maker: Лицо принимающее решение
 Interest Assessment: Оценка заинтересованость в покупке
+Channels: Каналы
+Allowed: Разрешён
+Main: Главная
 
 lead:
     status:

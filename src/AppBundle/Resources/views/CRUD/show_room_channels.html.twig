@@ -1,0 +1,16 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% for element in value %}
+        {% if element.property is defined and  element.allowed is defined %}
+            <div>
+                <span>{{ element.property.value }}</span>
+                {% if element.allowed %}
+                    <span class="label label-success">Да</span>
+                {% else %}
+                    <span class="label label-danger">Нет</span>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

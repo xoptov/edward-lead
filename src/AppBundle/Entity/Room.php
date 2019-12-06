@@ -2,11 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
-use AppBundle\Entity\Room\Schedule;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -186,6 +188,79 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
      */
     private $leadsPerDay;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="public_offer", type="boolean")
+     */
+    private $publicOffer = false;
+
+    /**
+     * @var RoomChannel[]
+     *
+     * @ORM\OneToMany(targetEntity="RoomChannel", mappedBy="room", cascade={"persist"})
+     */
+    private $channels;
+
+    /**
+     * @var ArrayCollection|Region[]
+     *
+     * @ORM\ManyToMany(targetEntity="Region")
+     * @ORM\JoinTable(
+     *     name="rooms_regions",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="region_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $regions;
+
+    /**
+     * @var ArrayCollection|City[]
+     *
+     * @ORM\ManyToMany(targetEntity="City")
+     * @ORM\JoinTable(
+     *     name="rooms_cities",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="city_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $cities;
+
+    public function __construct()
+    {
+        $this->channels = new ArrayCollection();
+        $this->regions = new ArrayCollection();
+        $this->cities = new ArrayCollection();
+    }
 
     /**
      * @param int $id
@@ -529,5 +604,115 @@ class Room implements IdentifiableInterface
     public function getLeadsPerDay(): ?int
     {
         return $this->leadsPerDay;
+    }
+
+    /**
+     * @param bool $publicOffer
+     *
+     * @return Room
+     */
+    public function setPublicOffer(bool $publicOffer): self
+    {
+        $this->publicOffer = $publicOffer;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublicOffer(): bool
+    {
+        return $this->publicOffer;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function addChannel(RoomChannel $channel): bool
+    {
+        if ($this->channels->add($channel)) {
+            $channel->setRoom($this);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function removeChannel(RoomChannel $channel): bool
+    {
+        return $this->channels->removeElement($channel);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getChannels(): Collection
+    {
+        return clone $this->channels;
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function addRegion(Region $region): bool
+    {
+        return $this->regions->add($region);
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function removeRegion(Region $region): bool
+    {
+        return $this->regions->removeElement($region);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRegions(): Collection
+    {
+        return clone $this->regions;
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function addCity(City $city): bool
+    {
+        return $this->cities->add($city);
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function removeCity(City $city): bool
+    {
+        return $this->cities->removeElement($city);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCities(): Collection
+    {
+        return clone $this->cities;
     }
 }
