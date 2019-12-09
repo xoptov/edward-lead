@@ -81,6 +81,18 @@ class RoomChannel
     }
 
     /**
+     * @return string|null
+     */
+    public function getPropertyValue(): ?string
+    {
+        if ($this->getProperty()) {
+            return $this->getProperty()->getValue();
+        }
+
+        return null;
+    }
+
+    /**
      * @param bool $allowed
      *
      * @return RoomChannel

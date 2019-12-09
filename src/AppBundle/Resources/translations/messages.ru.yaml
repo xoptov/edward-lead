@@ -231,7 +231,9 @@ User temporarily banned.: Пользователь временно забане
 common:
     balance: Баланс
     hold: Холд
+    rate: Ставка
     logotype: Логотип
+    and: и
 header:
     already_have_an_account: Уже есть аккаунт? 
     login: Войти
@@ -239,6 +241,7 @@ menu:
     admin_panel: Админ панель
     dashboard: Панель управления
     rooms: Комнаты
+    offers: Офферы
     my_leads: Мои лиды
     arbitration_and_support: Арбитраж / поддержка
     billing: Биллинг
@@ -252,3 +255,7 @@ menu:
     my_profile: Мой профиль
     knowledge_base: База знаний
     logout: Выход
+
+macros:
+    room:
+        lead_price_depend_on_locality: Зависит от населенного пункта

@@ -5,11 +5,14 @@ namespace AppBundle\Controller\API\v1;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\MessageBundle\Composer\ComposerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\MessageBundle\EntityManager\ThreadManager;
+use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
 
 /**
  * @Route("/api/v1")
@@ -17,27 +20,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class SupportController extends Controller
 {
     /**
-     * @var ThreadManager
-     */
-    private $threadManager;
-
-    /**
-     * @param ThreadManager $threadManager
-     */
-    public function __construct(ThreadManager $threadManager)
-    {
-        $this->threadManager = $threadManager;
-    }
-
-    /**
      * @Route("/support", name="api_v1_support_create", methods={"POST"})
      *
+     * @param ThreadManager          $threadManager
      * @param EntityManagerInterface $entityManager
      *
      * @return JsonResponse
      */
-    public function createAction(EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function createAction(
+        ThreadManager $threadManager,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -69,7 +62,7 @@ class SupportController extends Controller
         }
 
         /** @var Thread $thread */
-        $thread = $this->threadManager->createThread();
+        $thread = $threadManager->createThread();
         $thread->setCreatedBy($user);
         $thread->setSubject('Обращение в техподдержку');
         $thread->setTypeAppeal(Thread::TYPE_SUPPORT);
@@ -82,7 +75,7 @@ class SupportController extends Controller
             $thread->addParticipant($admin);
         }
 
-        $this->threadManager->saveThread($thread);
+        $threadManager->saveThread($thread);
 
         $result = [
             'id' => $thread->getId(),
@@ -95,5 +88,56 @@ class SupportController extends Controller
         ];
 
         return new JsonResponse($result);
+    }
+
+    /**
+     * @Route("/offer-request", name="api_v1_offer_request", methods={"GET"})
+     * 
+     * @param ComposerInterface      $composer
+     * @param SenderInterface        $sender
+     * @param EntityManagerInterface $entityManager
+     * 
+     * @return JsonResponse
+     */
+    public function offerRequestAction(
+        ComposerInterface $composer,
+        SenderInterface $sender,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($user->isCompany()) {
+            $messageBody = 'Запрос на создание оффера';
+        } elseif ($user->isWebmaster()) {
+            $messageBody = 'Запрос на подбор рекламодателей';
+        } else {
+            return new JsonResponse(
+                ['Только рекламодатели или вэбмастеры могут делать запрос на создание офера'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $admins = $entityManager->getRepository(User::class)->getAdmins();
+
+        if (empty($admins)) {
+            return new JsonResponse(['В системе нет администраторов'], Response::HTTP_BAD_REQUEST);
+        }
+
+        /** @var NewThreadMessageBuilder $threadBuilder */
+        $threadBuilder = $composer->newThread();
+        $threadBuilder
+            ->setSubject('Новый запрос на оффер')
+            ->setSender($user)
+            ->setBody($messageBody);
+
+        foreach ($admins as $admin) {
+            $threadBuilder->addRecipient($admin);
+        }
+
+        $message = $threadBuilder->getMessage();
+        $sender->send($message);
+
+        return new JsonResponse(['id' => $message->getId()]);
     }
 }

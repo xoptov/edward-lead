@@ -20,7 +20,7 @@ class Member implements IdentifiableInterface
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Room")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Room", inversedBy="members")
      * @ORM\JoinColumn(name="room_id", referencedColumnName="id", nullable=false)
      */
     private $room;

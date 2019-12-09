@@ -255,11 +255,19 @@ class Room implements IdentifiableInterface
      */
     private $cities;
 
+    /**
+     * @var ArrayCollection|Member[]
+     * 
+     * @ORM\OneToMany(targetEntity="Member", mappedBy="room")
+     */
+    private $members;
+
     public function __construct()
     {
         $this->channels = new ArrayCollection();
         $this->regions = new ArrayCollection();
         $this->cities = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     /**
@@ -714,5 +722,22 @@ class Room implements IdentifiableInterface
     public function getCities(): Collection
     {
         return clone $this->cities;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function isMember(User $user): bool
+    {
+        /** @var Member $member  */
+        foreach ($this->members as $member) {
+            if ($member->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

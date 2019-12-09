@@ -72,7 +72,7 @@ class RoomController extends Controller
             $this->entityManager->persist($data);
 
             try {
-                $this->roomManager->joinInRoom($data, $user);
+                $this->roomManager->joinInRoom($data, $user, false);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 

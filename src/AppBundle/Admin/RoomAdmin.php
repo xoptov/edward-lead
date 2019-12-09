@@ -70,7 +70,7 @@ class RoomAdmin extends AbstractAdmin
     public function prePersist($object)
     {
         $owner = $object->getOwner();
-        $this->roomManager->joinInRoom($object, $owner);
+        $this->roomManager->joinInRoom($object, $owner, false);
         $this->roomManager->updateInviteToken($object);
     }
 
@@ -87,6 +87,8 @@ class RoomAdmin extends AbstractAdmin
             ->add('owner.name')
             ->add('sphere')
             ->add('platformWarranty')
+            ->add('timer')
+            ->add('publicOffer')
             ->add($leadPrice)
             ->add('enabled');
     }
@@ -109,6 +111,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('leadCriteria')
             ->add('platformWarranty')
             ->add('timer')
+            ->add('publicOffer')
             ->add($leadPrice)
             ->add('buyerFee', null, [
                 'template' => '@App/CRUD/list_buyer_fee.html.twig'

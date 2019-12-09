@@ -44,7 +44,7 @@ class RoomController extends CRUDController
         $owner = $object->getOwner();
 
         if ($owner) {
-            $this->roomManager->joinInRoom($object, $owner);
+            $this->roomManager->joinInRoom($object, $owner, false);
         }
     }
 
