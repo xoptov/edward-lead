@@ -345,3 +345,6 @@ services:
         arguments:
             $client: '@notification_bundle.sms_client'
 
+    AppBundle\Notifications\InternalNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.internal_client'

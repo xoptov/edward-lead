@@ -3,7 +3,10 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Event\MemberEvent;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Exception;
+use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MemberEventListener extends BaseEventListener implements EventSubscriberInterface
@@ -22,18 +25,27 @@ class MemberEventListener extends BaseEventListener implements EventSubscriberIn
 
     /**
      * @param MemberEvent $event
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ValidationNotificationClientException
      */
     public function handleJoined(MemberEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->someOneJoinedToYou($event->getMember());
+        $this->internalNotificationContainer->youJoinedToRoom($event->getMember());
     }
 
     /**
      * @param MemberEvent $event
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     * @throws ValidationNotificationClientException
      */
     public function handleRemoved(MemberEvent $event): void
     {
-        //
+        $this->internalNotificationContainer->youRemovedFromRoom($event->getMember());
     }
 
     /**

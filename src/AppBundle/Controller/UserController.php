@@ -19,6 +19,7 @@ use AppBundle\Entity\MonetaryTransaction;
 use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
+use NotificationBundle\Entity\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

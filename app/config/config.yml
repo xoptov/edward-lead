@@ -43,6 +43,8 @@ twig:
         jivosite_enabled: '%jivosite_enabled%'
         referrer_reward: '%referrer_reward%'
         landing_url: '%landing_url%'
+    paths:
+        '%kernel.project_dir%/src/NotificationBundle/Resources/views': NotificationBundle
 
 # Doctrine Configuration
 doctrine:
