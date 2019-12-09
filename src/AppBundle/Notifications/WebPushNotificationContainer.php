@@ -9,12 +9,13 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use NotificationBundle\Channels\WebPushChannel;
 use NotificationBundle\Client\Client;
 
 class WebPushNotificationContainer
 {
     /**
-     * @var Client
+     * @var WebPushChannel
      */
     private $client;
 
@@ -26,10 +27,10 @@ class WebPushNotificationContainer
     /**
      * WebPushNotificationContainer constructor.
      *
-     * @param Client                 $client
+     * @param WebPushChannel                 $client
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client, EntityManagerInterface $entityManager)
+    public function __construct(WebPushChannel $client, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->entityManager = $entityManager;

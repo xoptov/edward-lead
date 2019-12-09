@@ -13,6 +13,7 @@ use AppBundle\Entity\Withdraw;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use NotificationBundle\Channels\EmailChannel;
 use NotificationBundle\Client\Client;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class EmailNotificationContainer
 {
     /**
-     * @var Client
+     * @var EmailChannel
      */
     private $client;
 
@@ -36,11 +37,11 @@ class EmailNotificationContainer
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client                 $client
+     * @param EmailChannel                 $client
      * @param UrlGeneratorInterface  $router
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
+    public function __construct(EmailChannel $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->router = $router;

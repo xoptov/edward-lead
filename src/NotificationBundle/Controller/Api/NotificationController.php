@@ -4,7 +4,10 @@ namespace NotificationBundle\Controller\Api;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use NotificationBundle\Entity\Notification;
+use NotificationBundle\Service\DisableNotificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,25 +19,21 @@ class NotificationController extends Controller
      * @var EntityManagerInterface
      */
     private $entityManager;
+    /**
+     * @var DisableNotificationService
+     */
+    private $disableNotificationService;
 
     /**
      * NotificationController constructor.
      *
-     * @param EntityManagerInterface $entityManager
+     * @param EntityManagerInterface     $entityManager
+     * @param DisableNotificationService $disableNotificationService
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, DisableNotificationService $disableNotificationService)
     {
         $this->entityManager = $entityManager;
-    }
-
-    /**
-     * @Route("/api/v1/notifications", methods={"GET"})
-     */
-    public function indexAction(): Response
-    {
-        // TODO return list of notifications
-
-        return new Response();
+        $this->disableNotificationService = $disableNotificationService;
     }
 
     /**
@@ -87,16 +86,18 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/api/v1/notifications/switch", methods={"PATCH"})
+     * @Route("/api/v1/notifications/switch", methods={"POST"})
      *
      * @param Request $request
      *
      * @return Response
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function switchNotificationAction(Request $request): Response
     {
-        // TODO enable or disable Notification
+        $configuration = $this->disableNotificationService->handle($request->request->all());
 
-        return new Response();
+        return new Response($configuration);
     }
 }
