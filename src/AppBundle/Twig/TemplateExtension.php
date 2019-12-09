@@ -2,27 +2,21 @@
 
 namespace AppBundle\Twig;
 
-use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\MonetaryTransaction;
-use AppBundle\Entity\Operation;
-use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\User;
-use AppBundle\Service\AccountManager;
-use AppBundle\Service\LeadManager;
-use AppBundle\Service\PhoneCallManager;
-use AppBundle\Service\TimerManager;
-use AppBundle\Service\TradeManager;
+use AppBundle\Entity\Invoice;
 use AppBundle\Util\Formatter;
-use DateTime;
+use AppBundle\Entity\Operation;
 use Doctrine\DBAL\DBALException;
-use NotificationBundle\Entity\Notification;
-use NotificationBundle\Repository\NotificationRepository;
-use Twig_Extension;
-use Twig_SimpleFilter;
-use Twig_SimpleFunction;
+use AppBundle\Service\LeadManager;
+use AppBundle\Service\TimerManager;
+use AppBundle\Entity\Room\Schedule;
+use AppBundle\Service\TradeManager;
+use AppBundle\Service\AccountManager;
+use AppBundle\Service\PhoneCallManager;
+use AppBundle\Entity\MonetaryTransaction;
 
-class TemplateExtension extends Twig_Extension
+class TemplateExtension extends \Twig_Extension
 {
     /**
      * @var AccountManager
@@ -45,10 +39,10 @@ class TemplateExtension extends Twig_Extension
     private $phoneCallManager;
 
     /**
-     * @param AccountManager         $accountManager
-     * @param TradeManager           $tradeManager
-     * @param TimerManager           $timerManager
-     * @param PhoneCallManager       $phoneCallManager
+     * @param AccountManager   $accountManager
+     * @param TradeManager     $tradeManager
+     * @param TimerManager     $timerManager
+     * @param PhoneCallManager $phoneCallManager
      */
     public function __construct(
         AccountManager $accountManager,
@@ -68,12 +62,12 @@ class TemplateExtension extends Twig_Extension
     public function getFilters()
     {
         return [
-            new Twig_SimpleFilter('hidden_phone', [$this, 'hiddenPhone']),
-            new Twig_SimpleFilter('date_format', [$this, 'dateFormat']),
-            new Twig_SimpleFilter('money_format', [$this, 'moneyFormat']),
-            new Twig_SimpleFilter('human_phone', [$this, 'humanPhone']),
-            new Twig_SimpleFilter('human_duration', [$this, 'humanDuration']),
-            new Twig_SimpleFilter('human_remain_time', [$this, 'humanRemainTime'])
+            new \Twig_SimpleFilter('hidden_phone', [$this, 'hiddenPhone']),
+            new \Twig_SimpleFilter('date_format', [$this, 'dateFormat']),
+            new \Twig_SimpleFilter('money_format', [$this, 'moneyFormat']),
+            new \Twig_SimpleFilter('human_phone', [$this, 'humanPhone']),
+            new \Twig_SimpleFilter('human_duration', [$this, 'humanDuration']),
+            new \Twig_SimpleFilter('human_remain_time', [$this, 'humanRemainTime'])
         ];
     }
 
@@ -83,17 +77,15 @@ class TemplateExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
-            new Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
-            new Twig_SimpleFunction('can_make_call', [$this, 'canMakeCall']),
-            new Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
-            new Twig_SimpleFunction('destination_of_money', [$this, 'getDestinationOfMoney']),
-            new Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
-            new Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays']),
-            new Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer']),
-            new Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades']),
-            new Twig_SimpleFunction('get_new_notifications', [$this, 'getNewNotifications']),
-            new Twig_SimpleFunction('get_new_notifications_count', [$this, 'getNewNotificationsCount'])
+            new \Twig_SimpleFunction('balance_hold', [$this, 'getBalanceHold']),
+            new \Twig_SimpleFunction('can_show_phone', [$this, 'canShowPhone']),
+            new \Twig_SimpleFunction('can_make_call', [$this, 'canMakeCall']),
+            new \Twig_SimpleFunction('source_of_money', [$this, 'getSourceOfMoney']),
+            new \Twig_SimpleFunction('destination_of_money', [$this, 'getDestinationOfMoney']),
+            new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
+            new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays']),
+            new \Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer']),
+            new \Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades'])
         ];
     }
 
@@ -108,11 +100,11 @@ class TemplateExtension extends Twig_Extension
     }
 
     /**
-     * @param DateTime $date
+     * @param \DateTime $date
      *
      * @return string
      */
-    public function dateFormat(DateTime $date): string
+    public function dateFormat(\DateTime $date): string
     {
         return Formatter::localizeDate($date);
     }
@@ -277,11 +269,11 @@ class TemplateExtension extends Twig_Extension
     }
 
     /**
-     * @param DateTime $endAt
+     * @param \DateTime $endAt
      *
      * @return null|string
      */
-    public function humanRemainTime(DateTime $endAt): ?string
+    public function humanRemainTime(\DateTime $endAt): ?string
     {
 
         $now = $this->timerManager->createDateTime();
@@ -290,11 +282,6 @@ class TemplateExtension extends Twig_Extension
         return Formatter::humanTimerRemain($remainInSeconds);
     }
 
-    /**
-     * @param Lead $lead
-     *
-     * @return bool
-     */
     public function canShowTimer(Lead $lead): bool
     {
         if (!$lead->isExpected()) {
