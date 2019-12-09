@@ -27,26 +27,28 @@
                 {% include '@App/v3/parts/dark/header.html.twig' %}
                 <div class="wrap fx">
                     <div class="nav__bg"></div>
-                        <div class="container fx {% if container_class is defined %}{{ container_class }}{% endif %}">  
-                            {% block container -%}
-                                <div class="col-3 nav-wrap">
-                                    {% include('@App/v3/parts/dark/menu.html.twig') %}
-                                </div>
-                                <div class="col-9 fx-column content-wrap">
-                                    <div class="content {% if content_class is defined %}{{ content_class }}{% endif %}">
-                                        {% block content -%}{%- endblock %}
-                                    </div>
-                                    <div class="footer">
-                                        <span class="footer__copyright">© 2019 Edward</span>
-                                    </div>
+                    {% block container -%}
+                        <div class="container fx">
+                            <div class="col-3 nav-wrap">
+                                {% include('@App/v3/parts/dark/menu.html.twig') %}
+                            </div>
+                            <div class="col-9 fx-column content-wrap">
+                                {% block content -%}
+                                    <div class="content"></div>
+                                {%- endblock content %}
+                                <div class="footer">
+                                    <span class="footer__copyright">© 2019 Edward</span>
                                 </div>
                             </div>
-                        {%- endblock container %}
-                    </div>
+                        </div>
+                    {%- endblock container %}
                     <div class="footer__bg"></div>
                 </div>
             </div>
         </div>
+
+        {% block modals %}{% endblock %}
+
         <!--[if lt IE 9]>
         {% if app.environment == 'prod' -%}
             <script src="{{ asset('bundles/app/v3/js/lib/es5-shim.min.js') }}"></script>
