@@ -194,7 +194,7 @@ class RoomController extends Controller
 
         $buyerFee = $feesManager->getCommissionForBuyerInRoom($room);
 
-        return $this->render('@App/v2/Room/view.html.twig', [
+        return $this->render('@App/v3/Room/view.html.twig', [
             'room' => $room,
             'leads' => $leads,
             'countCanBuy' => $this->roomManager->countCanBuy($room, $buyerFee, $totalAvailableMoney),
