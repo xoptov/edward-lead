@@ -68,7 +68,12 @@ class TradeSubscriber extends BaseEventListener implements EventSubscriberInterf
         $this->entityManager = $entityManager;
         $this->fosComposer = $fosComposer;
         $this->fosSender = $fosSender;
-        parent::__construct($emailNotificationContainer, $webPushNotificationContainer, $smsNotificationContainer, $internalNotificationContainer);
+        parent::__construct(
+            $emailNotificationContainer,
+            $webPushNotificationContainer,
+            $smsNotificationContainer,
+            $internalNotificationContainer
+        );
     }
 
     /**

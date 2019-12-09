@@ -1,21 +1,16 @@
 <div class="notifications">
     <div class="notifications__menu">
         Уведомления
-        {% if get_new_notifications_count() %}
-
-            <div class="notifications__menu__new_icon ">
-                {{ get_new_notifications_count() }}
-            </div>
-
-        {% endif %}
-
+        <div class="notifications__menu__new_icon ">
+            {{ notificationCount }}
+        </div>
     </div>
     <div class="notifications__popup">
-        {% for notification in get_new_notifications() %}
+        {% for notification in notifications %}
             <div class="notifications__popup__item {{ notification.readStatus == 'NEW' ? 'red-border' : '' }}" data-id="{{ notification.id }}">
 
                 <div class="notifications__popup__item_header">
-                    <div class="notifications__popup__item_type {{ notification.readStatus == 'NEW' ? 'green' : 'grey' }}">{{ get_notification_type(notification.type) }}</div>
+                    <div class="notifications__popup__item_type {{ notification.readStatus == 'NEW' ? 'green' : 'grey' }}">{{ notification.type | trans }}</div>
                     <div class="notifications__popup__item_date">{{ notification.createdAt | date("d.m.Y") }}</div>
                 </div>
 

@@ -14,7 +14,7 @@
     </div>
 
     <div class="col-lg-2">
-        {% include '@App/notification_menu.html.twig' %}
+        {{ render(controller('NotificationBundle\\Controller\\NotificationMenuController::indexAction')) }}
     </div>
 
     <div class="col-lg-7 header_main">

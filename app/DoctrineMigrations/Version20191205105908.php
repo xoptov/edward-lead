@@ -16,6 +16,7 @@ final class Version20191205105908 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notification ADD created_at DATETIME NOT NULL, ADD updated_at DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE notification CHANGE type type VARCHAR(50) NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -24,5 +25,6 @@ final class Version20191205105908 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notification DROP created_at, DROP updated_at');
+        $this->addSql('ALTER TABLE notification CHANGE type type VARCHAR(10) NOT NULL COLLATE utf8_unicode_ci');
     }
 }

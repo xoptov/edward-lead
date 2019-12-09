@@ -43,30 +43,23 @@ class TemplateExtension extends Twig_Extension
      * @var PhoneCallManager
      */
     private $phoneCallManager;
-    /**
-     * @var NotificationRepository
-     */
-    private $notificationRepository;
 
     /**
      * @param AccountManager         $accountManager
      * @param TradeManager           $tradeManager
      * @param TimerManager           $timerManager
      * @param PhoneCallManager       $phoneCallManager
-     * @param NotificationRepository $notificationRepository
      */
     public function __construct(
         AccountManager $accountManager,
         TradeManager $tradeManager,
         TimerManager $timerManager,
-        PhoneCallManager $phoneCallManager,
-        NotificationRepository $notificationRepository
+        PhoneCallManager $phoneCallManager
     ) {
         $this->accountManager = $accountManager;
         $this->tradeManager = $tradeManager;
         $this->timerManager = $timerManager;
         $this->phoneCallManager = $phoneCallManager;
-        $this->notificationRepository = $notificationRepository;
     }
 
     /**
@@ -100,8 +93,7 @@ class TemplateExtension extends Twig_Extension
             new Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer']),
             new Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades']),
             new Twig_SimpleFunction('get_new_notifications', [$this, 'getNewNotifications']),
-            new Twig_SimpleFunction('get_new_notifications_count', [$this, 'getNewNotificationsCount']),
-            new Twig_SimpleFunction('get_notification_type', [$this, 'getNotificationType'])
+            new Twig_SimpleFunction('get_new_notifications_count', [$this, 'getNewNotificationsCount'])
         ];
     }
 
@@ -330,37 +322,5 @@ class TemplateExtension extends Twig_Extension
         }
 
         return true;
-    }
-
-    /**
-     * @return array|Notification[]
-     */
-    public function getNewNotifications()
-    {
-        return $this->notificationRepository->getForCurrentUser();
-    }
-
-    /**
-     * @return int
-     */
-    public function getNewNotificationsCount()
-    {
-        try {
-            return $this->notificationRepository->getNewForCurrentUserCount();
-        } catch (\Exception $exception) {
-            return 0;
-        }
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getNotificationType(string $type): string
-    {
-
-        return $this->notificationRepository->getViewType($type);
-
     }
 }

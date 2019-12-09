@@ -38,7 +38,7 @@ class NotificationController extends Controller
     }
 
     /**
-     * @Route("/api/v1/notifications/read/{notification}", methods={"PATCH"})
+     * @Route("/api/v1/notifications/read/{notification}", methods={"GET"})
      *
      * @param Notification $notification
      *
@@ -56,7 +56,7 @@ class NotificationController extends Controller
 
 
     /**
-     * @Route("/api/v1/notifications/unread/{notification}", methods={"PATCH"})
+     * @Route("/api/v1/notifications/unread/{notification}", methods={"GET"})
      *
      * @param Notification $notification
      *

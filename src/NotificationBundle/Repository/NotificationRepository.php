@@ -5,10 +5,8 @@ namespace NotificationBundle\Repository;
 use AppBundle\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use NotificationBundle\Entity\Notification;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * NotificationRepository
@@ -19,31 +17,22 @@ use Symfony\Component\Security\Core\Security;
 class NotificationRepository extends ServiceEntityRepository
 {
     /**
-     * @var Security
-     */
-    private $security;
-
-    /**
      * NotificationRepository constructor.
      *
      * @param ManagerRegistry $registry
-     * @param Security        $security
      */
-    public function __construct(ManagerRegistry $registry, Security $security)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Notification::class);
-        $this->security = $security;
     }
 
     /**
+     * @param User $user
+     *
      * @return int
-     * @throws NonUniqueResultException
      */
-    public function getNewForCurrentUserCount(): int
+    public function getNewCountForUser(User $user): int
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
         $queryBuilder = $this->createQueryBuilder('l');
 
         $queryBuilder
@@ -51,23 +40,24 @@ class NotificationRepository extends ServiceEntityRepository
             ->where('l.user = :user')
             ->setParameter('user', $user);
 
-        $this->addReadStatusCondition($queryBuilder, [Notification::READ_STATUS_NEW]);
+        $this->addReadStatusCondition($queryBuilder, Notification::READ_STATUS_NEW);
 
-        $query = $queryBuilder->getQuery();
-
-        return $query->getSingleScalarResult();
+        try {
+            $query = $queryBuilder->getQuery();
+            return $query->getSingleScalarResult();
+        } catch (\Exception $exception) {
+            return 0;
+        }
     }
 
     /**
-     * @param int $limit
+     * @param User $user
+     * @param int  $limit
      *
      * @return Notification[]
      */
-    public function getForCurrentUser(int $limit = 30): array
+    public function getForUser(User $user, int $limit = 30): array
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
         $queryBuilder = $this->createQueryBuilder('l');
 
         $queryBuilder
@@ -81,29 +71,12 @@ class NotificationRepository extends ServiceEntityRepository
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param array        $readStatus
+     * @param string       $readStatus
      */
-    private function addReadStatusCondition(QueryBuilder $queryBuilder, array $readStatus)
+    private function addReadStatusCondition(QueryBuilder $queryBuilder, string $readStatus)
     {
         $queryBuilder
             ->andWhere('l.readStatus = :readStatus')
             ->setParameter('readStatus', $readStatus);
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    public function getViewType(string $type): string
-    {
-        switch ($type) {
-            case Notification::TYPE_IMPORTANT:
-                return 'Важное';
-            case Notification::TYPE_NEWS:
-                return 'Новости';
-            case Notification::TYPE_NOTIFICATION:
-                return 'Уведомление';
-        }
     }
 }

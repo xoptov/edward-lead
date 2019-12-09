@@ -28,7 +28,7 @@ $('.notifications__popup__item_read').click(function () {
     showPreloader(notificationId)
 
     $.ajax({
-        type: 'PATCH',
+        type: 'GET',
         url: '/api/v1/notifications/read/' + notificationId,
         processData: false,
         contentType: 'application/merge-patch+json',
@@ -57,7 +57,7 @@ $('.notifications__popup__item_unread').click(function () {
     showPreloader(notificationId)
 
     $.ajax({
-        type: 'PATCH',
+        type: 'GET',
         url: '/api/v1/notifications/unread/' + notificationId,
         processData: false,
         contentType: 'application/merge-patch+json',

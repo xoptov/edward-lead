@@ -241,7 +241,7 @@ class InternalNotificationContainer
      */
     public function someOneJoinedToYou(Member $object): void
     {
-        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
 
         /** @var Member $member */
         foreach ($members as $member) {
@@ -310,7 +310,7 @@ class InternalNotificationContainer
             return;
         }
 
-        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]) ?: [];
+        $members = $this->entityManager->getRepository(Member::class)->findBy(['room' => $object->getRoom()]);
 
         foreach ($members as $member) {
 
