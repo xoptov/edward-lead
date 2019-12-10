@@ -1,13 +1,9 @@
 <?php
 
-
 namespace NotificationBundle\Service;
 
-
 use AppBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use NotificationBundle\Channels\EmailChannel;
 use NotificationBundle\Channels\SmsChannel;
@@ -38,8 +34,9 @@ class DisableNotificationService
      * @var ValidatorInterface
      */
     private $validator;
+
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -49,13 +46,13 @@ class DisableNotificationService
      * @param NotificationConfigurationRepository $notificationConfigurationRepository
      * @param Security                            $security
      * @param ValidatorInterface                  $validator
-     * @param EntityManager                       $entityManager
+     * @param EntityManagerInterface              $entityManager
      */
     public function __construct(
         NotificationConfigurationRepository $notificationConfigurationRepository,
         Security $security,
         ValidatorInterface $validator,
-        EntityManager $entityManager
+        EntityManagerInterface $entityManager
     )
     {
         $this->notificationConfigurationRepository = $notificationConfigurationRepository;
@@ -65,15 +62,16 @@ class DisableNotificationService
     }
 
     /**
-     * @param array $data
+     * @param string $key
+     * @param int    $value
      *
      * @return NotificationConfiguration
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
+     * @throws Exception
      */
-    public function handle(array $data) : NotificationConfiguration
+    public function handle(string $key, int $value): NotificationConfiguration
     {
+        $data = $this->getDataFromRequest($key, $value);
         $this->validate($data);
 
         /** @var User $currentUser */
@@ -92,7 +90,6 @@ class DisableNotificationService
         if ($configuration) {
 
             $configuration->setDisabled($isDisabled);
-            $this->entityManager->persist($configuration);
 
         } else {
 
@@ -136,7 +133,7 @@ class DisableNotificationService
             'case' => [
                 new NotBlank(),
                 new Choice([
-                    'choices' => [Cases::getCases()],
+                    'choices' => Cases::getCases(),
                 ])
             ],
             'channel' => [
@@ -151,5 +148,17 @@ class DisableNotificationService
                 ])
             ]
         ]);
+    }
+
+    private function getDataFromRequest(string $key, int $value): array
+    {
+        $key = explode('__', $key);
+
+        $data = [];
+        $data['case'] = $key[0];
+        $data['channel'] = $key[1];
+        $data['isDisabled'] = (int)$value;
+
+        return $data;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace NotificationBundle\Service;
 
+use AppBundle\Entity\User;
 use NotificationBundle\Constants\Cases;
 use NotificationBundle\Entity\NotificationConfiguration;
 use NotificationBundle\Repository\NotificationConfigurationRepository;
@@ -45,7 +46,6 @@ class NotificationConfigurationService
     {
         $this->notificationConfigurationRepository = $notificationConfigurationRepository;
         $this->security = $security;
-        $this->setUserNotificationConfiguration();
         $this->validator = $validator;
     }
 
@@ -54,16 +54,20 @@ class NotificationConfigurationService
      */
     public function getViewData(): array
     {
+        $this->setUserNotificationConfiguration();
         $notificationCases = Cases::CASE_CHANNELS;
 
-        foreach ($notificationCases as $caseName => $channels) {
+        foreach ($notificationCases as $caseName => &$channels) {
 
-            foreach ($channels as &$channel) {
-                $channel = [
-                    $channel => $this->getConfiguration($caseName, $channel)
-                ];
+            $data = [];
+            foreach ($channels as $channel) {
+                $data[$channel] = (int)$this->getConfiguration($caseName, $channel);
             }
+
+            $channels = $data;
         }
+
+        return $notificationCases;
     }
 
     /**
@@ -74,7 +78,6 @@ class NotificationConfigurationService
      */
     private function getConfiguration(string $case, string $channel): bool
     {
-
         /** @var NotificationConfiguration $item */
         foreach ($this->userNotificationConfiguration as $item) {
 
@@ -89,7 +92,8 @@ class NotificationConfigurationService
      */
     private function setUserNotificationConfiguration(): void
     {
+        /** @var User $currentUser */
         $currentUser = $this->security->getUser();
-        $this->userNotificationConfiguration = $this->notificationConfigurationRepository->find(['user' => $currentUser]);
+        $this->userNotificationConfiguration = $this->notificationConfigurationRepository->findBy(['user' => $currentUser]);
     }
 }

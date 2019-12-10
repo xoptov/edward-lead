@@ -41,7 +41,7 @@ class NotificationConfiguration
      *
      * @var string
      *
-     * @ORM\Column(name="case", type="string", length=255)
+     * @ORM\Column(name="case_notification", type="string", length=255)
      */
     private $case;
 

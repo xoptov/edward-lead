@@ -14,7 +14,7 @@ use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use NotificationBundle\Channels\EmailChannel;
-use NotificationBundle\Client\Client;
+use NotificationBundle\Constants\Cases;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -29,6 +29,7 @@ class EmailNotificationContainer
      * @var UrlGeneratorInterface
      */
     private $router;
+
     /**
      * @var EntityManagerInterface
      */
@@ -106,16 +107,18 @@ class EmailNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        $this->client->send([
-            "to_email" => $object->getUser()->getEmail(),
-            "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
-            "params" => [
-                "ID_ROOM" => $object->getRoom()->getId(),
-                "NAME_ROOM" => $object->getRoom()->getName(),
-                "URL_ROOM" => $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]),
-                "ID_LEAD" => $object->getId()
+        $this->client->send(
+            [
+                "to_email" => $object->getUser()->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
+                "params" => [
+                    "ID_ROOM" => $object->getRoom()->getId(),
+                    "NAME_ROOM" => $object->getRoom()->getName(),
+                    "URL_ROOM" => $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]),
+                    "ID_LEAD" => $object->getId()
+                ],
             ],
-        ]);
+            EmailChannel::NAME);
     }
 
     /**
@@ -224,11 +227,13 @@ class EmailNotificationContainer
      */
     public function userApiTokenChanged(User $object): void
     {
-        $this->client->send([
-            "to_email" => $object->getEmail(),
-            "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
-            "params" => ["KEYAPI" => $object->getToken()],
-        ]);
+        $this->client->send(
+            [
+                "to_email" => $object->getEmail(),
+                "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
+                "params" => ["KEYAPI" => $object->getToken()],
+            ],
+            Cases::NAME_USER_API_TOKEN_CHANGED);
     }
 
     /**

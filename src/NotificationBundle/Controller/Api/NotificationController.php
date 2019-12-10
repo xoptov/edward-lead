@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use NotificationBundle\Entity\Notification;
 use NotificationBundle\Service\DisableNotificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -19,21 +20,15 @@ class NotificationController extends Controller
      * @var EntityManagerInterface
      */
     private $entityManager;
-    /**
-     * @var DisableNotificationService
-     */
-    private $disableNotificationService;
 
     /**
      * NotificationController constructor.
      *
      * @param EntityManagerInterface     $entityManager
-     * @param DisableNotificationService $disableNotificationService
      */
-    public function __construct(EntityManagerInterface $entityManager, DisableNotificationService $disableNotificationService)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->disableNotificationService = $disableNotificationService;
     }
 
     /**
@@ -85,19 +80,4 @@ class NotificationController extends Controller
         return new Response();
     }
 
-    /**
-     * @Route("/api/v1/notifications/switch", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function switchNotificationAction(Request $request): Response
-    {
-        $configuration = $this->disableNotificationService->handle($request->request->all());
-
-        return new Response($configuration);
-    }
 }

@@ -3,7 +3,7 @@
 namespace NotificationBundle\Channels;
 
 use NotificationBundle\Client\EsputnikEmailClient;
-use NotificationBundle\Repository\NotificationStatusRepository;
+use NotificationBundle\Repository\NotificationConfigurationRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -12,7 +12,7 @@ class EmailChannel extends BaseChannel
     const NAME = 'EMAIL_CHANNEL';
 
     public function __construct(
-        NotificationStatusRepository $notificationStatusRepository,
+        NotificationConfigurationRepository $notificationStatusRepository,
         Security $security,
         LoggerInterface $logger,
         EsputnikEmailClient $client

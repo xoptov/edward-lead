@@ -10,7 +10,7 @@ use NotificationBundle\Entity\NotificationConfiguration;
 class NotificationConfigurationRepository extends ServiceEntityRepository
 {
     /**
-     * NotificationStatusRepository constructor.
+     * NotificationConfigurationRepository constructor.
      *
      * @param ManagerRegistry $registry
      */
@@ -26,7 +26,7 @@ class NotificationConfigurationRepository extends ServiceEntityRepository
      *
      * @return object|null
      */
-    public function findByConfigurations(string $case, string $channel, User $user): object
+    public function findByConfigurations(string $case, string $channel, User $user)
     {
         return $this->findOneBy(
             [

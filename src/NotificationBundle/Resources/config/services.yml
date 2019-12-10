@@ -17,7 +17,7 @@ services:
 
   NotificationBundle\:
     resource: '../../*'
-    exclude: '../../{Entity,Event,Client,tests}'
+    exclude: '../../{Entity,Event,tests}'
 
   Zelenin\SmsRu\Auth\ApiIdAuth:
     arguments:

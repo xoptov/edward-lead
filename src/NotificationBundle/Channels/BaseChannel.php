@@ -6,7 +6,6 @@ use AppBundle\Entity\User;
 use NotificationBundle\Client\Client;
 use NotificationBundle\Entity\NotificationConfiguration;
 use NotificationBundle\Repository\NotificationConfigurationRepository;
-use NotificationBundle\Repository\NotificationStatusRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -59,7 +58,7 @@ abstract class BaseChannel
      */
     public function send(array $data, string $case = null): void
     {
-        if ($case && !$this->isAllowed($case, self::NAME)) {
+        if ($case && !$this->isAllowed($case, static::NAME)) {
             return;
         }
 

@@ -1,0 +1,91 @@
+<div class="notification_configuration">
+    <h3 class="profile-tabs__head">Оповещание системы</h3>
+    <div class="notification_configuration__container">
+
+        <form method="POST" action="{{ path('notifications_switch') }}">
+
+            <table>
+                <thead>
+
+                <tr>
+                    <td></td>
+                    <td>E-mail</td>
+                    <td>Webpush</td>
+                    <td>Telegramm</td>
+                    <td>Tqwe</td>
+                </tr>
+
+                </thead>
+                <tbody>
+                {% for key, configuration in notificationConfiguration %}
+
+                    <tr>
+                        <td>{{ key | trans }}</td>
+                        <td>
+                            {% if configuration['EMAIL_CHANNEL'] is defined %}
+
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__EMAIL_CHANNEL' }}"
+                                        value="0"
+                                        {{ configuration['EMAIL_CHANNEL'] ? '' : 'checked' }}
+                                >Разрешить
+                                <br>
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__EMAIL_CHANNEL' }}"
+                                        value="1"
+                                        {{ configuration['EMAIL_CHANNEL'] ? 'checked' : '' }}
+                                >Отключить
+
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if configuration['WEB_PUSH_CHANNEL'] is defined %}
+
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__WEB_PUSH_CHANNEL' }}"
+                                        value="0"
+                                        {{ configuration['WEB_PUSH_CHANNEL'] ? '' : 'checked' }}
+                                >Разрешить
+                                <br>
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__WEB_PUSH_CHANNEL' }}"
+                                        value="1"
+                                        {{ configuration['WEB_PUSH_CHANNEL'] ? 'checked' : '' }}
+                                >Отключить
+
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if configuration['TELEGRAM_CHANNEL'] is defined %}
+
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__TELEGRAM_CHANNEL' }}"
+                                        value="0"
+                                        {{ configuration['TELEGRAM_CHANNEL'] ? '' : 'checked' }}
+                                >Разрешить
+                                <br>
+                                <input
+                                        type="radio"
+                                        name="{{ key ~ '__TELEGRAM_CHANNEL' }}"
+                                        value="1"
+                                        {{ configuration['TELEGRAM_CHANNEL'] ? 'checked' : '' }}
+                                >Отключить
+
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <input type="submit" value="Сохранить" class="btn form__btn">
+        </form>
+
+    </div>
+</div>

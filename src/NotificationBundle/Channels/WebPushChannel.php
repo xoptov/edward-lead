@@ -3,7 +3,7 @@
 namespace NotificationBundle\Channels;
 
 use NotificationBundle\Client\EsputnikWebPushClient;
-use NotificationBundle\Repository\NotificationStatusRepository;
+use NotificationBundle\Repository\NotificationConfigurationRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -12,7 +12,7 @@ class WebPushChannel extends BaseChannel
     const NAME = 'WEB_PUSH_CHANNEL';
 
     public function __construct(
-        NotificationStatusRepository $notificationStatusRepository,
+        NotificationConfigurationRepository $notificationStatusRepository,
         Security $security,
         LoggerInterface $logger,
         EsputnikWebPushClient $client
