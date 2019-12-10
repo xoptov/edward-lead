@@ -538,6 +538,10 @@ span.i-rooms {
   background: url(/bundles/app/v3/img/icons/i-rooms.png) center/auto no-repeat;
 }
 
+span.i-offers {
+  background: url(/bundles/app/v3/img/icons/i-offers.png) center/auto no-repeat;
+}
+
 span.i-leads {
   background: url(/bundles/app/v3/img/icons/i-leads.png) center/auto no-repeat;
 }

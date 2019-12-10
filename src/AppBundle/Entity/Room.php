@@ -197,6 +197,11 @@ class Room implements IdentifiableInterface
     private $publicOffer = false;
 
     /**
+     * @ORM\Column(name="auto_join", type="boolean")
+     */
+    private $autoJoin = false;
+
+    /**
      * @var RoomChannel[]
      *
      * @ORM\OneToMany(targetEntity="RoomChannel", mappedBy="room", cascade={"persist"})
@@ -632,6 +637,26 @@ class Room implements IdentifiableInterface
     public function isPublicOffer(): bool
     {
         return $this->publicOffer;
+    }
+
+    /**
+     * @param bool $autoJoin
+     * 
+     * @return Room
+     */
+    public function setAutoJoin(bool $autoJoin): self
+    {
+        $this->autoJoin = $autoJoin;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoJoin(): bool
+    {
+        return $this->autoJoin;
     }
 
     /**

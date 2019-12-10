@@ -341,3 +341,8 @@ services:
         arguments:
             $client: '@notification_bundle.sms_client'
 
+    FOS\MessageBundle\Sender\SenderInterface:
+        alias: fos_message.sender
+    
+    FOS\MessageBundle\Composer\ComposerInterface:
+        alias: fos_message.composer

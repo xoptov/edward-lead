@@ -89,6 +89,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('platformWarranty')
             ->add('timer')
             ->add('publicOffer')
+            ->add('autoJoin', null, [], null, null, ['label' => 'Auto Connect'])
             ->add($leadPrice)
             ->add('enabled');
     }
@@ -112,6 +113,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('platformWarranty')
             ->add('timer')
             ->add('publicOffer')
+            ->add('autoJoin', null, ['label' => 'Auto Connect'])
             ->add($leadPrice)
             ->add('buyerFee', null, [
                 'template' => '@App/CRUD/list_buyer_fee.html.twig'
@@ -182,6 +184,9 @@ class RoomAdmin extends AbstractAdmin
             ->end()
             ->with('Offer')
                 ->add('publicOffer')
+                ->add('autoJoin', null, [
+                    'label' => 'Auto Connect'
+                ])
                 ->add('channels', CollectionType::class, [
                     'entry_type' => RoomChannelType::class,
                     'allow_add' => true,
@@ -262,6 +267,9 @@ class RoomAdmin extends AbstractAdmin
                 ->ifTrue($this->subject->isPublicOffer())
                     ->with('Offer')
                         ->add('publicOffer')
+                        ->add('autoJoin', null, [
+                            'label' => 'Auto Connect'
+                        ])
                         ->add('channels', null, [
                             'template' => '@App/CRUD/show_room_channels.html.twig'
                         ])

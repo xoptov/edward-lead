@@ -1,11 +1,46 @@
 const offersList = new Vue({
     el: '#offers-list',
+    data: {
+        sended: [],
+        success: [],
+        error: []
+    },
     methods: {
-        onPublicOfferClick() {
-            this.$emit('public-offer-clicked');
+        onConnectRequestClick(roomId) {
+            if (this.isSended(roomId)) {
+                return false;
+            }
+            this.$http.get('/api/v1/offer/' + roomId + '/connect-request')
+                .then(() => {
+                    this.success.push(roomId);
+                })
+                .catch(() => {
+                    this.error.push(roomId);
+                });
+            this.sended.push(roomId);
         },
-        onNeedAdvertisersClick() {
-            this.$emit('need-advertisers-clicked');
+        onJoinClick(roomId) {
+            if (this.isSended(roomId)) {
+                return false;
+            }
+            this.$http.get('/api/v1/room/' + roomId + '/join')
+                .then(() => {
+                    this.success.push(roomId);
+                    window.location.href = '/room/' + roomId;
+                })
+                .catch(() => {
+                    this.error.push(roomId);
+                });
+            this.sended.push(roomId);
+        },
+        isSended(roomId) {
+            return this.sended.indexOf(roomId) !== -1;
+        },
+        isSuccess(roomId) {
+            return this.success.indexOf(roomId) !== -1;
+        },
+        isError(roomId) {
+            return this.error.indexOf(roomId) !== -1;
         }
     }
 });
@@ -13,55 +48,48 @@ const offersList = new Vue({
 const modals = new Vue({
     el: '#modals',
     data: {
-        publicOfferModal: false,
-        needAdvertisersModal: false,
-        requestResultModal: false,
-        requestPending: false
+        publicationOffer: false,
+        needOffer: false,
+        requestResult: false
     },
     computed: {
-        isPublicOfferModalShow() {
-            return this.publicOfferModal;
+        isPublicationOfferShow() {
+            return this.publicationOffer;
         },
-        isNeedAdvertisersModalShow() {
-            return this.needAdvertisersModal;
+        isNeedOfferShow() {
+            return this.needOffer;
         },
-        isRequestResultModalShow() {
-            return this.requestResultModal;
+        isRequestResultShow() {
+            return this.requestResult;
         }
     },
     methods: {
-        onPublicOfferClick(event) {
-            this.closeAllModal();
-            this.publicOfferModal = true;
+        onOpenPublicationOfferModalClick() {
+            this.publicationOffer = true;
         },
-        onNeedAdvertisersClick() {
-            this.closeAllModal();
-            this.needAdvertisersModal = true;
+        onClosePublicationOfferModalClick() {
+            this.publicationOffer = false;
+        },
+        onOpenNeedOfferModalClick() {
+            this.needOffer = true;
+        },
+        onCloseNeedOfferModalClick() {
+            this.needOffer = false;
         },
         onSendRequestClick() {
-            if (this.requestPending) {
-                return false;
-            }
-            // todo: Тут собственно необходимо сделать отправку запроса на бэкенд,
-            //       предварительно заблокировав кнопку отправки от повторного нажатия.
-            this.closeAllModal();
-            this.requestResultModal = true;
+            //todo: вобщем остановился тут на реализации интерактива для офферов.
+            this.closeAll();
+            this.requestResult = true;
         },
-        onJoinToRoomClick(room) {
-            return false;
+        onCloseRequestResultModalClick() {
+            this.requestResult = false;
         },
-        closeAllModal() {
-            this.publicOfferModal = false;
-            this.needAdvertisersModal = false;
-            this.requestResultModal = false;
-        },
-        onCancelClick(modal) {
-            if (modal + 'Modal' in this) {
-                this[modal + 'Modal'] = false;
-            }
+        closeAll() {
+            this.publicationOffer = false;
+            this.needOffer = false;
         }
     }
 });
 
-offersList.$on('public-offer-clicked', modals.onPublicOfferClick);
-offersList.$on('need-advertisers-clicked', modals.onNeedAdvertisersClick);
+offersList.$on('publication-offer', modals.onOpenPublicationOfferModalClick);
+offersList.$on('need-offer', modals.onOpenNeedOfferModalClick);
