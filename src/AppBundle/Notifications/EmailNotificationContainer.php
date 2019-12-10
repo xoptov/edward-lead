@@ -118,7 +118,7 @@ class EmailNotificationContainer
                     "ID_LEAD" => $object->getId()
                 ],
             ],
-            EmailChannel::NAME);
+            Cases::NAME_LEAD_NEW_PLACED);
     }
 
     /**
