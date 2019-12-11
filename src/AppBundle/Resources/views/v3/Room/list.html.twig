@@ -1,0 +1,86 @@
+{% extends '@App/v3/layout_dark.html.twig' %}
+
+{% block content %}
+    <!-- Content -->
+
+    <div class="content">
+
+        <!-- Room -->
+
+        <div class="title-panel fx fx-between align-center">
+        <div class="title">
+            <h3 class="title__h3">Комнаты</h3>
+            {% include '@App/flash_messages.html.twig' %}
+        </div>
+        <div class="room-panel__btn"><a href="{{ path('app_room_create') }}" class="btn btn__green">Создать новую комнату</a></div>
+        </div>
+        
+        <!-- List room -->
+        
+        <div class="list-room">
+        <div class="row">
+            <div class="table__box">
+            <table class="table info-room__table">
+                <thead class="table__head table__row_white">
+                <tr>
+                    <th class="table__cell">ID комнаты</th>
+                    <th class="table__cell">Название комнаты</th>
+                    <th class="table__cell">Лидов за сегодня</th>
+                    <th class="table__cell">Лидов ожидает</th>
+                    <th class="table__cell">Компания</th>
+                    <th class="table__cell">Вебмастер</th>
+                    <th class="table__cell table__cell__fix"><span class="dots dots__gray"></span></th>
+                    <th class="table__cell table__cell__fix"></th>
+                </tr>
+                </thead>
+                <tbody class="table__body">
+                {% if rooms is defined and rooms is not null -%}
+                    {%- for row in rooms -%}
+                        {%- set room = row.room -%}
+                        <tr class="table__row {% if not room.enabled %}table__row_not__active{% endif %} clickable-row" data-href='{{ path('app_room_view', {'id': room.id}) }}' data-room="{{ room.id }}">
+                            <td class="table__cell"><span class="table__cell__{% if room.enabled %}green{% else %}red{% endif %}">#{{ room.id }}</span></td>
+                            <td class="table__cell">{{ room.name }}</td>
+                            <td class="table__cell">{{ row.daily }}</td>
+                            <td class="table__cell"><span class="table__cell__green">{{ row.expect }}</span></td>
+                            <td class="table__cell">{{ row.companies }}</td>
+                            <td class="table__cell">{{ row.webmasters }}</td>
+                            <td class="table__cell table__cell__fix"><span class="dots dots__{% if room.enabled %}green{% else %}red{% endif %}"></span></td>
+                            <td class="table__cell table__cell__fix"><a href="{{ path('app_room_view', {'id': room.id}) }}" class="table__link"></a></td>
+                        </tr>
+                    {%- endfor -%}
+                {%- else -%}
+                    <tr class="table__row clickable-row" data-href="{{ path('app_room_create') }}">
+                        <td class="table__cell" colspan="8">У вас нет комнт и вы не состаите не в одной из комнат</td>
+                    </tr>
+                {%- endif -%}
+                </tbody>
+            </table>
+            </div>
+        </div>
+        </div>
+
+        <!-- Room staps -->
+
+        <div class="row fx fx-wrap fx-center room-staps">
+        <div class="col-3">
+            <div class="room-staps__item">
+            <span class="room-staps__icon i-room"></span>
+            <p class="room-staps__txt">Создате приватную комнату</p>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="room-staps__item">
+            <span class="room-staps__icon i-partner"></span>
+            <p class="room-staps__txt">Пригласите своего <br />партнера</p>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="room-staps__item">
+            <span class="room-staps__icon i-lead"></span>
+            <p class="room-staps__txt">Загружайте и покупайте лидов</p>
+            </div>
+        </div>
+        </div>
+
+    </div>
+{% endblock %}
