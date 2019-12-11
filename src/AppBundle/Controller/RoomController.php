@@ -87,7 +87,6 @@ class RoomController extends Controller
             $this->addFlash('success', 'Новая комната успешно создана');
 
             $eventDispatcher->dispatch(
-                //TODO: вываливает эксепшн при создании комнаты, если заходим компанией
                 RoomEvent::NEW_CREATED,
                 new RoomEvent($data)
             );
@@ -184,9 +183,6 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_list');
         }
 
-        //$leads = $this->entityManager->getRepository(Lead::class)
-        //    ->findBy(['room' => $room], ['createdAt' => 'DESC']);
-
         $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
 
         $totalAvailableMoney = 0;
@@ -199,7 +195,6 @@ class RoomController extends Controller
 
         return $this->render('@App/v3/Room/view.html.twig', [
             'room' => $room,
-            //'leads' => $leads,
             'countCanBuy' => $this->roomManager->countCanBuy($room, $buyerFee, $totalAvailableMoney),
             'fee' => $feesManager->getCommissionForBuyerInRoom($room)
         ]);
