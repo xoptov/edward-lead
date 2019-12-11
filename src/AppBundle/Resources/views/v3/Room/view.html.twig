@@ -1,241 +1,220 @@
 {% extends '@App/v3/layout_dark.html.twig' %}
 
 {% block content %}
-    <div class="content">
-        <div id="app" class="row align-items-center">
-            <div class="col-12 content_box">
-                <div class="content_title" style="margin-bottom:0;">
-                    <div class="main_title" style="width:100%;">
-                        <h1>Комната #{{ room.id }} - {{ room.name }}</h1>
-                        {% include '@App/flash_messages.html.twig' %}
-                        <div v-if="activated" style="width:100%;justify-content:space-between;">
-                            {% if room.isOwner(app.user) %}
-                                <span v-if="deactivationError" v-text="deactivationError"></span>
-                                <a href="#" @click.prevent="onDeactivateClick">Деактивировать комнату</a>
-                            {% endif %}
-                            {% if app.user.company %}
-                                <p class="balance">
-                                    {% if countCanBuy > 0 %}
-                                        Баланс покупателей выраженный в лидах: <span>{{ countCanBuy }}</span> (?)
-                                    {% else %}
-                                        У покупателей недостаточно средств для покупки лидов (?)
-                                    {% endif %}
-                                </p>
-                            {% endif %}
-                            {% if app.user.webmaster and room.enabled %}
-                                <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn_room green" v-if="activated">Добавить лида</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+    <!-- Content -->
+
+    <div id="app" class="content">
+
+        <!-- Room -->
+        
+        <div class="title-panel fx fx-between">
+        <div class="room-panel__box">
+            <div class="title">
+            <h3 class="title__h3 fx align-center">Комната #{{ room.id }} - {{ room.name }}<span class="dots dots__{% if room.enabled %}green{% else %}red{% endif %}"></span></h3>
             </div>
-            <div class="col-12 content_box room_list">
-                <div class="table">
-                    <table>
-                        <thead>
-                        <tr>
-                            <td>Дата публикации</td>
-                            <td>Вебмастер</td>
-                            <td>Телефон</td>
-                            <td>Источник</td>
-                            <td>Компания</td>
-                            <td>Статус</td>
-                            <td class="last"></td>
-                        </tr>
-                        </thead>
-                        <tbody v-if="leadsCount">
-                            <tr v-for="lead in leads" @click.prevent="onRowClick(lead.id)">
-                                <td v-text="dateFormat(lead.created_at)"></td>
-                                <td v-text="lead.user.name"></td>
-                                <td v-text="lead.phone"></td>
-                                <td v-text="lead.channel"></td>
-                                <td>
-                                    <span v-if="'timer' in lead">
-                                        таймер<br>
-                                        <span class="text-red" v-text="lead.timer.remain"></span>
-                                    </span>
-                                    <span v-else-if="lead.buyer && lead.buyer.company" v-text="lead.buyer.company.short_name"></span>
-                                </td>
-                                <td class="status">
-                                    <span :class="getStatusObject(lead.status).class" v-text="getStatusObject(lead.status).label"></span>
-                                </td>
-                                <td>
-                                    <a :href="leadViewUrl(lead)" v-if="activated">
-                                        <img src="{{ asset('bundles/app/v2/img/icon_9.png') }}">
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tbody v-else>
-                            <tr>
-                                <td colspan="7">В данной комнате ещё небыло лидов на продажу</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    {#<a href="#" class="more">СМОТРЕТЬ ПОЛНУЮ ДЕТАЛИЗАЦИЮ</a>#}
-                </div>
-            </div>
-            <div class="col-12 content_box">
-                <div class="content_title">
-                    <h2>Информация о комнате</h2>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 room_info box_desc">
-                        <div class="box_title">
-                            Описание целевого лида:
-                        </div>
-                        <p>
-                            {% if room.leadCriteria is not empty %}
-                                {{ room.leadCriteria }}
-                            {% else %}
-                                Нет описания лида
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="col-lg-3 room_info box_price">
-                        <div class="box_title">Стоимость лида:</div>
-                        <span class="price">
-                            {% if room.leadPrice %}
-                                {% if is_granted('ROLE_COMPANY') and room.hasHiddenMargin %}
-                                    {{ (room.leadPrice + room.hiddenMargin)|money_format }}
-                                {% else %}
-                                    {{ room.leadPrice|money_format }}
-                                {% endif %}
-                            {% else %}
-                                Зависит от населенного пункта
-                            {% endif %}
-                            {% if not room.hideFee %}
-                                <div class="fee">{{ fee }}% комиссия</div>
-                            {% endif %}
-                        </span>
-                        <div class="box_title proc">Ср. % целевых:</div>
-                        <span>Ещё не расчитан</span>
-                    </div>
-                    <div class="col-lg-3 room_info box_guarantee">
-                        <div class="box_title">Гарантии Edward:</div>
-                        <span class="guarantee">
-                            {% if room.platformWarranty %}
-                                Да
-                            {% else %}
-                                Нет
-                            {% endif %}
-                            {% if room.timer %}
-                                {% if room.city is not empty %}
-                                    <div>Город работы: {{ room.city.name }}</div>
-                                {% endif %}
-                                {% if room.schedule is not empty %}
-                                    {% set schedule = room.schedule %}
-                                    {% if schedule.workTime is not empty %}
-                                        {% set workTime = schedule.workTime %}
-                                        <div>
-                                            Режим работы: с {{ workTime.startAt|date('H:i') }} по {{ workTime.endAt|date('H:i') }}
-                                        </div>
-                                    {% endif %}
-                                    {% if schedule.workDays is not empty %}
-                                        {% set workDays = humanize_work_days(schedule.workDays) %}
-                                        <div>
-                                            {% for workDay in workDays %}
-                                                {{ workDay }}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    {% if room.executionHours is not empty %}
-                                        <div>Таймер мереджера: {{ room.executionHours }} час(ов)</div>
-                                    {% endif %}
-                                    {% if room.leadsPerDay is not empty %}
-                                        <div>Требуется лидов в день: {{ room.leadsPerDay }} шт</div>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="col-lg-3 room_info box_date">
-                        <div class="box_title">
-                            Дата создания:
-                        </div>
-                        <span class="date">
-                            {{ room.createdAt|date_format('d.m.Y г.') }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 content_box">
-                <div class="content_title">
-                    <h2>Участники комнаты</h2>
-                </div>
-                <div class="row">
-                    <div class="col-12 room_members_box">
-                        <div class="row">
-                            <div class="col-md-2 room_members">
-                                <div class="number">
-                                    <div class="number_title">
-                                        Вебмастера:
-                                    </div>
-                                    <p>Кол: <span v-text="webmastersCount"></span></p>
-                                </div>
-                            </div>
-                            <div class="col-md-7 room_members">
-                                <ul class="user">
-                                    <li v-for="member in members.webmasters" :class="{'crown': member.user.isOwner}">
-                                        <div class="image">
-                                            <img class="user_image" :src="getLogotype(member)">
-                                            {% if room.isOwner(app.user) %}
-                                                <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
-                                                    <img src="{{ asset('bundles/app/v2/img/del.png') }}">
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                        <span class="nick" v-text="member.user.name"></span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-3 room_members">
-                                {% if room.isOwner(app.user) and room.enabled %}
-                                    <div class="add_webmaster" v-if="activated">
-                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ ВЕБМАСТЕРА</a>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 room_members_box">
-                        <div class="row">
-                            <div class="col-md-2 room_members">
-                                <div class="number">
-                                    <div class="number_title">
-                                        Компании:
-                                    </div>
-                                    <p>Кол: <span v-text="companiesCount"></span></p>
-                                </div>
-                            </div>
-                            <div class="col-md-7 room_members">
-                                <ul class="user">
-                                    <li v-for="member in members.companies" :class="{'crown': member.user.isOwner}">
-                                        <div class="image">
-                                            <img class="user_image" :src="getLogotype(member)">
-                                            {% if room.isOwner(app.user) %}
-                                                <a class="del" href="#" @click="onRevokeMemberClick(member)" v-if="!member.user.isOwner">
-                                                    <img src="{{ asset('bundles/app/v2/img/del.png') }}">
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                        <span class="nick" v-text="member.user.name"></span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-3 room_members">
-                                {% if room.isOwner(app.user) and room.enabled %}
-                                    <div class="add_webmaster" v-if="activated">
-                                        <a href="{{ path('app_room_invite', {'room': room.id}) }}">ДОБАВИТЬ КОМПАНИЮ</a>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="room-panel__info fx">
+            <a href="/room/{{ room.id }}/invite" class="room-panel__invite">Пригласить участника</a>
+            <p class="room-panel__balance">Общий баланс покупателей: <span>{% if countCanBuy > 0 %}{{countCanBuy}} лидов{% else %}Нет покупателей{% endif %}</span></p>
             </div>
         </div>
+        {% if app.user.webmaster and room.enabled %}
+        <div class="room-panel__btn"><a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn__green">Добавить лид</a></div>
+        {% else %}
+        <div class="room-panel__btn"><span class="btn btn__grey">Добавить лид</span></div>
+        {% endif %}
+        </div>
+
+        <!-- Room panel table -->
+        
+        <div class="row room-panel-table">
+        <div class="table__box">
+            <table class="table info-room__table">
+            <thead class="table__head table__row_white">
+                <tr>
+                <th class="table__cell">Дата публикации</th>
+                <th class="table__cell">Вебмастер</th>
+                <th class="table__cell">Телефон</th>
+                <th class="table__cell">Источник</th>
+                <th class="table__cell">Компания</th>
+                <th class="table__cell">Статус</th>
+                <th class="table__cell table__cell__fix"></th>
+                </tr>
+            </thead>
+            <tbody v-if="leadsCount" class="table__body">
+                <tr v-for="lead in leads" class="table__row clickable-row" @click.prevent="onRowClick(lead.id)">
+                <td class="table__cell" v-text="dateFormat(lead.created_at)"></td>
+                <td class="table__cell" v-text="lead.user.name"></td>
+                <td class="table__cell" v-text="lead.phone"></td>
+                <td class="table__cell" v-text="lead.channel"></td>
+                <td v-if="'timer' in lead" class="table__cell">
+                    <div class="table__timer flex-center">
+                    <i class="table__timer_icon"></i>
+                    <div v-for="str in splitString(lead.timer.remain)" class="table__timer__box flex-center">
+                        <span class="table__timer__item" v-text="str"></span>
+                    </div>
+                    </div>
+                </td>
+                <td v-else-if="lead.buyer && lead.buyer.company" class="table__cell" v-text="lead.buyer.company.short_name"></td>
+                <td v-else class="table__cell"></td>
+                
+                <th class="table__cell"><span :class="getStatusObject(lead.status).class" class="status flex-center" v-text="getStatusObject(lead.status).label"></span></th>
+                <th class="table__cell table__cell__fix"><a :href="leadViewUrl(lead)" class="table__link"></a></th>
+                </tr>
+
+            </tbody>
+            <tbody v-else class="table__body">
+                <tr class="table__row clickable-row" data-href="https://www.google.com/">
+                    <td class="table__cell" colspan="8">В данной комнате нет лидов на продажу</td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        </div>
+
+        <!-- Desc room -->
+
+        <div class="desc-room">
+        <div class="title">
+            <h4 class="title__h4">Информация о комнате</h4>
+        </div>
+        <div class="row fx fx-wrap">
+            <div class="col-4">
+            <div class="desc-room__item">
+                <h5 class="title__h5">Описание целевого лида:</h5>
+                <ul class="desc-room__list">
+                {% if room.leadCriteria is not empty %}
+                    {% for line in room.leadCriteria|split('\r\n') %}
+                <li class="desc-room__list__item">{{ line }}</li>
+                    {% endfor %}
+                {% else %}
+                <li class="desc-room__list__item">Нет описания лида</li>
+                {% endif %}
+                </ul>
+            </div>
+            </div>
+            <div class="col-3">
+            <div class="desc-room__item">
+                <h5 class="title__h5">Стоимость лида:</h5>
+                <ul class="desc-room__list">
+                {% if room.leadPrice %}
+                    {% if is_granted('ROLE_COMPANY') and room.hasHiddenMargin %}
+                <li class="desc-room__list__item">{{ (room.leadPrice + room.hiddenMargin)|money_format }} рублей</li>
+                    {% else %}
+                <li class="desc-room__list__item">{{ room.leadPrice|money_format }} рублей</li>
+                    {% endif %}
+                {% else %}
+                <li class="desc-room__list__item">Зависит от населенного пункта</li>
+                {% endif %}
+                <li class="desc-room__list__item">{% if not room.hideFee %}{{ fee }}% комиссия{% else %}&nbsp;{% endif %}</li>
+                </ul>
+            </div>
+            <div class="desc-room__item">
+                <h5 class="title__h5">Ср. % целевых:</h5>
+                <ul class="desc-room__list">
+                <li class="desc-room__list__item">56%</li>
+                </ul>
+            </div>
+            </div>
+            <div class="col-3">
+            <div class="desc-room__item">
+                <h5 class="title__h5">Гарантии Edward:</h5>
+                <ul class="desc-room__list">
+                <li class="desc-room__list__item">{% if room.platformWarranty %}Да{% else %}Нет{% endif %}</li>
+                </ul>
+            </div>
+            <div class="desc-room__item">
+                <h5 class="title__h5">Таймер комнаты:</h5>
+                {% if room.timer %}
+                <ul class="desc-room__list">
+                <li class="desc-room__list__item">Город работы - {% if room.city is not empty %}{{ room.city.name }}{% else %}Не задан{% endif %}</li>
+                {% if room.schedule is not empty %}
+                    {% set schedule = room.schedule %}
+                    {% set workRange = '' %}
+                    {% if schedule.workTime is not empty %}
+                        {% set workTime = schedule.workTime %}
+                        {% set workRange = "с " ~ workTime.startAt|date('H:i') ~ " по " ~  workTime.endAt|date('H:i') %}
+                    {% endif %}
+                    {% set workDaysRange = [] %}
+                    {% if schedule.workDays is not empty %}
+                        {% set workDays = humanize_work_days(schedule.workDays) %}
+                        {% for workDay in workDays %}
+                            {% set workDaysRange = workDaysRange|merge([workDay]) %}
+                        {% endfor %}
+                    {% endif %}
+                <li class="desc-room__list__item">Режим работы: {{ workRange }} {{ workDaysRange|join(", ") }} </li>
+                    {% if room.executionHours is not empty %}
+                <li class="desc-room__list__item">Таймер менеджера - {{ room.executionHours }} часа</li>    
+                    {% endif %}
+                    {% if room.leadsPerDay is not empty %}
+                <li class="desc-room__list__item">Лимит заявок по таймеру - {{ room.leadsPerDay }} шт.</li>
+                    {% endif %}
+                {% endif %}
+                </ul>
+                {% endif %}
+            </div>
+            </div>
+            <div class="col-2">
+            <div class="desc-room__item">
+                <h5 class="title__h5">Дата создания:</h5>
+                <ul class="desc-room__list">
+                <li class="desc-room__list__item">{{ room.createdAt|date_format('d.m.Y г.') }}</li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Room members -->
+
+        <div class="room-members">
+        <div class="title">
+            <h4 class="title__h4">Участники комнаты</h4>
+        </div>
+        <div class="room-members__box fx">
+            <div class="room-members__info">
+            <p class="room-members__title">Вебмастера:</p>
+            <p class="room-members__quantity"><span v-text="'Кол: ' + webmastersCount"></span></p>
+            </div>
+            <div class="room-members__user">
+            <ul v-for="member in members.webmasters" class="room-members__list fx fx-wrap">
+                <li class="room-members__list__item">
+                    <span class="room-members__list__icon">
+                    <img :src="getLogotype(member)" :alt="member.user.name"></span>
+                    <p v-text="member.user.name"></p>
+                </li>
+            </ul>
+            </div>
+        </div>
+        <div class="room-members__box fx">
+            <div class="room-members__info">
+            <p class="room-members__title">Компании:</p>
+            <p class="room-members__quantity"><span v-text="'Кол: ' + companiesCount"></span></p>
+            </div>
+            <div class="room-members__user">
+            <ul v-for="member in members.companies" class="room-members__list fx fx-wrap">
+                <li class="room-members__list__item">
+                    <span class="room-members__list__icon">
+                        <img :src="getLogotype(member)" :alt="member.user.name">
+                        <button v-if="!member.user.isOwner" @click="onRevokeMemberClick(member)" class="room-members__list__item__delete"></button>
+                    </span>
+                    <p v-text="member.user.name"></p>
+                </li>
+            </ul>
+            </div>
+        </div>
+        </div>
+
+        <!-- Room deactivate -->
+
+        <div v-if="activated" class="room-deactivate">
+        {% if room.isOwner(app.user) %}
+            <a href="#" @click.prevent="onDeactivateClick" class="room-deactivate__btn">Деактивировать комнату</a>
+        {% endif %}
+        </div>
+
     </div>
+    <!--/Content -->
+
 {% endblock %}
 
 {% block javascripts %}
@@ -255,5 +234,5 @@
             {%- endif -%}
         {%- endif -%}
     </script>
-    <script src="{{ asset('bundles/app/v2/js/room/view.js') }}"></script>
+    <script src="{{ asset('bundles/app/v3/js/room/view.js') }}"></script>
 {% endblock %}
