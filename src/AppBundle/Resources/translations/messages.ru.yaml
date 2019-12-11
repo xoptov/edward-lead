@@ -234,7 +234,7 @@ common:
     hold: Холд
     rate: Ставка
     logotype: Логотип
-    and: и
+    and: '%before%и%after%'
 header:
     already_have_an_account: Уже есть аккаунт? 
     login: Войти

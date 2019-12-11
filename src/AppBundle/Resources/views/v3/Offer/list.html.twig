@@ -63,8 +63,8 @@
                                             <div class="offers__title">
                                                 <p class="offers__title__small">География</p>
                                                 <h5 class="fx align-center">
-                                                    {% if room.regions|length -%}
-                                                        {{ room.regions|map(r => "#{r.name}")|join(',', 'common.and'|trans) }}
+                                                    {% if room.locations|length -%}
+                                                        {{ room.locations|map(l => "#{l.name}")|join(', ', 'common.and'|trans({'%before%':' ','%after%':' '})) }}
                                                     {%- endif %}
                                                 </h5>
                                             </div>
@@ -99,12 +99,12 @@
                                                         {% elseif is_granted('ROLE_WEBMASTER') and not room.isOwner(app.user) %}
                                                             <p class="offers__channels__request"
                                                                 style="display:none;" 
-                                                                :style="{'display': isSended({{ room.id }}) && isSuccess({{ room.id }}) ? 'block' : 'none'}">
+                                                                :style="{'display': isSuccess({{ room.id }}) ? 'block' : 'none'}">
                                                                 Запрос принят
                                                             </p>
                                                             <p class="offers__channels__request"
                                                                 style="display:none;"
-                                                                :style="{'display': isSended({{ room.id }}) && isError({{ room.id }}) ? 'block' : 'none'}">
+                                                                :style="{'display': isError({{ room.id }}) ? 'block' : 'none'}">
                                                                 Произошла ошибка
                                                             </p>
                                                             {% if room.autoJoin -%}                                        
@@ -112,17 +112,21 @@
                                                                     class="btn btn__green offers__channels__btn"
                                                                     style="display:none;"
                                                                     :style="{'display': !isSended({{ room.id }}) ? 'inline-block' : 'none'}"
-                                                                    @click="onJoinClick({{ room.id }})">
+                                                                    @click="joinToRoom({{ room.id }})">
                                                                     Подключить оффер
                                                                 </button>
                                                             {%- else -%}
-                                                                <button
-                                                                    class="btn btn__red offers__channels__btn"
-                                                                    style="display:none;"
-                                                                    :style="{'display': !isSended({{ room.id }}) ? 'inline-block' : 'none'}"
-                                                                    @click="onConnectRequestClick({{ room.id }})">
-                                                                    Запрос подключения
-                                                                </button>
+                                                                {% if not room.hasJoinRequest(app.user) -%}
+                                                                    <button
+                                                                        class="btn btn__red offers__channels__btn"
+                                                                        style="display:none;"
+                                                                        :style="{'display': !isSended({{ room.id }}) ? 'inline-block' : 'none'}"
+                                                                        @click.prevent="connectRequest({{ room.id }})">
+                                                                        Запрос подключения
+                                                                    </button>
+                                                                {%- else -%}
+                                                                    <p class="offers__channels__request">Запрос уже отправлен</p>
+                                                                {%- endif %}
                                                             {%- endif %}
                                                         {% endif %}
                                                     </li>
@@ -146,7 +150,7 @@
         <div class="modal modal_request" 
             style="display:none;"
             v-show="isRequestResultShow"
-            @click="onCloseRequestConfirmModalClick">
+            @click="closeModal('requestResult')">
             <div class="modal__box flex-center">
                 <div class="modal__offer text-center">
                     <h4 class="modal__offer__title">Ваш запрос отправлен</h4>
@@ -164,8 +168,8 @@
                         <h4 class="modal__offer__title">Не нашли подходящий для себя оффер?</h4>
                         <p class="modal__offer__paragraph">Оставьте запрос и наша служба поддержки свяжется с Вами и постарается подобрать подходящего рекламодателя из нашей базы.</p>
                         <div class="modal__box__control flex-center">
-                            <button class="btn btn__green" @click="onSendRequestClick">Отправить запрос</button>
-                            <button class="btn modal__close" @click="onCloseNeedOfferModalClick">
+                            <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
+                            <button class="btn modal__close" @click="closeModal('needOffer')">
                                 Отменить
                             </button>
                         </div>
@@ -193,8 +197,8 @@
                         <div class="registration__form__chek__txt">Я прочитал <a href="#">правила и критерии публичных офферов</a> и прошу расмотреть мою заявку на добавление в каталог.</div>
                     </div>
                     <div class="modal__box__control flex-center">
-                        <button class="btn btn__green" @click="onSendRequestClick">Отправить запрос</button>
-                        <button class="btn modal__close" @click="onClosePublicationOfferModalClick">
+                        <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
+                        <button class="btn modal__close" @click="closeModal('publicationOffer')">
                             Отменить
                         </button>
                     </div>

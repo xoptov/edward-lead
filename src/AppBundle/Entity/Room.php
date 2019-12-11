@@ -267,12 +267,20 @@ class Room implements IdentifiableInterface
      */
     private $members;
 
+    /**
+     * @var ArrayCollection|RoomJoinRequest[]
+     * 
+     * @ORM\OneToMany(targetEntity="RoomJoinRequest", mappedBy="room")
+     */
+    private $joinRequests;
+
     public function __construct()
     {
         $this->channels = new ArrayCollection();
         $this->regions = new ArrayCollection();
         $this->cities = new ArrayCollection();
         $this->members = new ArrayCollection();
+        $this->joinRequests = new ArrayCollection();
     }
 
     /**
@@ -750,6 +758,19 @@ class Room implements IdentifiableInterface
     }
 
     /**
+     * @return array
+     */
+    public function getLocations(): array
+    {
+        $locations = array_merge(
+            $this->regions->toArray(),
+            $this->cities->toArray()
+        );
+
+        return $locations;
+    }
+
+    /**
      * @param User $user
      * 
      * @return bool
@@ -759,6 +780,23 @@ class Room implements IdentifiableInterface
         /** @var Member $member  */
         foreach ($this->members as $member) {
             if ($member->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function hasJoinRequest(User $user): bool
+    {
+        foreach ($this->joinRequests as $joinRequest)
+        {
+            if ($joinRequest->getUser() === $user) {
                 return true;
             }
         }

@@ -8,16 +8,19 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191210142203 extends AbstractMigration
+final class Version20191211085345 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('CREATE TABLE room_join_request (id INT UNSIGNED AUTO_INCREMENT NOT NULL, room_id INT UNSIGNED NOT NULL, user_id INT UNSIGNED NOT NULL, created_at DATETIME NOT NULL, INDEX IDX_5F40FC6C54177093 (room_id), INDEX IDX_5F40FC6CA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET UTF8 COLLATE UTF8_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE room_channel (id INT UNSIGNED AUTO_INCREMENT NOT NULL, room_id INT UNSIGNED NOT NULL, property_id INT UNSIGNED NOT NULL, allowed TINYINT(1) NOT NULL, INDEX IDX_4EDB32A754177093 (room_id), INDEX IDX_4EDB32A7549213EC (property_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET UTF8 COLLATE UTF8_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE rooms_regions (room_id INT UNSIGNED NOT NULL, region_id INT UNSIGNED NOT NULL, INDEX IDX_120C29FD54177093 (room_id), INDEX IDX_120C29FD98260155 (region_id), PRIMARY KEY(room_id, region_id)) DEFAULT CHARACTER SET UTF8 COLLATE UTF8_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE rooms_cities (room_id INT UNSIGNED NOT NULL, city_id INT UNSIGNED NOT NULL, INDEX IDX_62959D1154177093 (room_id), INDEX IDX_62959D118BAC62AF (city_id), PRIMARY KEY(room_id, city_id)) DEFAULT CHARACTER SET UTF8 COLLATE UTF8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE room_join_request ADD CONSTRAINT FK_5F40FC6C54177093 FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE room_join_request ADD CONSTRAINT FK_5F40FC6CA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE room_channel ADD CONSTRAINT FK_4EDB32A754177093 FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE room_channel ADD CONSTRAINT FK_4EDB32A7549213EC FOREIGN KEY (property_id) REFERENCES property (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE rooms_regions ADD CONSTRAINT FK_120C29FD54177093 FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE');
@@ -32,6 +35,7 @@ final class Version20191210142203 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('DROP TABLE room_join_request');
         $this->addSql('DROP TABLE room_channel');
         $this->addSql('DROP TABLE rooms_regions');
         $this->addSql('DROP TABLE rooms_cities');

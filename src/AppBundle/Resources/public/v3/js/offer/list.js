@@ -6,7 +6,7 @@ const offersList = new Vue({
         error: []
     },
     methods: {
-        onConnectRequestClick(roomId) {
+        connectRequest(roomId) {
             if (this.isSended(roomId)) {
                 return false;
             }
@@ -19,7 +19,7 @@ const offersList = new Vue({
                 });
             this.sended.push(roomId);
         },
-        onJoinClick(roomId) {
+        joinToRoom(roomId) {
             if (this.isSended(roomId)) {
                 return false;
             }
@@ -37,10 +37,10 @@ const offersList = new Vue({
             return this.sended.indexOf(roomId) !== -1;
         },
         isSuccess(roomId) {
-            return this.success.indexOf(roomId) !== -1;
+            return this.isSended(roomId) && this.success.indexOf(roomId) !== -1;
         },
         isError(roomId) {
-            return this.error.indexOf(roomId) !== -1;
+            return this.isSended(roomId) && this.error.indexOf(roomId) !== -1;
         }
     }
 });
@@ -64,32 +64,27 @@ const modals = new Vue({
         }
     },
     methods: {
-        onOpenPublicationOfferModalClick() {
-            this.publicationOffer = true;
+        openModal(name)
+        {
+            if (name in this)
+                this[name] = true;
         },
-        onClosePublicationOfferModalClick() {
-            this.publicationOffer = false;
-        },
-        onOpenNeedOfferModalClick() {
-            this.needOffer = true;
-        },
-        onCloseNeedOfferModalClick() {
-            this.needOffer = false;
-        },
-        onSendRequestClick() {
-            //todo: вобщем остановился тут на реализации интерактива для офферов.
-            this.closeAll();
-            this.requestResult = true;
-        },
-        onCloseRequestResultModalClick() {
-            this.requestResult = false;
+        closeModal(name)
+        {
+            if (name in this)
+                this[name] = false;
         },
         closeAll() {
-            this.publicationOffer = false;
-            this.needOffer = false;
+            this.closeModal('publicationOffer');
+            this.closeModal('needOffer');
+        },
+        sendRequest() {
+            //todo: вобщем остановился тут на реализации интерактива для офферов.
+            this.closeAll();
+            this.openModal('requestResult');
         }
     }
 });
 
-offersList.$on('publication-offer', modals.onOpenPublicationOfferModalClick);
-offersList.$on('need-offer', modals.onOpenNeedOfferModalClick);
+offersList.$on('publication-offer', () => modals.openModal('publicationOffer'));
+offersList.$on('need-offer', () => modals.openModal('needOffer'));

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Room;
+use AppBundle\Entity\RoomJoinRequest;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Sender\SenderInterface;
@@ -127,6 +128,13 @@ class OfferController extends Controller
         }
 
         $message = $threadBuilder->getMessage();
+
+        $joinRequest = new RoomJoinRequest();
+        $joinRequest
+            ->setUser($this->getUser())
+            ->setRoom($room);
+
+        $this->entityManager->persist($joinRequest);
         $this->sender->send($message);
 
         return new JsonResponse(['id' => $message->getId()]);
