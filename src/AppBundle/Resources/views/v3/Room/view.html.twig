@@ -10,7 +10,7 @@
         <div class="title-panel fx fx-between">
         <div class="room-panel__box">
             <div class="title">
-            <h3 class="title__h3 fx align-center">Комната #{{ room.id }} - {{ room.name }}<span class="dots dots__red"></span></h3>
+            <h3 class="title__h3 fx align-center">Комната #{{ room.id }} - {{ room.name }}<span class="dots dots__{% if room.enabled %}green{% else %}red{% endif %}"></span></h3>
             </div>
             <div class="room-panel__info fx">
             <a href="/room/{{ room.id }}/invite" class="room-panel__invite">Пригласить участника</a>
@@ -46,18 +46,11 @@
                 <td class="table__cell" v-text="lead.user.name"></td>
                 <td class="table__cell" v-text="lead.phone"></td>
                 <td class="table__cell" v-text="lead.channel"></td>
-                    
-                
                 <td v-if="'timer' in lead" class="table__cell">
                     <div class="table__timer flex-center">
                     <i class="table__timer_icon"></i>
-                    <div class="table__timer__box flex-center">
-                        {# TODO: распарсить стоку времени #}
-                        <span class="table__timer__item">12</span>
-                        <span class="table__time__dots">:</span>
-                        <span class="table__timer__item">11</span>
-                        <span class="table__time__dots">:</span>
-                        <span class="table__timer__item">57</span>
+                    <div v-for="str in splitString(lead.timer.remain)" class="table__timer__box flex-center">
+                        <span class="table__timer__item" v-text="str"></span>
                     </div>
                     </div>
                 </td>
@@ -71,91 +64,9 @@
             </tbody>
             <tbody v-else class="table__body">
                 <tr class="table__row clickable-row" data-href="https://www.google.com/">
-                    <td class="table__cell" colspan="8">В данной комнате ещё небыло лидов на продажу</td>
+                    <td class="table__cell" colspan="8">В данной комнате нет лидов на продажу</td>
                 </tr>
             </tbody>
-                {# <div style="display:none">
-                    <tr class="table__row table__row_white table__row_active clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">
-                        <div class="table__timer flex-center">
-                        <i class="table__timer_icon"></i>
-                        <div class="table__timer__box flex-center">
-                            <span class="table__timer__item">12</span>
-                            <span class="table__time__dots">:</span>
-                            <span class="table__timer__item">11</span>
-                            <span class="table__time__dots">:</span>
-                            <span class="table__timer__item">57</span>
-                        </div>
-                        </div>
-                    </td>
-                    <th class="table__cell"><span class="status status__gray flex-center">Ожидает</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__yellow flex-center">В работе</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row table__row_white clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__pink flex-center">Арбитраж</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__green flex-center">Целевой</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row table__row_white clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__gray flex-center">Целевой</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__black flex-center">Архив</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                    
-                    <tr class="table__row table__row_white clickable-row" data-href='https://www.google.com/'>
-                    <td class="table__cell">01.04.2019 в 18:00</td>
-                    <td class="table__cell">Nikitosik</td>
-                    <td class="table__cell">+79173150878</td>
-                    <td class="table__cell">Яндекс</td>
-                    <td class="table__cell">Окна Тиссен</td>
-                    <th class="table__cell"><span class="status status__red flex-center">Нецелевой</span></th>
-                    <th class="table__cell table__cell__fix"><a href="#" class="table__link"></a></th>
-                    </tr>
-                </div> #}
             </table>
         </div>
         </div>
@@ -171,9 +82,10 @@
             <div class="desc-room__item">
                 <h5 class="title__h5">Описание целевого лида:</h5>
                 <ul class="desc-room__list">
-                {# TODO: прикрутить многостраничное представление #}
                 {% if room.leadCriteria is not empty %}
-                <li class="desc-room__list__item">{{ room.leadCriteria }}</li>
+                    {% for line in room.leadCriteria|split('\r\n') %}
+                <li class="desc-room__list__item">{{ line }}</li>
+                    {% endfor %}
                 {% else %}
                 <li class="desc-room__list__item">Нет описания лида</li>
                 {% endif %}
@@ -213,12 +125,30 @@
             <div class="desc-room__item">
                 <h5 class="title__h5">Таймер комнаты:</h5>
                 {% if room.timer %}
-                {# TODO: Дописать работу с таймером комнаты #}
                 <ul class="desc-room__list">
                 <li class="desc-room__list__item">Город работы - {% if room.city is not empty %}{{ room.city.name }}{% else %}Не задан{% endif %}</li>
-                <li class="desc-room__list__item">Режим работы: с 9:00 до 18:00 пн, вт, ср, чт, пт, сб, вс</li>
-                <li class="desc-room__list__item">Таймер менеджера - 23 часа</li>
-                <li class="desc-room__list__item">Лимит заявок по таймеру - 100 шт.</li>
+                {% if room.schedule is not empty %}
+                    {% set schedule = room.schedule %}
+                    {% set workRange = '' %}
+                    {% if schedule.workTime is not empty %}
+                        {% set workTime = schedule.workTime %}
+                        {% set workRange = "с " ~ workTime.startAt|date('H:i') ~ " по " ~  workTime.endAt|date('H:i') %}
+                    {% endif %}
+                    {% set workDaysRange = [] %}
+                    {% if schedule.workDays is not empty %}
+                        {% set workDays = humanize_work_days(schedule.workDays) %}
+                        {% for workDay in workDays %}
+                            {% set workDaysRange = workDaysRange|merge([workDay]) %}
+                        {% endfor %}
+                    {% endif %}
+                <li class="desc-room__list__item">Режим работы: {{ workRange }} {{ workDaysRange|join(", ") }} </li>
+                    {% if room.executionHours is not empty %}
+                <li class="desc-room__list__item">Таймер менеджера - {{ room.executionHours }} часа</li>    
+                    {% endif %}
+                    {% if room.leadsPerDay is not empty %}
+                <li class="desc-room__list__item">Лимит заявок по таймеру - {{ room.leadsPerDay }} шт.</li>
+                    {% endif %}
+                {% endif %}
                 </ul>
                 {% endif %}
             </div>
@@ -227,7 +157,7 @@
             <div class="desc-room__item">
                 <h5 class="title__h5">Дата создания:</h5>
                 <ul class="desc-room__list">
-                <li class="desc-room__list__item">02.07.2019 г.</li>
+                <li class="desc-room__list__item">{{ room.createdAt|date_format('d.m.Y г.') }}</li>
                 </ul>
             </div>
             </div>
@@ -243,37 +173,32 @@
         <div class="room-members__box fx">
             <div class="room-members__info">
             <p class="room-members__title">Вебмастера:</p>
-            <p class="room-members__quantity"><span>Кол: 14</span></p>
+            <p class="room-members__quantity"><span v-text="'Кол: ' + webmastersCount"></span></p>
             </div>
             <div class="room-members__user">
-            <ul class="room-members__list fx fx-wrap">
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik выаыа...</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"></span><p>Nikitosik</p></li>
+            <ul v-for="member in members.webmasters" class="room-members__list fx fx-wrap">
+                <li class="room-members__list__item">
+                    <span class="room-members__list__icon">
+                    <img :src="getLogotype(member)" :alt="member.user.name"></span>
+                    <p v-text="member.user.name"></p>
+                </li>
             </ul>
             </div>
         </div>
         <div class="room-members__box fx">
             <div class="room-members__info">
             <p class="room-members__title">Компании:</p>
-            <p class="room-members__quantity"><span>Кол: 3</span></p>
+            <p class="room-members__quantity"><span v-text="'Кол: ' + companiesCount"></span></p>
             </div>
             <div class="room-members__user">
-            <ul class="room-members__list fx fx-wrap">
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"><button class="room-members__list__item__delete"></button></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"><button class="room-members__list__item__delete"></button></span><p>Nikitosik</p></li>
-                <li class="room-members__list__item"><span class="room-members__list__icon"><img src="/bundles/app/v3/img/other/user.png" alt="Img"><button class="room-members__list__item__delete"></button></span><p>Nikitosik</p></li>
+            <ul v-for="member in members.companies" class="room-members__list fx fx-wrap">
+                <li class="room-members__list__item">
+                    <span class="room-members__list__icon">
+                        <img :src="getLogotype(member)" :alt="member.user.name">
+                        <button v-if="!member.user.isOwner" @click="onRevokeMemberClick(member)" class="room-members__list__item__delete"></button>
+                    </span>
+                    <p v-text="member.user.name"></p>
+                </li>
             </ul>
             </div>
         </div>
@@ -281,7 +206,11 @@
 
         <!-- Room deactivate -->
 
-        <div class="room-deactivate"><a href="#" class="room-deactivate__btn">Деактивировать комнату</a></div>
+        <div v-if="activated" class="room-deactivate">
+        {% if room.isOwner(app.user) %}
+            <a href="#" @click.prevent="onDeactivateClick" class="room-deactivate__btn">Деактивировать комнату</a>
+        {% endif %}
+        </div>
 
     </div>
     <!--/Content -->

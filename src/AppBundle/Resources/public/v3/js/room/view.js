@@ -132,6 +132,10 @@ const vm = new Vue({
         onRowClick(id) {
             window.location.href = '/lead/' + id;
             return false;
+        },
+        splitString(str,splitter){
+            return str.split(splitter);
         }
+        
     }
 });
