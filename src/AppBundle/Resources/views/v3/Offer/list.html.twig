@@ -6,21 +6,23 @@
     <div class="content" id="offers-list">
         <div class="title title__offers fx fx-between fx-wrap align-center">
             <h3 class="title__h3">Офферы</h3>
-            <div class="title__links">
-                {%- if is_granted('ROLE_ADVIRTISER') -%}
-                    <a href="#" 
-                       class="title__links__item"
-                       @click="$emit('publication-offer')">
-                       Опубликовать свой оффер
-                    </a>
-                {%- elseif is_granted('ROLE_WEBMASTER') -%}
-                    <a href="#" 
-                       class="title__links__item"
-                       @click="$emit('need-offer')">
-                       Не нашли подходящий оффер?
-                    </a>
-                {%- endif -%}
-            </div>
+            {% if not has_offer_in_interval(app.user, offer_limit_in_seconds) -%}
+                <div class="title__links" v-if="!isRequestSended">
+                    {%- if is_granted('ROLE_ADVIRTISER') -%}
+                        <a href="#" 
+                           class="title__links__item"
+                           @click="$emit('publication-offer')">
+                                Опубликовать свой оффер
+                        </a>
+                    {%- elseif is_granted('ROLE_WEBMASTER') -%}
+                        <a href="#" 
+                           class="title__links__item"
+                           @click="$emit('need-offer')">
+                                Не нашли подходящий оффер?
+                        </a>
+                    {%- endif -%}
+                </div>
+            {%- endif %}
         </div>
         {% if rooms|length -%}
             <div class="offers">
@@ -152,10 +154,14 @@
             v-show="isRequestResultShow"
             @click="closeModal('requestResult')">
             <div class="modal__box flex-center">
-                <div class="modal__offer text-center">
+                <div class="modal__offer text-center" v-if="isRequestSuccess">
                     <h4 class="modal__offer__title">Ваш запрос отправлен</h4>
                     <p class="modal__offer__paragraph">Модератор свяжется с Вами для уточнения источника трафика и прочей информации.</p>
                     <p class="modal__offer__paragraph">Среднее время подключения - 10 часов.</p>
+                </div>
+                <div class="modal__offer text-center" v-else-if="isRequestError">
+                    <h4 class="modal__offer__title">Ошибка отправки запроса</h4>
+                    <p class="modal__offer__paragraph">Вам необходимо связаться со службой техподдержки для уточнения статуса запроса.</p>
                 </div>
             </div>
         </div>

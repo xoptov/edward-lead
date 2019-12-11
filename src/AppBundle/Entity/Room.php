@@ -202,7 +202,7 @@ class Room implements IdentifiableInterface
     private $autoJoin = false;
 
     /**
-     * @var RoomChannel[]
+     * @var ArrayCollection|RoomChannel[]
      *
      * @ORM\OneToMany(targetEntity="RoomChannel", mappedBy="room", cascade={"persist"})
      */

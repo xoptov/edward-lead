@@ -350,3 +350,7 @@ services:
     AppBundle\Notifications\InternalNotificationContainer:
         arguments:
             $client: '@notification_bundle.internal_client'
+    
+    AppBundle\Controller\API\v1\OfferController:
+        arguments:
+            $oneInInterval: '%offer_limit_in_seconds%'

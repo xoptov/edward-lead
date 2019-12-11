@@ -3,8 +3,9 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Room;
-use AppBundle\Entity\RoomJoinRequest;
 use AppBundle\Entity\User;
+use AppBundle\Entity\OfferRequest;
+use AppBundle\Entity\RoomJoinRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,18 +35,26 @@ class OfferController extends Controller
     private $entityManager;
 
     /**
+     * @var int
+     */
+    private $oneInInterval;
+
+    /**
      * @param ComposerInterface      $composer
      * @param SenderInterface        $sender
      * @param EntityManagerInterface $entityManager
+     * @param int                    $oneInInterval
      */
     public function __construct(
         ComposerInterface $composer, 
         SenderInterface $sender, 
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        int $oneInInterval
     ) {
         $this->composer = $composer;
         $this->sender = $sender;
         $this->entityManager = $entityManager;
+        $this->oneInInterval = $oneInInterval;
     }
 
     /**
@@ -57,6 +66,17 @@ class OfferController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
+
+        $nearestOfferRequest = $this->entityManager
+            ->getRepository(OfferRequest::class)
+            ->getCountInInterval($this->oneInInterval);
+
+        if ($nearestOfferRequest) {
+            return new JsonResponse(
+                ['Нельзя слишком часто отправлять запросы'], 
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         if ($user->isCompany()) {
             $messageSubject = 'Запрос на создание нового офера';
@@ -89,6 +109,11 @@ class OfferController extends Controller
         }
 
         $message = $threadBuilder->getMessage();
+
+        $offerRequest = new OfferRequest();
+        $offerRequest->setUser($user);
+
+        $this->entityManager->persist($offerRequest);
         $this->sender->send($message);
 
         return new JsonResponse(['id' => $message->getId()]);
@@ -104,13 +129,26 @@ class OfferController extends Controller
     public function connectRequestAction(Room $room): JsonResponse
     {
         if (!$this->isGranted('ROLE_WEBMASTER')) {
-            return new JsonResponse(['К офферам могут присоединиться только вэбмастера']);
+            return new JsonResponse(
+                ['К офферам могут присоединиться только вэбмастера'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        if ($room->hasJoinRequest($this->getUser())) {
+            return new JsonResponse(
+                ['Вы уже отправляли запрос на подключение к данной комнате'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $admins = $this->entityManager->getRepository(User::class)->getAdmins();
 
         if (empty($admins)) {
-            return new JsonResponse(['В системе нет администраторов'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['В системе нет администраторов'], 
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $messageSubject = 'Запрос на присоединения к оферу';
