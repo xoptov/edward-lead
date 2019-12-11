@@ -33,7 +33,7 @@
                                         </li>
                                     {%- elseif is_granted('ROLE_ADVERTISER') and app.user.hasCompany -%}
                                         <li class="user__panel__nav__item">
-                                            <a href="{{ path('app_company_update', {'id': app.user.companyId}) }}" class="user__panel__nav__link">{{ 'menu.advertiser_cabinet'|trans }}</a>
+                                            <a href="{{ path('app_updating_company', {'id': app.user.companyId}) }}" class="user__panel__nav__link">{{ 'menu.advertiser_cabinet'|trans }}</a>
                                         </li>    
                                     {%- endif %}
                                     <li class="user__panel__nav__item">
