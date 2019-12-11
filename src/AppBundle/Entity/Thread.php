@@ -2,9 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Model\ParticipantInterface;
+use Doctrine\ORM\Mapping as ORM;
 use FOS\MessageBundle\Entity\Thread as BaseThread;
 
 /**
@@ -21,7 +20,7 @@ class Thread extends BaseThread implements IdentifiableInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @var ParticipantInterface
+     * @var User
      */
     protected $createdBy;
 

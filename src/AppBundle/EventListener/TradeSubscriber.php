@@ -2,16 +2,20 @@
 
 namespace AppBundle\EventListener;
 
-use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
+use AppBundle\Entity\User;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Notifications\EmailNotificationContainer;
+use AppBundle\Notifications\InternalNotificationContainer;
+use AppBundle\Notifications\SmsNotificationContainer;
+use AppBundle\Notifications\WebPushNotificationContainer;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\MessageBundle\Sender\SenderInterface;
 use FOS\MessageBundle\Composer\ComposerInterface;
 use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
+use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class TradeSubscriber implements EventSubscriberInterface
+class TradeSubscriber extends BaseEventListener implements EventSubscriberInterface
 {
     /**
      * @var EntityManagerInterface
@@ -41,18 +45,35 @@ class TradeSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param ComposerInterface      $fosComposer
-     * @param SenderInterface        $fosSender
+     * TradeSubscriber constructor.
+     *
+     * @param EntityManagerInterface        $entityManager
+     * @param ComposerInterface             $fosComposer
+     * @param SenderInterface               $fosSender
+     * @param EmailNotificationContainer    $emailNotificationContainer
+     * @param WebPushNotificationContainer  $webPushNotificationContainer
+     * @param SmsNotificationContainer      $smsNotificationContainer
+     * @param InternalNotificationContainer $internalNotificationContainer
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ComposerInterface $fosComposer,
-        SenderInterface $fosSender
-    ) {
+        SenderInterface $fosSender,
+        EmailNotificationContainer $emailNotificationContainer,
+        WebPushNotificationContainer $webPushNotificationContainer,
+        SmsNotificationContainer $smsNotificationContainer,
+        InternalNotificationContainer $internalNotificationContainer
+    )
+    {
         $this->entityManager = $entityManager;
         $this->fosComposer = $fosComposer;
         $this->fosSender = $fosSender;
+        parent::__construct(
+            $emailNotificationContainer,
+            $webPushNotificationContainer,
+            $smsNotificationContainer,
+            $internalNotificationContainer
+        );
     }
 
     /**
@@ -105,6 +126,7 @@ class TradeSubscriber implements EventSubscriberInterface
      */
     public function handleAccept(TradeEvent $event): void
     {
+        $this->internalNotificationContainer->tradeAccepted($event->getTrade());
         //todo: тут необходимо добавить создание нотификации для продавца.
     }
 
@@ -114,5 +136,6 @@ class TradeSubscriber implements EventSubscriberInterface
     public function handleReject(TradeEvent $event): void
     {
         //todo: тут необходимо добавить создание нотификации для продавца.
+        $this->internalNotificationContainer->tradeRejected($event->getTrade());
     }
 }

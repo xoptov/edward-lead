@@ -11,7 +11,7 @@ use NotificationBundle\Client\Client;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class SmsNotificationContainerTest extends TestCase
+class SmsNotificationContainerTest extends BaseNotificationContainerTestCase
 {
     /**
      * @var EmailNotificationContainer
@@ -19,7 +19,7 @@ class SmsNotificationContainerTest extends TestCase
     private $service;
 
     /**
-     * @var MockObject
+     * @var Client
      */
     private $smsClientMock;
 
@@ -39,39 +39,5 @@ class SmsNotificationContainerTest extends TestCase
     {
         $this->smsClientMock->expects($this->once())->method('send');
         $this->service->withdrawUser($this->getWithdraw());
-    }
-
-    //
-
-    private function getAccount()
-    {
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $account = new ClientAccount();
-        $account
-            ->setUser($user);
-
-        return $account;
-    }
-
-    private function getWithdraw()
-    {
-
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $object = new Withdraw();
-        $object->setUser($user);
-
-        return $object;
     }
 }

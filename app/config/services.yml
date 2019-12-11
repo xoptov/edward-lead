@@ -346,3 +346,7 @@ services:
     
     FOS\MessageBundle\Composer\ComposerInterface:
         alias: fos_message.composer
+
+    AppBundle\Notifications\InternalNotificationContainer:
+        arguments:
+            $client: '@notification_bundle.internal_client'
