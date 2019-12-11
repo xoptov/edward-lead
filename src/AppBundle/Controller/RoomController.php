@@ -53,8 +53,10 @@ class RoomController extends Controller
      *
      * @return Response
      */
-    public function createAction(Request $request, EventDispatcherInterface $eventDispatcher): Response
-    {
+    public function createAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher
+    ): Response {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
 
