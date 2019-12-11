@@ -4,8 +4,10 @@ namespace NotificationBundle\Controller;
 
 use AppBundle\Entity\User;
 use Exception;
+use NotificationBundle\Exception\ValidationTelegramHookException;
 use NotificationBundle\Repository\NotificationRepository;
 use NotificationBundle\Service\DisableNotificationService;
+use NotificationBundle\Service\MassSendService;
 use NotificationBundle\Service\NotificationConfigurationService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +36,10 @@ class NotificationController extends Controller
      * @var DisableNotificationService
      */
     private $disableNotificationService;
+    /**
+     * @var MassSendService
+     */
+    private $massSendService;
 
     /**
      * NotificationMenuController constructor.
@@ -42,18 +48,21 @@ class NotificationController extends Controller
      * @param Security                         $security
      * @param NotificationConfigurationService $configurationService
      * @param DisableNotificationService       $disableNotificationService
+     * @param MassSendService                  $massSendService
      */
     public function __construct(
         NotificationRepository $notificationRepository,
         Security $security,
         NotificationConfigurationService $configurationService,
-        DisableNotificationService $disableNotificationService
+        DisableNotificationService $disableNotificationService,
+        MassSendService $massSendService
     )
     {
         $this->notificationRepository = $notificationRepository;
         $this->security = $security;
         $this->configurationService = $configurationService;
         $this->disableNotificationService = $disableNotificationService;
+        $this->massSendService = $massSendService;
     }
 
     public function indexAction(): Response
@@ -101,5 +110,20 @@ class NotificationController extends Controller
             $this->disableNotificationService->handle($key, $value);
         }
         return $this->redirectToRoute('app_profile');
+    }
+
+    /**
+     * @Route("/admin/notifications/mass", methods={"POST"}, name="admin_mass_send")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     * @throws ValidationTelegramHookException
+     */
+    public function massSendAction(Request $request): Response
+    {
+        $this->massSendService->handle($request->request->all());
+
+        return $this->redirectToRoute('notification_mass_send_list');
     }
 }

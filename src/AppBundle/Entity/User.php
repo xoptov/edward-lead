@@ -738,7 +738,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     {
         $this
             ->removeRole(self::ROLE_COMPANY)
-            ->addRole(self::ROLE_WEBMASTER);
+            ->addRole(self::ROLE_ADMIN);
 
         return $this;
     }

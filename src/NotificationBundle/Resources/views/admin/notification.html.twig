@@ -1,0 +1,16 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/notification/css/admin_mass_notification.css') }}">
+{% endblock %}
+
+{% block sonata_admin_content %}
+    <div class="mass_notification">
+        <form class="mass_notification_container" method="post" action="{{ path('admin_mass_send') }}">
+            <h2>Массовая рассылка</h2>
+            <textarea name="message" required></textarea>
+            <input class="btn btn-adn" type="submit" value="Отправить" >
+        </form>
+    </div>
+{% endblock %}
