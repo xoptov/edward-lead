@@ -53,8 +53,10 @@ class RoomController extends Controller
      *
      * @return Response
      */
-    public function createAction(Request $request): Response
-    {
+    public function createAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher
+    ): Response {
         $form = $this->createForm(RoomType::class);
         $form->handleRequest($request);
 
@@ -86,10 +88,10 @@ class RoomController extends Controller
 
             $eventDispatcher->dispatch(
                 RoomEvent::NEW_CREATED,
-                new RoomEvent($room)
+                new RoomEvent($data)
             );
 
-            return $this->redirectToRoute('app_room_view', ['id' => $room->getId()]);
+            return $this->redirectToRoute('app_room_view', ['id' => $data->getId()]);
         }
 
         return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
