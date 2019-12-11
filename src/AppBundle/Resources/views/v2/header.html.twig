@@ -1,5 +1,5 @@
 {% block header %}
-    <div class="col-lg-4 header_logo" xmlns="http://www.w3.org/1999/html">
+    <div class="col-lg-3 header_logo" xmlns="http://www.w3.org/1999/html">
         <div class="logo" style="display:flex;">
             {% if is_granted('ROLE_WEBMASTER') %}
                 <a href="{{ path('app_dashboard') }}">
@@ -12,7 +12,12 @@
             {% endif %}
         </div>
     </div>
-    <div class="col-lg-8 header_main">
+
+    <div class="col-lg-2">
+        {{ render(controller('NotificationBundle\\Controller\\NotificationMenuController::indexAction')) }}
+    </div>
+
+    <div class="col-lg-7 header_main">
         <div class="main">
             <div class="balance">
                 <p>Баланс: <span>{{ app.user.balance|money_format }}</span></p>

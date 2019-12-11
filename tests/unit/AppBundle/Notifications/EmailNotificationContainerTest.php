@@ -2,24 +2,18 @@
 
 namespace Tests\unit\AppBundle\Notifications;
 
-use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Invoice;
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Member;
-use AppBundle\Entity\Message;
 use AppBundle\Entity\Room;
-use AppBundle\Entity\Thread;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Withdraw;
 use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use NotificationBundle\Client\Client;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class AccountBalanceApproachingZeroNotificationTest extends TestCase
+class AccountBalanceApproachingZeroNotificationTest extends BaseNotificationContainerTestCase
 {
     /**
      * @var EmailNotificationContainer
@@ -28,9 +22,17 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
 
     public function setUp()
     {
+
+        /** @var Client $emailClientMock */
         $emailClientMock = $this->createMock(Client::class);
+
+        /** @var EntityManagerInterface $entityManagerMock */
         $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+
+        /** @var UserRepository $repositoryMock */
         $repositoryMock = $this->createMock(UserRepository::class);
+
+        /** @var UrlGeneratorInterface $urlGenerator */
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $emailClientMock->expects($this->once())->method('send');
@@ -164,109 +166,5 @@ class AccountBalanceApproachingZeroNotificationTest extends TestCase
     public function testWithdrawUser()
     {
         $this->service->withdrawUser($this->getWithdraw());
-    }
-
-    //
-
-    private function getAccount()
-    {
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $account = new ClientAccount();
-        $account
-            ->setUser($user);
-
-        return $account;
-    }
-
-    private function getLead()
-    {
-        $user = new User();
-        $user
-            ->setId(1)
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $room = new Room();
-        $room
-            ->setId(1)
-            ->setName(' комната')
-            ->setSphere(' сфера');
-
-        $lead = new Lead();
-        $lead
-            ->setId(1)
-            ->setPhone('79000000003')
-            ->setStatus(Lead::STATUS_EXPECT)
-            ->setPrice(10000)
-            ->setUser($user)
-            ->setRoom($room);
-
-        return $lead;
-    }
-
-    private function getMessage()
-    {
-        $thread = new Thread();
-
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $object = new Message();
-        $object->setThread($thread);
-        $object->setSender($user);
-
-        return $object;
-
-    }
-
-    private function getUser()
-    {
-        $object = new User();
-        $object->setEmail('company1@xoptov.ru');
-        return $object;
-    }
-
-    private function getWithdraw()
-    {
-
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $object = new Withdraw();
-        $object->setUser($user);
-
-        return $object;
-    }
-
-    private function getMember()
-    {
-
-        $user = new User();
-        $user
-            ->setName('Company 1')
-            ->setEmail('company1@xoptov.ru')
-            ->setPhone('79000000001')
-            ->setPlainPassword(123456);
-
-        $object = new Member();
-        $object->setUser($user);
-
-        return $object;
     }
 }

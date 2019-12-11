@@ -1247,7 +1247,7 @@ textarea {
     margin-left: 10px;
     height: 32px;
     display: block;
-
+    width: 270px;
 }
 
 .lead__title {

@@ -222,6 +222,10 @@ Room Id: ID Комнаты
 Bad credentials.: Неверные учетные данные.
 User temporarily banned.: Пользователь временно забанен.
 
+NOTIFICATION: Уведомление
+IMPORTANT: Важное
+NEWS: Новости
+
 # Для новой вёрстки
 
 common:
