@@ -42,7 +42,7 @@
                     {% endif %}
                 </div>
 
-                {{ render(controller('NotificationBundle\\Controller\\NotificationMenuController::indexAction')) }}
+                {{ render(controller('NotificationBundle\\Controller\\NotificationController::renderPopupAction')) }}
 
                 <div class="header__balance-box">
                     <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>

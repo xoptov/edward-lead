@@ -4,7 +4,11 @@ namespace NotificationBundle\Controller\Api;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use NotificationBundle\Entity\Notification;
+use NotificationBundle\Service\DisableNotificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,21 +24,11 @@ class NotificationController extends Controller
     /**
      * NotificationController constructor.
      *
-     * @param EntityManagerInterface $entityManager
+     * @param EntityManagerInterface     $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-    }
-
-    /**
-     * @Route("/api/v1/notifications", methods={"GET"})
-     */
-    public function indexAction(): Response
-    {
-        // TODO return list of notifications
-
-        return new Response();
     }
 
     /**
@@ -86,17 +80,4 @@ class NotificationController extends Controller
         return new Response();
     }
 
-    /**
-     * @Route("/api/v1/notifications/switch", methods={"PATCH"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function switchNotificationAction(Request $request): Response
-    {
-        // TODO enable or disable Notification
-
-        return new Response();
-    }
 }

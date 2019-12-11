@@ -10,6 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use NotificationBundle\Channels\EmailChannel;
 use NotificationBundle\Client\Client;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,8 +24,8 @@ class AccountBalanceApproachingZeroNotificationTest extends BaseNotificationCont
     public function setUp()
     {
 
-        /** @var Client $emailClientMock */
-        $emailClientMock = $this->createMock(Client::class);
+        /** @var EmailChannel $emailClientMock */
+        $emailClientMock = $this->createMock(EmailChannel::class);
 
         /** @var EntityManagerInterface $entityManagerMock */
         $entityManagerMock = $this->createMock(EntityManagerInterface::class);

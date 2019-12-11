@@ -9,12 +9,13 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use NotificationBundle\Client\Client;
+use NotificationBundle\Channels\WebPushChannel;
+use NotificationBundle\Constants\Cases;
 
 class WebPushNotificationContainer
 {
     /**
-     * @var Client
+     * @var WebPushChannel
      */
     private $client;
 
@@ -26,10 +27,10 @@ class WebPushNotificationContainer
     /**
      * WebPushNotificationContainer constructor.
      *
-     * @param Client                 $client
+     * @param WebPushChannel                 $client
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client, EntityManagerInterface $entityManager)
+    public function __construct(WebPushChannel $client, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->entityManager = $entityManager;
@@ -89,10 +90,13 @@ class WebPushNotificationContainer
                 continue;
             }
 
-            $this->client->send([
-                "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
-                "push_token" => $member->getUser()->getWebPushToken()
-            ]);
+            $this->client->send(
+                [
+                    "body" => "В комнате {$object->getRoom()->getId()} появился новый лид",
+                    "push_token" => $member->getUser()->getWebPushToken()
+                ],
+                Cases::NAME_LEAD_NEW_PLACED
+            );
         }
     }
 
@@ -116,10 +120,13 @@ class WebPushNotificationContainer
                 continue;
             }
 
-            $this->client->send([
-                "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
-                "push_token" => $member->getUser()->getWebPushToken()
-            ]);
+            $this->client->send(
+                [
+                    "body" => "Лид {$object->getId()} уже больше 2 часов находиться в статусе Ожидания",
+                    "push_token" => $member->getUser()->getWebPushToken()
+                ],
+                Cases::NAME_LEAD_EXPECT_TOO_LONG
+            );
         }
     }
 
@@ -130,9 +137,12 @@ class WebPushNotificationContainer
      */
     public function leadInWorkTooLong(Lead $object): void
     {
-        $this->client->send([
-            "body" => "Лид {$object->getId()} уже более 24 часов находиться в статусе - В Работе",
-            "push_token" => $object->getBuyer()->getWebPushToken()
-        ]);
+        $this->client->send(
+            [
+                "body" => "Лид {$object->getId()} уже более 24 часов находиться в статусе - В Работе",
+                "push_token" => $object->getBuyer()->getWebPushToken()
+            ],
+            Cases::NAME_LEAD_IN_WORK_TOO_LONG
+        );
     }
 }

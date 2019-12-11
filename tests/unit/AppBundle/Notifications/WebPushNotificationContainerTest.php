@@ -8,6 +8,7 @@ use AppBundle\Repository\MemberRepository;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use NotificationBundle\Channels\WebPushChannel;
 use NotificationBundle\Client\Client;
 
 class WebPushNotificationContainerTest extends BaseNotificationContainerTestCase
@@ -34,7 +35,7 @@ class WebPushNotificationContainerTest extends BaseNotificationContainerTestCase
 
     public function setUp()
     {
-        $this->clientMock = $this->createMock(Client::class);
+        $this->clientMock = $this->createMock(WebPushChannel::class);
         $this->entityManagerMock = $this->createMock(EntityManager::class);
         $this->repositoryMock = $this->createMock(MemberRepository::class);
 
