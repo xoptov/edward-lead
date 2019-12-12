@@ -15,6 +15,7 @@ use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\PhoneCallManager;
 use AppBundle\Entity\MonetaryTransaction;
+use AppBundle\Entity\OfferRequest;
 
 class TemplateExtension extends \Twig_Extension
 {
@@ -85,7 +86,8 @@ class TemplateExtension extends \Twig_Extension
             new \Twig_SimpleFunction('final_price', [$this, 'getFinalPrice']),
             new \Twig_SimpleFunction('humanize_work_days', [$this, 'humanizeWorkDays']),
             new \Twig_SimpleFunction('can_show_timer', [$this, 'canShowTimer']),
-            new \Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades'])
+            new \Twig_SimpleFunction('pending_amount', [$this, 'getAmountInPendingTrades']),
+            new \Twig_SimpleFunction('has_offer_in_interval', [$this, 'hasOfferInInterval'])
         ];
     }
 
@@ -309,5 +311,25 @@ class TemplateExtension extends \Twig_Extension
         }
 
         return true;
+    }
+
+    /**
+     * @param User $user
+     * @param int  $seconds
+     * 
+     * @return bool
+     */
+    public function hasOfferInInterval(User $user, int $seconds): bool
+    {
+        $bound = new \DateTime('-'.$seconds.' seconds');
+
+        /** @var OfferRequest $offerRequest */
+        foreach($user->getOfferRequests() as $offerRequest) {
+            if ($offerRequest->getCreatedAt() >= $bound) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

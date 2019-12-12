@@ -12,32 +12,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
- * @Route("/api/v1")
+ * @Route("/api/v1/support")
  */
 class SupportController extends Controller
 {
     /**
-     * @var ThreadManager
-     */
-    private $threadManager;
-
-    /**
-     * @param ThreadManager $threadManager
-     */
-    public function __construct(ThreadManager $threadManager)
-    {
-        $this->threadManager = $threadManager;
-    }
-
-    /**
-     * @Route("/support", name="api_v1_support_create", methods={"POST"})
+     * @Route(name="api_v1_support_create", methods={"POST"})
      *
+     * @param ThreadManager          $threadManager
      * @param EntityManagerInterface $entityManager
      *
      * @return JsonResponse
      */
-    public function createAction(EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function createAction(
+        ThreadManager $threadManager,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -69,7 +59,7 @@ class SupportController extends Controller
         }
 
         /** @var Thread $thread */
-        $thread = $this->threadManager->createThread();
+        $thread = $threadManager->createThread();
         $thread->setCreatedBy($user);
         $thread->setSubject('Обращение в техподдержку');
         $thread->setTypeAppeal(Thread::TYPE_SUPPORT);
@@ -82,7 +72,7 @@ class SupportController extends Controller
             $thread->addParticipant($admin);
         }
 
-        $this->threadManager->saveThread($thread);
+        $threadManager->saveThread($thread);
 
         $result = [
             'id' => $thread->getId(),

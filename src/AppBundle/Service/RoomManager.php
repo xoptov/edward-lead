@@ -50,12 +50,13 @@ class RoomManager
     /**
      * @param Room $room
      * @param User $user
+     * @param bool $flush
      *
      * @return Member
      *
      * @throws RoomException
      */
-    public function joinInRoom(Room $room, User $user): Member
+    public function joinInRoom(Room $room, User $user, bool $flush = true): Member
     {
         if ($this->isMember($room, $user)) {
             throw new RoomException($room, $user, 'Пользователь уже находится в группе');
@@ -90,6 +91,10 @@ class RoomManager
             ->setUser($user)
             ->setRoom($room);
         $this->entityManager->persist($member);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
 
         return $member;
     }

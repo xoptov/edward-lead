@@ -2,11 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
-use AppBundle\Entity\Room\Schedule;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -38,6 +41,18 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="name", type="string")
      */
     private $name;
+
+    /**
+     * @var string
+     * 
+     * @ORM\Column(name="logotype", type="string", nullable=true)
+     */
+    private $logotype;
+
+    /**
+     * @var UploadedFile|null
+     */
+    private $uploadedLogotype;
 
     /**
      * @var string|null
@@ -188,6 +203,100 @@ class Room implements IdentifiableInterface
     private $leadsPerDay;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="public_offer", type="boolean")
+     */
+    private $publicOffer = false;
+
+    /**
+     * @ORM\Column(name="auto_join", type="boolean")
+     */
+    private $autoJoin = false;
+
+    /**
+     * @var ArrayCollection|RoomChannel[]
+     *
+     * @ORM\OneToMany(targetEntity="RoomChannel", mappedBy="room", cascade={"persist"})
+     */
+    private $channels;
+
+    /**
+     * @var ArrayCollection|Region[]
+     *
+     * @ORM\ManyToMany(targetEntity="Region")
+     * @ORM\JoinTable(
+     *     name="rooms_regions",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="region_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $regions;
+
+    /**
+     * @var ArrayCollection|City[]
+     *
+     * @ORM\ManyToMany(targetEntity="City")
+     * @ORM\JoinTable(
+     *     name="rooms_cities",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="city_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $cities;
+
+    /**
+     * @var ArrayCollection|Member[]
+     * 
+     * @ORM\OneToMany(targetEntity="Member", mappedBy="room")
+     */
+    private $members;
+
+    /**
+     * @var ArrayCollection|RoomJoinRequest[]
+     * 
+     * @ORM\OneToMany(targetEntity="RoomJoinRequest", mappedBy="room")
+     */
+    private $joinRequests;
+
+    public function __construct()
+    {
+        $this->channels = new ArrayCollection();
+        $this->regions = new ArrayCollection();
+        $this->cities = new ArrayCollection();
+        $this->members = new ArrayCollection();
+        $this->joinRequests = new ArrayCollection();
+    }
+
+    /**
      * @param int $id
      *
      * @return Room
@@ -247,6 +356,44 @@ class Room implements IdentifiableInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @param string|null $logotype
+     */
+    public function setLogotype(?string $logotype): self
+    {
+        $this->logotype = $logotype;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogotype(): ?string
+    {
+        return $this->logotype;
+    }
+
+    /**
+     * @param UploadedFile|null $uploadedFile
+     * 
+     * @return Room
+     */
+    public function setUploadedLogotype($uploadedFile): self
+    {
+        $this->uploadedLogotype = $uploadedFile;
+
+        return $this;
+    }
+    
+    /**
+     * @return UploadedFile|null
+     */
+    public function getUploadedLogotype()
+    {
+        return $this->uploadedLogotype;
     }
 
     /**
@@ -529,5 +676,182 @@ class Room implements IdentifiableInterface
     public function getLeadsPerDay(): ?int
     {
         return $this->leadsPerDay;
+    }
+
+    /**
+     * @param bool $publicOffer
+     *
+     * @return Room
+     */
+    public function setPublicOffer(bool $publicOffer): self
+    {
+        $this->publicOffer = $publicOffer;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublicOffer(): bool
+    {
+        return $this->publicOffer;
+    }
+
+    /**
+     * @param bool $autoJoin
+     * 
+     * @return Room
+     */
+    public function setAutoJoin(bool $autoJoin): self
+    {
+        $this->autoJoin = $autoJoin;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoJoin(): bool
+    {
+        return $this->autoJoin;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function addChannel(RoomChannel $channel): bool
+    {
+        if ($this->channels->add($channel)) {
+            $channel->setRoom($this);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function removeChannel(RoomChannel $channel): bool
+    {
+        return $this->channels->removeElement($channel);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getChannels(): Collection
+    {
+        return clone $this->channels;
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function addRegion(Region $region): bool
+    {
+        return $this->regions->add($region);
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function removeRegion(Region $region): bool
+    {
+        return $this->regions->removeElement($region);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRegions(): Collection
+    {
+        return clone $this->regions;
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function addCity(City $city): bool
+    {
+        return $this->cities->add($city);
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function removeCity(City $city): bool
+    {
+        return $this->cities->removeElement($city);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCities(): Collection
+    {
+        return clone $this->cities;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLocations(): array
+    {
+        $locations = array_merge(
+            $this->regions->toArray(),
+            $this->cities->toArray()
+        );
+
+        return $locations;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function isMember(User $user): bool
+    {
+        /** @var Member $member  */
+        foreach ($this->members as $member) {
+            if ($member->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function hasJoinRequest(User $user): bool
+    {
+        foreach ($this->joinRequests as $joinRequest)
+        {
+            if ($joinRequest->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

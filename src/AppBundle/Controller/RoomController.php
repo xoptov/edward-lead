@@ -74,7 +74,7 @@ class RoomController extends Controller
             $this->entityManager->persist($data);
 
             try {
-                $this->roomManager->joinInRoom($data, $user);
+                $this->roomManager->joinInRoom($data, $user, false);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
 
@@ -160,7 +160,7 @@ class RoomController extends Controller
             }
         }
 
-        return $this->render('@App/v2/Room/list.html.twig', ['rooms' => $rooms]);
+        return $this->render('@App/v3/Room/list.html.twig', ['rooms' => $rooms]);
     }
 
     /**
