@@ -252,9 +252,9 @@ class UserController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-//        if ($user->isTypeSelected()) {
-//            return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
-//        }
+        if ($user->isTypeSelected()) {
+            return new Response('Тип пользователя уже указан', Response::HTTP_BAD_REQUEST);
+        }
 
         $user
             ->switchToWebmaster()

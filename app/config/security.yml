@@ -57,6 +57,7 @@ security:
         - { path: ^/api/v1/payment, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/stub, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/v1/notifications/telegram/hook, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/dashboard, roles: ROLE_WEBMASTER }
         - { path: ^/telephony/calls, roles: ROLE_COMPANY }
         - { path: ^/company/update, roles: ROLE_COMPANY }
