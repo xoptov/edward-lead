@@ -50,7 +50,7 @@ class ReplayType extends AbstractType
             new EntityToIdTransformer($this->em, Thread::class)
         );
 
-        $builder->get('image')->addViewTransformer(
+        $builder->get('images')->addViewTransformer(
             new EntityToIdTransformer($this->em, Image::class)
         );
     }
