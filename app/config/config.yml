@@ -43,6 +43,7 @@ twig:
         jivosite_enabled: '%jivosite_enabled%'
         referrer_reward: '%referrer_reward%'
         landing_url: '%landing_url%'
+        offer_limit_in_seconds: '%offer_limit_in_seconds%'
     paths:
         '%kernel.project_dir%/src/NotificationBundle/Resources/views': NotificationBundle
 
@@ -134,6 +135,12 @@ liip_imagine:
             filters:
                 thumbnail:
                     size: [1280, 1024]
+                    mode: outbound
+        thumbnail_145x58:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [145, 58]
                     mode: outbound
 fos_message:
     db_driver: orm

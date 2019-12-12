@@ -49,6 +49,7 @@ parameters:
     max_asks_callback: 2
 
     message_limit_in_minute: 5
+    offer_limit_in_seconds: 3600
 
     # Statistics
     google_tag_manager: false
@@ -60,4 +61,6 @@ parameters:
 
     auth_time_frame: 300
     auth_fail_retry: 7
+
+
 
