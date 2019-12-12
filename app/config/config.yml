@@ -136,6 +136,12 @@ liip_imagine:
                 thumbnail:
                     size: [1280, 1024]
                     mode: outbound
+        thumbnail_145x58:
+            quality: 75
+            filters:
+                thumbnail:
+                    size: [145, 58]
+                    mode: outbound
 fos_message:
     db_driver: orm
     thread_class: AppBundle\Entity\Thread

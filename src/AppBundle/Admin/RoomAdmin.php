@@ -7,6 +7,7 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Region;
 use AppBundle\Entity\Account;
+use AppBundle\Service\Uploader;
 use AppBundle\Service\RoomManager;
 use AppBundle\Form\Type\ScheduleType;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -23,6 +24,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Sonata\AdminBundle\Form\Type\ModelAutocompleteType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class RoomAdmin extends AbstractAdmin
 {
@@ -30,6 +32,11 @@ class RoomAdmin extends AbstractAdmin
      * @var RoomManager
      */
     private $roomManager;
+
+    /**
+     * @var Uploader
+     */
+    private $uploader;
 
     /**
      * @inheritdoc
@@ -57,9 +64,17 @@ class RoomAdmin extends AbstractAdmin
     /**
      * @param RoomManager $roomManager
      */
-    public function setRoomManager(RoomManager $roomManager)
+    public function setRoomManager(RoomManager $roomManager): void
     {
         $this->roomManager = $roomManager;
+    }
+
+    /**
+     * @param Uploader $uploader
+     */
+    public function setUploader(Uploader $uploader): void
+    {
+        $this->uploader = $uploader;
     }
 
     /**
@@ -72,6 +87,39 @@ class RoomAdmin extends AbstractAdmin
         $owner = $object->getOwner();
         $this->roomManager->joinInRoom($object, $owner, false);
         $this->roomManager->updateInviteToken($object);
+        $this->processLogotype($object);
+    }
+
+    /**
+     * @param Room $object
+     */
+    public function preUpdate($object)
+    {
+        $newOwner = $object->getOwner();
+
+        if (!$this->roomManager->isMember($object, $newOwner)) {
+            $this->roomManager->joinInRoom($object, $newOwner, false);
+        }
+        
+        $this->processLogotype($object);
+    }
+
+    /**
+     * @param Room $object
+     */
+    protected function processLogotype($object)
+    {
+        $uploadedLogotype = $object->getUploadedLogotype();
+
+        if (!$uploadedLogotype) {
+            return;
+        }
+
+        $result = $this->uploader->store($uploadedLogotype, 'logotype');
+
+        if (isset($result['path']) && !empty($result['path'])) {
+            $object->setLogotype($result['path']);
+        }
     }
 
     /**
@@ -135,9 +183,15 @@ class RoomAdmin extends AbstractAdmin
      */
     protected function configureFormFields(FormMapper $form)
     {
+        $subject = $this->subject;
+
         $form
             ->with('Main')
                 ->add('name')
+                ->add('uploadedLogotype', FileType::class, [
+                    'label' => 'Upload Logotype',
+                    'required' => false
+                ])
                 ->add('owner', ModelAutocompleteType::class, [
                     'property' => 'name',
                     'to_string_callback' => function(User $entity) {
@@ -227,6 +281,9 @@ class RoomAdmin extends AbstractAdmin
         $show
             ->with('Main')
                 ->add('name')
+                ->add('logotype', null, [
+                    'template' => '@App/CRUD/show_image_field.html.twig'
+                ])
                 ->add('owner.name')
                 ->add('sphere')
                 ->add('leadCriteria')

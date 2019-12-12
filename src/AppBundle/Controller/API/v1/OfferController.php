@@ -69,7 +69,7 @@ class OfferController extends Controller
 
         $nearestOfferRequest = $this->entityManager
             ->getRepository(OfferRequest::class)
-            ->getCountInInterval($this->oneInInterval);
+            ->getCountByUserInInterval($user, $this->oneInInterval);
 
         if ($nearestOfferRequest) {
             return new JsonResponse(

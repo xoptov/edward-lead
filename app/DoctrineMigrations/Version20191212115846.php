@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191211123430 extends AbstractMigration
+final class Version20191212115846 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -29,7 +29,7 @@ final class Version20191211123430 extends AbstractMigration
         $this->addSql('ALTER TABLE rooms_regions ADD CONSTRAINT FK_120C29FD98260155 FOREIGN KEY (region_id) REFERENCES region (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE rooms_cities ADD CONSTRAINT FK_62959D1154177093 FOREIGN KEY (room_id) REFERENCES room (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE rooms_cities ADD CONSTRAINT FK_62959D118BAC62AF FOREIGN KEY (city_id) REFERENCES city (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE room ADD public_offer TINYINT(1) NOT NULL, ADD auto_join TINYINT(1) NOT NULL');
+        $this->addSql('ALTER TABLE room ADD logotype VARCHAR(255) DEFAULT NULL, ADD public_offer TINYINT(1) NOT NULL, ADD auto_join TINYINT(1) NOT NULL');
     }
 
     public function down(Schema $schema) : void
@@ -42,6 +42,6 @@ final class Version20191211123430 extends AbstractMigration
         $this->addSql('DROP TABLE offer_request');
         $this->addSql('DROP TABLE rooms_regions');
         $this->addSql('DROP TABLE rooms_cities');
-        $this->addSql('ALTER TABLE room DROP public_offer, DROP auto_join');
+        $this->addSql('ALTER TABLE room DROP logotype, DROP public_offer, DROP auto_join');
     }
 }

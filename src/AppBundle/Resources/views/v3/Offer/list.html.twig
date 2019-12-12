@@ -40,15 +40,7 @@
                                     </div>
                                     <div class="offers__criteria">
                                         <p class="offers__title__small">Критерии целевого лида</p>
-                                        <p class="offers__criteria__list">
-                                            {{ room.leadCriteria }}
-                                        </p>
-                                        {# <ul class="offers__criteria__list">
-                                            <li class="offers__criteria__item"><span>1.</span> Хочет получить займ от 300.000 руб</li>
-                                            <li class="offers__criteria__item"><span>2.</span> Объект под залог должен находиться в Москве</li>
-                                            <li class="offers__criteria__item"><span>3.</span> Лицо принимающее решение</li>
-                                        </ul> #}
-                                        {# <span class="offers__criteria__all speed">Развернуть все критерии</span> #}
+                                        <p class="offers__criteria__list">{{ room.leadCriteria }}</p>
                                     </div>
                                     <div class="offers__info fx align-center">
                                         <div class="offers__info__item">{{ 'common.rate'|trans }}: <span>
@@ -76,7 +68,9 @@
                                             </div>
                                         </div>
                                         <div class="offers__right__top__img col-6 text-center">
-                                            <img src="" alt="Логотип">
+                                            {% if room.logotype is not empty %}
+                                                <img src="{{ room.logotype|imagine_filter('thumbnail_145x58') }}" alt="Логотип">
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="offers__channels">

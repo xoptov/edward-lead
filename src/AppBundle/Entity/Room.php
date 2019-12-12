@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -40,6 +41,18 @@ class Room implements IdentifiableInterface
      * @ORM\Column(name="name", type="string")
      */
     private $name;
+
+    /**
+     * @var string
+     * 
+     * @ORM\Column(name="logotype", type="string", nullable=true)
+     */
+    private $logotype;
+
+    /**
+     * @var UploadedFile|null
+     */
+    private $uploadedLogotype;
 
     /**
      * @var string|null
@@ -343,6 +356,44 @@ class Room implements IdentifiableInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @param string|null $logotype
+     */
+    public function setLogotype(?string $logotype): self
+    {
+        $this->logotype = $logotype;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogotype(): ?string
+    {
+        return $this->logotype;
+    }
+
+    /**
+     * @param UploadedFile|null $uploadedFile
+     * 
+     * @return Room
+     */
+    public function setUploadedLogotype($uploadedFile): self
+    {
+        $this->uploadedLogotype = $uploadedFile;
+
+        return $this;
+    }
+    
+    /**
+     * @return UploadedFile|null
+     */
+    public function getUploadedLogotype()
+    {
+        return $this->uploadedLogotype;
     }
 
     /**

@@ -212,6 +212,7 @@ services:
         public: true
         calls:
             - [setRoomManager, ['@AppBundle\Service\RoomManager']]
+            - [setUploader, ['@AppBundle\Service\Uploader']]
 
     app.admin.lead:
         class: AppBundle\Admin\LeadAdmin
