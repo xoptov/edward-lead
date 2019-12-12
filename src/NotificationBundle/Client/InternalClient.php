@@ -4,10 +4,9 @@ namespace NotificationBundle\Client;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use NotificationBundle\Entity\Notification;
 use NotificationBundle\Exception\ValidationNotificationClientException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class InternalClient
@@ -21,32 +20,43 @@ class InternalClient
      * @var ValidatorInterface
      */
     private $validator;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * InternalClient constructor.
      *
-     * @param ValidatorInterface $validator
+     * @param ValidatorInterface     $validator
      * @param EntityManagerInterface $entityManager
+     * @param LoggerInterface        $logger
      */
-    public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager)
+    public function __construct(
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger
+    )
     {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->logger = $logger;
     }
 
     /**
-     * @param Notification $model
-     *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
+     * @param Notification $model *
      */
     public function send(Notification $model): void
     {
-        $this->validate($model);
+        try {
 
-        $this->entityManager->persist($model);
-        $this->entityManager->flush();
+            $this->validate($model);
+            $this->entityManager->persist($model);
+            $this->entityManager->flush();
+
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
+        }
     }
 
     /**
