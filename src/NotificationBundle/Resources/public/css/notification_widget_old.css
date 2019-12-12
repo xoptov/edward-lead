@@ -49,7 +49,7 @@
     border: 1px solid #F2F2F2;
 }
 
-.notifications .notifications__popup .notifications__popup__item.red-border {
+.notifications .notifications__popup .notifications__popup__item.notice__item_red {
     border: 1px solid red;
 }
 
@@ -84,6 +84,12 @@
     justify-content: space-between;
 }
 
+.notifications .notifications__popup .notifications__popup__item .notifications__popup__item_button_container {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
 .notifications .notifications__popup .notifications__popup__item .notifications__popup__item_button_container .hide {
     display: none;
 }
@@ -102,16 +108,49 @@
     color: #00a368;
 }
 
-.notifications .notifications__popup .notifications__popup__item .notifications__popup__item_container .notifications__popup__item_message a.notification__button {
+.notifications .notifications__popup .notifications__popup__item .notifications__popup__item_container .notice__item__body a.btn {
+    width: 46%;
+    padding: 3px 10px;
+    text-align: center;
+    color: #fff;
+    border-radius: 1px;
     background: #00a368;
-    padding: 8px 5px 5px 5px;
-    color: white;
-    border-radius: 4px;
-    display: block;
-    width: fit-content;
-    margin-top: 5px;
 }
 
-.notifications .notifications__popup .notifications__popup__item .notifications__popup__item_container .notifications__popup__item_message p {
-    color: #626161;
+.notice__item__body {
+    margin-top: 10px;
+    padding-right: 40px;
+}
+
+.notice__item__txt {
+    color: #4b4b4b;
+    font-size: 13px;
+}
+
+.notifications .notice__item__body .fx {display: -webkit-box;display: -ms-flexbox;display: flex;}
+.notifications .notice__item__body .fx-wrap {-ms-flex-wrap: wrap;flex-wrap: wrap;}
+.notifications .notice__item__body .fx-between {-webkit-box-pack: justify;-ms-flex-pack: justify;justify-content: space-between;}
+.notifications .notice__item__body .notice__item__foot {
+    margin-top: 15px;
+}
+
+.notifications .notifications__popup__item_button_container .notice__btn  {
+    opacity: .5;
+    width: 18px;height: 19px;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    border: none;
+}
+
+.notifications .notifications__popup__item_button_container .notice__btn:hover {
+    opacity: 1;
+}
+
+.notifications .notifications__popup__item_button_container .notice__btn_check {
+    background: url(/bundles/app/v3/img/icons/i-check-green.png) center no-repeat;
+}
+
+.notifications .notifications__popup__item_button_container .notice__btn_refresh {
+    background: url(/bundles/app/v3/img/icons/i-refresh-green.png) center no-repeat;
 }
