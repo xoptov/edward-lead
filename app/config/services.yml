@@ -348,3 +348,6 @@ services:
     AppBundle\Controller\API\v1\OfferController:
         arguments:
             $oneInInterval: '%offer_limit_in_seconds%'
+    
+    FOS\MessageBundle\EntityManager\ThreadManager:
+        alias: fos_message.thread_manager
