@@ -1,0 +1,199 @@
+{% extends '@App/v3/layout_dark.html.twig' %}
+
+{% block _room_platformWarranty_entry_row %}
+    <label class="wrapper">
+        {{ label }}
+        {{ block('radio_widget') }}
+        <span class="checkmark"></span>
+    </label>
+{% endblock %}
+
+{% block _room_timer_entry_row %}
+    <label class="wrapper">
+        {{ label }}
+        {{ block('radio_widget') }}
+        <span class="checkmark"></span>
+    </label>
+{% endblock %}
+
+{% form_theme form _self %}
+
+{% block content %}
+    <!-- Content -->
+
+    <div class="content">
+
+        <!-- Title -->
+
+        <div class="title">
+        <h3 class="title__h3">Создать новую комнанту</h3>
+        </div>
+
+        <!-- Create room -->
+
+        <form action="#" class="row create-room room-validation form fx fx-wrap fx-between">
+        <div class="col-7">
+            <div class="create-room__box">
+            <div class="create-room__top">
+                <div class="form__input form__input__item">
+                <span class="form__input__title">Придумайте название комнаты:</span>
+                <label class="form__input__field"><input type="text" class="room_title" placeholder="пример: Офис на Московской" /><span class="form__input__surely"></span></label>
+                </div>
+                <div class="form__input form__input__item">
+                <span class="form__input__title">Укажите одну сферу деятельности:</span>
+                <label class="form__input__field"><input type="text" class="room_activity" placeholder="пример: Пластиковые окна" /><span class="form__input__surely"></span></label>
+                </div>
+            </div>
+            <div class="create-room__criteria">
+                <h5 class="title__h5">Критерий целевого лида:</h5>
+                <div class="create-room__criteria__fields">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">1.</span>
+                    <label class="form__input__field"><input type="text" class="room_criteria" placeholder="пример: Хочет купить окна в Москве и МО" /><span class="form__input__surely"></span></label>
+                </div>
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">2.</span>
+                    <label class="form__input__field"><input type="text" placeholder="пример: Бюджет покупки от 10.000 рублей" /><span class="form__input__remove"></span></label>
+                </div>
+                </div>
+                <div class="create-room__criteria__control fx fx-between fx-wrap">
+                <a href="#" class="create-room__criteria__control__btn">Пример заполнения и зачем это нужно</a>
+                <a href="#" class="create-room__criteria__control__btn">Добавить еще</a>
+                </div>
+            </div>
+            <div class="lead-cost">
+                <div class="form__input form__input__item">
+                <span class="form__input__title">Стоимость лида:</span>
+                <label class="form__input__field"><input type="text" placeholder="пример: 500" /><span class="form__input__currency">руб.</span></label>
+                </div>
+            </div>
+            <button class="btn btn__green form__btn create-room__btn">Создать новую комнату</button>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="create-room__guarantee">
+            <h5 class="title__h5">Требуется ли Вам гарантии платформы?</h5>
+            <p class="create-room__paragraph">Если рекламодатель, после покупки лида, укажет его статус как «нецелевой», служба поддержки платформы прослушает запись разговора, сверит критерии целевого лида и вынесет решение по его окончательному статусу.</p>
+            <p class="create-room__paragraph">Если окажется что лид целевой, деньги за его покупку будут отправленны вебмастеру.</p>
+            <p class="create-room__paragraph"><a href="#">Подробнее про гарантии Edward</a></p>
+            <div class="check fx fx-wrap create-room__check">
+                <label class="check__item">
+                <input type="radio" name="check-guarantee" checked="checked">
+                <span class="check__mark"></span>
+                <span class="check__title">Да</span>
+                </label>
+                <label class="check__item">
+                <input type="radio" name="check-guarantee">
+                <span class="check__mark"></span>
+                <span class="check__title">Нет</span>
+                </label>
+            </div>
+            </div>
+            <div class="create-room__time">
+            <h5 class="title__h5">Включить таймер для менеджера?</h5>
+            <p class="create-room__paragraph">Если вы активируете эту функцию, Вам потребуется выбрать город, рабочее время менеджера, который будет звонить лиду, максимальное время для обработки лида и необходимое количество лидов в день.</p>
+            <p class="create-room__paragraph">Таймер будет отсчитывать время, только в установленом графике работы. Если менеджер не успел его обработать согласно настройкам, лид автоматически получит статус «Целевой»</p>
+            <p class="create-room__paragraph"><a href="#">Смотреть как это работает на примере</a></p>
+            <div class="check fx fx-wrap create-room__check">
+                <label class="check__item">
+                <input type="radio" name="check-time" checked="checked">
+                <span class="check__mark"></span>
+                <span class="check__title">Включить</span>
+                </label>
+                <label class="check__item">
+                <input type="radio" name="check-time">
+                <span class="check__mark"></span>
+                <span class="check__title">Отключить</span>
+                </label>
+            </div>
+            </div>
+            <div class="create-room__sett">
+            <div class="create-room__sett__city">
+                <div class="form__input form__input__item">
+                <span class="form__input__title">Город работы:</span>
+                <div class="form__input__field">
+                    <select>
+                    <option value="" selected disabled hidden>Выберите город из списка</option>
+                    <option value="1">Выберите город из списка</option>
+                    <option value="2">Выберите город из списка1</option>
+                    <option value="3">Выберите город из списка2</option>
+                    <option value="4">Выберите город из списка3</option>
+                    <option value="5">Выберите город из списка4</option>
+                    </select>
+                </div>
+                </div>
+                <p class="create-room__paragraph">таймер будет работать с учетом часового пояса вашего региона.</p>
+            </div>
+            <div class="create-room__sett__chart">
+                <div class="form__input form__input__item">
+                <span class="form__input__title">График работы:</span>
+                <div class="create-room__sett__chart__box fx align-center">
+                    <span class="form__input__title create-room__sett__chart__form">с</span>
+                    <div class="form__input__field">
+                    <select>
+                        <option value="1">9:00</option>
+                        <option value="1">10:00</option>
+                        <option value="1">11:00</option>
+                        <option value="1">12:00</option>
+                        <option value="1">13:00</option>
+                        <option value="1">14:00</option>
+                    </select>
+                    </div>
+                    <span class="form__input__title create-room__sett__chart__before">по</span>
+                    <div class="form__input__field">
+                    <select>
+                        <option value="1">18:00</option>
+                        <option value="1">19:00</option>
+                        <option value="1">20:00</option>
+                        <option value="1">21:00</option>
+                        <option value="1">22:00</option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+                <p class="create-room__paragraph fx fx-end"><a href="#">круглосуточно</a></p>
+            </div>
+            <div class="create-room__sett__days">
+                <ul class="create-room__sett__days__list fx fx-wrap">
+                <li class="create-room__sett__days__item flex-center">пн</li>
+                <li class="create-room__sett__days__item flex-center">вт</li>
+                <li class="create-room__sett__days__item flex-center">ср</li>
+                <li class="create-room__sett__days__item flex-center">чт</li>
+                <li class="create-room__sett__days__item flex-center">пт</li>
+                <li class="create-room__sett__days__item flex-center">сб</li>
+                <li class="create-room__sett__days__item flex-center">вс</li>
+                </ul>
+                <div class="create-room__sett__days__box fx fx-between">
+                <p class="create-room__paragraph fx fx-end"><a href="#">будни</a></p>
+                <p class="create-room__paragraph fx fx-end"><a href="#">ежедневно</a></p>
+                </div>
+            </div>
+            <div class="create-room__sett__timer">
+                <div class="form__input form__input__item">
+                <span class="form__input__title">Таймер обработки для менеджера:</span>
+                <div class="form__input__field fx-end">
+                    <select>
+                    <option value="1">23 часа</option>
+                    <option value="2">1 час</option>
+                    <option value="2">2 часа</option>
+                    <option value="2">3 часа</option>
+                    <option value="2">4 часа</option>
+                    <option value="2">5 часов</option>
+                    </select>
+                </div>
+                </div>
+                <p class="create-room__paragraph">Если менеджер не успеет его обработать, лид автоматические перейдет в статус «Целевой» и деньги за него будут списаны с рекламодателя.</p>
+            </div>
+            <div class="create-room__sett__leads">
+                <div class="form__input form__input__item fx-between">
+                <span class="form__input__title">Необходимое количество лидов в день для работы с таймером:</span>
+                <label class="form__input__field"><input type="text" placeholder="20" /></label>
+                </div>
+                <p class="create-room__paragraph">Все поступившие лиды сверх этого числа, будут опубликованы без таймера и скорость их обработки менеджером не будет учитывается.</p>
+            </div>
+            </div>
+        </div>
+        </form>
+
+    </div>
+{% endblock %}
