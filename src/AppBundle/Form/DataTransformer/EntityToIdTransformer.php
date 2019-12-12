@@ -37,6 +37,11 @@ class EntityToIdTransformer implements DataTransformerInterface
     {
         if ($value instanceof IdentifiableInterface) {
             return $value->getId();
+        } elseif (is_array($value)) {
+            return array_map(function(IdentifiableInterface $item) {
+                return $item->getId();
+            }, $value);
+
         }
 
         return null;
@@ -53,9 +58,14 @@ class EntityToIdTransformer implements DataTransformerInterface
             return null;
         }
 
-        $entity = $this->entityManager->getRepository($this->dataClass)
-            ->find($value);
+        if (is_array($value)) {
+            $result = $this->entityManager->getRepository($this->dataClass)
+                ->findBy(['id' => $value]);
+        } else {
+            $result = $this->entityManager->getRepository($this->dataClass)
+                ->find($value);
+        }
 
-        return $entity;
+        return $result;
     }
 }

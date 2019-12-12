@@ -62,7 +62,7 @@ class InternalNotificationContainer
     {
         $message = "Вы создали комнату #{$object->getId()} - {$object->getName()}";
         $link = $this->router->generate('app_room_view', ['id' => $object->getId()]);
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Перейти</a></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Перейти</a></div>";
         $user = $object->getOwner();
 
         $notification = new Notification($user, $html);
@@ -80,7 +80,7 @@ class InternalNotificationContainer
     public function roomDeactivated(Room $object): void
     {
         $message = "Вы деактивровали комнату #{$object->getId()} - {$object->getName()}";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getOwner();
 
         $notification = new Notification($user, $html);
@@ -98,7 +98,7 @@ class InternalNotificationContainer
     public function invoiceProcessed(Invoice $object): void
     {
         $message = "Ваш баланс пополнен на сумму {$object->getAmount()}";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
         $notification = new Notification($user, $html);
@@ -117,7 +117,7 @@ class InternalNotificationContainer
     {
         $message = "Ваш баланс приближается к нулю. Не забудьте его пополнить.";
         $link = $this->router->generate('app_financial_deposit');
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Пополнить баланс</a></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Пополнить баланс</a></div>";
         $user = $object->getUser();
         $type = Notification::TYPE_IMPORTANT;
 
@@ -137,7 +137,7 @@ class InternalNotificationContainer
     {
         $message = "Ваш баланс менее 40 рублей. Пополните баланс для дальнейшей работы.";
         $link = $this->router->generate('app_financial_deposit');
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Пополнить баланс</a></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Пополнить баланс</a></div>";
         $user = $object->getUser();
         $type = Notification::TYPE_IMPORTANT;
 
@@ -157,7 +157,7 @@ class InternalNotificationContainer
     {
         $message = "У вас имеется новое сообщение от службы поддержки";
         $link = $this->router->generate('app_arbitration');
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
         $user = $object->getThread()->getCreatedBy();
         $type = Notification::TYPE_IMPORTANT;
 
@@ -180,7 +180,7 @@ class InternalNotificationContainer
     public function tradeAccepted(Trade $trade): void
     {
         $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус \"Завершена Успешно\". Подробнее в разделе \"Арбитраж\"";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $trade->getSeller();
 
         $notification = new Notification($user, $html);
@@ -198,7 +198,7 @@ class InternalNotificationContainer
     public function tradeRejected(Trade $trade): void
     {
         $message = "По лиду {$trade->getLead()->getId()} арбитраж установил статус \"Откланена\". Подробнее в разделе \"Арбитраж\"";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $trade->getSeller();
 
         $notification = new Notification($user, $html);
@@ -223,7 +223,7 @@ class InternalNotificationContainer
 
         $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
         $link = $this->router->generate('app_arbitration');
-        $html = "<div class='notification'><p>{$message}</p><a class='notification__button' href='{$link}'>Смотреть</a></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
 
         $type = Notification::TYPE_IMPORTANT;
 
@@ -251,7 +251,7 @@ class InternalNotificationContainer
             }
 
             $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$member->getUser()->getAccount()->getType()}";
-            $html = "<div class='notification'><p>{$message}</p></div>";
+            $html = "<p class='notice__item__txt'>{$message}</p>";
             $user = $member->getUser();
 
             $notification = new Notification($user, $html);
@@ -270,7 +270,7 @@ class InternalNotificationContainer
     public function youJoinedToRoom(Member $object): void
     {
         $message = "Вы успешно присоединились к комнате #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
         $notification = new Notification($user, $html);
@@ -288,7 +288,7 @@ class InternalNotificationContainer
     public function youRemovedFromRoom(Member $object): void
     {
         $message = "Вы были изключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
         $notification = new Notification($user, $html);
@@ -320,7 +320,7 @@ class InternalNotificationContainer
             }
 
             $message = "В комнате #{$object->getRoom()->getId()} появился новый лид - #{$object->getId()}";
-            $html = "<div class='notification'><p>{$message}</p></div>";
+            $html = "<p class='notice__item__txt'>{$message}</p>";
             $user = $member->getUser();
 
             $notification = new Notification($user, $html);
@@ -339,7 +339,7 @@ class InternalNotificationContainer
     public function withdrawUser(Withdraw $object): void
     {
         $message = "Запрос на вывод средств отправлен. Ожидайте ответа администрации";
-        $html = "<div class='notification'><p>{$message}</p></div>";
+        $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
         $notification = new Notification($user, $html);

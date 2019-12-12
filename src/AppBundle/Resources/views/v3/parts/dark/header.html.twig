@@ -11,9 +11,9 @@
             <div class="col-9">
                 <div class="info fx fx-between">
                     <div class="info__left fx align-center">
-                        {# Тут нужно будет вызывать NotificationController::widgetAction #}
-                        {%- include('@App/v3/Notification/widget.html.twig') -%}
-                        
+
+                        {{ render(controller('NotificationBundle\\Controller\\NotificationController::widgetAction', {'isNewTemplate' : 1})) }}
+
                         {# Тут нужно будет вызывать ManagerController::widgetAction (Логики с назначением менеджера пока нет, как будет тогда будет и виджет) #}
                         {%- include('@App/v3/Manager/widget.html.twig') -%}
                     </div>

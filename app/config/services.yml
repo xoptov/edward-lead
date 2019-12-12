@@ -228,6 +228,15 @@ services:
             - { name: sonata.admin, manager_type: orm, group: main, label: Member }
         public: true
 
+    app.admin.custom_view:
+        class: AppBundle\Admin\NotificationAdmin
+        arguments:
+            - ~
+            - ~
+            - NotificationBundle\Controller\Admin\NotificationController
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Mass Notification }
+
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
     AppBundle\Service\LeadManager:
@@ -339,3 +348,6 @@ services:
     AppBundle\Controller\API\v1\OfferController:
         arguments:
             $oneInInterval: '%offer_limit_in_seconds%'
+    
+    FOS\MessageBundle\EntityManager\ThreadManager:
+        alias: fos_message.thread_manager

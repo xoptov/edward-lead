@@ -288,6 +288,11 @@ body {
           transform: translateY(-50%);
 }
 
+
+.notice__btn.hide{
+  display: none;
+}
+
 .notice__btn_check {
   background: url(/bundles/app/v3/img/icons/i-check-green.png) center no-repeat;
 }
@@ -4496,4 +4501,15 @@ span.i-yes {
 .modal__assistant__icon:before {
   content: " ";
   position: absolute;
+}
+
+/* Custom */
+
+.notifications__popup__empty{
+  color: #3a3a3a;
+  margin: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

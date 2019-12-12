@@ -7,7 +7,7 @@
     </div>
     <div class="notifications__popup">
         {% for notification in notifications %}
-            <div class="notifications__popup__item {{ notification.readStatus == 'NEW' ? 'red-border' : '' }}" data-id="{{ notification.id }}">
+            <div class="notifications__popup__item {{ notification.readStatus == 'NEW' ? 'notice__item_red' : '' }}" data-id="{{ notification.id }}">
 
                 <div class="notifications__popup__item_header">
                     <div class="notifications__popup__item_type {{ notification.readStatus == 'NEW' ? 'green' : 'grey' }}">{{ notification.type | trans }}</div>
@@ -16,17 +16,16 @@
 
                 <div class="notifications__popup__item_container">
 
-                    <div class="notifications__popup__item_message">
+                    <div class="notice__item__body">
                         {{ notification.message | raw }}
                     </div>
 
                     <div class="notifications__popup__item_button_container">
 
-                        <i class="fas fa-check  notifications__popup__item_read {{ notification.readStatus == 'NEW' ? 'show' : 'hide' }}"
-                           data-id="{{ notification.id }}"></i>
-                        <i class="fas fa-sync  notifications__popup__item_unread {{ notification.readStatus == 'NEW' ?'hide' :  'show' }}"
-                           data-id="{{ notification.id }}"></i>
-                        <i class="fas fa-spinner notifications__popup__item_preloader hide"></i>
+                        <button class="notice__btn notice__btn_check notifications__popup__item_read {{ notification.readStatus == 'NEW' ? 'show' : 'hide' }}"
+                           data-id="{{ notification.id }}"></button>
+                        <button class="notice__btn notice__btn_refresh notifications__popup__item_unread {{ notification.readStatus == 'NEW' ?'hide' :  'show' }}"
+                           data-id="{{ notification.id }}"></button>
 
                     </div>
                 </div>
