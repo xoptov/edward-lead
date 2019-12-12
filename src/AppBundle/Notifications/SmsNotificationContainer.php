@@ -5,21 +5,22 @@ namespace AppBundle\Notifications;
 use AppBundle\Entity\ClientAccount;
 use AppBundle\Entity\Withdraw;
 use Exception;
+use NotificationBundle\Channels\SmsChannel;
 use NotificationBundle\Client\Client;
 
 class SmsNotificationContainer
 {
     /**
-     * @var Client
+     * @var SmsChannel
      */
     private $client;
 
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client $client
+     * @param SmsChannel $client
      */
-    public function __construct(Client $client)
+    public function __construct(SmsChannel $client)
     {
         $this->client = $client;
     }

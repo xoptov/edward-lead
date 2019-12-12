@@ -24,6 +24,7 @@ class TelegramHookHandler
 
     /**
      * TelegramHookHandler constructor.
+     *
      * @param ValidatorInterface $validator
      * @param EntityManagerInterface $entityManager
      */

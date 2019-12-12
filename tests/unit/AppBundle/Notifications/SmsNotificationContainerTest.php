@@ -7,6 +7,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Notifications\SmsNotificationContainer;
+use NotificationBundle\Channels\SmsChannel;
 use NotificationBundle\Client\Client;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,7 @@ class SmsNotificationContainerTest extends BaseNotificationContainerTestCase
 
     public function setUp()
     {
-        $this->smsClientMock = $this->createMock(Client::class);
+        $this->smsClientMock = $this->createMock(SmsChannel::class);
         $this->service = new SmsNotificationContainer($this->smsClientMock);
     }
 

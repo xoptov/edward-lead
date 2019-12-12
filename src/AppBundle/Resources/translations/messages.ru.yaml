@@ -234,6 +234,11 @@ NOTIFICATION: Уведомление
 IMPORTANT: Важное
 NEWS: Новости
 
+NAME_USER_API_TOKEN_CHANGED: Смена ключа API
+NAME_LEAD_NEW_PLACED: Новый лид в комнате, со статусом "Ожидает"
+NAME_LEAD_EXPECT_TOO_LONG: Лид более 2 часов со статусом "Ожидает"
+NAME_LEAD_IN_WORK_TOO_LONG: Лид более 24 часов со статусом "В работе"
+
 # Для новой вёрстки
 
 common:

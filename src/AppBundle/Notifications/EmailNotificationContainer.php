@@ -13,14 +13,15 @@ use AppBundle\Entity\Withdraw;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use NotificationBundle\Client\Client;
+use NotificationBundle\Channels\EmailChannel;
+use NotificationBundle\Constants\Cases;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class EmailNotificationContainer
 {
     /**
-     * @var Client
+     * @var EmailChannel
      */
     private $client;
 
@@ -28,6 +29,7 @@ class EmailNotificationContainer
      * @var UrlGeneratorInterface
      */
     private $router;
+
     /**
      * @var EntityManagerInterface
      */
@@ -36,11 +38,11 @@ class EmailNotificationContainer
     /**
      * EmailNotificationContainer constructor.
      *
-     * @param Client                 $client
+     * @param EmailChannel                 $client
      * @param UrlGeneratorInterface  $router
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(Client $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
+    public function __construct(EmailChannel $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->router = $router;
@@ -105,16 +107,18 @@ class EmailNotificationContainer
      */
     public function leadNewPlaced(Lead $object): void
     {
-        $this->client->send([
-            "to_email" => $object->getUser()->getEmail(),
-            "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
-            "params" => [
-                "ID_ROOM" => $object->getRoom()->getId(),
-                "NAME_ROOM" => $object->getRoom()->getName(),
-                "URL_ROOM" => $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]),
-                "ID_LEAD" => $object->getId()
+        $this->client->send(
+            [
+                "to_email" => $object->getUser()->getEmail(),
+                "template_id" => EsputnikEmailTemplate::NEW_LEAD_IN_ROOM,
+                "params" => [
+                    "ID_ROOM" => $object->getRoom()->getId(),
+                    "NAME_ROOM" => $object->getRoom()->getName(),
+                    "URL_ROOM" => $this->router->generate('app_room_view', ['id' => $object->getRoom()->getId()]),
+                    "ID_LEAD" => $object->getId()
+                ],
             ],
-        ]);
+            Cases::NAME_LEAD_NEW_PLACED);
     }
 
     /**
@@ -223,11 +227,13 @@ class EmailNotificationContainer
      */
     public function userApiTokenChanged(User $object): void
     {
-        $this->client->send([
-            "to_email" => $object->getEmail(),
-            "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
-            "params" => ["KEYAPI" => $object->getToken()],
-        ]);
+        $this->client->send(
+            [
+                "to_email" => $object->getEmail(),
+                "template_id" => EsputnikEmailTemplate::API_KEY_CHANGE,
+                "params" => ["KEYAPI" => $object->getToken()],
+            ],
+            Cases::NAME_USER_API_TOKEN_CHANGED);
     }
 
     /**
