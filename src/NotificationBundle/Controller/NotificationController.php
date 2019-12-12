@@ -69,7 +69,7 @@ class NotificationController extends Controller
         );
     }
 
-    public function renderPopupAction(): Response
+    public function widgetAction($isNewTemplate = false): Response
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -77,8 +77,13 @@ class NotificationController extends Controller
         $notifications = $this->notificationRepository->getForUser($user);
         $notificationCount = $this->notificationRepository->getNewCountForUser($user);
 
+        $oldTemplate = '@NotificationBundle/notification_widget_old.html.twig';
+        $newTemplate = '@App/v3/Notification/widget.html.twig';
+
+        $template = $isNewTemplate ? $newTemplate : $oldTemplate;
+
         return $this->render(
-            '@NotificationBundle/notification_menu.html.twig',
+            $template,
             [
                 'notifications' => $notifications,
                 'notificationCount' => $notificationCount
