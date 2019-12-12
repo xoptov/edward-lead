@@ -61,15 +61,15 @@ class Thread extends BaseThread implements IdentifiableInterface
     /**
      * const of type appeal
      */
-    const TYPE_ARBITRATION = 'arbitration';
-    const TYPE_SUPPORT     = 'support';
+    const TYPE_ARBITRATION   = 'arbitration';
+    const TYPE_SUPPORT       = 'support';
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="type_appeal", type="string", length=20)
      */
-    protected $typeAppeal;
+    protected $typeAppeal = self::TYPE_SUPPORT;
 
     /**
      * @var Lead|null

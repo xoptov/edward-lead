@@ -78,7 +78,9 @@ class RoomType extends AbstractType
                 if ($data->isTimer()) {
                     $groups[] = 'timer';
                 }
-
+                if ($data->isPublicOffer()) {
+                    $groups[] = 'offer';
+                }
                 return $groups;
             }
         ]);

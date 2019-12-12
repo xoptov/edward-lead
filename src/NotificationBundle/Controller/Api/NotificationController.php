@@ -65,19 +65,4 @@ class NotificationController extends Controller
 
         return new Response();
     }
-
-    /**
-     * @Route("/api/v1/notifications", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function massSendAction(Request $request): Response
-    {
-        // TODO make mass send
-
-        return new Response();
-    }
-
 }

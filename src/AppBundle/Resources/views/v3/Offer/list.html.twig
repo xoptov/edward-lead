@@ -1,0 +1,222 @@
+{% extends '@App/v3/layout_dark.html.twig' %}
+
+{% from '@App/v3/macros.html.twig' import room_lead_price %}
+
+{% block content %}
+    <div class="content" id="offers-list">
+        <div class="title title__offers fx fx-between fx-wrap align-center">
+            <h3 class="title__h3">Офферы</h3>
+            {% if not has_offer_in_interval(app.user, offer_limit_in_seconds) -%}
+                <div class="title__links" v-if="!isRequestSended">
+                    {%- if is_granted('ROLE_ADVIRTISER') -%}
+                        <a href="#" 
+                           class="title__links__item"
+                           @click="$emit('publication-offer')">
+                                Опубликовать свой оффер
+                        </a>
+                    {%- elseif is_granted('ROLE_WEBMASTER') -%}
+                        <a href="#" 
+                           class="title__links__item"
+                           @click="$emit('need-offer')">
+                                Не нашли подходящий оффер?
+                        </a>
+                    {%- endif -%}
+                </div>
+            {%- endif %}
+        </div>
+        {% if rooms|length -%}
+            <div class="offers">
+                {% for room in rooms -%}
+                    <div class="offers__item">
+                        <div class="row fx fx-wrap">
+                            <div class="col-5">
+                                <div class="offers__left">
+                                    <div class="offers__title">
+                                        <p class="offers__title__small">Название оффера</p>
+                                        <h5 class="fx align-center">
+                                            {{- room.name -}}&nbsp;
+                                            <span class="dots {{ room.enabled ? 'dots__green' : 'dots__red' }}"></span>
+                                        </h5>
+                                    </div>
+                                    <div class="offers__criteria">
+                                        <p class="offers__title__small">Критерии целевого лида</p>
+                                        <p class="offers__criteria__list">{{ room.leadCriteria }}</p>
+                                    </div>
+                                    <div class="offers__info fx align-center">
+                                        <div class="offers__info__item">{{ 'common.rate'|trans }}: <span>
+                                            {{ room_lead_price(room) }}
+                                        </span></div>
+                                        <div class="offers__info__item">{{ 'common.hold'|trans }}: <span>48 часов</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <div class="offers__right">
+                                    <div class="row fx align-center">
+                                        <div class="offers__right__top__txt col-6">
+                                            <div class="offers__title">
+                                                <p class="offers__title__small">География</p>
+                                                <h5 class="fx align-center">
+                                                    {% if room.locations|length -%}
+                                                        {{ room.locations|map(l => "#{l.name}")|join(', ', 'common.and'|trans({'%before%':' ','%after%':' '})) }}
+                                                    {%- endif %}
+                                                </h5>
+                                            </div>
+                                            <div class="offers__title">
+                                                <p class="offers__title__small">Сфера деятельности</p>
+                                                <h5 class="fx align-center">{{ room.sphere }}</h5>
+                                            </div>
+                                        </div>
+                                        <div class="offers__right__top__img col-6 text-center">
+                                            {% if room.logotype is not empty %}
+                                                <img src="{{ room.logotype|imagine_filter('thumbnail_145x58') }}" alt="Логотип">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="offers__channels">
+                                        <p class="offers__title__small">Рекамные каналы</p>
+                                        <div class="offers__channels__box row fx fx-wrap">
+                                            <div class="col-6">
+                                                {% if room.channels|length -%}
+                                                    <ul class="offers__channels__list speed">
+                                                        {% for channel in room.channels -%}
+                                                            <li class="offers__channels__item">
+                                                                <span class="offers__channels__icon {{ channel.allowed ? 'i-yes' : 'i-not' }}"></span>{{ channel.propertyValue }}
+                                                            </li>
+                                                        {%- endfor %}
+                                                    </ul>
+                                                {%- endif %}
+                                            </div>
+                                            <div class="col-6">
+                                                <ul class="offers__channels__list speed">
+                                                    <li class="offers__channels__item">
+                                                        {% if room.isMember(app.user) %}
+                                                            <p class="offers__channels__request">Вы подключены!</p>
+                                                        {% elseif is_granted('ROLE_WEBMASTER') and not room.isOwner(app.user) %}
+                                                            <p class="offers__channels__request"
+                                                                style="display:none;" 
+                                                                :style="{'display': isSuccess({{ room.id }}) ? 'block' : 'none'}">
+                                                                Запрос принят
+                                                            </p>
+                                                            <p class="offers__channels__request"
+                                                                style="display:none;"
+                                                                :style="{'display': isError({{ room.id }}) ? 'block' : 'none'}">
+                                                                Произошла ошибка
+                                                            </p>
+                                                            {% if room.autoJoin -%}                                        
+                                                                <button 
+                                                                    class="btn btn__green offers__channels__btn"
+                                                                    style="display:none;"
+                                                                    :style="{'display': !isSended({{ room.id }}) ? 'inline-block' : 'none'}"
+                                                                    @click="joinToRoom({{ room.id }})">
+                                                                    Подключить оффер
+                                                                </button>
+                                                            {%- else -%}
+                                                                {% if not room.hasJoinRequest(app.user) -%}
+                                                                    <button
+                                                                        class="btn btn__red offers__channels__btn"
+                                                                        style="display:none;"
+                                                                        :style="{'display': !isSended({{ room.id }}) ? 'inline-block' : 'none'}"
+                                                                        @click.prevent="connectRequest({{ room.id }})">
+                                                                        Запрос подключения
+                                                                    </button>
+                                                                {%- else -%}
+                                                                    <p class="offers__channels__request">Запрос уже отправлен</p>
+                                                                {%- endif %}
+                                                            {%- endif %}
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        {# <span class="offers__channels__hide speed">Развернуть все каналы</span> #}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {%- endif %}
+    </div>
+{% endblock %}
+
+{% block modals -%}  
+    <div id="modals">
+        <div class="modal modal_request" 
+            style="display:none;"
+            v-show="isRequestResultShow"
+            @click="closeModal('requestResult')">
+            <div class="modal__box flex-center">
+                <div class="modal__offer text-center" v-if="isRequestSuccess">
+                    <h4 class="modal__offer__title">Ваш запрос отправлен</h4>
+                    <p class="modal__offer__paragraph">Модератор свяжется с Вами для уточнения источника трафика и прочей информации.</p>
+                    <p class="modal__offer__paragraph">Среднее время подключения - 10 часов.</p>
+                </div>
+                <div class="modal__offer text-center" v-else-if="isRequestError">
+                    <h4 class="modal__offer__title">Ошибка отправки запроса</h4>
+                    <p class="modal__offer__paragraph">Вам необходимо связаться со службой техподдержки для уточнения статуса запроса.</p>
+                </div>
+            </div>
+        </div>
+        {% if is_granted('ROLE_WEBMASTER') -%}
+            <div class="modal modal_not-found" 
+                style="display:none;"
+                v-show="isNeedOfferShow">
+                <div class="modal__box flex-center">
+                    <div class="modal__offer">
+                        <h4 class="modal__offer__title">Не нашли подходящий для себя оффер?</h4>
+                        <p class="modal__offer__paragraph">Оставьте запрос и наша служба поддержки свяжется с Вами и постарается подобрать подходящего рекламодателя из нашей базы.</p>
+                        <div class="modal__box__control flex-center">
+                            <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
+                            <button class="btn modal__close" @click="closeModal('needOffer')">
+                                Отменить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%- elseif is_granted('ROLE_ADVERTISER') -%}
+            <div class="modal modal_publish" 
+                 style="display:none;"
+                 v-show="isPublicationOfferShow">
+                <div class="modal__box flex-center">
+                    <div class="modal__offer">
+                        <h4 class="modal__offer__title">Чтобы опубликовать свой оффер в каталоге, требуется согласовать его с администрацией платформы.</h4>
+                        <p class="modal__offer__paragraph">Перед тем как подать запрос на добавление своего оффера в каталог, прочитайте <br /><a href="#">правила и критерии публичных офферов.</a></p>
+                        <p class="modal__offer__paragraph">Если Ваше предложение соотвествует им, Вы можете отправить запрос.</p>
+                        <div class="registration__form__chek fx align-start">
+                            <!-- <div class="registration__form__chek registration__form__chek_error fx align-start"> -->
+                            <div class="check fx">
+                                <label class="check__item">
+                                    <input type="checkbox" name="check" checked="checked">
+                                    <span class="check__mark"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="registration__form__chek__txt">Я прочитал <a href="#">правила и критерии публичных офферов</a> и прошу расмотреть мою заявку на добавление в каталог.</div>
+                    </div>
+                    <div class="modal__box__control flex-center">
+                        <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
+                        <button class="btn modal__close" @click="closeModal('publicationOffer')">
+                            Отменить
+                        </button>
+                    </div>
+                    <div class="modal__offer__error">Чтобы отправить запрос на добавление, прочитайте и согласитесь с правилами и критериями публичных офферов.</div>
+                </div>
+            </div>
+        {%- endif %}
+    </div>
+{%- endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/v3/js/offer/list.js') }}"></script>
+{% endblock %}

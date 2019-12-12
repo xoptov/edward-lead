@@ -1,0 +1,20 @@
+.mass_notification{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+.mass_notification .mass_notification_container{
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mass_notification .mass_notification_container textarea{
+    width: 100%;
+    margin-bottom: 20px;
+    height: 200px;
+}

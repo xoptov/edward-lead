@@ -221,16 +221,24 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|HistoryAction
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\HistoryAction", mappedBy="user")
      */
     private $historyActions;
 
+    /**
+     * @var ArrayCollection|OfferRequest
+     * 
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
+     */
+    private $offerRequests;
+
     public function __construct()
     {
         $this->historyActions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->offerRequests = new ArrayCollection();
     }
 
     /**
@@ -851,6 +859,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getHistoryActions(): Collection
     {
         return $this->historyActions;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOfferRequests(): Collection
+    {
+        return clone $this->offerRequests;
     }
 
     /**

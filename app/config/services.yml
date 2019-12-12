@@ -212,6 +212,7 @@ services:
         public: true
         calls:
             - [setRoomManager, ['@AppBundle\Service\RoomManager']]
+            - [setUploader, ['@AppBundle\Service\Uploader']]
 
     app.admin.lead:
         class: AppBundle\Admin\LeadAdmin
@@ -226,6 +227,15 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, group: main, label: Member }
         public: true
+
+    app.admin.custom_view:
+        class: AppBundle\Admin\NotificationAdmin
+        arguments:
+            - ~
+            - ~
+            - NotificationBundle\Controller\Admin\NotificationController
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: main, label: Mass Notification }
 
     Sonata\DoctrineORMAdminBundle\Model\ModelManager: '@sonata.admin.manager.orm'
 
@@ -313,10 +323,6 @@ services:
             $sender: '@fos_message.sender.default'
             $messageLimitInMinute: '%message_limit_in_minute%'
 
-    AppBundle\Controller\API\v1\SupportController:
-        arguments:
-            $threadManager: '@fos_message.thread_manager.default'
-
     AppBundle\Controller\API\v1\PaymentController:
         arguments:
             $paymentGatewayToken: '%payment_gateway_token%'
@@ -332,3 +338,13 @@ services:
     AppBundle\Validator\Constraints\UniqueLeadValidator:
         tags:
             - { name: validator.constraint_validator }
+
+    FOS\MessageBundle\Sender\SenderInterface:
+        alias: fos_message.sender
+    
+    FOS\MessageBundle\Composer\ComposerInterface:
+        alias: fos_message.composer
+    
+    AppBundle\Controller\API\v1\OfferController:
+        arguments:
+            $oneInInterval: '%offer_limit_in_seconds%'
