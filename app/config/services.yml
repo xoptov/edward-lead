@@ -330,27 +330,11 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    AppBundle\Notifications\EmailNotificationContainer:
-        arguments:
-            $client: '@notification_bundle.email_client'
-
-    AppBundle\Notifications\WebPushNotificationContainer:
-        arguments:
-            $client: '@notification_bundle.web_push_client'
-
-    AppBundle\Notifications\SmsNotificationContainer:
-        arguments:
-            $client: '@notification_bundle.sms_client'
-
     FOS\MessageBundle\Sender\SenderInterface:
         alias: fos_message.sender
     
     FOS\MessageBundle\Composer\ComposerInterface:
         alias: fos_message.composer
-
-    AppBundle\Notifications\InternalNotificationContainer:
-        arguments:
-            $client: '@notification_bundle.internal_client'
     
     AppBundle\Controller\API\v1\OfferController:
         arguments:
