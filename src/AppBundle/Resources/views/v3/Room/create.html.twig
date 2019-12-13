@@ -30,44 +30,81 @@
         </div>
 
         <!-- Create room -->
-
-        <form action="#" class="row create-room room-validation form fx fx-wrap fx-between">
+        {{ form_start(form, {'attr': {'novalidate': true, 'class':"row create-room room-validation form fx fx-wrap fx-between"}}) }}
+        {# <form action="#" class="row create-room room-validation form fx fx-wrap fx-between"> #}
         <div class="col-7">
             <div class="create-room__box">
+                {% if form.vars.errors|length %}
+                    {% for error in form.vars.errors %}
+                        <span class="text-error">{{ error.message }}</span>
+                    {% endfor %}
+                {% endif %}
             <div class="create-room__top">
                 <div class="form__input form__input__item">
-                <span class="form__input__title">Придумайте название комнаты:</span>
-                <label class="form__input__field"><input type="text" class="room_title" placeholder="пример: Офис на Московской" /><span class="form__input__surely"></span></label>
+                    <span class="form__input__title">Придумайте название комнаты:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.name, {'attr': {'type': 'text', 'class':'room_title', 'placeholder': 'пример: Офис на Московской'}}) }}
+                        <span class="form__input__surely"></span>
+                    </label>
+                    {% if form.name.vars.errors|length %}
+                        <span class="text-error">{{ form.name.vars.errors[0].message }}</span>
+                    {% endif %}
                 </div>
                 <div class="form__input form__input__item">
-                <span class="form__input__title">Укажите одну сферу деятельности:</span>
-                <label class="form__input__field"><input type="text" class="room_activity" placeholder="пример: Пластиковые окна" /><span class="form__input__surely"></span></label>
+                    <span class="form__input__title">Укажите одну сферу деятельности:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.sphere, {'attr': {'class': 'room_activity', 'type':'text', 'placeholder': 'пример: Пластиковые окна'}}) }}
+                        <span class="form__input__surely"></span>
+                    </label>
+                    {% if form.sphere.vars.errors|length %}
+                        <span class="text-error">{{ form.sphere.vars.errors[0].message }}</span>
+                    {% endif %}
                 </div>
             </div>
             <div class="create-room__criteria">
                 <h5 class="title__h5">Критерий целевого лида:</h5>
+                
                 <div class="create-room__criteria__fields">
-                <div class="form__input form__input__item">
-                    <span class="form__input__title">1.</span>
-                    <label class="form__input__field"><input type="text" class="room_criteria" placeholder="пример: Хочет купить окна в Москве и МО" /><span class="form__input__surely"></span></label>
+                    <div class="form__input form__input__item">
+                        <span class="form__input__title">1.</span>
+                        <label class="form__input__field">
+                            <input type="text" class="room_criteria" placeholder="пример: Хочет купить окна в Москве и МО" />
+                            <span class="form__input__surely"></span>
+                        </label>
+                    </div>
+                    <div class="form__input form__input__item">
+                        <span class="form__input__title">2.</span>
+                        <label class="form__input__field">
+                            <input type="text" placeholder="пример: Бюджет покупки от 10.000 рублей" />
+                            <span class="form__input__remove"></span>
+                        </label>
+                    </div>
                 </div>
-                <div class="form__input form__input__item">
-                    <span class="form__input__title">2.</span>
-                    <label class="form__input__field"><input type="text" placeholder="пример: Бюджет покупки от 10.000 рублей" /><span class="form__input__remove"></span></label>
-                </div>
-                </div>
+
                 <div class="create-room__criteria__control fx fx-between fx-wrap">
                 <a href="#" class="create-room__criteria__control__btn">Пример заполнения и зачем это нужно</a>
                 <a href="#" class="create-room__criteria__control__btn">Добавить еще</a>
                 </div>
+
             </div>
+            
             <div class="lead-cost">
                 <div class="form__input form__input__item">
-                <span class="form__input__title">Стоимость лида:</span>
-                <label class="form__input__field"><input type="text" placeholder="пример: 500" /><span class="form__input__currency">руб.</span></label>
+                    <span class="form__input__title">Стоимость лида:</span>
+                    <label class="form__input__field">
+                        {# <input type="text" placeholder="пример: 500" /> #}
+                        {{ form_widget(form.leadPrice, {'attr': {'type': 'text', 'placeholder': 'пример: 500' }}) }}
+                        <span class="form__input__currency">руб.</span>
+                    </label>
+                    {% if form.leadPrice.vars.errors|length %}
+                        <span class="text-error">{{ form.leadPrice.vars.errors[0].message }}</span>
+                    {% endif %}
                 </div>
             </div>
-            <button class="btn btn__green form__btn create-room__btn">Создать новую комнату</button>
+            
+            {# <button class="btn btn__green form__btn create-room__btn">Создать новую комнату</button> #}
+            {{ form_widget(form.submit, {'label': 'Создать новую комнату','attib':{ 'class':'btn btn__green form__btn create-room__btn'} }) }}
+            {# TODO: Я тут заккончил #}
             </div>
         </div>
         <div class="col-5">
@@ -193,7 +230,8 @@
             </div>
             </div>
         </div>
-        </form>
+        {# </form> #}
+        {{ form_end(form) }}
 
     </div>
 {% endblock %}
