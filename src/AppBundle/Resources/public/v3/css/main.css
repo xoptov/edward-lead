@@ -4454,7 +4454,7 @@ span.i-yes {
 }
 
 .modal__offer__error {
-  display: none;
+  /* display: none; */
   color: #e82d2d;
   font-size: 12px;
   margin-top: 15px;
