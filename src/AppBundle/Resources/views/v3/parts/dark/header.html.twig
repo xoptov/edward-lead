@@ -27,7 +27,7 @@
                             <span class="user__panel__img"><img src="/bundles/app/v3/img/icon_2.png"></span>
                             <div class="user__panel__nav__box">
                                 <ul class="user__panel__nav">
-                                `   {% if is_granted('ROLE_ADMIN') -%}
+                                    {% if is_granted('ROLE_ADMIN') -%}
                                         <li class="user__panel__nav__item">
                                             <a href="{{ path('sonata_admin_dashboard') }}" class="user__panel__nav__link">{{ 'menu.admin_panel'|trans }}</a>
                                         </li>
