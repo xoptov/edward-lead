@@ -209,7 +209,7 @@ class RoomController extends Controller
      */
     public function inviteAction(Room $room): Response
     {
-        return $this->render('@App/v2/Room/invite.html.twig', ['room' => $room]);
+        return $this->render('@App/v3/Room/invite.html.twig', ['room' => $room]);
     }
 
     /**

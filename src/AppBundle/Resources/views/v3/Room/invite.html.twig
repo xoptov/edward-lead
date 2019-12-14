@@ -1,0 +1,42 @@
+{% extends '@App/v3/layout_dark.html.twig' %}
+{% block content %}
+    <!-- Content -->
+
+    <div class="content">
+
+        <!-- Title -->
+        
+        <div class="title">
+        <h3 class="title__h3">Пригласить участника в комнату #{{ room.id }} - {{ room.name }}</h3>
+        </div>
+
+        <!-- Party invitation -->
+
+        <div class="party-invitation row fx fx-wrap">
+        <div class="col-6">
+            <div class="party-invitation__link">
+            <h4 class="title__h4">Отправьте ссылку</h4>
+            <label class="form__input__field" onclick="copyTxt()">
+                <span class="party-invitation__link__icon"></span>
+                <input type="text" value="{{ absolute_url(path('app_index', {'i': room.inviteToken[26:]})) }}" id="copy-link">
+            </label>
+            <p class="create-room__paragraph">Вы можете отправить партнеру прямую ссылку, чтобы пригласить присоединиться его к своей комнате</p>
+            </div>
+        </div> 
+        <div class="col-6">
+            <div class="party-invitation__link">
+            <h4 class="title__h4">Отправьте приглашение на эл. почту</h4>
+            {# TODO: прикрутить обработку формы отправки приглашения #}
+            <form action="#" class="form party-invitation__form party-validation">
+                <label class="form__input__field">
+                <input type="text" class="form_email" placeholder="Введите E-mail">
+                </label>
+                <button class="btn btn__green">Отправить</button>
+            </form>
+            <p class="create-room__paragraph">Партнёру придёт письмо с приглашением присоединиться к закрытой комнате</p>
+            </div>
+        </div>
+        </div>
+
+    </div>
+{% endblock %}
