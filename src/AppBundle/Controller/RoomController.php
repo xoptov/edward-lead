@@ -332,7 +332,7 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_invite_invalid');
         }
 
-        return $this->render('@App/v2/Room/invite_reject.html.twig');
+        return $this->render('@App/v3/Room/invite_reject.html.twig');
     }
 }
 
