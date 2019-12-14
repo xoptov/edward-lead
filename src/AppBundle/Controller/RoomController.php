@@ -219,7 +219,7 @@ class RoomController extends Controller
      */
     public function inviteInvalidAction(): Response
     {
-        return $this->render('@App/v2/Room/invite_invalid.html.twig');
+        return $this->render('@App/v3/Room/invite_invalid.html.twig');
     }
 
     /**
