@@ -131,7 +131,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Компания создана');
 
-                return $this->redirectToRoute('app_room_list');
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -189,7 +192,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о компании обновлена');
 
-                return $this->redirectToRoute('app_updating_office', ['id' => $company->getId()]);
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -227,7 +233,7 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о офисе сохранена');
 
-                return $this->redirectToRoute('app_profile');
+                return $this->redirectToRoute('app_room_list');
             }
         }
 
