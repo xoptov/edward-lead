@@ -5,9 +5,14 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
+ * @UniqueEntity(
+ *     fields={"room", "property"},
+ *     message="Не уникальные каналы поступления в пределах комнаты"
+ * )
  */
 class RoomChannel
 {
