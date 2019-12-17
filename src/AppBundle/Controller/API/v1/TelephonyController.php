@@ -2,10 +2,9 @@
 
 namespace AppBundle\Controller\API\v1;
 
-use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Trade;
 use Psr\Log\LoggerInterface;
-use AppBundle\Entity\Account;
 use AppBundle\Entity\PhoneCall;
 use AppBundle\Entity\PBX\Callback;
 use AppBundle\Service\PhoneCallManager;
@@ -73,7 +72,7 @@ class TelephonyController extends APIController
 
         if (!$this->isGranted(TradeVoter::MAKE_CALL, $trade)) {
             return new JsonResponse(
-                ['error' => 'Для звонка лиду вы должны его сначала купить'],
+                ['Для звонка лиду вы должны его сначала купить'],
                 Response::HTTP_FORBIDDEN
             );
         }
@@ -81,7 +80,10 @@ class TelephonyController extends APIController
         $telephonyEnabled = $this->getParameter('telephony_enabled');
 
         if (!$telephonyEnabled) {
-            return new JsonResponse(['error' => 'Телефония отключена'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                ['Телефония отключена'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         /** @var User $user */
@@ -94,7 +96,7 @@ class TelephonyController extends APIController
             $errorMessage = 'Ошибка при запросе на соединение по телефону';
             $logger->error($errorMessage, ['message' => $e->getMessage()]);
 
-            return new JsonResponse(['error' => $errorMessage], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([$errorMessage], Response::HTTP_BAD_REQUEST);
         } catch (OperationException $e) {
             /** @var PhoneCall $phoneCall */
             $phoneCall = $e->getOperation();
@@ -109,18 +111,21 @@ class TelephonyController extends APIController
             }
 
             $this->entityManager->flush();
-
             $logger->error($e->getMessage());
 
-            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (InsufficientFundsException $e) {
             return new JsonResponse(
-                ['error' => $e->getMessage(), 'amount' => $e->getNeedle() / Account::DIVISOR],
+                [$e->getMessage()],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        } catch (InsufficientFundsException $e) {
+
+            return new JsonResponse(
+                [$e->getMessage()],
                 Response::HTTP_PAYMENT_REQUIRED
             );
         }
 
-        return new JsonResponse(['message' => 'Запрос на соединение принят, ожидайте соединение с лидом']);
+        return new JsonResponse(['Запрос на соединение принят, ожидайте соединение с лидом']);
     }
 
     /**
@@ -129,10 +134,10 @@ class TelephonyController extends APIController
      * @param Request         $request
      * @param LoggerInterface $logger
      *
-     * @return JsonResponse
+     * @return Response
      * @todo: переделать обработку результата звонка после ответа серверу. KERNEL_TERMINATE событие.
      */
-    public function postCallbackAction(Request $request, LoggerInterface $logger): JsonResponse
+    public function postCallbackAction(Request $request, LoggerInterface $logger): Response
     {
         if ('dev' === $this->getParameter('kernel.environment')) {
             $logger->debug('Callback from PBX', ['data' => $request->request->all()]);
@@ -164,7 +169,10 @@ class TelephonyController extends APIController
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            return $this->responseErrors($form->getErrors(true));
+            $errors = $form->getErrors(true);
+            $logger->error('Ошибка в формате данных Callback от PBX', ['errors' => (string)$errors]);
+
+            return $this->responseErrors($errors);
         }
 
         try {
@@ -180,15 +188,21 @@ class TelephonyController extends APIController
             $errorMessage = 'Ошибка обработки телефонного вызова';
             $logger->error($errorMessage, ['message' => $e->getMessage()]);
 
-            return new JsonResponse(['error' => $errorMessage], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(
+                [$errorMessage],
+                Response::HTTP_BAD_REQUEST
+            );
 
         } catch (\Exception $e) {
             $errorMessage = 'Ошибка обработки callback от PBX';
             $logger->error($errorMessage, ['message' => $e->getMessage()]);
 
-            return new JsonResponse(['error' => $errorMessage], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse(
+                [$errorMessage],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
-        return new JsonResponse(['message' => 'Данные о звонке успешно приняты']);
+        return new Response();
     }
 }

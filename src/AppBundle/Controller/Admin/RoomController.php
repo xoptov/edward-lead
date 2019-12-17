@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
-use AppBundle\Service\RoomManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -19,33 +18,11 @@ class RoomController extends CRUDController
     private $entityManager;
 
     /**
-     * @var RoomManager
-     */
-    private $roomManager;
-
-    /**
      * @param EntityManagerInterface $entityManager
-     * @param RoomManager            $roomManager
      */
-    public function __construct(
-        RoomManager $roomManager,
-        EntityManagerInterface $entityManager
-    ) {
-        $this->entityManager = $entityManager;
-        $this->roomManager = $roomManager;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function preCreate(Request $request, $object)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        /** @var Room $object */
-        $owner = $object->getOwner();
-
-        if ($owner) {
-            $this->roomManager->joinInRoom($object, $owner);
-        }
+        $this->entityManager = $entityManager;
     }
 
     /**

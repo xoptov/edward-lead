@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/libs.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/v2/css/main.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/blocked-modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/notification/css/notification_widget_old.css') }}">
     {%- endblock %}
     <title>Edward лидогенерация</title>
     {% include '@App/google_tag_manager_head.html.twig' %}
@@ -60,6 +61,8 @@
         {%- endif -%}
         <script src="{{ asset('bundles/app/v2/js/libs.min.js') }}"></script>
         <script src="{{ asset('bundles/app/v2/js/main.js') }}"></script>
+        <script src="{{ asset('bundles/notification/js/notification_widget.js') }}"></script>
+        <script src="{{ asset('bundles/notification/js/web_push_token_handler.js') }}"></script>
     {%- endblock %}
     {% include '@App/google_tag_manager_body.html.twig' %}
 </body>

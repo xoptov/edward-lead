@@ -10,6 +10,7 @@ use AppBundle\Entity\Part\TimeTrackableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use NotificationBundle\Entity\UserNotificationTrait;
+use NotificationBundle\Entity\UserWithWebPushInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use NotificationBundle\Entity\UserNotificationInterface;
 use NotificationBundle\Entity\UserWithTelegramInterface;
@@ -22,7 +23,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks
  * @UniqueEntity(fields={"email"}, message="Пользователь с таким email уже существует")
  */
-class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface, UserNotificationInterface, UserWithTelegramInterface
+class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableInterface, UserNotificationInterface, UserWithTelegramInterface, UserWithWebPushInterface
 {
     use IdentificatorTrait,
         UserNotificationTrait,
@@ -220,16 +221,24 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollection|HistoryAction
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\HistoryAction", mappedBy="user")
      */
     private $historyActions;
 
+    /**
+     * @var ArrayCollection|OfferRequest
+     * 
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
+     */
+    private $offerRequests;
+
     public function __construct()
     {
         $this->historyActions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->offerRequests = new ArrayCollection();
     }
 
     /**
@@ -850,6 +859,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getHistoryActions(): Collection
     {
         return $this->historyActions;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOfferRequests(): Collection
+    {
+        return clone $this->offerRequests;
     }
 
     /**

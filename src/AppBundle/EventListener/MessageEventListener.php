@@ -27,6 +27,7 @@ class MessageEventListener extends BaseEventListener implements EventSubscriberI
     public function handleNewCreated(MessageEvent $event): void
     {
         $this->emailNotificationContainer->messageCreated($event->getMessage());
+        $this->internalNotificationContainer->messageCreated($event->getMessage());
     }
 
     /**
@@ -37,5 +38,7 @@ class MessageEventListener extends BaseEventListener implements EventSubscriberI
     public function handleSupportReply(MessageEvent $event): void
     {
         $this->emailNotificationContainer->messageSupportReply($event->getMessage());
+        $this->webPushNotificationContainer->messageSupportReply($event->getMessage());
+        $this->internalNotificationContainer->messageAboutLead($event->getMessage());
     }
 }

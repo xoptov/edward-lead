@@ -28,6 +28,13 @@ trait UserNotificationTrait
     private $telegramAuthToken;
 
     /**
+     * @var string|null
+     *
+     * @ORM\Column(name="web_push_token", type="string", length=255, nullable=true)
+     */
+    private $webPushToken;
+
+    /**
      * @return mixed
      */
     public function getNotifications()
@@ -73,5 +80,21 @@ trait UserNotificationTrait
     public function setTelegramAuthToken(string $telegramAuthToken): void
     {
         $this->telegramAuthToken = $telegramAuthToken;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getWebPushToken(): ?string
+    {
+        return $this->webPushToken;
+    }
+
+    /**
+     * @param string $webPushToken
+     */
+    public function setWebPushToken(string $webPushToken): void
+    {
+        $this->webPushToken = $webPushToken;
     }
 }

@@ -1,0 +1,16 @@
+.notification_configuration  form .btn{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.notification_configuration  form input[type="radio"]{
+    margin-bottom: 10px;
+}
+
+.notification_configuration  table tr{
+    height: 100px;
+}
+
+.notification_configuration table, td, th {
+    border: 1px solid rgb(222, 222, 222);
+    text-align: center;
+}

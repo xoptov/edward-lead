@@ -27,7 +27,9 @@ class AccountEventListener extends BaseEventListener implements EventSubscriberI
     public function handleBalanceApproachingZero(AccountEvent $event): void
     {
         $this->emailNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-
+        $this->webPushNotificationContainer->accountBalanceApproachingZero($event->getAccount());
+        $this->smsNotificationContainer->accountBalanceApproachingZero($event->getAccount());
+        $this->internalNotificationContainer->accountBalanceApproachingZero($event->getAccount());
     }
 
     /**
@@ -38,5 +40,8 @@ class AccountEventListener extends BaseEventListener implements EventSubscriberI
     public function handleBalanceLowerThenMinimal(AccountEvent $event): void
     {
         $this->emailNotificationContainer->accountBalanceLowerThenMinimal($event->getAccount());
+        $this->webPushNotificationContainer->accountBalanceApproachingZero($event->getAccount());
+        $this->smsNotificationContainer->accountBalanceApproachingZero($event->getAccount());
+        $this->internalNotificationContainer->accountBalanceLowerThenMinimal($event->getAccount());
     }
 }

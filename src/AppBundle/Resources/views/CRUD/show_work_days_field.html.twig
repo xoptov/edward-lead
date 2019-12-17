@@ -1,0 +1,12 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value is not empty %}
+        {% set workDays = humanize_work_days(value) %}
+        <div>
+            {% for workDay in workDays %}
+                <span class="label label-default">{{ workDay }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

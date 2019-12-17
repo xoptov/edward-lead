@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{ asset('bundles/app/css/style.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/index.css') }}">
         <link rel="stylesheet" href="{{ asset('bundles/app/css/blocked-modal.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/notification/css/notification_widget_old.css') }}">
     {% endblock %}
     <title>Edward лидогенерация</title>
     {% include '@App/google_tag_manager_head.html.twig' %}
@@ -39,6 +40,9 @@
                         </a>
                     {% endif %}
                 </div>
+
+                {{ render(controller('NotificationBundle\\Controller\\NotificationController::widgetAction')) }}
+
                 <div class="header__balance-box">
                     <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>
                     {% if is_granted('ROLE_COMPANY') %}
@@ -70,7 +74,11 @@
             <script src="{{ asset('bundles/app/js/lib/jquery-3.4.1.js') }}"></script>
         {%- endif -%}
         <script src="{{ asset('bundles/app/js/main.js') }}"></script>
+        <script src="{{ asset('bundles/notification/js/notification_widget.js') }}"></script>
+        <script src="{{ asset('bundles/notification/js/web_push_token_handler.js') }}"></script>
+
     {% endblock %}
     {% include '@App/google_tag_manager_body.html.twig' %}
+
 </body>
 </html>

@@ -73,7 +73,7 @@ $(function() {
 });
 
 $('.tabs-nav li').click(function (e) {
-   var a = $(this),
+   let a = $(this),
       parent = a.parents('.tabs'),
       nav = parent.children('.tabs-nav').children('li'),
       box = parent.children('.tabs-box').children('div');

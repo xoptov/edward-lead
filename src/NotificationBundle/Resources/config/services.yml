@@ -13,10 +13,11 @@ services:
 
   _defaults:
     autowire: true
+    autoconfigure: true
 
   NotificationBundle\:
     resource: '../../*'
-    exclude: '../../{Entity,Repository,Event,Client,tests}'
+    exclude: '../../{Entity,Event,tests}'
 
   Zelenin\SmsRu\Auth\ApiIdAuth:
     arguments:
@@ -41,22 +42,9 @@ services:
 
   Brownie\ESputnik\HTTPClient\HTTPClient:
 
-  notification_bundle.web_push_client:
-    class: NotificationBundle\Client\EsputnikWebPushClient
+  NotificationBundle\Client\EsputnikWebPushClient:
     arguments:
       $eventPushKey: '%nb_smsru_esputik_event_push_key%'
-
-  notification_bundle.email_client:
-    class: NotificationBundle\Client\EsputnikEmailClient
-
-  notification_bundle.sms_client:
-    class: NotificationBundle\Client\SmsRuClient
-
-  notification_bundle.internal_client:
-    class: NotificationBundle\Client\InternalClient
-
-  notification_bundle.telegram_client:
-    class: NotificationBundle\Client\TelegramClient
 
   Brownie\ESputnik\HTTPClient\Client: '@Brownie\ESputnik\HTTPClient\CurlClient'
 

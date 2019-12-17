@@ -5,8 +5,11 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Room\Schedule;
 use AppBundle\Entity\Part\EnabledTrait;
-use AppBundle\Entity\Part\TimeTrackableTrait;
+use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use AppBundle\Entity\Part\TimeTrackableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -40,6 +43,18 @@ class Room implements IdentifiableInterface
     private $name;
 
     /**
+     * @var string
+     * 
+     * @ORM\Column(name="logotype", type="string", nullable=true)
+     */
+    private $logotype;
+
+    /**
+     * @var UploadedFile|null
+     */
+    private $uploadedLogotype;
+
+    /**
      * @var string|null
      *
      * @Assert\NotBlank(message="Сфера должна быть указана")
@@ -64,14 +79,29 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Range(min="100", minMessage="Минимальная стоимость 1", max="999900", maxMessage="Максимальная стоимость 9999")
+     * @Assert\Range(
+     *     min="100",
+     *     minMessage="Минимальная стоимость 1",
+     *     max="999999",
+     *     maxMessage="Максимальная стоимость 9999.99"
+     * )
      *
-     * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="lead_price", 
+     *     type="integer", 
+     *     nullable=true, 
+     *     options={"unsigned":"true"}
+     * )
      */
     private $leadPrice;
 
     /**
      * @var bool
+     *
+     * @Assert\IsTrue(
+     *     message="Гарантия должна быть включена если включен таймер",
+     *     groups={"timer"}
+     * )
      *
      * @ORM\Column(name="platform_warranty", type="boolean")
      */
@@ -80,16 +110,29 @@ class Room implements IdentifiableInterface
     /**
      * @var float|null
      *
-     * @ORM\Column(name="buyer_fee", type="float", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="buyer_fee", 
+     *     type="float", 
+     *     nullable=true, 
+     *     options={"unsigned":"true"}
+     * )
      */
     private $buyerFee;
 
     /**
      * @var int
      *
-     * @Assert\GreaterThan(value=0, message="Значение должно быть положительным или пустым")
+     * @Assert\GreaterThan(
+     *     value=0,
+     *     message="Значение должно быть положительным или пустым"
+     * )
      *
-     * @ORM\Column(name="hidden_margin", type="integer", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="hidden_margin",
+     *     type="integer",
+     *     nullable=true,
+     *     options={"unsigned":"true"}
+     * )
      */
     private $hiddenMargin;
 
@@ -110,11 +153,6 @@ class Room implements IdentifiableInterface
     /**
      * @var bool
      *
-     * @Assert\Expression(
-     *     "!(!this.isPlatformWarranty() and value)",
-     *     message="Включить таймер можно только с включенной гарантией платформы"
-     * )
-     *
      * @ORM\Column(name="timer", type="boolean")
      */
     private $timer = false;
@@ -122,9 +160,9 @@ class Room implements IdentifiableInterface
     /**
      * @var City|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать город"
+     * @Assert\NotBlank(
+     *     message="Для таймера необходимо указать город",
+     *     groups={"timer"}
      * )
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City")
@@ -135,7 +173,7 @@ class Room implements IdentifiableInterface
     /**
      * @var Schedule|null
      *
-     * @Assert\Valid
+     * @Assert\Valid(groups={"timer"})
      *
      * @ORM\Embedded(class="AppBundle\Entity\Room\Schedule")
      */
@@ -144,39 +182,163 @@ class Room implements IdentifiableInterface
     /**
      * @var int|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать время в часах на обработку лида"
+     * @Assert\NotBlank(
+     *     message="Необходимо указать рабочии часы комнаты",
+     *     groups={"timer"}
      * )
      * @Assert\Range(
      *     min=1,
      *     max=24,
      *     minMessage="Минимальное кол-во {{ limit }} часов на обработку",
-     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку"
+     *     maxMessage="Максимальное кол-во {{ limit }} часов на обработку",
+     *     groups={"timer"}
      * )
      *
-     * @ORM\Column(name="execution_hours", type="smallint", nullable=true, options={"unsigned":true})
+     * @ORM\Column(
+     *     name="execution_hours", 
+     *     type="smallint", 
+     *     nullable=true, 
+     *     options={"unsigned":true}
+     * )
      */
     private $executionHours;
 
     /**
      * @var int|null
      *
-     * @Assert\Expression(
-     *     "!(this.isTimer() and !value)",
-     *     message="Необходимо указать количество лидов в день по таймеру"
+     * @Assert\NotBlank(
+     *     message="Необходимо указать количество лидов",
+     *     groups={"timer"}
      * )
-     *
      * @Assert\Range(
      *     min=1,
      *     max=1000,
      *     minMessage="Минимальное кол-во {{ limit }} лидов в день по таймеру",
-     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру"
+     *     maxMessage="Максимальное кол-во {{ limit }} лидов в день по таймеру",
+     *     groups={"timer"}
      * )
      *
-     * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
+     * @ORM\Column(
+     *     name="leads_per_day", 
+     *     type="smallint", 
+     *     nullable=true, 
+     *     options={"unsigned":true}
+     * )
      */
     private $leadsPerDay;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="public_offer", type="boolean")
+     */
+    private $publicOffer = false;
+
+    /**
+     * @ORM\Column(name="auto_join", type="boolean")
+     */
+    private $autoJoin = false;
+
+    /**
+     * @var ArrayCollection|RoomChannel[]
+     * 
+     * @Assert\Valid()
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="RoomChannel",
+     *     mappedBy="room",
+     *     cascade={"persist", "remove"},
+     *     orphanRemoval=true
+     * )
+     */
+    private $channels;
+
+    /**
+     * @var ArrayCollection|Region[]
+     *
+     * @ORM\ManyToMany(targetEntity="Region")
+     * @ORM\JoinTable(
+     *     name="rooms_regions",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="region_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $regions;
+
+    /**
+     * @var ArrayCollection|City[]
+     *
+     * @ORM\ManyToMany(targetEntity="City")
+     * @ORM\JoinTable(
+     *     name="rooms_cities",
+     *     joinColumns={
+     *         @ORM\JoinColumn(
+     *             name="room_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(
+     *             name="city_id",
+     *             referencedColumnName="id",
+     *             nullable=false,
+     *             onDelete="CASCADE"
+     *         )
+     *     }
+     * )
+     */
+    private $cities;
+
+    /**
+     * @var ArrayCollection|Member[]
+     * 
+     * @ORM\OneToMany(targetEntity="Member", mappedBy="room")
+     */
+    private $members;
+
+    /**
+     * @var ArrayCollection|RoomJoinRequest[]
+     * 
+     * @ORM\OneToMany(targetEntity="RoomJoinRequest", mappedBy="room")
+     */
+    private $joinRequests;
+
+    public function __construct()
+    {
+        $this->channels = new ArrayCollection();
+        $this->regions = new ArrayCollection();
+        $this->cities = new ArrayCollection();
+        $this->members = new ArrayCollection();
+        $this->joinRequests = new ArrayCollection();
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Room
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
 
     /**
      * @return User|null
@@ -226,6 +388,44 @@ class Room implements IdentifiableInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @param string|null $logotype
+     */
+    public function setLogotype(?string $logotype): self
+    {
+        $this->logotype = $logotype;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogotype(): ?string
+    {
+        return $this->logotype;
+    }
+
+    /**
+     * @param UploadedFile|null $uploadedFile
+     * 
+     * @return Room
+     */
+    public function setUploadedLogotype($uploadedFile): self
+    {
+        $this->uploadedLogotype = $uploadedFile;
+
+        return $this;
+    }
+    
+    /**
+     * @return UploadedFile|null
+     */
+    public function getUploadedLogotype()
+    {
+        return $this->uploadedLogotype;
     }
 
     /**
@@ -508,5 +708,182 @@ class Room implements IdentifiableInterface
     public function getLeadsPerDay(): ?int
     {
         return $this->leadsPerDay;
+    }
+
+    /**
+     * @param bool $publicOffer
+     *
+     * @return Room
+     */
+    public function setPublicOffer(bool $publicOffer): self
+    {
+        $this->publicOffer = $publicOffer;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPublicOffer(): bool
+    {
+        return $this->publicOffer;
+    }
+
+    /**
+     * @param bool $autoJoin
+     * 
+     * @return Room
+     */
+    public function setAutoJoin(bool $autoJoin): self
+    {
+        $this->autoJoin = $autoJoin;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoJoin(): bool
+    {
+        return $this->autoJoin;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function addChannel(RoomChannel $channel): bool
+    {
+        if ($this->channels->add($channel)) {
+            $channel->setRoom($this);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param RoomChannel $channel
+     *
+     * @return bool
+     */
+    public function removeChannel(RoomChannel $channel): bool
+    {
+        return $this->channels->removeElement($channel);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getChannels(): Collection
+    {
+        return clone $this->channels;
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function addRegion(Region $region): bool
+    {
+        return $this->regions->add($region);
+    }
+
+    /**
+     * @param Region $region
+     *
+     * @return bool
+     */
+    public function removeRegion(Region $region): bool
+    {
+        return $this->regions->removeElement($region);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRegions(): Collection
+    {
+        return clone $this->regions;
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function addCity(City $city): bool
+    {
+        return $this->cities->add($city);
+    }
+
+    /**
+     * @param City $city
+     *
+     * @return bool
+     */
+    public function removeCity(City $city): bool
+    {
+        return $this->cities->removeElement($city);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCities(): Collection
+    {
+        return clone $this->cities;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLocations(): array
+    {
+        $locations = array_merge(
+            $this->regions->toArray(),
+            $this->cities->toArray()
+        );
+
+        return $locations;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function isMember(User $user): bool
+    {
+        /** @var Member $member  */
+        foreach ($this->members as $member) {
+            if ($member->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param User $user
+     * 
+     * @return bool
+     */
+    public function hasJoinRequest(User $user): bool
+    {
+        foreach ($this->joinRequests as $joinRequest)
+        {
+            if ($joinRequest->getUser() === $user) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

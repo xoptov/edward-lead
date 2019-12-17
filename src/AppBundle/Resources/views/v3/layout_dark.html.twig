@@ -11,7 +11,7 @@
         <meta name="description" content="{% block page_description %}{% endblock %}"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         {% block stylesheets -%}
             <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/lib/nice-select.css') }}" />
             <link rel="stylesheet" href="{{ asset('bundles/app/v3/css/stylesheet.css') }}" />
@@ -24,29 +24,31 @@
     <body class="body-gray">
         <div class="wrapper fx-column">
             <div class="main fx-column">
-                {% include '@App/parts/dark/header.html.twig' %}
+                {% include '@App/v3/parts/dark/header.html.twig' %}
                 <div class="wrap fx">
                     <div class="nav__bg"></div>
-                        <div class="container fx {% if container_class %}{{ container_class }}{% endif %}">  
-                            {% block container -%}
-                                <div class="col-3 nav-wrap">
-                                    {% include('@App/parts/dark/menu.html.twig') %}
-                                </div>
-                                <div class="col-9 fx-column content-wrap">
-                                    <div class="content {% if content_class is defined %}{{ content_class }}{% endif %}">
-                                        {% block content -%}{%- endblock %}
-                                    </div>
-                                    <div class="footer">
-                                        <span class="footer__copyright">© 2019 Edward</span>
-                                    </div>
+                    {% block container -%}
+                        <div class="container fx">
+                            <div class="col-3 nav-wrap">
+                                {% include('@App/v3/parts/dark/menu.html.twig') %}
+                            </div>
+                            <div class="col-9 fx-column content-wrap">
+                                {% block content -%}
+                                    <div class="content"></div>
+                                {%- endblock content %}
+                                <div class="footer">
+                                    <span class="footer__copyright">© 2019 Edward</span>
                                 </div>
                             </div>
-                        {%- endblock container %}
-                    </div>
+                        </div>
+                    {%- endblock container %}
                     <div class="footer__bg"></div>
                 </div>
             </div>
         </div>
+
+        {% block modals %}{% endblock %}
+
         <!--[if lt IE 9]>
         {% if app.environment == 'prod' -%}
             <script src="{{ asset('bundles/app/v3/js/lib/es5-shim.min.js') }}"></script>
@@ -68,7 +70,8 @@
                 <script src="{{ asset('bundles/app/v3/js/lib/jquery-3.4.1.js') }}"></script>
                 <script src="{{ asset('bundles/app/v3/js/lib/jquery.nice-select.js') }}"></script>
             {%- endif %}
-            <script src="{{ asset('bundles/app/v3/js/lib/main.js') }}"></script>
+            <script src="{{ asset('bundles/app/js/lib/main.js') }}"></script>
+            <script src="{{ asset('bundles/notification/js/notification_widget.js') }}"></script>
         {%- endblock %}
     </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\Image;
 use AppBundle\Entity\Thread;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +36,7 @@ class ReplayType extends AbstractType
                 'constraints' => [new NotBlank(['message' => 'Необходимо указать текст сообщения'])]
             ])
             ->add('images', CollectionType::class, [
-                'entry_type' => ImageType::class,
+                'entry_type' => HiddenType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'delete_empty' => true,
@@ -43,11 +44,14 @@ class ReplayType extends AbstractType
             ])
             ->add('file', FileType::class, [
                 'mapped' => false
-            ])
-        ;
+            ]);
 
         $builder->get('thread')->addViewTransformer(
             new EntityToIdTransformer($this->em, Thread::class)
+        );
+
+        $builder->get('images')->addViewTransformer(
+            new EntityToIdTransformer($this->em, Image::class)
         );
     }
 

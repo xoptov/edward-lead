@@ -2,9 +2,9 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\CreatedAtTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="member")
@@ -20,7 +20,7 @@ class Member implements IdentifiableInterface
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Room")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Room", inversedBy="members")
      * @ORM\JoinColumn(name="room_id", referencedColumnName="id", nullable=false)
      */
     private $room;
@@ -32,6 +32,17 @@ class Member implements IdentifiableInterface
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
+
+    /**
+     * @param int $id
+     *
+     * @return Member
+     */
+    public function setId(int $id): Member
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * @return Room|null

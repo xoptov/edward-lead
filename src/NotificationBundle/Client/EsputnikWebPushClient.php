@@ -53,10 +53,6 @@ class EsputnikWebPushClient extends EsputnikClient
                 "value" => $model['body'],
             ],
             [
-                "name" => "link",
-                "value" => $model['link'],
-            ],
-            [
                 "name" => "pushToken",
                 "value" => $model['push_token'],
             ]
@@ -78,7 +74,6 @@ class EsputnikWebPushClient extends EsputnikClient
     {
         return new Collection([
             'body' => new NotBlank(),
-            'link' => new NotBlank(),
             'push_token' => new NotBlank(),
         ]);
     }

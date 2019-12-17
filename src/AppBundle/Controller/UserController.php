@@ -19,6 +19,7 @@ use AppBundle\Entity\MonetaryTransaction;
 use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Security\Voter\CompanyVoter;
 use AppBundle\Form\Type\PasswordUpdateType;
+use NotificationBundle\Entity\Notification;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -130,7 +131,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Компания создана');
 
-                return $this->redirectToRoute('app_room_list');
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -188,7 +192,10 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о компании обновлена');
 
-                return $this->redirectToRoute('app_updating_office', ['id' => $company->getId()]);
+                return $this->redirectToRoute(
+                    'app_updating_office', 
+                    ['id' => $company->getId()]
+                );
             }
         }
 
@@ -226,7 +233,7 @@ class UserController extends Controller
 
                 $this->addFlash('success', 'Информация о офисе сохранена');
 
-                return $this->redirectToRoute('app_profile');
+                return $this->redirectToRoute('app_room_list');
             }
         }
 
@@ -408,6 +415,7 @@ class UserController extends Controller
         $result = [
             'list' => [],
             'addedLeadsToday' => 0,
+            'addedLeadsLastMonth' => [],
             'averageTarget' => 0
         ];
 
@@ -417,7 +425,9 @@ class UserController extends Controller
 
         $result['addedLeadsToday'] = $leadRepository->getAddedCountByDate($now);
 
+
         $totalTarget = $leadRepository->getCountByStatus(Lead::STATUS_TARGET);
+        
         $totalNotTarget = $leadRepository->getCountByStatus(Lead::STATUS_NOT_TARGET);
 
         if ($totalTarget && $totalNotTarget) {
@@ -436,7 +446,12 @@ class UserController extends Controller
             ->getByRooms($rooms);
 
         $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
+
         $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_TARGET, Lead::STATUS_NOT_TARGET]);
+        
+        $result['addedLeadsLastMonth'] = $leadRepository->getCountByUserLastMonth($user);
+
+        $result['addedLeadsLastDay'] = $leadRepository->getCountByUserLastDay($user);
 
         /** @var Room $room */
         foreach ($rooms as $room) {
@@ -502,6 +517,6 @@ class UserController extends Controller
             'user' => $user
         ], ['createdAt' => 'DESC'], 6);
 
-        return $this->render('@App/User/dashboard.html.twig', ['data' => $result]);
+        return $this->render('@App/v3/User/dashboard.html.twig', ['data' => $result]);
     }
 }

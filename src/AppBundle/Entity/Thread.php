@@ -2,9 +2,8 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use FOS\MessageBundle\Model\ParticipantInterface;
+use Doctrine\ORM\Mapping as ORM;
 use FOS\MessageBundle\Entity\Thread as BaseThread;
 
 /**
@@ -21,7 +20,7 @@ class Thread extends BaseThread implements IdentifiableInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\User")
-     * @var ParticipantInterface
+     * @var User
      */
     protected $createdBy;
 
@@ -62,15 +61,15 @@ class Thread extends BaseThread implements IdentifiableInterface
     /**
      * const of type appeal
      */
-    const TYPE_ARBITRATION = 'arbitration';
-    const TYPE_SUPPORT     = 'support';
+    const TYPE_ARBITRATION   = 'arbitration';
+    const TYPE_SUPPORT       = 'support';
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="type_appeal", type="string", length=20)
      */
-    protected $typeAppeal;
+    protected $typeAppeal = self::TYPE_SUPPORT;
 
     /**
      * @var Lead|null
