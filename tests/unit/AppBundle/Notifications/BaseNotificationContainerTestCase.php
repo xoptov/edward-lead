@@ -71,6 +71,8 @@ abstract class BaseNotificationContainerTestCase extends TestCase
             ->setPlainPassword(123456)
             ->setAccount($account);
 
+        $account->setUser($user);
+
         return $user;
     }
 

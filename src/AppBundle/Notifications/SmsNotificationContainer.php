@@ -3,6 +3,8 @@
 namespace AppBundle\Notifications;
 
 use AppBundle\Entity\ClientAccount;
+use AppBundle\Entity\Message;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use Exception;
 use NotificationBundle\Channels\SmsChannel;
@@ -35,7 +37,7 @@ class SmsNotificationContainer
         $message = 'Ваш баланс приблежается к нулю. Не забудьте его пополнить. Текущий - ' . $object->getBalance();
 
         $this->client->send([
-            "phone" => $object->getUser()->getEmail(),
+            "phone" => $object->getUser()->getPhone(),
             "body" => $message,
         ]);
     }
@@ -50,7 +52,7 @@ class SmsNotificationContainer
         $message = 'Запрос на вывод средств отправлен. Ожидайте ответа администрации';
 
         $this->client->send([
-            "phone" => $object->getUser()->getEmail(),
+            "phone" => $object->getUser()->getPhone(),
             "body" => $message,
         ]);
     }

@@ -36,14 +36,12 @@ class EsputnikEmailClient extends EsputnikClient
 
         $url = str_replace('{tempalteId}', $model['template_id'], self::SMART_SEND_URL_TEMPLATE);
 
-        $result = $this->httpClient->request(
+        return $this->httpClient->request(
             HTTPClient::HTTP_CODE_200,
             $url,
             $data,
             HTTPClient::HTTP_METHOD_POST
         );
-
-        return $result;
     }
 
     /**

@@ -77,6 +77,12 @@ class WithdrawController extends CRUDController
                     'SonataAdminBundle'
                 )
             );
+
+            $this->eventDispatcher->dispatch(
+                WithdrawEvent::REJECTED,
+                new WithdrawEvent($object)
+            );
+
         } catch (ModelManagerException $e) {
             $this->handleModelManagerException($e);
 
@@ -139,6 +145,12 @@ class WithdrawController extends CRUDController
                             'SonataAdminBundle'
                         )
                     );
+
+                    $this->eventDispatcher->dispatch(
+                        WithdrawEvent::ACCEPTED,
+                        new WithdrawEvent($object)
+                    );
+
                 } catch(\Exception $e) {
                     $this->handleModelManagerException($e);
 
@@ -151,11 +163,6 @@ class WithdrawController extends CRUDController
                         )
                     );
                 }
-
-                $this->eventDispatcher->dispatch(
-                    WithdrawEvent::ACCEPTED, 
-                    new WithdrawEvent($object)
-                );
 
                 return new RedirectResponse($this->admin->generateUrl('list'));
             }

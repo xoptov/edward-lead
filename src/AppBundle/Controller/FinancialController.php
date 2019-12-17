@@ -187,12 +187,12 @@ class FinancialController extends Controller
                     ]);
                 }
 
+                $this->entityManager->flush();
+
                 $this->eventDispatcher->dispatch(
                     WithdrawEvent::NEW_CREATED,
                     new WithdrawEvent($withdraw)
                 );
-
-                $this->entityManager->flush();
 
                 $this->addFlash('success', 'Зявка на вывод отправлена');
 

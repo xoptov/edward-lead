@@ -94,7 +94,7 @@ class EmailNotificationContainer
             "template_id" => EsputnikEmailTemplate::BALANCE_CHARGED,
             "params" => [
                 "NAME" => $object->getUser()->getName(),
-                "SUMM_BALANCE" => $object->getAmount(),
+                "SUMM_BALANCE" => $object->getAmount(100),
                 "TYPE_BALANCE" => $object->getDescription(),
             ],
         ]);
@@ -161,16 +161,24 @@ class EmailNotificationContainer
     }
 
     /**
+     * Ответ от службы поддержки
      * @param Message $object
      *
      * @throws Exception
      */
     public function messageSupportReply(Message $object): void
     {
+        $user =$object->getThread()->getCreatedBy();
+
+        if (!$user instanceof User) {
+            return;
+        }
+
         $this->client->send([
-            "to_email" => $object->getSender()->getEmail(),
+            "to_email" => $user->getEmail(),
             "template_id" => EsputnikEmailTemplate::SUPPORT_RESPONSE,
             "params" => [
+                "NAME" => $user->getName(),
                 "ID_SUPPORT" => $object->getThread()->getId(),
                 "TEXT_SUPPORT" => $object->getBody(),
             ],
@@ -211,7 +219,7 @@ class EmailNotificationContainer
                     "ID_LEAD" => $object->getLead()->getId(),
                     "ID_WEBMASTER" => $object->getSellerId(),
                     "ID_COMPANY" => $object->getBuyerId(),
-                    "SUMM_DEAL" => $object->getAmount(),
+                    "SUMM_DEAL" => $object->getAmount(100),
                     "ID_ROOM" => $object->getLead()->getRoom()->getId(),
                 ],
             ]);
@@ -246,7 +254,9 @@ class EmailNotificationContainer
         $this->client->send([
             "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_SUCCESS,
-            "params" => [],
+            "params" => [
+                "changed" => "success" // массив не должен быть пустым
+            ],
         ]);
     }
 
@@ -257,7 +267,7 @@ class EmailNotificationContainer
      */
     public function userResetTokenUpdated(User $object): void
     {
-        $url = $this->router->generate('app_password_reset_confirm', ['token' => $object->getResetToken()]);
+        $url = $this->router->generate('app_password_reset_confirm', ['token' => $object->getResetToken()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $this->client->send([
             "to_email" => $object->getEmail(),
@@ -277,7 +287,7 @@ class EmailNotificationContainer
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_SUCCESS,
             "params" => [
-                "BALANCE_LOGOUT" => $object->getAmount(),
+                "BALANCE_LOGOUT" => $object->getAmount(100),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
                 "TYPE_BALANCE_LOGOUT" => $object->getDescription(),
             ],
@@ -301,7 +311,7 @@ class EmailNotificationContainer
                 "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_ADMIN,
                 "params" => [
                     "ID_USER" => $object->getUser()->getId(),
-                    "BALANCE_LOGOUT" => $object->getAmount(),
+                    "BALANCE_LOGOUT" => $object->getAmount(100),
                     "ID_BALANCE_LOGOUT" => $object->getId(),
                 ],
             ]);
@@ -317,10 +327,10 @@ class EmailNotificationContainer
     public function withdrawRejected(Withdraw $object): void
     {
         $this->client->send([
-            "to_email" => $object->getUser()->getEmail(),
+            "to_email" => $object->getAccount()->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FAIL,
             "params" => [
-                "BALANCE_LOGOUT" => $object->getAmount(),
+                "BALANCE_LOGOUT" => $object->getAmount(100),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
             ],
         ]);
@@ -337,7 +347,7 @@ class EmailNotificationContainer
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::BALANCE_WITHDRAW_FOR_USER,
             "params" => [
-                "BALANCE_LOGOUT" => $object->getAmount(),
+                "BALANCE_LOGOUT" => $object->getAmount(100),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
             ],
         ]);
