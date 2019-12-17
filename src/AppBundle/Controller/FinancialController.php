@@ -161,10 +161,10 @@ class FinancialController extends Controller
                 'currency' => null,
                 'constraints' => [
                     new NotBlank(['message' => 'Необходимо указать сумму для вывода']),
-//                    new LessThanOrEqual([
-//                        'value' => $freeBalance,
-//                        'message' => 'Недостаточно средств для вывода'
-//                    ])
+                    new LessThanOrEqual([
+                        'value' => $freeBalance,
+                        'message' => 'Недостаточно средств для вывода'
+                    ])
                 ]
             ])
             ->add('submit', SubmitType::class);

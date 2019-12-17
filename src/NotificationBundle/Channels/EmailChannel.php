@@ -33,7 +33,6 @@ class EmailChannel extends BaseChannel
 
         try {
             $result = $this->client->send($data);
-
         } catch (\Exception $exception) {
             print_r($exception->getMessage());exit();
             $this->logger->critical($exception->getMessage());

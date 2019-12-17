@@ -33,7 +33,6 @@ class SmsChannel extends BaseChannel
 
         try {
             $result = $this->client->send($data);
-
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
         }

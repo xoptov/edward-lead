@@ -2,14 +2,15 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ClientAccount;
-use AppBundle\Entity\OutgoingAccount;
+use AppBundle\Entity\Account;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
+use AppBundle\Entity\ClientAccount;
+use AppBundle\Entity\OutgoingAccount;
 use AppBundle\Entity\WithdrawConfirm;
+use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\FinancialException;
 use AppBundle\Exception\InsufficientFundsException;
-use Doctrine\ORM\EntityManagerInterface;
 
 class WithdrawManager
 {
@@ -72,22 +73,19 @@ class WithdrawManager
         User $user,
         int $amount,
         bool $flush = true
-    ): Withdraw
-    {
+    ): Withdraw {
 
-        // TODO uncomment
-//        if ($amount < $this->minimalAmount) {
-//            throw new FinancialException(
-//                'Минимальная сумма вывода составляет ' . (int)ceil($this->minimalAmount / Account::DIVISOR) . ' руб'
-//            );
-//        }
+        if ($amount < $this->minimalAmount) {
+            throw new FinancialException(
+                'Минимальная сумма вывода составляет ' . (int)ceil($this->minimalAmount / Account::DIVISOR) . ' руб'
+            );
+        }
 
         $balance = $this->accountManager->getAvailableBalance($user->getAccount());
 
-        // TODO uncomment
-//        if ($balance < $amount) {
-//            throw new FinancialException('Недостаточно средств для вывода');
-//        }
+        if ($balance < $amount) {
+            throw new FinancialException('Недостаточно средств для вывода');
+        }
 
         $withdraw = new Withdraw();
         $withdraw

@@ -252,7 +252,7 @@ class EmailNotificationContainer
     public function userPasswordChanged(User $object): void
     {
         $this->client->send([
-            "to_email" => "atsutavictor.dev@gmail.com",
+            "to_email" => $object->getEmail(),
             "template_id" => EsputnikEmailTemplate::PASSWORD_CHANGE_SUCCESS,
             "params" => [
                 "changed" => "success" // массив не должен быть пустым
