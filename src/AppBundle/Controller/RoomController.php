@@ -341,4 +341,3 @@ class RoomController extends Controller
         return $this->render('@App/v3/Room/invite_reject.html.twig');
     }
 }
-
