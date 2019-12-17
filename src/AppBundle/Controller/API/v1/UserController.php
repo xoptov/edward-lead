@@ -40,4 +40,45 @@ class UserController extends Controller
 
         return new JsonResponse(['token' => $user->getToken()]);
     }
+
+    /**
+     * @Route("/user/tutorial/has/{tmark}",name="api_v1_user_has_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * 
+     * @param string $tmark
+     * 
+     * @return JsonResponse
+     */
+    public function hasTutorialAction($tmark)
+    {
+        $user = $this->getUser();
+
+        $result = new JsonResponse([ $tmark => $user->hasTutorialMark($tmark) ]);
+
+        return $result;
+    }
+
+    /**
+     * @Route("/user/tutorial/add/{tmark}",name="api_v1_user_add_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * 
+     * @param UserManager   $userManager
+     * @param string        $tmark
+     * 
+     * @return JsonResponse
+     */
+    public function addTutorialAction(
+        UserManager $userManager, 
+        $tmark)
+    {
+        $user = $this->getUser();
+
+        $mark_added = $user->addTutorialMark($tmark);
+
+        if( $mark_added ){
+            $userManager->updateUser($user);
+        }
+        
+        $result = new JsonResponse([ $tmark => $mark_added]);
+
+        return $result;
+    }
 }

@@ -36,6 +36,15 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE     = self::ROLE_USER;
+    
+    const TMARK_COMPANY_ROOM        = 'company_room';
+    const TMARK_COMPANY_PROFILE     = 'company_profile';
+    const TMARK_WEBMASTER_ROOM      = 'webmaster_room';
+    const TMARK_WEBMASTER_PROFILE   = 'webmaster_profile';
+    const TMARK_OFFICE_SETUP        = 'office_setup';
+    const TMARK_ROOM_CREATE         = 'room_new';
+    const TMARK_LEAD_EDIT           = 'lead_edit';
+    const TMARK_LEAD_ADD            = 'lead_add';
 
     /**
      * @var Company|null
@@ -233,6 +242,63 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
      */
     private $offerRequests;
+        
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="tutorial", type="array")
+     */
+    private $tutorial = [];
+
+    /**
+     * @return array
+     */
+    public function getTutorials():array
+    {
+        return $this->tutorial;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function hasTutorialMark( $tmark )
+    {
+        if ( $this->tutorial[ $tmark ] ){
+            return $this->tutorial[ $tmark ];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function addTutorialMark($tmark) 
+    {
+        $this->tutorial[$tmark] = true;
+
+        return $this->hasTutorialMark( $tmark )? true : false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllTutorialMarks(): array
+    {
+        return [
+            self::TMARK_COMPANY_ROOM,
+            self::TMARK_COMPANY_PROFILE,
+            self::TMARK_LEAD_ADD,
+            self::TMARK_LEAD_EDIT,
+            self::TMARK_OFFICE_SETUP,
+            self::TMARK_ROOM_CREATE,
+            self::TMARK_WEBMASTER_ROOM,
+            self::TMARK_WEBMASTER_PROFILE
+        ];
+    }
 
     public function __construct()
     {
@@ -884,5 +950,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     {
         return in_array(self::ROLE_WEBMASTER, $this->roles);
     }
+
 }
 
