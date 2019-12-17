@@ -161,10 +161,10 @@ class FinancialController extends Controller
                 'currency' => null,
                 'constraints' => [
                     new NotBlank(['message' => 'Необходимо указать сумму для вывода']),
-                    new LessThanOrEqual([
-                        'value' => $freeBalance,
-                        'message' => 'Недостаточно средств для вывода'
-                    ])
+//                    new LessThanOrEqual([
+//                        'value' => $freeBalance,
+//                        'message' => 'Недостаточно средств для вывода'
+//                    ])
                 ]
             ])
             ->add('submit', SubmitType::class);
@@ -187,12 +187,12 @@ class FinancialController extends Controller
                     ]);
                 }
 
+                $this->entityManager->flush();
+
                 $this->eventDispatcher->dispatch(
                     WithdrawEvent::NEW_CREATED,
                     new WithdrawEvent($withdraw)
                 );
-
-                $this->entityManager->flush();
 
                 $this->addFlash('success', 'Зявка на вывод отправлена');
 

@@ -105,9 +105,9 @@ class Operation implements IdentifiableInterface
     /**
      * @param int $divisor
      *
-     * @return int|null
+     * @return float|null
      */
-    public function getAmount(int $divisor = 1): ?int
+    public function getAmount(int $divisor = 1): ?float
     {
         return $this->amount / $divisor;
     }

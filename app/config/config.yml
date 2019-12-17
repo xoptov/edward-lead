@@ -44,6 +44,8 @@ twig:
         referrer_reward: '%referrer_reward%'
         landing_url: '%landing_url%'
         offer_limit_in_seconds: '%offer_limit_in_seconds%'
+        esputnik_wepush_script_is_stage: '%esputnik_wepush_script_is_stage%'
+
     paths:
         '%kernel.project_dir%/src/NotificationBundle/Resources/views': NotificationBundle
 

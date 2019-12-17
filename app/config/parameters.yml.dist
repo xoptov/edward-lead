@@ -62,5 +62,7 @@ parameters:
     auth_time_frame: 300
     auth_fail_retry: 7
 
+    esputnik_wepush_script_is_stage: false
+
 
 
