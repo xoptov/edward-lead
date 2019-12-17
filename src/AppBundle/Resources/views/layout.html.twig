@@ -11,7 +11,7 @@
     {% endblock %}
     <title>Edward лидогенерация</title>
     {% include '@App/google_tag_manager_head.html.twig' %}
-    {%- if app.environment == 'dev' -%}
+    {%- if app.environment == 'prod' -%}
         {% include '@App/esputnik_web_push.html.twig' %}
     {%- endif -%}
     {% block head %}{% endblock %}
