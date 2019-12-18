@@ -52,9 +52,7 @@ class UserController extends Controller
     {
         $user = $this->getUser();
 
-        $result = new JsonResponse([ $tmark => $user->hasTutorialMark($tmark) ]);
-
-        return $result;
+        return new JsonResponse([ $tmark => $user->hasTutorialMark($tmark) ]);
     }
 
     /**
@@ -77,8 +75,6 @@ class UserController extends Controller
             $userManager->updateUser($user);
         }
         
-        $result = new JsonResponse([ $tmark => $mark_added]);
-
-        return $result;
+        return new JsonResponse([ $tmark => $mark_added]);
     }
 }
