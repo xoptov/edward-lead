@@ -37,12 +37,11 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE     = self::ROLE_USER;
     
-    const TMARK_COMPANY_ROOM        = 'company_room';
-    const TMARK_COMPANY_PROFILE     = 'company_profile';
-    const TMARK_WEBMASTER_ROOM      = 'webmaster_room';
+    const TMARK_ROOM_VIEW           = 'room_view';
+    const TMARK_COMPANY_UPDATE      = 'company_update';
     const TMARK_WEBMASTER_PROFILE   = 'webmaster_profile';
-    const TMARK_OFFICE_SETUP        = 'office_setup';
-    const TMARK_ROOM_CREATE         = 'room_new';
+    const TMARK_OFFICE_UPDATE       = 'office_update';
+    const TMARK_ROOM_CREATE         = 'room_create';
     const TMARK_LEAD_EDIT           = 'lead_edit';
     const TMARK_LEAD_ADD            = 'lead_add';
 
@@ -289,13 +288,12 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getAllTutorialMarks(): array
     {
         return [
-            self::TMARK_COMPANY_ROOM,
-            self::TMARK_COMPANY_PROFILE,
+            self::TMARK_ROOM_VIEW,
+            self::TMARK_COMPANY_UPDATE,
             self::TMARK_LEAD_ADD,
             self::TMARK_LEAD_EDIT,
-            self::TMARK_OFFICE_SETUP,
+            self::TMARK_OFFICE_UPDATE,
             self::TMARK_ROOM_CREATE,
-            self::TMARK_WEBMASTER_ROOM,
             self::TMARK_WEBMASTER_PROFILE
         ];
     }
