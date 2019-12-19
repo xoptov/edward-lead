@@ -48,7 +48,7 @@ class HistoryAction implements IdentifiableInterface
     /**
      * @param string $action
      */
-    public function __construct(?string $action = self::ACTION_LOGIN)
+    public function __construct(string $action = self::ACTION_LOGIN)
     {
         $this->action = $action;
     }

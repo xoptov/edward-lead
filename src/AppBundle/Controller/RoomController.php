@@ -7,6 +7,7 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Entity\RoomVisit;
 use AppBundle\Event\MemberEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
@@ -193,6 +194,11 @@ class RoomController extends Controller
 
         $buyerFee = $feesManager->getCommissionForBuyerInRoom($room);
 
+        $visit = new RoomVisit($room, $this->getUser());
+
+        $this->entityManager->persist($visit);
+        $this->entityManager->flush();
+
         return $this->render('@App/v3/Room/view.html.twig', [
             'room' => $room,
             'countCanBuy' => $this->roomManager->countCanBuy($room, $buyerFee, $totalAvailableMoney),
@@ -335,4 +341,3 @@ class RoomController extends Controller
         return $this->render('@App/v3/Room/invite_reject.html.twig');
     }
 }
-
