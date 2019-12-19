@@ -411,4 +411,67 @@ SQL;
 
         return array();
     }
+
+    /**
+     * @return array
+     *
+     * @throws DBALException
+     */
+    public function getExpectTooLong(): array
+    {
+        $sql = <<<SQL
+SELECT id FROM lead
+WHERE status = :target_status
+  AND (
+    DATE_ADD(created_at, INTERVAL 2 HOUR) < NOW() 
+    AND NOW() < DATE_ADD(created_at, INTERVAL '2:05' HOUR_MINUTE)
+  )
+SQL;
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('target_status', Lead::STATUS_EXPECT);
+
+        $result = [];
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            $ids = [];
+            while($id = $stmt->fetchColumn()) {
+                $ids[] = $id;
+            }
+            return $this->findBy(['id' => $ids]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     *
+     * @throws DBALException
+     */
+    public function getInWorkTooLong(): array
+    {
+        $sql = <<<SQL
+SELECT id FROM lead
+WHERE status = :target_status
+  AND (
+    NOW() > DATE_ADD(updated_at, INTERVAL 24 HOUR) AND NOW() < DATE_ADD(updated_at, INTERVAL 25 HOUR)
+  );
+SQL;
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('target_status', Lead::STATUS_IN_WORK);
+
+        $result = [];
+
+        if ($stmt->execute() && $stmt->rowCount()) {
+            $ids = [];
+            while($id = $stmt->fetchColumn()) {
+                $ids[] = $id;
+            }
+            return $this->findBy(['id' => $ids]);
+        }
+
+        return $result;
+    }
 }

@@ -332,10 +332,6 @@ services:
         arguments:
             $paymentGatewayToken: '%payment_gateway_token%'
 
-    AppBundle\Command\ArchiveStaledLeadsCommand:
-        arguments:
-            $ttl: '%stale_after_hours%'
-
     AppBundle\Command\AutoFinishTradesCommand:
         arguments:
             $staleAfterHours: '%stale_after_hours%'

@@ -84,14 +84,14 @@ SQL;
 
         $result = [];
 
-        if ($stmt->execute()) {
+        if ($stmt->execute() && $stmt->rowCount()) {
+
             $ids = [];
+
             while ($id = $stmt->fetchColumn()) {
                 $ids[] = $id;
             }
-            if (empty($ids)) {
-                return $result;
-            }
+
             return $this->findBy(['id' => $ids]);
         }
 

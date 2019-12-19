@@ -6,75 +6,84 @@ use AppBundle\Entity\Lead;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ArchiveStaledLeadsCommand extends Command
 {
+    const STATUS_SUCCESS = 0;
+    const STATUS_ERROR = 1;
+
+    const HOURS = 48;
+
     /**
      * @var Connection
      */
     private $connection;
 
     /**
-     * @var string
-     */
-    private $ttl;
-
-    /**
      * @param Connection  $connection
-     * @param int         $ttl
      * @param null|string $name
      */
-    public function __construct(Connection $connection, int $ttl, ?string $name = null)
+    public function __construct(Connection $connection, ?string $name = null)
     {
         parent::__construct($name);
 
         $this->connection = $connection;
-        $this->ttl = $ttl;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function configure()
     {
         $this
             ->setName('app:lead:archive')
-            ->setDescription('Команда для отправки лидов в архив если они со статусом expect и старше 48 часов');
+            ->setDescription('Команда для отправки лидов в архив если они со статусом expect и старше '.self::HOURS.' часов')
+            ->addArgument(
+                'hours',
+                InputArgument::OPTIONAL,
+                'Кол-во часов после которых отправлять в архив',
+                self::HOURS
+            );
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int|null|void
+     * @inheritdoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $sql = <<<SQL
 UPDATE lead
-SET status = :archive 
-WHERE status = :expect 
+SET status = :target_status, updated_at = NOW()
+WHERE status = :result_status
   AND timer_end_at IS NULL
-  AND UNIX_TIMESTAMP(NOW()) > (UNIX_TIMESTAMP(created_at) + :ttl)
+  AND DATE_ADD(created_at, INTERVAL :hours HOUR) < NOW()
 SQL;
+
+        $hours = $input->getArgument('hours');
 
         try {
             $stmt = $this->connection->prepare($sql);
         } catch (DBALException $e) {
             $output->writeln($e->getMessage());
-            return;
+            return self::STATUS_ERROR;
         }
 
         $result = $stmt->execute([
-            'archive' => Lead::STATUS_ARCHIVE,
-            'expect' => Lead::STATUS_EXPECT,
-            'ttl' => $this->ttl * 3600
+            'target_status' => Lead::STATUS_ARCHIVE,
+            'result_status' => Lead::STATUS_EXPECT,
+            'hours' => $hours
         ]);
 
         if (!$result) {
             $output->writeln($stmt->errorCode() . ': Выполнения SQL запроса на архивирования лидов');
-            return;
+            return self::STATUS_ERROR;
         }
 
         $output->writeln('Лидов отправлено в архив: ' . $stmt->rowCount());
+
+        return self::STATUS_SUCCESS;
     }
 }
