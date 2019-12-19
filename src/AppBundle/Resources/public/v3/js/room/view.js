@@ -138,6 +138,7 @@ new Vue({
     components: {
         'room-members': RoomMembers,
         'room-leads': RoomLeads
+        //todo: модалки
     },
     data: {
         roomId: roomId,
