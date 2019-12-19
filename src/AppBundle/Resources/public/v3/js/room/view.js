@@ -1,45 +1,31 @@
-const vm = new Vue({
-    el: '#app',
-    data: {
-        roomId: roomId,
-        activated: roomEnabled,
-        deactivationError: null,
-        members: {
-            webmasters: [],
-            companies: []
-        },
-        leads: []
+const RoomLeads = {
+    props: {
+        roomId: {
+            type: Number,
+            required: true
+        }
     },
-    created: function() {
-        this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
-            response => {
-                this.members.webmasters = response.data.webmasters;
-                this.members.companies = response.data.companies;
-            }
-        );
+    data() {
+        return {
+            leads: []
+        };
+    },
+    computed: {
+        leadsCount: function() {
+            return this.leads.length;
+        }
+    },
+    created() {
         this.$http.get('/api/v1/leads/' + this.roomId).then(
             response => {
                 this.leads = response.data;
                 setInterval(() => {
                     this.$http.get('/api/v1/leads/' + this.roomId).then(
-                        response => {
-                            this.leads = response.data;
-                        }
+                        response => this.leads = response.data
                     );
                 }, 10000);
             }
         );
-    },
-    computed: {
-        webmastersCount: function() {
-            return this.members.webmasters.length;
-        },
-        companiesCount: function() {
-            return this.members.companies.length;
-        },
-        leadsCount: function() {
-            return this.leads.length;
-        }
     },
     methods: {
         leadViewUrl: function(lead) {
@@ -48,15 +34,6 @@ const vm = new Vue({
         dateFormat: function(value) {
             const createdAt = new Date(value);
             return createdAt.format('dd.mm.yyyy HH:MM:s');
-        },
-        getLogotype: function(member) {
-            if (member.user.logotype) {
-                return member.user.logotype;
-            }
-            return '/bundles/app/v2/img/icon_2.png';
-        },
-        getTimerOrCompanyLabel: function(lead) {
-            return '';
         },
         getStatusObject: function(status) {
             const statusObj = {
@@ -100,10 +77,77 @@ const vm = new Vue({
                     statusObj.label = 'Не извесно';
                     statusObj.color = 'gray';
             }
-
             return statusObj;
         },
-        onDeactivateClick: function() {
+        viewLead(id) {
+            window.location.href = '/lead/' + id;
+            return false;
+        },
+        splitString(str, splitter){
+            return str.split(splitter);
+        }
+    }
+};
+
+const RoomMembers = {
+    props: {
+        roomId: {
+            type: Number,
+            required: true
+        }
+    },
+    data() {
+        return {
+            members: {
+                webmasters: [],
+                companies: []
+            }
+        }
+    },
+    created() {
+        this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
+            response => {
+                this.members.webmasters = response.data.webmasters;
+                this.members.companies = response.data.companies;
+            }
+        );
+    },
+    computed: {
+        webmastersCount: function() {
+            return this.members.webmasters.length;
+        },
+        companiesCount: function() {
+            return this.members.companies.length;
+        }
+    },
+    methods: {
+        getLogotype: function(member) {
+            if (member.user.logotype) {
+                return member.user.logotype;
+            }
+            return '/bundles/app/v2/img/icon_2.png';
+        },
+        revokeMember(member) {
+            this.$emit('revoke-member', member);
+        }
+    }
+};
+
+new Vue({
+    el: '#app',
+    components: {
+        'room-members': RoomMembers,
+        'room-leads': RoomLeads
+    },
+    data: {
+        roomId: roomId,
+        activated: roomEnabled,
+        deactivationError: null,
+        revokeMemberModal: false,
+        deactivateModal: false
+    },
+    methods: {
+        deactivate() {
             this.$http.get('/api/v1/room/' + this.roomId + '/deactivate')
                 .then(response => {
                     this.deactivationError = null;
@@ -111,31 +155,8 @@ const vm = new Vue({
                 })
                 .catch(response => this.deactivationError = response.data[0]);
         },
-        onRevokeMemberClick: function(member) {
-            this.$http.delete('/api/v1/room/' + roomId + '/revoke/' + member.id)
-                .then(response => {
-                    for (let i = 0; i < this.members.companies.length; i++) {
-                        if (this.members.companies[i].id === member.id) {
-                            this.members.companies.splice(i, 1);
-                            return true;
-                        }
-                    }
-                    for (let i = 0; i < this.members.webmasters.length; i++) {
-                        if (this.members.webmasters[i].id === member.id) {
-                            this.members.webmasters.splice(i, 1);
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-        },
-        onRowClick(id) {
-            window.location.href = '/lead/' + id;
-            return false;
-        },
-        splitString(str,splitter){
-            return str.split(splitter);
+        revokeMember(data) {
+            console.log(data);
         }
-        
     }
 });
