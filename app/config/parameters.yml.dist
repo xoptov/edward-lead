@@ -64,3 +64,5 @@ parameters:
 
     first_minimal_bound: 150000
     second_minimal_bound: 4000
+
+    esputnik_wepush_script_is_stage: false

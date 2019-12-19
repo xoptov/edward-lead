@@ -20,4 +20,23 @@ class EmailChannel extends BaseChannel
     {
         parent::__construct($notificationStatusRepository, $security, $logger, $client);
     }
+
+    /**
+     * @param array       $data
+     * @param string|null $case
+     */
+    public function send(array $data, string $case = null): void
+    {
+        if ($case && !$this->isAllowed($case, static::NAME)) {
+            return;
+        }
+
+        try {
+            $result = $this->client->send($data);
+        } catch (\Exception $exception) {
+            print_r($exception->getMessage());exit();
+            $this->logger->critical($exception->getMessage());
+        }
+    }
+
 }

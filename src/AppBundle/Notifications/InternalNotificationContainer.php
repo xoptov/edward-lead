@@ -54,9 +54,6 @@ class InternalNotificationContainer
     /**
      * @param Room $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function newRoomCreated(Room $object): void
     {
@@ -73,9 +70,6 @@ class InternalNotificationContainer
     /**
      * @param Room $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function roomDeactivated(Room $object): void
     {
@@ -91,13 +85,10 @@ class InternalNotificationContainer
     /**
      * @param Invoice $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function invoiceProcessed(Invoice $object): void
     {
-        $message = "Ваш баланс пополнен на сумму {$object->getAmount()}";
+        $message = "Ваш баланс пополнен на сумму {$object->getAmount(100)}";
         $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
@@ -109,9 +100,6 @@ class InternalNotificationContainer
     /**
      * @param ClientAccount $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function accountBalanceApproachingZero(ClientAccount $object): void
     {
@@ -129,9 +117,6 @@ class InternalNotificationContainer
     /**
      * @param ClientAccount $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function accountBalanceLowerThenMinimal(ClientAccount $object): void
     {
@@ -149,9 +134,6 @@ class InternalNotificationContainer
     /**
      * @param Message $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function messageCreated(Message $object): void
     {
@@ -173,9 +155,6 @@ class InternalNotificationContainer
     /**
      * @param Trade $trade
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function tradeAccepted(Trade $trade): void
     {
@@ -191,9 +170,6 @@ class InternalNotificationContainer
     /**
      * @param Trade $trade
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function tradeRejected(Trade $trade): void
     {
@@ -235,9 +211,6 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function someOneJoinedToYou(Member $object): void
     {
@@ -263,9 +236,6 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function youJoinedToRoom(Member $object): void
     {
@@ -281,9 +251,6 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function youRemovedFromRoom(Member $object): void
     {
@@ -299,9 +266,6 @@ class InternalNotificationContainer
     /**
      * @param Lead $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function leadNewPlaced(Lead $object): void
     {
@@ -332,9 +296,6 @@ class InternalNotificationContainer
     /**
      * @param Withdraw $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function withdrawUser(Withdraw $object): void
     {
