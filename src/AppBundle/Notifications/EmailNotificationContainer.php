@@ -131,7 +131,9 @@ class EmailNotificationContainer
         $this->client->send([
             "to_email" => $object->getUser()->getEmail(),
             "template_id" => EsputnikEmailTemplate::NO_VISITING_FOR_TOO_LONG,
-            "params" => [],
+            "params" => [
+                "status" => true
+            ],
         ]);
     }
 
