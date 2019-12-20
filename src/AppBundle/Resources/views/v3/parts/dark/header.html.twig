@@ -28,7 +28,13 @@
                                 {%- endif -%}</p>
                         </div>
                         <div class="user__panel">
-                            <span class="user__panel__img"><img src="/bundles/app/v3/img/icon_2.png"></span>
+                            <span class="user__panel__img">
+                                {% if is_granted('ROLE_ADVERTISER') and app.user.company.logotype is not empty %}
+                                    <img src="{{ app.user.company.logotype.path|imagine_filter('logotype_34x34') }}">
+                                {% else %}
+                                    <img src="{{ asset('bundles/app/v3/img/other/user-default-header.png') }}">
+                                {% endif %}
+                            </span>
                             <div class="user__panel__nav__box">
                                 <ul class="user__panel__nav">
                                     {% if is_granted('ROLE_ADMIN') -%}
