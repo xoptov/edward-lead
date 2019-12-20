@@ -5,6 +5,7 @@ namespace AppBundle\Controller\API\v1;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
+use AppBundle\Repository\TradeRepository;
 use AppBundle\Service\LeadManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,6 +40,7 @@ class TradeController extends Controller
         $user = $this->getUser();
         $company = $user->getCompany();
 
+        /** @var TradeRepository */
         $tradeRepository = $this->getDoctrine()->getRepository(Trade::class);
 
         if ($company) {

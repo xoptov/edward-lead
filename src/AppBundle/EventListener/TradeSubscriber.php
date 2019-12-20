@@ -5,6 +5,7 @@ namespace AppBundle\EventListener;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Sender\SenderInterface;
 use FOS\MessageBundle\Composer\ComposerInterface;
@@ -67,7 +68,10 @@ class TradeSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $admins = $this->entityManager->getRepository(User::class)
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        
+        $admins = $userRepository
             ->getAdmins();
 
         if (empty($admins)) {

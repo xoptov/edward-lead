@@ -63,8 +63,9 @@ class TradeController extends CRUDController
 
         try {
 
-            $feesAccount = $this->getDoctrine()->getRepository(Account::class)
-                ->getFeesAccount();
+            /** @var AccountRepository */
+            $accountRepository = $this->getDoctrine()->getRepository(Account::class);
+            $feesAccount = $accountRepository->getFeesAccount();
 
             $this->tradeManager->accept($object, $feesAccount);
             $this->admin->update($object);
