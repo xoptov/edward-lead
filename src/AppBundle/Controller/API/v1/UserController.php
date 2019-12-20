@@ -52,10 +52,9 @@ class UserController extends Controller
     {
         $user = $this->getUser();
 
-        return new JsonResponse([ 
-            $tmark => $user->hasTutorialMark($tmark),
-            'company' => $user->hasCompany()
-        ]);
+        $company = $this->isGranted(User::ROLE_COMPANY,$user);
+
+        return new JsonResponse([ $tmark => $user->hasTutorialMark($tmark), 'company' => $company ]);
     }
 
     /**
@@ -78,9 +77,6 @@ class UserController extends Controller
             $userManager->updateUser($user);
         }
         
-        return new JsonResponse([ 
-            $tmark => $mark_added,
-            'company' => $user->hasCompany()
-        ]);
+        return new JsonResponse([$tmark => $mark_added]);
     }
 }

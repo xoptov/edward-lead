@@ -264,8 +264,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function hasTutorialMark( $tmark )
     {
-        if ( $this->tutorial[ $tmark ] ){
-            return $this->tutorial[ $tmark ];
+        if (isset($this->tutorial[$tmark])) {
+            return $this->tutorial[$tmark];
         }
         return false;
     }

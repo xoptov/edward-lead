@@ -8,7 +8,11 @@ const vm = new Vue({
             webmasters: [],
             companies: []
         },
-        leads: []
+        leads: [],
+        user: {
+            tutorial: false,
+            company: false
+        }
     },
     created: function() {
         this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
@@ -26,7 +30,7 @@ const vm = new Vue({
                             this.leads = response.data;
                         }
                     );
-                }, 10000);
+                }, 5000);
             }
         );
     },
@@ -136,6 +140,35 @@ const vm = new Vue({
         splitString(str,splitter){
             return str.split(splitter);
         }
-        
+    }
+});
+
+const tut = new Vue({
+    el: '#tutorial',
+    data: {
+        userPassTutorial: true,
+        userIsCompany: false
+    },
+    mounted: function() {
+        this.$http.get('/api/v1/user/tutorial/has/room_view').then(
+            response => {
+                this.userPassTutorial = response.body.room_view;
+                this.userIsCompany = response.body.company;
+            }
+        );
+    },
+    methods: {
+        onBtnTutorialClick(obj) {
+            this.$http.get('/api/v1/user/tutorial/add/room_view').then(
+                response => {
+                    this.userPassTutorial = response.body.room_view;
+                }
+            );
+            
+            document.getElementsByClassName(obj).forEach(element => {
+                element.style.cssText = "display:none";
+            });
+            return true;
+        }
     }
 });

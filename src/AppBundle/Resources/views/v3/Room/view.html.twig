@@ -211,9 +211,58 @@
             <a href="#" @click.prevent="onDeactivateClick" class="room-deactivate__btn">Деактивировать комнату</a>
         {% endif %}
         </div>
-
     </div>
     <!--/Content -->
+
+    <!-- Modal assistant -->
+    <div id="tutorial">
+        <div class="modal modal_assistant modal_company_room_view" style="display:none;" v-show="userIsCompany && userPassTutorial == false">
+            <div class="modal__box flex-center">
+            <div class="modal__assistant">
+                <div class="modal__assistant__body fx align-center">
+                <div class="modal__assistant__icon i-lock"></div>
+                <div class="modal__assistant__txt modal__assistant__txt__other">
+                    <h3 class="modal__assistant__title__green">Список лидов и приглашение участника</h3>
+                    <p class="modal__assistant__txt__item">Отлично, вы попали в свою первую комнату. Теперь нужно дождаться пока вебмастер загрузит в комнату первые лиды.</p>
+                    <p class="modal__assistant__txt__item">Платформа будет оповещать Вас о добавлении нового лида, используя e-mail, sms или telegram (настроить отправку оповещений, вы можете в своем профиле).</p>
+                    <div class="modal__assistant__advice fx align-center">
+                    <span class="modal__assistant__advice__icon i-invitations"></span>
+                    <p class="modal__assistant__txt__item"><b>Лиды продаются только в одни руки. Если рекламодатель №1 выкупил его, то второй рекламодатель уже не сможет с ним работать.</b></p>
+                    </div>
+                    <p class="modal__assistant__txt__item">Чтобы пригласить вебмастера в комнату, нажмите кнопку «Пригласить участника», которая находится сразу под названием комнаты, и отправьте ему ссылку-приглашение.</p>
+                    <p class="modal__assistant__txt__item">Вебмастеру предстоит перейди по ссылке и нажать кнопку «принять приглашение».</p>
+                </div>
+                </div>
+                <div class="modal__box__foot">
+                <a href="#" @click="onBtnTutorialClick('modal_company_room_view')" class="btn btn__green text-center">Понятно <span v-text="userPassTutorial+':'+userIsCompany"></span></a>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="modal modal_assistant modal_room_view" style="display:none;" v-show="userIsCompany == false && userPassTutorial == false">
+            <div class="modal__box flex-center">
+            <div class="modal__assistant">
+                <div class="modal__assistant__body fx align-center">
+                <div class="modal__assistant__icon i-lock"></div>
+                <div class="modal__assistant__txt modal__assistant__txt__other">
+                    <h3 class="modal__assistant__title__green">Комната и приглашение участника</h3>
+                    <p class="modal__assistant__txt__item">Отлично, вы попали в свою первую комнату. Теперь нужно добавить лида, для этого нажмите кнопку «Добавить лид» в верхней части экрана.</p>
+                    <p class="modal__assistant__txt__item">После публикации, лид будет доступен для покупки всем участникам комнаты.</p>
+                    <div class="modal__assistant__advice fx align-center">
+                    <span class="modal__assistant__advice__icon i-invitations"></span>
+                    <p class="modal__assistant__txt__item"><b>Лиды продаются только в одни руки. Если рекламодатель №1 выкупил его, то второй рекламодатель уже не сможет с ним работать.</b></p>
+                    </div>
+                    <p class="modal__assistant__txt__item">Чтобы пригласить рекламодателя в комнату, нажмите кнопку «Пригласить участника», которая находится сразу под названием комнаты, и отправьте ему ссылку-приглашение.</p>
+                    <p class="modal__assistant__txt__item">Рекламодателю предстоит перейди по ссылке и нажать кнопку «принять приглашение».</p>
+                </div>
+                </div>
+                <div class="modal__box__foot">
+                <a href="#" @click="onBtnTutorialClick('modal_room_view')" class="btn btn__green text-center">Понятно <span v-text="userPassTutorial+':'+userIsCompany"></span></a>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
