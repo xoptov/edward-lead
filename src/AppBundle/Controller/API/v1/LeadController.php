@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Form\DataTransformer\NumberToBooleanTransformer;
+use AppBundle\Repository\LeadRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -329,6 +330,7 @@ class LeadController extends APIController
         /** @var User $user */
         $user = $this->getUser();
 
+        /** @var LeadRepository $repository */
         $repository = $this->entityManager->getRepository(Lead::class);
 
         if ($room) {

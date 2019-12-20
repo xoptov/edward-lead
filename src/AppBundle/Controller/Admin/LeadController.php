@@ -3,12 +3,18 @@
 namespace AppBundle\Controller\Admin;
 
 use Exception;
+use AppBundle\Admin\LeadAdmin;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LeadController extends CRUDController
 {
+    /**
+     * @var LeadAdmin
+     */
+    protected $admin;
+
     /**
      * @return RedirectResponse|Response
      *

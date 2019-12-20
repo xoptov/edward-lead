@@ -187,7 +187,7 @@ class PaymentController extends Controller
         try {
             $invoice = $this->entityManager
                 ->getRepository(Invoice::class)
-                ->getById($id_invoice);
+                ->find($id_invoice);
 
             if (count($invoice) == 0 || $invoice[0] == null)
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-invoice', 'result' => null]);
