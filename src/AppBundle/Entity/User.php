@@ -221,14 +221,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $referrer;
 
     /**
-     * @var ArrayCollection|HistoryAction
+     * @var ArrayCollection|HistoryAction[]
      *
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\HistoryAction", mappedBy="user")
      */
     private $historyActions;
 
     /**
-     * @var ArrayCollection|OfferRequest
+     * @var ArrayCollection|OfferRequest[]
      * 
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
      */

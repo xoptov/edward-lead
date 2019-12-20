@@ -6,7 +6,9 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\OfferRequest;
 use AppBundle\Entity\RoomJoinRequest;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\OfferRepository;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -67,8 +69,11 @@ class OfferController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $nearestOfferRequest = $this->entityManager
-            ->getRepository(OfferRequest::class)
+        /** @var OfferRepository */
+        $offerRepository = $this->entityManager
+            ->getRepository(OfferRequest::class);
+
+        $nearestOfferRequest = $offerRepository
             ->getCountByUserInInterval($user, $this->oneInInterval);
 
         if ($nearestOfferRequest) {
@@ -91,7 +96,9 @@ class OfferController extends Controller
             );
         }
 
-        $admins = $this->entityManager->getRepository(User::class)->getAdmins();
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $admins = $userRepository->getAdmins();
 
         if (empty($admins)) {
             return new JsonResponse(['В системе нет администраторов'], Response::HTTP_BAD_REQUEST);
@@ -142,7 +149,9 @@ class OfferController extends Controller
             );
         }
 
-        $admins = $this->entityManager->getRepository(User::class)->getAdmins();
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $admins = $userRepository->getAdmins();
 
         if (empty($admins)) {
             return new JsonResponse(

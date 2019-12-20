@@ -196,7 +196,8 @@ body {
   border-radius: 2px;
   padding: 7px 11px 7px 3px;
   border: 1px solid #d2d2d2;
-  width: 304px;height: 400px;
+  width: 304px;
+  max-height: 400px;
   -webkit-box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
 }
@@ -286,11 +287,6 @@ body {
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%);
-}
-
-
-.notice__btn.hide{
-  display: none;
 }
 
 .notice__btn_check {

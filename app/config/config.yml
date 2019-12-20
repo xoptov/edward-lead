@@ -28,7 +28,7 @@ framework:
     fragments: ~
     http_method_override: true
     assets:
-        version: '20191121'
+        version: '20191220'
     php_errors:
         log: true
 
@@ -45,7 +45,6 @@ twig:
         landing_url: '%landing_url%'
         offer_limit_in_seconds: '%offer_limit_in_seconds%'
         esputnik_wepush_script_is_stage: '%esputnik_wepush_script_is_stage%'
-
     paths:
         '%kernel.project_dir%/src/NotificationBundle/Resources/views': NotificationBundle
 
