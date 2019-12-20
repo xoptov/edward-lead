@@ -2,27 +2,32 @@
 
 {%- block content %}
     <!-- Content -->
-    <div id="app" class="content">
+    <div id="app" class="content" data-room-id="{{ room.id }}" data-room-enabled="{{ room.enabled }}">
         <!-- Room -->
         <div class="title-panel fx fx-between">
             <div class="room-panel__box">
                 <div class="title">
-                    <h3 class="title__h3 fx align-center">Комната #{{ room.id }} - {{ room.name }}<span class="dots dots__{{ room.enabled ? 'green' : 'red' }}"></span></h3>
+                    <h3 class="title__h3 fx align-center">
+                        Комната #{{ room.id }} - {{ room.name }}
+                        <span class="dots" :class="{dots__green: roomEnabled, dots__red: !roomEnabled}"></span>
+                    </h3>
                 </div>
                 <div class="room-panel__info fx">
-                    <a href="/room/{{ room.id }}/invite" class="room-panel__invite">Пригласить участника</a>
+                    {% if room.enabled -%}
+                        <a href="/room/{{ room.id }}/invite" class="room-panel__invite" v-show="roomEnabled">Пригласить участника</a>
+                    {%- endif %}
                     <p class="room-panel__balance">Общий баланс покупателей: <span>{% if countCanBuy > 0 %}{{countCanBuy}} лидов{% else %}Нет покупателей{% endif %}</span></p>
                 </div>
             </div>
-            {% if app.user.webmaster and room.enabled -%}
-                <div class="room-panel__btn"><a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn__green">Добавить лид</a></div>
-            {%- else -%}
-                <div class="room-panel__btn"><span class="btn btn__grey">Добавить лид</span></div>
+            {% if is_granted('ROLE_WEBMASTER') and room.enabled -%}
+                <div class="room-panel__btn" v-show="roomEnabled">
+                    <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn__green">Добавить лид</a>
+                </div>
             {%- endif %}
         </div>
 
         <!-- Rooms table -->
-        <room-leads :room-id="roomId" inline-template>
+        <room-leads :room-id="{{ room.id }}" inline-template>
             <div class="row room-panel-table">
                 <div class="table__box">
                     <table class="table info-room__table">
@@ -162,7 +167,7 @@
         <!--/ Room description -->
 
         <!-- Room members -->
-        <room-members :room-id="roomId" v-on:revoke-member="revokeMember" inline-template>
+        <room-members :members="members" v-on:revoke-member="revokeMember" inline-template>
             <div class="room-members">
                 <div class="title">
                     <h4 class="title__h4">Участники комнаты</h4>
@@ -210,33 +215,58 @@
         <!--/ Room members -->
 
         <!-- Room deactivate -->
-        <div v-if="activated" class="room-deactivate">
-            {% if room.isOwner(app.user) %}
-                <a href="#" @click.prevent="onDeactivateClick" class="room-deactivate__btn">Деактивировать комнату</a>
-            {% endif %}
-        </div>
+        {% if room.enabled and room.isOwner(app.user) -%}
+            <div class="room-deactivate" v-show="roomEnabled">
+                <a href="#" @click.prevent="deactivate" class="room-deactivate__btn">Деактивировать комнату</a>
+            </div>
+        {%- endif %}
         <!--/ Room deactivate -->
 
     </div>
     <!--/Content -->
 {% endblock -%}
 
+{% block modals %}
+    <!-- Modals -->
+    <div id="room-deactivate-modal" class="modal modal_deactivate" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_green">Вы действительно хотите <br />деактивировать комнату?</p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click.prevent="confirm">Деактивировать</button>
+                    <button class="modal__close" @click.prevent="close">Отменить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="revoke-member-modal" class="modal modal_exclude" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_green">Вы действительно хотите <br />исключить участника Nikitosik?</p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click.prevent="confirm">Исключить</button>
+                    <button class="modal__close" @click.prevent="close">Отменить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="room-deactivate-impossible-modal" class="modal modal_impossible" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_red"><span>:(</span></p>
+                <p class="modal__paragraph">К сожаению, вы не можете деактивировать <br />комнату пока в ней есть лиды</p>
+            </div>
+        </div>
+    </div>
+    <!--/ Modals -->
+{% endblock %}
+
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/date.format.js') }}"></script>
-    <script>
-        let roomId = null;
-        let roomEnabled = false;
-        {%- if room -%}
-            roomId = {{ room.id }};
-            {%- if room.enabled -%}
-                roomEnabled = true;
-            {%- else -%}
-                roomEnabled = false;
-            {%- endif -%}
-        {%- endif -%}
-    </script>
     <script src="{{ asset('bundles/app/v3/js/room/view.js') }}"></script>
 {% endblock %}

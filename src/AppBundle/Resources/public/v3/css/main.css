@@ -786,14 +786,11 @@ span.i-panel {
 .room-panel__invite {
   color: #00a368;
   font-size: 14px;
+  margin-right: 40px;
 }
 
 .room-panel__invite:hover {
   color: #01c37d;
-}
-
-.room-panel__balance {
-  margin-left: 40px;
 }
 
 .room-panel__balance span {

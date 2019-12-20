@@ -91,33 +91,16 @@ const RoomLeads = {
 
 const RoomMembers = {
     props: {
-        roomId: {
-            type: Number,
+        members: {
             required: true
         }
-    },
-    data() {
-        return {
-            members: {
-                webmasters: [],
-                companies: []
-            }
-        }
-    },
-    created() {
-        this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
-            response => {
-                this.members.webmasters = response.data.webmasters;
-                this.members.companies = response.data.companies;
-            }
-        );
     },
     computed: {
         webmastersCount: function() {
             return this.members.webmasters.length;
         },
-        companiesCount: function() {
-            return this.members.companies.length;
+        advertisersCount: function() {
+            return this.members.advertisers.length;
         }
     },
     methods: {
@@ -133,31 +116,109 @@ const RoomMembers = {
     }
 };
 
-new Vue({
+const app = new Vue({
     el: '#app',
     components: {
         'room-members': RoomMembers,
         'room-leads': RoomLeads
-        //todo: модалки
     },
     data: {
-        roomId: roomId,
-        activated: roomEnabled,
-        deactivationError: null,
-        revokeMemberModal: false,
-        deactivateModal: false
+        roomId: 0,
+        roomEnabled: false,
+        members: {
+            webmasters: [],
+            advertisers: []
+        }
+    },
+    mounted() {
+        this.roomId = parseInt(this.$el.dataset.roomId);
+        this.roomEnabled = !!parseInt(this.$el.dataset.roomEnabled);
+        this.loadMembers();
     },
     methods: {
-        deactivate() {
-            this.$http.get('/api/v1/room/' + this.roomId + '/deactivate')
-                .then(response => {
-                    this.deactivationError = null;
-                    this.activated = false;
-                })
-                .catch(response => this.deactivationError = response.data[0]);
+        loadMembers: function() {
+            this.$http.get('/api/v1/room/' + this.roomId + '/members').then(
+                response => {
+                    this.members.webmasters = response.data.webmasters;
+                    this.members.advertisers = response.data.companies;
+                }
+            );
         },
-        revokeMember(data) {
-            console.log(data);
+        deactivate() {
+            this.$emit('room-deactivate');
+        },
+        deactivation() {
+            this.$http.get('/api/v1/room/' + this.roomId + '/deactivate')
+                .then(() => this.roomDisable())
+                .catch(() => this.$emit('deactivation-rejected'));
+        },
+        revokeMember(member) {
+            this.$emit('revoke-member', member);
+        },
+        roomDisable() {
+            this.roomEnabled = false;
         }
     }
 });
+
+const roomDeactivateModal = new Vue({
+    el: '#room-deactivate-modal',
+    data: {
+        visible: false
+    },
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        close() {
+            this.visible = false;
+        },
+        confirm() {
+            this.close();
+            this.$emit('deactivate-confirm');
+        }
+    }
+});
+
+const revokeMemberModal = new Vue({
+    el: '#revoke-member-modal',
+    data: {
+        visible: false,
+        member: null
+    },
+    methods: {
+        show(member) {
+            this.member = member;
+            this.visible = true;
+        },
+        close() {
+            this.visible = false;
+            this.member = null;
+        },
+        confirm() {
+            //todo: тут нужно реализовать логику по ревоку членства пользователя.
+            this.close();
+        }
+    }
+});
+
+const roomDeactivateImpossibleModal = new Vue({
+    el: '#room-deactivate-impossible-modal',
+    data: {
+        visible: false
+    },
+    methods: {
+        show() {
+            this.visible = true;
+        },
+        close() {
+            this.visible = false;
+        }
+    }
+});
+
+roomDeactivateModal.$on('deactivate-confirm', app.deactivation);
+
+app.$on('room-deactivate', roomDeactivateModal.show);
+app.$on('revoke-member', revokeMemberModal.show);
+app.$on('deactivation-rejected', roomDeactivateImpossibleModal.show);
