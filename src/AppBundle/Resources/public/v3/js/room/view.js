@@ -153,7 +153,9 @@ const app = new Vue({
                 .catch(() => this.$emit('deactivation-rejected'));
         },
         revokeMember(member) {
-            this.$emit('revoke-member', member);
+            this.$http.delete('/api/v1/room/' + this.roomId + '/revoke/' + member.id)
+                .then(() => this.loadMembers())
+                .catch(resp => console.log(resp));
         },
         roomDisable() {
             this.roomEnabled = false;
@@ -174,8 +176,8 @@ const roomDeactivateModal = new Vue({
             this.visible = false;
         },
         confirm() {
-            this.close();
             this.$emit('deactivate-confirm');
+            this.close();
         }
     }
 });
@@ -196,7 +198,7 @@ const revokeMemberModal = new Vue({
             this.member = null;
         },
         confirm() {
-            //todo: тут нужно реализовать логику по ревоку членства пользователя.
+            this.$emit('revoke-member-confirm', this.member);
             this.close();
         }
     }
@@ -218,6 +220,7 @@ const roomDeactivateImpossibleModal = new Vue({
 });
 
 roomDeactivateModal.$on('deactivate-confirm', app.deactivation);
+revokeMemberModal.$on('revoke-member-confirm', app.revokeMember);
 
 app.$on('room-deactivate', roomDeactivateModal.show);
 app.$on('revoke-member', revokeMemberModal.show);

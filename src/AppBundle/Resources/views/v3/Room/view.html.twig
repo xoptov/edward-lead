@@ -167,7 +167,7 @@
         <!--/ Room description -->
 
         <!-- Room members -->
-        <room-members :members="members" v-on:revoke-member="revokeMember" inline-template>
+        <room-members :members="members" v-on:revoke-member="$emit('revoke-member', $event)" inline-template>
             <div class="room-members">
                 <div class="title">
                     <h4 class="title__h4">Участники комнаты</h4>
@@ -194,11 +194,11 @@
                 <div class="room-members__box fx">
                     <div class="room-members__info">
                         <p class="room-members__title">Компании:</p>
-                        <p class="room-members__quantity"><span v-text="'Кол: ' + companiesCount"></span></p>
+                        <p class="room-members__quantity"><span v-text="'Кол: ' + advertisersCount"></span></p>
                     </div>
                     <div class="room-members__user">
                         <ul class="room-members__list fx fx-wrap">
-                            <li class="room-members__list__item" v-for="member in members.companies">
+                            <li class="room-members__list__item" v-for="member in members.advertisers">
                             <span class="room-members__list__icon">
                                 <img :src="getLogotype(member)" :alt="member.user.name">
                                 {% if room.isOwner(app.user) -%}
