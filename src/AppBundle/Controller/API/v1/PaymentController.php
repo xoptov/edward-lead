@@ -132,7 +132,7 @@ class PaymentController extends Controller
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-user', 'result' => null]);
 
             $invoice = $this->invoiceManager->create($user[0], $sum, '', false);
-            $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
+            $this->eventDispatcher->dispatch(InvoiceEvent::NEW_CREATED, new InvoiceEvent($invoice));
             $this->entityManager->flush();
 
             $userOwner = null;
