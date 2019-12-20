@@ -251,7 +251,7 @@ class RoomController extends Controller
 
     /**
      * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
-     * 
+     *
      * @param EventDispatcherInterface $eventDispatcher
      * @param string                   $token
      *

@@ -7,7 +7,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 class WithdrawEvent extends Event
 {
-    const CREATED = 'withdraw.created';
+    const NEW_CREATED = 'withdraw.new_created';
+    const ACCEPTED    = 'withdraw.accepted';
 
     /**
      * @var Withdraw

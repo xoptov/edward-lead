@@ -9,6 +9,9 @@ class UserEvent extends Event
 {
     const NEW_REGISTERED      = 'user.new_registered';
     const RESET_TOKEN_UPDATED = 'user.reset_token_updated';
+    const API_TOKEN_CHANGED   = 'user.api_token_changed';
+    const PASSWORD_CHANGED    = 'user.password_changed';
+    const PASSWORD_RESET      = 'user.password_reset';
 
     /**
      * @var User
