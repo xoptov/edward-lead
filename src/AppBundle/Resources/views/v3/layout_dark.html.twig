@@ -33,9 +33,7 @@
                                 {% include('@App/v3/parts/dark/menu.html.twig') %}
                             </div>
                             <div class="col-9 fx-column content-wrap">
-                                {% block content -%}
-                                    <div class="content"></div>
-                                {%- endblock content %}
+                                {% block content %}{% endblock content %}
                                 <div class="footer">
                                     <span class="footer__copyright">© 2019 Edward</span>
                                 </div>

@@ -37,6 +37,9 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE     = self::ROLE_USER;
 
+    const TYPE_PERSONAL     = 'personal';
+    const TYPE_ORGANIZATION = 'organization';
+
     /**
      * @var Company|null
      *
