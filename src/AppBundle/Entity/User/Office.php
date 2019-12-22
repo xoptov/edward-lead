@@ -63,7 +63,8 @@ class Office
     /**
      * @var ArrayCollection|City[]
      *
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\City")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\City")
+     * @ORM\JoinTable(name="offices_cities")
      */
     private $cities;
 
@@ -82,6 +83,7 @@ class Office
 
     /**
      * @param null|string $name
+     * 
      * @return Office
      */
     public function setName(?string $name): self

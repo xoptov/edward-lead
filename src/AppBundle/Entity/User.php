@@ -2,16 +2,18 @@
 
 namespace AppBundle\Entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\User\Office;
+use AppBundle\Entity\User\Personal;
+use AppBundle\Entity\User\Organization;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use FOS\MessageBundle\Model\ParticipantInterface;
 use NotificationBundle\Entity\UserNotificationTrait;
-use NotificationBundle\Entity\UserWithWebPushInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use NotificationBundle\Entity\UserWithWebPushInterface;
 use NotificationBundle\Entity\UserNotificationInterface;
 use NotificationBundle\Entity\UserWithTelegramInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -29,23 +31,50 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         UserNotificationTrait,
         TimeTrackableTrait;
 
-    const ROLE_USER        = 'ROLE_USER';
-    const ROLE_COMPANY     = 'ROLE_COMPANY';
-    const ROLE_WEBMASTER   = 'ROLE_WEBMASTER';
-    const ROLE_ADMIN       = 'ROLE_ADMIN';
-    const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
+    const ROLE_USER                  = 'ROLE_USER';
+    const ROLE_WEBMASTER             = 'ROLE_WEBMASTER';
+    const ROLE_ADVERTISER            = 'ROLE_ADVERTISER';
+    const ROLE_ADMIN                 = 'ROLE_ADMIN';
+    const ROLE_SUPER_ADMIN           = 'ROLE_SUPER_ADMIN';
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
-    const DEFAULT_ROLE     = self::ROLE_USER;
+    const DEFAULT_ROLE               = self::ROLE_USER;
 
     const TYPE_PERSONAL     = 'personal';
     const TYPE_ORGANIZATION = 'organization';
 
     /**
-     * @var Company|null
-     *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Company", mappedBy="user")
+     * @var string|null
+     * 
+     * @ORM\Column(type="string", length=12, nullable=true)
      */
-    private $company;
+    private $type;
+
+    /**
+     * @var Organization|null
+     * 
+     * @Assert\Valid(groups={"organization"})
+     *
+     * @ORM\Embedded(class="AppBundle\Entity\User\Organization")
+     */
+    private $organization;
+
+    /**
+     * @var Personal|null
+     * 
+     * @Assert\Valid(groups={"personal"})
+     * 
+     * @ORM\Embedded(class="AppBundle\Entity\User\Personal")
+     */
+    private $personal;
+
+    /**
+     * @var Office|null
+     * 
+     * @Assert\Valid
+     * 
+     * @ORM\Embedded(class="AppBundle\Entity\User\Office")
+     */
+    private $office;
 
     /**
      * @var ClientAccount|null
@@ -181,9 +210,9 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @var bool
      *
-     * @ORM\Column(name="type_selected", type="boolean")
+     * @ORM\Column(name="role_selected", type="boolean")
      */
-    private $typeSelected = false;
+    private $roleSelected = false;
 
     /**
      * @var int|null
@@ -262,41 +291,115 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public static function getPossibleRoles(): array
     {
         return [
-            self::ROLE_COMPANY,
             self::ROLE_ADMIN,
             self::ROLE_SUPER_ADMIN,
             self::ROLE_WEBMASTER,
-            self::ROLE_COMPANY
+            self::ROLE_ADVERTISER
         ];
     }
 
     /**
-     * @param Company|null $company
-     *
+     * @return array
+     */
+    public static function getPossibleTypes(): array
+    {
+        return [
+            self::TYPE_ORGANIZATION,
+            self::TYPE_PERSONAL
+        ];
+    }
+
+    /**
+     * @param string|null $type
+     * 
      * @return User
      */
-    public function setCompany(?Company $company): self
+    public function setType(?string $type): self
     {
-        $this->company = $company;
+        $types = $this->getPossibleTypes();
+
+        if (in_array($type, $types)) {
+            $this->type = $type;
+        }
 
         return $this;
     }
 
     /**
-     * @return Company|null
+     * @return string|null
      */
-    public function getCompany(): ?Company
+    public function getType(): ?string
     {
-        return $this->company;
+        return $this->type;
     }
 
     /**
-     * @return int|null
+     * @param Organization|null $organization
+     *
+     * @return User
      */
-    public function getCompanyId(): ?int
+    public function setOrganization(?Organization $organization): self
     {
-        if ($this->company) {
-            return $this->company->getId();
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return Organization|null
+     */
+    public function getOrganization(): ?Organization
+    {
+        if ($this->organization) {
+            return clone $this->organization;
+        }
+        
+        return null;
+    }
+
+    /**
+     * @param Personal|null $personal
+     * 
+     * @return User
+     */
+    public function setPersonal(?Personal $personal): self
+    {
+        $this->personal = $personal;
+
+        return $this;
+    }
+
+    /**
+     * @return Personal|null
+     */
+    public function getPersonal(): ?Personal
+    {
+        if ($this->personal) {
+            return clone $this->personal;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Office|null $office
+     * 
+     * @return User
+     */
+    public function setOffice(?Office $office): self
+    {
+        $this->office = $office;
+
+        return $this;
+    }
+
+    /**
+     * @return Office|null
+     */
+    public function getOffice(): ?Office
+    {
+        if ($this->office) {
+            return clone $this->office;
         }
 
         return null;
@@ -307,8 +410,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function getOfficePhone(): ?string
     {
-        if ($this->company) {
-            return $this->company->getOfficePhone();
+        if ($this->office) {
+            return $this->office->getPhone();
         }
 
         return null;
@@ -705,29 +808,9 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @return bool
      */
-    public function hasCompany(): bool
+    public function isRoleSelected(): bool
     {
-        return $this->company instanceof Company;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isTypeSelected(): bool
-    {
-        return $this->typeSelected;
-    }
-
-    /**
-     * @return User
-     */
-    public function makeTypeSelected(): self
-    {
-        if (!$this->typeSelected) {
-            $this->typeSelected = true;
-        }
-
-        return $this;
+        return $this->roleSelected;
     }
 
     /**
@@ -748,8 +831,10 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function switchToWebmaster(): self
     {
         $this
-            ->removeRole(self::ROLE_COMPANY)
+            ->removeRole(self::ROLE_ADVERTISER)
             ->addRole(self::ROLE_WEBMASTER);
+        
+        $this->roleSelected = true;
 
         return $this;
     }
@@ -757,11 +842,13 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @return User
      */
-    public function switchToCompany(): self
+    public function switchToAdvertiser(): self
     {
         $this
             ->removeRole(self::ROLE_WEBMASTER)
-            ->addRole(self::ROLE_COMPANY);
+            ->addRole(self::ROLE_ADVERTISER);
+        
+        $this->roleSelected = true;
 
         return $this;
     }
@@ -776,16 +863,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         }
 
         return $this->account->getBalance();
-    }
-
-    /**
-     * @param int $divisor
-     *
-     * @return float
-     */
-    public function getHumanBalance(int $divisor = Account::DIVISOR): float
-    {
-        return $this->getBalance() / $divisor;
     }
 
     /**
@@ -875,9 +952,9 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @return bool
      */
-    public function isCompany(): bool
+    public function isAdvertiser(): bool
     {
-        return in_array(self::ROLE_COMPANY, $this->roles);
+        return in_array(self::ROLE_ADVERTISER, $this->roles);
     }
 
     /**
@@ -888,4 +965,3 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         return in_array(self::ROLE_WEBMASTER, $this->roles);
     }
 }
-
