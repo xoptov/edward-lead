@@ -4,6 +4,7 @@ namespace AppBundle\Entity\User\Personal;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Embeddable
@@ -12,40 +13,97 @@ class Passport
 {
     /**
      * @var string|null
+     *
+     * @Assert\Length(
+     *     max=4,
+     *     maxMessage="Максимальная длинна серии паспорта {{limit}} символов"
+     * )
+     *
+     * @ORM\Column(type="string", length=4, nullable=true)
      */
-    private $serialNumber;
+    private $serial;
 
     /**
      * @var string|null
+     *
+     * @Assert\Length(
+     *     max=6,
+     *     maxMessage="Максимальная длинна номера паспорта {{limit}} символов"
+     * )
+     *
+     * @ORM\Column(type="string", length=6, nullable=true)
+     */
+    private $number;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(
+     *     max=150,
+     *     maxMessage="Максимальная длинна наименования структоры выдавшей паспорт {{limit}} символов"
+     * )
+     *
+     * @ORM\Column(type="string", length=150, nullable=true)
      */
     private $issuer;
 
     /**
      * @var DateTime|null
+     *
+     * @Assert\Date(message="Значение должно быть датой")
+     *
+     * @ORM\Column(name="issue_date", type="date", nullable=true)
      */
     private $issueDate;
 
     /**
      * @var string|null
+     *
+     * @Assert\Length(
+     *     max=150,
+     *     maxMessage="Максимальная длинна адреса {{limit}} символов"
+     * )
+     *
+     * @ORM\Column(name="address", type="string", length=150, nullable=true)
      */
-    private $permanentAddress;
+    private $address;
 
     /**
      * @return string|null
      */
-    public function getSerialNumber(): ?string
+    public function getSerial(): ?string
     {
-        return $this->serialNumber;
+        return $this->serial;
     }
 
     /**
-     * @param string|null $serialNumber
+     * @param string|null $serial
      * 
      * @return Passport
      */
-    public function setSerialNumber(?string $serialNumber): self
+    public function setSerial(?string $serial): self
     {
-        $this->serialNumber = $serialNumber;
+        $this->serial = $serial;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNumber(): ?string
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param string|null $number
+     *
+     * @return Passport
+     */
+    public function setNumber(?string $number): self
+    {
+        $this->number = $number;
 
         return $this;
     }
@@ -97,19 +155,19 @@ class Passport
     /**
      * @return string|null
      */
-    public function getPermanentAddress(): ?string
+    public function getAddress(): ?string
     {
-        return $this->permanentAddress;
+        return $this->address;
     }
 
     /**
-     * @param string|null $permanentAddress
+     * @param string|null $address
      * 
      * @return Passport
      */
-    public function setPermanentAddress(?string $permanentAddress): self
+    public function setAddress(?string $address): self
     {
-        $this->permanentAddress = $permanentAddress;
+        $this->address = $address;
 
         return $this;
     }
