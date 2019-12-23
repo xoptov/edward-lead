@@ -177,10 +177,9 @@ class ArbitrationController extends Controller
 
         $logotypePath = null;
 
-        if ($user->isCompany()) {
+        if ($user->isAdvertiser()) {
 
-            $company = $user->getCompany();
-            $logotype = $company->getLogotype();
+            $logotype = $user->getLogotype();
 
             if ($logotype) {
                 $logotypePath = $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_34x34');

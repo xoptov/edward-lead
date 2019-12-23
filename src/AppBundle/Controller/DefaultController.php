@@ -70,11 +70,11 @@ class DefaultController extends Controller
         $user = $this->getUser();
 
         if ($user->isWebmaster()) {
-            return $this->redirectToRoute('app_dashboard');
-        } elseif ($user->isCompany()) {
+            return $this->redirectToRoute('app_user_dashboard');
+        } elseif ($user->isAdvertiser()) {
             return $this->redirectToRoute('app_room_list');
         }
 
-        return $this->redirectToRoute('app_select_type');
+        return $this->redirectToRoute('app_user_select_role');
     }
 }

@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Repository\AccountRepository;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

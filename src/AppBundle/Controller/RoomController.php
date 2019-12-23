@@ -155,7 +155,7 @@ class RoomController extends Controller
             foreach ($users as $user) {
                 if ($user->isWebmaster()) {
                     $rooms[$i]['webmasters'] +=1 ;
-                } elseif ($user->isCompany()) {
+                } elseif ($user->isAdvertiser()) {
                     $rooms[$i]['companies'] += 1;
                 }
             }
@@ -194,7 +194,9 @@ class RoomController extends Controller
 
         $buyerFee = $feesManager->getCommissionForBuyerInRoom($room);
 
-        $visit = new RoomVisit($room, $this->getUser());
+        /** @var User $user */
+        $user = $this->getUser();
+        $visit = new RoomVisit($room, $user);
 
         $this->entityManager->persist($visit);
         $this->entityManager->flush();
@@ -289,13 +291,13 @@ class RoomController extends Controller
                 $memberUser = $member->getUser();
                 if ($memberUser->isWebmaster()) {
                     $webmasters++;
-                } elseif ($memberUser->isCompany()) {
+                } elseif ($memberUser->isAdvertiser()) {
                     $advertisers++;
                 }
             }
 
             if (($user->isWebmaster() && $webmasters)
-                || ($user->isCompany() && $advertisers)) {
+                || ($user->isAdvertiser() && $advertisers)) {
                 return $this->redirectToRoute('app_room_invite_invalid');
             }
         }

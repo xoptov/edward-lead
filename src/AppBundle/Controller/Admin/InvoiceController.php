@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Invoice;
-use AppBundle\Event\AccountEvent;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Service\InvoiceManager;
 use AppBundle\Form\Type\InvoiceProcessType;

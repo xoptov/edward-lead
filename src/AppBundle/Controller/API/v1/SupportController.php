@@ -4,9 +4,9 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
-use AppBundle\Repository\ThreadRepository;
 use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\ThreadRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\MessageBundle\EntityManager\ThreadManager;

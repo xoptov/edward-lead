@@ -112,7 +112,6 @@ class LeadController extends Controller
      * @param TradeManager     $tradeManager
      * @param FeesManager      $feesManager
      * @param PhoneCallManager $phoneCallManager
-     * @param TimerManager     $timerManager
      *
      * @return Response
      */
@@ -120,8 +119,7 @@ class LeadController extends Controller
         Lead $lead,
         TradeManager $tradeManager,
         FeesManager $feesManager,
-        PhoneCallManager $phoneCallManager,
-        TimerManager $timerManager
+        PhoneCallManager $phoneCallManager
     ): Response {
         if (!$this->isGranted(LeadViewVoter::OPERATION, $lead)) {
             $this->addFlash('error', 'У Вас нет прав на просмотр лида');
@@ -133,8 +131,6 @@ class LeadController extends Controller
         $user = $this->getUser();
 
         if ($lead->isOwner($user)) {
-            $now = $timerManager->createDateTime();
-
             return $this->render('@App/Lead/show_before_buy.html.twig', [
                 'lead' => $lead,
                 'priceWithFee' => $tradeManager->calculateCostWithFee($lead),

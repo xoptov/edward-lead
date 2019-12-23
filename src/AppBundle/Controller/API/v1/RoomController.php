@@ -97,14 +97,14 @@ class RoomController extends APIController
                 ]
             ];
 
-            if ($user->isCompany() && $user->getCompany()->getLogotype()) {
-                $logotype = $user->getCompany()->getLogotype();
+            if ($user->isAdvertiser() && $user->getLogotype()) {
+                $logotype = $user->getLogotype();
                 $item['user']['logotype'] = $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_34x34');
             }
 
             if ($user->isWebmaster()) {
                 $result['webmasters'][] = $item;
-            } elseif ($user->isCompany()) {
+            } elseif ($user->isAdvertiser()) {
                 $result['companies'][] = $item;
             }
         }
@@ -285,7 +285,8 @@ class RoomController extends APIController
         Room $room,
         RoomManager $roomManager
     ): JsonResponse {
-        
+
+        /** @var User $user */
         $user = $this->getUser();
 
         try {
