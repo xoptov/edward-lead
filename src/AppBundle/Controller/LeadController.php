@@ -13,6 +13,7 @@ use AppBundle\Service\TradeManager;
 use AppBundle\Service\PhoneCallManager;
 use AppBundle\Security\Voter\LeadBuyVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
+use AppBundle\Repository\PhoneCallRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -90,8 +91,11 @@ class LeadController extends Controller
                 ->getRepository(Trade::class)
                 ->findBy(['buyer' => $user], ['id' => 'DESC']);
 
-            $phoneCalls = $this->getDoctrine()
-                ->getRepository(PhoneCall::class)
+            /** @var PhoneCallRepository $phoneCallRepository */
+            $phoneCallRepository = $this->getDoctrine()
+                ->getRepository(PhoneCall::class);
+
+            $phoneCalls = $phoneCallRepository
                 ->getCallsWithTrades($user, $trades);
 
             $data = array(

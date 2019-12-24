@@ -14,6 +14,9 @@ use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Exception\RoomException;
+use AppBundle\Repository\LeadRepository;
+use AppBundle\Repository\RoomRepository;
+use AppBundle\Repository\UserRepository;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,8 +111,9 @@ class RoomController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $rooms = $this->entityManager->getRepository(Room::class)
-            ->getByMember($user);
+        /** @var RoomRepository $roomRepository */
+        $roomRepository = $this->entityManager->getRepository(Room::class);
+        $rooms = $roomRepository->getByMember($user);
 
         if (empty($rooms)) {
             return $this->redirectToRoute('app_room_create');
@@ -127,10 +131,14 @@ class RoomController extends Controller
 
         $now = new \DateTime();
 
-        $repository = $this->entityManager->getRepository(Lead::class);
+        /** @var LeadRepository $leadRepository */
+        $leadRepository = $this->entityManager->getRepository(Lead::class);
 
-        $dailyLeads = $repository->getAddedInRoomsByDate($rooms, $now);
-        $expectLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_EXPECT]);
+        $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
+        $expectLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_EXPECT]);
+
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
 
         for ($i = 0; $i < count($rooms); $i++) {
 
@@ -148,7 +156,7 @@ class RoomController extends Controller
                 }
             }
 
-            $users = $this->entityManager->getRepository(User::class)
+            $users = $userRepository
                 ->getUsersInRoom($rooms[$i]['room']);
 
             /** @var User $user */
@@ -178,13 +186,16 @@ class RoomController extends Controller
         AccountManager $accountManager,
         FeesManager $feesManager
     ): Response {
+        
         if (!$this->isGranted(RoomVoter::VIEW, $room)) {
             $this->addFlash('error', 'У вас нет прав на просмотр комнаты');
 
             return $this->redirectToRoute('app_room_list');
         }
 
-        $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $buyers = $userRepository->getAdvertisersInRoom($room);
 
         $totalAvailableMoney = 0;
 
@@ -280,8 +291,9 @@ class RoomController extends Controller
         // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
         if ($room->isTimer()) {
 
-            $members = $this->entityManager->getRepository(Member::class)
-                ->getByRooms([$room]);
+            /** @var MemberRepository $memberRepository */
+            $memberRepository = $this->entityManager->getRepository(Member::class);
+            $members = $memberRepository->getByRooms([$room]);
 
             $webmasters = 0;
             $advertisers = 0;

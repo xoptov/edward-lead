@@ -8,6 +8,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use AppBundle\Event\MemberEvent;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Repository\LeadRepository;
 use AppBundle\Service\RoomManager;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,8 +40,9 @@ class RoomController extends APIController
         /** @var User $user */
         $user = $this->getUser();
 
-        $rooms = $this->getDoctrine()->getRepository(Room::class)
-            ->getByMember($user);
+        /** @var RoomRepository $roomRepository */
+        $roomRepository = $this->getDoctrine()->getRepository(Room::class);
+        $rooms = $roomRepository->getByMember($user);
 
         $result = [];
 
@@ -174,9 +176,14 @@ class RoomController extends APIController
             );
         }
 
-        $leads = $entityManager
-            ->getRepository(Lead::class)
-            ->getOffersByRooms([$room], [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]);
+        /** @var LeadRepository $leadRepository */
+        $leadRepository = $entityManager
+            ->getRepository(Lead::class);
+
+        $leads = $leadRepository->getOffersByRooms(
+            [$room], 
+            [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]
+        );
 
         if (count($leads)) {
             return new JsonResponse(

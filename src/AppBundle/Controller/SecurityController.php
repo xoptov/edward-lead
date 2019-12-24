@@ -101,7 +101,8 @@ class SecurityController extends Controller
                     $referrerToken = $request->cookies->get('referrer');
 
                     if (!empty($referrerToken)) {
-
+                        
+                        /** @var UserRepository $userRepository */
                         $userRepository = $this->entityManager->getRepository(User::class);
 
                         try {

@@ -6,11 +6,12 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
-use AppBundle\Event\MessageEvent;
 use AppBundle\Service\Uploader;
-use AppBundle\Form\Type\ReplayType;
 use Doctrine\DBAL\DBALException;
+use AppBundle\Event\MessageEvent;
+use AppBundle\Form\Type\ReplayType;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\MessageRepository;
 use Symfony\Component\Filesystem\Filesystem;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -137,9 +138,12 @@ class ArbitrationController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $entityManager->getRepository(Message::class);
+
         // todo: Нравится ли мне как тут я сделал? Нет конечно! Но! Блять я уже устал в пятницу вечером и хочу домой.
         try {
-            $messageInTimeFrame = $entityManager->getRepository(Message::class)
+            $messageInTimeFrame = $messageRepository
                 ->getCountInTimeFrameBySender($user, 60);
 
             if ($messageInTimeFrame >= $this->messageLimitInMinute) {
@@ -163,6 +167,8 @@ class ArbitrationController extends Controller
         $messageBuilder = $this->fosComposer->reply($data['thread']);
         $messageBuilder->setBody($data['body']);
         $messageBuilder->setSender($user);
+        
+        /** @var Message $message */
         $message = $messageBuilder->getMessage();
 
         /** @var Thread $thread */

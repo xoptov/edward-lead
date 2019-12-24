@@ -52,8 +52,11 @@ class DefaultController extends Controller
                     $this->addFlash('error', $violation->getMessage());
                 }
             } else {
+                /** @var RoomRepository $roomRepository */
+                $roomRepository = $entityManager->getRepository(Room::class);
+
                 try {
-                    $room = $entityManager->getRepository(Room::class)
+                    $room = $roomRepository
                         ->getByInviteShortToken($inviteShortToken);
 
                     return $this->redirectToRoute('app_room_invite_confirm', ['token' => $room->getInviteToken()]);
