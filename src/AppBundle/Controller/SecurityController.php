@@ -233,7 +233,7 @@ class SecurityController extends Controller
             }
         }
 
-        return $this->render('@App/Security/password_reset.html.twig', [
+        return $this->render('@App/v3/Security/password_reset.html.twig', [
             'form' => $form->createView()
         ]);
     }
