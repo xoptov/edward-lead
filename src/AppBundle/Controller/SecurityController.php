@@ -302,7 +302,6 @@ class SecurityController extends Controller
                 new UserEvent($user)
             );
 
-            // return new Response('Пароль пользователя успешно изменен');
             return $this->render('@App/v3/Security/password_change_success.html.twig');
         }
 
