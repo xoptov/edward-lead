@@ -169,7 +169,7 @@ class TelephonyController extends APIController
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            $errors = $form->getErrors(true);
+            $errors = $form->getErrors(true, false);
             $logger->error('Ошибка в формате данных Callback от PBX', ['errors' => (string)$errors]);
 
             return $this->responseErrors($errors);
