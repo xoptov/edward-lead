@@ -131,12 +131,6 @@ class InternalNotificationContainerTest extends BaseNotificationContainerTestCas
         $this->service->youJoinedToRoom($this->getMember());
     }
 
-    public function testMessageCreated()
-    {
-        $this->clientMock->expects($this->once())->method('send');
-        $this->service->messageFromSupport($this->getMessage());
-    }
-
     public function testWithdrawUser()
     {
         $this->clientMock->expects($this->once())->method('send');

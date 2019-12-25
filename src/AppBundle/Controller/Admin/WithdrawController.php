@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Admin;
 
-use AppBundle\Entity\OutgoingAccount;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Event\WithdrawEvent;
@@ -111,17 +110,17 @@ class WithdrawController extends CRUDController
     {
         $object = $this->admin->getSubject();
 
-//        if (!$object) {
-//            throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
-//        }
-//
-//        if (!$object instanceof Withdraw) {
-//            throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
-//        }
-//
-//        if ($object->isProcessed()) {
-//            throw new \Exception('Операция вывода уже обработана');
-//        }
+        if (!$object) {
+            throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
+        }
+
+        if (!$object instanceof Withdraw) {
+            throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
+        }
+
+        if ($object->isProcessed()) {
+            throw new \Exception('Операция вывода уже обработана');
+        }
 
         $form = $this->createForm(WithdrawProcessType::class, ['invoice' => $object]);
         $objectName = $this->admin->toString($object);
@@ -136,10 +135,7 @@ class WithdrawController extends CRUDController
                     /** @var User $user */
                     $user = $this->getUser();
                     $this->withdrawManager->confirm($object, $user);
-                    $account = new OutgoingAccount();
-                    $account->setEnabled(true);
-                    $account->setDescription('qwe');
-                    $this->withdrawManager->process($data['invoice'], $account);
+                    $this->withdrawManager->process($data['invoice'], $data['account']);
 
                     $this->addFlash(
                         'sonata_flash_success',

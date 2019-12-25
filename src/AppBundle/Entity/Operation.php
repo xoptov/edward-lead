@@ -220,9 +220,11 @@ class Operation implements IdentifiableInterface
     }
 
     /**
-     * @return string
+     * @param bool $incoming
+     *
+     * @return string | null
      */
-    public function getAccountDescription(bool $incoming = true): string
+    public function getAccountDescription(bool $incoming = true): ?string
     {
         $transactions = $incoming ? $this->getIncomeTransactions() : $this->getOutcomeTransactions();
         $transactions = reset($transactions);
