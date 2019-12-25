@@ -220,8 +220,11 @@ class SecurityController extends Controller
                 $user = $this->entityManager->getRepository(User::class)
                     ->findOneBy(['email' => $data['email']]);
 
-                if (!$user) {
-                    return new Response('Пользователь с указанным Email не найден', Response::HTTP_NOT_FOUND);
+                if (!$user){
+                    return $this->render('@App/v3/Security/password_reset.html.twig', [
+                        'form' => $form->createView(),
+                        'error' => 'Пользователь с указанным Email не найден'
+                    ]);
                 }
 
                 $this->userManager->updateResetToken($user);
@@ -233,7 +236,7 @@ class SecurityController extends Controller
             }
         }
 
-        return $this->render('@App/Security/password_reset.html.twig', [
+        return $this->render('@App/v3/Security/password_reset.html.twig', [
             'form' => $form->createView()
         ]);
     }
