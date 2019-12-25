@@ -25,8 +25,8 @@ class UserRepository extends EntityRepository
         $query = $queryBuilder
             ->innerJoin(Member::class, 'm', Join::WITH, 'u = m.user AND m.room = :room')
                 ->setParameter('room', $room)
-            ->where('u.typeSelected = :type_selected')
-                ->setParameter('type_selected', true)
+            ->where('u.roleSelected = :role_selected')
+                ->setParameter('role_selected', true)
             ->getQuery();
 
         return $query->getResult();
@@ -89,10 +89,11 @@ class UserRepository extends EntityRepository
        $queryBuilder
            ->join(Member::class, 'm', Join::WITH, 'u = m.user AND m.room IN (:rooms)')
                 ->setParameter('rooms', $rooms)
-           ->where('u.typeSelected = :type_selected')
-                ->setParameter('type_selected', true)
-           ->andWhere('u.roles LIKE :role_company')
-                ->setParameter('role_company', '%ROLE_COMPANY%');
+           ->where('u.roleSelected = :role_selected')
+                ->setParameter('role_selected', true)
+           ->andWhere('(u.roles LIKE :role_company) OR (u.roles LIKE :role_advertiser)')
+                ->setParameter('role_company', '%ROLE_COMPANY%')
+                ->setParameter('role_advertiser', '%ROLE_ADVERTISER%');
 
        return $queryBuilder;
     }

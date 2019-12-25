@@ -13,11 +13,8 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use NotificationBundle\Client\InternalClient;
 use NotificationBundle\Entity\Notification;
-use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class InternalNotificationContainer

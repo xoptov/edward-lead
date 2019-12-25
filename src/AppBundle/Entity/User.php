@@ -123,25 +123,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $phone;
 
     /**
-     * @var string|null
-     *
-     * @Assert\Length(
-     *     min=6,
-     *     minMessage="Почтовый индекс должен быть 6 символов",
-     *     max=6,
-     *     maxMessage="Почновый индекс должен быть 6 символов"
-     * )
-     *
-     * @Assert\Type(
-     *     type="integer",
-     *     message="Почтовый индекс должен состоять из целых десятичный чисел"
-     * )
-     *
-     * @ORM\Column(type="string", length=6, nullable=true)
-     */
-    private $zipcode;
-
-    /**
      * @var string
      *
      * @Assert\Email(message="Невалидное значение поля")
@@ -452,6 +433,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @return bool
+     */
+    public function hasPersonal(): bool
+    {
+        return !empty($this->personal);
+    }
+
+    /**
      * @param Image $logotype
      *
      * @return Company
@@ -469,6 +458,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function getLogotype(): ?Image
     {
         return $this->logotype;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLogotype(): bool
+    {
+        return !empty($this->logotype);
     }
 
     /**

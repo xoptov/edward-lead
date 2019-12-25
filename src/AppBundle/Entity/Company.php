@@ -29,59 +29,64 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(max=50)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать короткое название компании",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     max=50,
+     *     maxMessage="Максимальная длина краткого названия компании {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="short_name", type="string", length=50)
+     * @ORM\Column(name="short_name", type="string", length=50, nullable=true)
      */
     private $shortName;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(max=100)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать полное название компании",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     max=100,
+     *     maxMessage="Максимальная длина полного названия компании {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="large_name", type="string", length=100)
+     * @ORM\Column(name="large_name", type="string", length=100, nullable=true)
      */
     private $largeName;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(min=10, max=12)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать ИНН",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     min=10,
+     *     minMessage="Минимальная длина ИНН {{limit}} символов",
+     *     max=12,
+     *     maxMessage="Максимальная длина ИНН {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="inn", type="string", length=12)
+     * @ORM\Column(name="inn", type="string", length=12, nullable=true)
      */
     private $inn;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(min=13, max=15)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать ОГРН",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     min=13,
+     *     minMessage="Минимальная длина ОГРН {{limit}} символов",
+     *     max=15,
+     *     maxMessage="Максимальная длина ОГРН {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="ogrn", type="string", length=15)
+     * @ORM\Column(name="ogrn", type="string", length=15, nullable=true)
      */
     private $ogrn;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(min=9, max=9)
+     * @Assert\Length(
+     *     min=9,
+     *     minMessage="Минимальная длина КПП {{limit}} символов",
+     *     max=9,
+     *     maxMessage="Максимальная длина КПП {{limit}} символов"
+     * )
      *
      * @ORM\Column(name="kpp", type="string", length=9, nullable=true)
      */
@@ -90,41 +95,61 @@ class Company implements IdentifiableInterface
     /**
      * @var string|null
      *
-     * @Assert\Length(min=9, max=9)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать БИК",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     min=9,
+     *     minMessage="Минимальная длина БИК {{limit}} символов",
+     *     max=9,
+     *     maxMessage="Максимальная длина БИК {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="bik", type="string", length=9)
+     * @ORM\Column(name="bik", type="string", length=9, nullable=true)
      */
     private $bik;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(min=20, max=25)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать расчётный счёт",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     min=20,
+     *     minMessage="Минимальная длина номера счёта {{limit}} символов",
+     *     max=25,
+     *     maxMessage="Максимальная длина номера счёта {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="account_number", type="string", length=25)
+     * @ORM\Column(name="account_number", type="string", length=25, nullable=true)
      */
     private $accountNumber;
 
     /**
      * @var string|null
      *
-     * @Assert\Length(max=150)
-     * @Assert\NotBlank(
-     *     message="Необходимо указать адрес",
-     *     groups={"Company"}
+     * @Assert\Length(
+     *     max=150,
+     *     maxMessage="Максимальная длина адреса {{limit}} символов"
      * )
      *
-     * @ORM\Column(name="address", type="string", length=150)
+     * @ORM\Column(name="address", type="string", length=150, nullable=true)
      */
     private $address;
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(
+     *     min=6,
+     *     minMessage="Почтовый индекс должен быть 6 символов",
+     *     max=6,
+     *     maxMessage="Почновый индекс должен быть 6 символов"
+     * )
+     *
+     * @Assert\Type(
+     *     type="integer",
+     *     message="Почтовый индекс должен состоять из целых десятичный чисел"
+     * )
+     *
+     * @ORM\Column(type="string", length=6, nullable=true)
+     */
+    private $zipcode;
 
     /**
      * @param User $user
@@ -304,5 +329,25 @@ class Company implements IdentifiableInterface
     public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    /**
+     * @param null|string $zipcode
+     *
+     * @return User
+     */
+    public function setZipcode(?string $zipcode): self
+    {
+        $this->zipcode = $zipcode;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getZipcode(): ?string
+    {
+        return $this->zipcode;
     }
 }

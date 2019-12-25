@@ -114,7 +114,7 @@ class NotificationController extends Controller
         foreach ($request->request->all() as $key => $value){
             $this->disableNotificationService->handle($key, $value);
         }
-        return $this->redirectToRoute('app_profile');
+        return $this->redirectToRoute('app_user_profile');
     }
 
     /**

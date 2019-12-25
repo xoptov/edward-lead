@@ -81,7 +81,6 @@ class UserController extends Controller
         }
 
         $user->switchToAdvertiser();
-
         $userManager->updateAccessToken($user);
 
         //todo: это костыль который пока не знаю как лучше изменить.
@@ -115,7 +114,6 @@ class UserController extends Controller
         }
 
         $user->switchToWebmaster();
-
         $userManager->updateAccessToken($user);
 
         //todo: это костыль который пока не знаю как лучше изменить.

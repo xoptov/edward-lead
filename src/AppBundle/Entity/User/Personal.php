@@ -4,7 +4,6 @@ namespace AppBundle\Entity\User;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use AppBundle\Entity\User\Personal\Passport;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -32,15 +31,6 @@ class Personal
      * @ORM\Column(name="birth_date", type="date", nullable=true)
      */
     private $birthDate;
-
-    /**
-     * @var Passport|null
-     * 
-     * @Assert\Valid(groups={"personal"})
-     *
-     * @ORM\Embedded(class="AppBundle\Entity\User\Personal\Passport")
-     */
-    private $passport;
 
     /**
      * @return string|null
@@ -75,6 +65,14 @@ class Personal
     }
 
     /**
+     * @return bool
+     */
+    public function hasBirthDate(): bool
+    {
+        return !empty($this->birthDate);
+    }
+
+    /**
      * @param DateTime|null
      * 
      * @return Personal
@@ -82,28 +80,6 @@ class Personal
     public function setBirthDate(?DateTime $birthDate): self
     {
         $this->birthDate = $birthDate;
-
-        return $this;
-    }
-
-    /**
-     * @return Passport|null
-     */
-    public function getPassport(): ?Passport
-    {
-        if ($this->passport) {
-            return clone $this->passport;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Passport|null $passport
-     */
-    public function setPassport(?Passport $passport): self
-    {
-        $this->passport = $passport;
 
         return $this;
     }

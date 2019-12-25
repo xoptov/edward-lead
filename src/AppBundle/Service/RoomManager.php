@@ -63,6 +63,7 @@ class RoomManager
         }
 
         // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
+        // @todo: Это необходимо вынести в другой сервис, и сделать интерфейс общий или абстрактный класс.
         if ($room->isTimer() && $room->getId()) {
 
             $members = $this->entityManager->getRepository(Member::class)
@@ -81,7 +82,7 @@ class RoomManager
             }
 
             if (($user->isWebmaster() && $webmasters)
-                || ($user->isCompany() && $advertisers)) {
+                || ($user->isAdvertiser() && $advertisers)) {
                 throw new RoomException($room, $user, 'Комната с таймером и такой тип пользователя уже есть в комнате');
             }
         }
