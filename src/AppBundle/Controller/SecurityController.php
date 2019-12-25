@@ -232,7 +232,8 @@ class SecurityController extends Controller
 
                 $this->eventDispatcher->dispatch(UserEvent::RESET_TOKEN_UPDATED, new UserEvent($user));
 
-                return new Response('На указанный вами Email была отправленна ссылка для смены пароля');
+                // return new Response('На указанный вами Email была отправленна ссылка для смены пароля');
+                return $this->render('@App/v3/Security/password_reset_confirm.html.twig');
             }
         }
 
