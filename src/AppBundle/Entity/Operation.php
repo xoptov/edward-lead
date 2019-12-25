@@ -2,10 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
 use AppBundle\Entity\Part\CreatedAtTrait;
 use AppBundle\Entity\Part\IdentificatorTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="operation")
@@ -210,13 +210,32 @@ class Operation implements IdentifiableInterface
         $incomeTransactions = [];
 
         /** @var MonetaryTransaction $transaction */
-        foreach ($this->transactions as $transaction)
-        {
+        foreach ($this->transactions as $transaction) {
             if ($transaction->isIncome()) {
                 $incomeTransactions[] = $transaction;
             }
         }
 
         return $incomeTransactions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountDescription(bool $incoming = true): string
+    {
+        $transactions = $incoming ? $this->getIncomeTransactions() : $this->getOutcomeTransactions();
+        $transactions = reset($transactions);
+
+        /** @var MonetaryTransaction */
+        if ($transactions) {
+            /** @var Account $destinationAccount */
+            $account = $transactions->getAccount();
+
+            return $account->getDescription();
+        }
+
+        return null;
+
     }
 }

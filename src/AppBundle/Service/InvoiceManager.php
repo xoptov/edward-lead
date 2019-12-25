@@ -79,6 +79,8 @@ class InvoiceManager
             throw new OperationException($invoice, 'Инвойс уже обработан');
         }
 
+        $this->entityManager->persist($account);
+
         $transactions = $this->transactionManager->create(
             $account,
             $invoice->getAccount(),

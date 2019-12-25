@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\IncomeAccount;
 use AppBundle\Entity\Invoice;
+use AppBundle\Entity\OutgoingAccount;
 use AppBundle\Event\AccountEvent;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Service\InvoiceManager;
@@ -105,17 +107,17 @@ class InvoiceController extends CRUDController
     {
         $object = $this->admin->getSubject();
 
-        if (!$object) {
-            throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
-        }
-
-        if (!$object instanceof Invoice) {
-            throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
-        }
-
-        if ($object->isProcessed()) {
-            throw new \Exception('Инвойс уже обработан');
-        }
+//        if (!$object) {
+//            throw new NotFoundHttpException(sprintf('Не найден объект с казанным идентификатором: %s', $id));
+//        }
+//
+//        if (!$object instanceof Invoice) {
+//            throw new \InvalidArgumentException('Данный тип объекта не поддерживается');
+//        }
+//
+//        if ($object->isProcessed()) {
+//            throw new \Exception('Инвойс уже обработан');
+//        }
 
         $form = $this->createForm(InvoiceProcessType::class, ['invoice' => $object]);
         $objectName = $this->admin->toString($object);
@@ -127,7 +129,10 @@ class InvoiceController extends CRUDController
                 $data = $form->getData();
 
                 try {
-                    $this->invoiceManager->process($data['invoice'], $data['account']);
+                    $account = new IncomeAccount();
+                    $account->setEnabled(true);
+                    $account->setDescription('qwe');
+                    $this->invoiceManager->process($data['invoice'],$account);
 
                     $this->addFlash(
                         'sonata_flash_success',

@@ -3,12 +3,9 @@
 namespace AppBundle\Notifications;
 
 use AppBundle\Entity\ClientAccount;
-use AppBundle\Entity\Message;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use Exception;
 use NotificationBundle\Channels\SmsChannel;
-use NotificationBundle\Client\Client;
 
 class SmsNotificationContainer
 {

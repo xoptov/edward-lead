@@ -138,6 +138,8 @@ class WithdrawManager
             );
         }
 
+        $this->entityManager->persist($account);
+
         $transactions = $this->transactionManager->create($withdraw->getAccount(), $account, $withdraw, false);
 
         $this->entityManager->transactional(function(EntityManagerInterface $entityManager) use ($withdraw, $transactions) {

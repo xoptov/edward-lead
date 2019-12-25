@@ -134,7 +134,7 @@ class InternalNotificationContainerTest extends BaseNotificationContainerTestCas
     public function testMessageCreated()
     {
         $this->clientMock->expects($this->once())->method('send');
-        $this->service->messageCreated($this->getMessage());
+        $this->service->messageFromSupport($this->getMessage());
     }
 
     public function testWithdrawUser()

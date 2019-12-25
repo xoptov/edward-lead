@@ -37,7 +37,7 @@ class InvoiceProcessType extends AbstractType
         $builder
             ->add('invoice', HiddenType::class, [
                 'constraints' => [
-                    new NotBlank()
+//                    new NotBlank()
                 ]
             ])
             ->add('account', EntityType::class, [
@@ -49,7 +49,7 @@ class InvoiceProcessType extends AbstractType
                 },
                 'choice_label' => 'description',
                 'constraints' => [
-                    new NotBlank()
+//                    new NotBlank()
                 ]
             ])
             ->add('submit', SubmitType::class);
