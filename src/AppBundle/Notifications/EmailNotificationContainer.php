@@ -10,7 +10,6 @@ use AppBundle\Entity\Message;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
-use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use NotificationBundle\Channels\EmailChannel;
@@ -18,7 +17,7 @@ use NotificationBundle\Constants\Cases;
 use NotificationBundle\Constants\EsputnikEmailTemplate;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class EmailNotificationContainer
+class EmailNotificationContainer extends BaseNotificationContainer
 {
     /**
      * @var EmailChannel
@@ -31,22 +30,21 @@ class EmailNotificationContainer
     private $router;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * EmailNotificationContainer constructor.
      *
-     * @param EmailChannel                 $client
+     * @param EmailChannel           $client
      * @param UrlGeneratorInterface  $router
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EmailChannel $client, UrlGeneratorInterface $router, EntityManagerInterface $entityManager)
+    public function __construct(
+        EmailChannel $client,
+        UrlGeneratorInterface $router,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->client = $client;
         $this->router = $router;
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager);
     }
 
     /**
@@ -83,6 +81,8 @@ class EmailNotificationContainer
     }
 
     /**
+     * Пополнение баланса
+     *
      * @param Invoice $object
      *
      * @throws Exception
@@ -95,7 +95,7 @@ class EmailNotificationContainer
             "params" => [
                 "NAME" => $object->getUser()->getName(),
                 "SUMM_BALANCE" => $object->getAmount(100),
-                "TYPE_BALANCE" => $object->getDescription(),
+                "TYPE_BALANCE" => $object->getAccountDescription(true),
             ],
         ]);
     }
@@ -279,6 +279,8 @@ class EmailNotificationContainer
     }
 
     /**
+     * Вывод средств успех
+     *
      * @param Withdraw $object
      *
      * @throws Exception
@@ -291,7 +293,7 @@ class EmailNotificationContainer
             "params" => [
                 "BALANCE_LOGOUT" => $object->getAmount(100),
                 "ID_BALANCE_LOGOUT" => $object->getId(),
-                "TYPE_BALANCE_LOGOUT" => $object->getDescription(),
+                "TYPE_BALANCE_LOGOUT" => $object->getAccountDescription(false),
             ],
         ]);
     }
@@ -355,15 +357,5 @@ class EmailNotificationContainer
         ]);
     }
 
-    /**
-     * @return array
-     */
-    private function getNotificationOperators()
-    {
-        /** @var UserRepository $repository */
-        $repository = $this->entityManager->getRepository(User::class);
 
-        return $repository->getByRole(User::ROLE_NOTIFICATION_OPERATOR);
-
-    }
 }

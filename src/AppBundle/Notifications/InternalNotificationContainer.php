@@ -20,7 +20,7 @@ use NotificationBundle\Entity\Notification;
 use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class InternalNotificationContainer
+class InternalNotificationContainer extends BaseNotificationContainer
 {
     /**
      * @var InternalClient
@@ -33,11 +33,6 @@ class InternalNotificationContainer
     private $router;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * EmailNotificationContainer constructor.
      *
      * @param InternalClient         $client
@@ -48,7 +43,7 @@ class InternalNotificationContainer
     {
         $this->client = $client;
         $this->router = $router;
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager);
     }
 
     /**
@@ -135,17 +130,25 @@ class InternalNotificationContainer
      * @param Message $object
      *
      */
-    public function messageCreated(Message $object): void
+    public function messageFromSupport(Message $object): void
     {
+        $thread = $object->getThread();
+
+        /** @var User $user */
+        $user = $thread->getCreatedBy();
+
+        if (
+            !$user instanceof User ||
+            !$thread instanceof Thread ||
+            $thread->getTypeAppeal() !== Thread::TYPE_SUPPORT
+        ) {
+            return;
+        }
+
         $message = "У вас имеется новое сообщение от службы поддержки";
         $link = $this->router->generate('app_arbitration');
         $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
-        $user = $object->getThread()->getCreatedBy();
         $type = Notification::TYPE_IMPORTANT;
-
-        if(!$user instanceof User){
-            return;
-        }
 
         $notification = new Notification($user, $html, $type);
 
@@ -197,7 +200,7 @@ class InternalNotificationContainer
             return;
         }
 
-        $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
+        $message = "Вам поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
         $link = $this->router->generate('app_arbitration');
         $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
 
@@ -223,7 +226,9 @@ class InternalNotificationContainer
                 continue;
             }
 
-            $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$member->getUser()->getAccount()->getType()}";
+            $type = $member->getUser()->isWebmaster() ? 'Вебмастер' : 'Компания';
+
+            $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$type}";
             $html = "<p class='notice__item__txt'>{$message}</p>";
             $user = $member->getUser();
 
@@ -254,7 +259,7 @@ class InternalNotificationContainer
      */
     public function youRemovedFromRoom(Member $object): void
     {
-        $message = "Вы были изключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
+        $message = "Вы были исключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
         $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
