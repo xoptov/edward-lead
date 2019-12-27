@@ -263,7 +263,7 @@ class SecurityController extends Controller
             'step' => PasswordResetType::STEP_SECOND
         ]);
 
-        return $this->render('@App/Security/password_resetting.html.twig', [
+        return $this->render('@App/v3/Security/password_resetting.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -306,7 +306,7 @@ class SecurityController extends Controller
             return $this->render('@App/v3/Security/password_change_success.html.twig');
         }
 
-        return $this->render('@App/Security/password_resetting.html.twig', [
+        return $this->render('@App/v3/Security/password_resetting.html.twig', [
             'form' => $form->createView()
         ]);
     }
