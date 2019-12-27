@@ -20,7 +20,7 @@ class PersonalType extends AbstractType
             ->add('fullName', TextType::class, [
                 'required' => false
             ])
-            ->add('birthDate'. DateType::class, [
+            ->add('birthDate', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'dd.MM.yyyy',
                 'required' => false
@@ -33,5 +33,13 @@ class PersonalType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', Personal::class);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBlockPrefix()
+    {
+        return null;
     }
 }

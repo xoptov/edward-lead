@@ -85,11 +85,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $logotype;
 
     /**
-     * @var string
-     */
-    private $logotypePath;
-
-    /**
      * @var ClientAccount|null
      *
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\ClientAccount", mappedBy="user")
@@ -284,6 +279,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
 
     public function __construct()
     {
+        $this->personal = new Personal();
         $this->offices = new ArrayCollection();
         $this->historyActions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
@@ -314,6 +310,26 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
             self::ROLE_WEBMASTER,
             self::ROLE_COMPANY
         ];
+    }
+
+    /**
+     * @param null|string $type
+     *
+     * @return User
+     */
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
     }
 
     /**
@@ -466,26 +482,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public function hasLogotype(): bool
     {
         return !empty($this->logotype);
-    }
-
-    /**
-     * @param string|null $logotypePath
-     *
-     * @return Company
-     */
-    public function setLogotypePath(?string $logotypePath): self
-    {
-        $this->logotypePath = $logotypePath;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getLogotypePath(): ?string
-    {
-        return $this->logotypePath;
     }
 
     /**

@@ -41,12 +41,12 @@ final class Version20191225153310 extends AbstractMigration
         $this->addSql('CREATE TABLE companies_cities (company_id INT UNSIGNED NOT NULL, city_id INT UNSIGNED NOT NULL, INDEX IDX_7ED91E45979B1AD6 (company_id), INDEX IDX_7ED91E458BAC62AF (city_id), PRIMARY KEY(company_id, city_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB COMMENT = \'\'');
         $this->addSql('ALTER TABLE companies_cities ADD CONSTRAINT FK_7ED91E458BAC62AF FOREIGN KEY (city_id) REFERENCES city (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE companies_cities ADD CONSTRAINT FK_7ED91E45979B1AD6 FOREIGN KEY (company_id) REFERENCES company (id) ON DELETE CASCADE');
+        $this->addSql('UPDATE company c, office o SET c.user_id = o.user_id, c.office_name = o.name, c.office_phone = o.phone, c.office_address = o.address WHERE c.user_id = o.user_id');
         $this->addSql('DROP TABLE office');
         $this->addSql('DROP TABLE offices_cities');
         $this->addSql('ALTER TABLE company ADD logotype_id INT UNSIGNED DEFAULT NULL, ADD office_name VARCHAR(30) DEFAULT NULL COLLATE utf8_unicode_ci, ADD office_phone VARCHAR(32) DEFAULT NULL COLLATE utf8_unicode_ci, ADD office_address VARCHAR(150) DEFAULT NULL COLLATE utf8_unicode_ci, CHANGE short_name short_name VARCHAR(50) NOT NULL COLLATE utf8_unicode_ci, CHANGE large_name large_name VARCHAR(100) NOT NULL COLLATE utf8_unicode_ci, CHANGE inn inn VARCHAR(12) NOT NULL COLLATE utf8_unicode_ci, CHANGE ogrn ogrn VARCHAR(15) NOT NULL COLLATE utf8_unicode_ci, CHANGE bik bik VARCHAR(9) NOT NULL COLLATE utf8_unicode_ci, CHANGE account_number account_number VARCHAR(25) NOT NULL COLLATE utf8_unicode_ci, CHANGE address address VARCHAR(150) NOT NULL COLLATE utf8_unicode_ci, CHANGE zipcode zipcode VARCHAR(6) NOT NULL COLLATE utf8_unicode_ci');
         $this->addSql('ALTER TABLE company ADD CONSTRAINT FK_4FBF094F784CE779 FOREIGN KEY (logotype_id) REFERENCES image (id) ON DELETE SET NULL');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_4FBF094F784CE779 ON company (logotype_id)');
-        $this->addSql('UPDATE company c, office o SET c.user_id = o.user_id, c.office_name = o.name, c.office_phone = o.phone, c.office_address = o.address WHERE c.user_id = o.user_id');
         $this->addSql('UPDATE company c, user u SET c.logotype_id = u.logotype_id WHERE c.user_id = u.id');
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D649784CE779');
         $this->addSql('DROP INDEX UNIQ_8D93D649784CE779 ON user');

@@ -5,9 +5,12 @@ namespace AppBundle\Controller\API\v1;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Event\UserEvent;
+use AppBundle\Form\Type\UserType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\User\Personal;
 use AppBundle\Form\Type\PersonalType;
+use AppBundle\Security\Voter\UserVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +24,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class UserController extends APIController
 {
     /**
-     * @Route("/user/renew-token", name="api_v1_user_renew_token", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *     "/user/renew-token",
+     *     name="api_v1_user_renew_token",
+     *     methods={"GET"},
+     *     defaults={"_format":"json"}
+     * )
      *
      * @param UserManager              $userManager
      * @param EventDispatcherInterface $eventDispatcher
@@ -47,10 +55,10 @@ class UserController extends APIController
     }
 
     /**
-     * @Route("/user/my", name="api_v1_user_my_view", methods={"GET"})
+     * @Route("/user/me", name="api_v1_user_me_view", methods={"GET"})
      *
-     * @param Request       $request
-     * @param CacheManager  $cacheManager
+     * @param Request      $request
+     * @param CacheManager $cacheManager
      *
      * @return JsonResponse
      */
@@ -62,6 +70,37 @@ class UserController extends APIController
         /** @var User $user */
         $user = $this->getUser();
 
+        return $this->getAction($user, $request, $cacheManager);
+    }
+
+    /**
+     * @Route(
+     *     "/user/{id}",
+     *     name="api_v1_user_view",
+     *     methods={"GET"},
+     *     requirements={"id":"\d+"},
+     *     defaults={"_format":"json"}
+     * )
+     *
+     * @param User         $user
+     * @param Request      $request
+     * @param CacheManager $cacheManager
+     *
+     * @return JsonResponse
+     */
+    public function getAction(
+        User $user,
+        Request $request,
+        CacheManager $cacheManager
+    ): JsonResponse {
+
+        if (!$this->isGranted(UserVoter::VIEW, $user)) {
+            return new JsonResponse(
+                ['У вас нет прав на просмотр информации о пользователе'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $result = [
             'id' => $user->getId(),
             'email' => $user->getEmail(),
@@ -70,12 +109,16 @@ class UserController extends APIController
             'skype' => $user->getSkype(),
             'vkontakte' => $user->getVkontakte(),
             'facebook' => $user->getFacebook(),
-            'telegram' => $user->getTelegram()
+            'telegram' => $user->getTelegram(),
+            'type' => $user->getType()
         ];
 
         // todo: тут на самом делел херня получается, нужно представление картинки по другому.
         if ($user->hasLogotype()) {
-            $result['logotype'] = $cacheManager->getBrowserPath($user->getLogotype()->getPath(), 'logotype_202x202');
+            $result['logotype'] = [
+                'id' => $user->getLogotype()->getId(),
+                'path' => $cacheManager->getBrowserPath($user->getLogotype()->getPath(), 'logotype_202x202')
+            ];
         } else {
             $result['logotype'] = null;
         }
@@ -125,50 +168,28 @@ class UserController extends APIController
     }
 
     /**
-     * @Route("/user/my/personal", name="api_v1_user_my_personal_view", methods={"GET"})
+     * @Route("/user/{id}", name="api_v1_user_update", methods={"PATCH"})
      *
-     * @return JsonResponse
-     */
-    public function getMyPersonalAction(): JsonResponse
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $result = [];
-
-        if ($user->hasPersonal()) {
-
-            /** @var Personal $personal */
-            $personal = $user->getPersonal();
-            $result['fullName'] = $personal->getFullName();
-
-            if ($personal->hasBirthDate()) {
-                $birthDate = $personal->getBirthDate();
-                $result['birthDate'] = $birthDate->getTimestamp() * 1000;
-            }
-        }
-
-        return new JsonResponse($result);
-    }
-
-    /**
-     * @Route("/user/my/personal", name="api_v1_user_my_personal_create", methods={"POST"})
-     *
+     * @param User                     $user
      * @param Request                  $request
-     * @param UserManager              $userManager
+     * @param EntityManagerInterface   $entityManager
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function postMyPersonalAction(
+    public function patchAction(
+        User $user,
         Request $request,
-        UserManager $userManager,
+        EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher
     ): JsonResponse {
-        /** @var User $user */
-        $user = $this->getUser();
 
-        $form = $this->createForm(PersonalType::class, null, [
+        if (!$this->isGranted(UserVoter::EDIT, $user)) {
+            return new JsonResponse(['У вас не прав на редактирование пользователя'], Response::HTTP_FORBIDDEN);
+        }
+
+        $form = $this->createForm(UserType::class, $user, [
+            'method' => Request::METHOD_PATCH,
             'csrf_protection' => false
         ]);
 
@@ -182,18 +203,126 @@ class UserController extends APIController
             return $this->responseErrors($form->getErrors(true));
         }
 
-        $personal = $form->getData();
-        $user->setPersonal($personal);
+        $entityManager->flush();
 
-        $userManager->updateUser($user);
-
-        $eventDispatcher->dispatch(UserEvent::PERSONAL_CREATED, new UserEvent($user));
+        $eventDispatcher->dispatch(UserEvent::UPDATED, new UserEvent($user));
 
         return new JsonResponse(['id' => $user->getId()]);
     }
 
     /**
-     * @Route("/user/my/personal", name="api_v1_user_my_personal_update", methods={"PUT"})
+     * @Route(
+     *     "/user/{id}/settings",
+     *     name="api_v1_user_settings",
+     *     methods={"GET"},
+     *     requirements={"id":"\d+"},
+     *     defaults={"_format":"json"}
+     * )
+     *
+     * @param User         $user
+     * @param CacheManager $cacheManager
+     *
+     * @return JsonResponse
+     */
+    public function getMeSettings(
+        User $user,
+        CacheManager $cacheManager
+    ): JsonResponse {
+
+        if (!$this->isGranted(UserVoter::VIEW, $user)) {
+            return new JsonResponse(
+                ['У вас нет прав просмотра настроект пользователя'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
+
+        $result = [
+            'type' => $user->getType(),
+            'logotype' => null
+        ];
+
+        /** @var Personal $personal */
+        $personal = $user->getPersonal();
+
+        $result['personal'] = [
+            'fullName' => $personal->getFullName(),
+            'birthDate' => null
+        ];
+
+        if ($personal->hasBirthDate()) {
+            $result['personal']['birthDate'] = $personal->getBirthDate()->getTimestamp() * 1000;
+        }
+
+        if ($user->hasLogotype()) {
+
+            $logotype = $user->getLogotype();
+
+            $result['logotype'] = [
+                'id' => $logotype->getId(),
+                'path' => $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_202x202')
+            ];
+        }
+
+        return new JsonResponse($result);
+    }
+
+    /**
+     * @Route(
+     *     "/user/me/personal",
+     *     name="api_v1_user_me_personal_view",
+     *     methods={"GET"},
+     *     defaults={"_format":"json"}
+     * )
+     *
+     * @return JsonResponse
+     */
+    public function getMePersonal(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        return $this->getPersonalAction($user);
+    }
+
+    /**
+     * @Route(
+     *     "/user/{id}/personal",
+     *     name="api_v1_user_personal_view",
+     *     methods={"GET"},
+     *     requirements={"id":"\d+"},
+     *     defaults={"_format":"json"}
+     * )
+     *
+     * @param User $user
+     *
+     * @return JsonResponse
+     */
+    public function getPersonalAction(User $user): JsonResponse
+    {
+        /** @var Personal $personal */
+        $personal = $user->getPersonal();
+
+        $result = [
+            'fullName' => $personal->getFullName(),
+            'birthDate' => null
+        ];
+
+        if ($personal->hasBirthDate()) {
+            $birthDate = $personal->getBirthDate();
+            $result['birthDate'] = $birthDate->getTimestamp() * 1000;
+        }
+
+        return new JsonResponse($result);
+    }
+
+
+    /**
+     * @Route(
+     *     "/user/me/personal",
+     *     name="api_v1_user_me_personal_update",
+     *     methods={"PUT"},
+     *     defaults={"_format":"json"}
+     * )
      *
      * @param Request                  $request
      * @param UserManager              $userManager
@@ -201,13 +330,47 @@ class UserController extends APIController
      *
      * @return JsonResponse
      */
-    public function putMyPersonalAction(
+    public function putMePersonalAction(
         Request $request,
         UserManager $userManager,
         EventDispatcherInterface $eventDispatcher
     ): JsonResponse {
+
         /** @var User $user */
-        $user = $this->getUser();
+        $user =  $this->getUser();
+
+        return $this->putPersonalAction($user, $request, $userManager, $eventDispatcher);
+    }
+
+    /**
+     * @Route(
+     *     "/user/{id}/personal",
+     *     name="api_v1_user_personal_update",
+     *     methods={"PUT"},
+     *     requirements={"id":"\d+"},
+     *     defaults={"_format":"json"}
+     * )
+     *
+     * @param User                     $user
+     * @param Request                  $request
+     * @param UserManager              $userManager
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return JsonResponse
+     */
+    public function putPersonalAction(
+        User $user,
+        Request $request,
+        UserManager $userManager,
+        EventDispatcherInterface $eventDispatcher
+    ): JsonResponse {
+
+        if (!$this->isGranted(UserVoter::EDIT, $user)) {
+            return new JsonResponse(
+                ['У вас нет прав на редактирование персональной информации о пользователей'],
+                Response::HTTP_FORBIDDEN
+            );
+        }
 
         $form = $this->createForm(PersonalType::class, null, [
             'method' => Request::METHOD_PUT,
@@ -224,6 +387,7 @@ class UserController extends APIController
             return $this->responseErrors($form->getErrors(true));
         }
 
+        /** @var Personal $personal */
         $personal = $form->getData();
         $user->setPersonal($personal);
 

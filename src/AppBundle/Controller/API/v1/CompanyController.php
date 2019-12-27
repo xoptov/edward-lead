@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Company;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\CompanyVoter;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,23 @@ class CompanyController extends APIController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @Route("/company/my", name="api_v1_company_my_view", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function getMyAction(): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user->hasCompany()) {
+            return new JsonResponse(['У вас нет созданной компании'], Response::HTTP_BAD_REQUEST);
+        }
+
+        return $this->getAction($user->getCompany());
     }
 
     /**
