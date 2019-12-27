@@ -1,4 +1,8 @@
 {% extends '@App/v3/layout_light.html.twig' %}
+{% block header_widget_content -%}
+    <span>{{ 'header.no_account'|trans }}</span>
+    <a href="{{ path('app_registration') }}">{{ 'header.registration'|trans }}</a>
+{%- endblock %}
 {% block content %}
 <!-- Wrap -->
 
@@ -18,8 +22,13 @@
             <div class="form__input form__input__item">
                 <span class="form__input__title">E-mail:</span>
                 <label class="form__input__field">
-                    {{ form_row(form.email, {'label_attr': {'style': 'display:none;'}}) }}
-                    <span class="form__input__surely"></span>
+                    {{ form_widget(form.email, {'attr': {'class': 'form_email'}}) }}
+                    <span class="form__input__surely" {% if form.email.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                    {% if form.email.vars.errors is not empty -%}
+                        <div style="color:red;">
+                            {{ form_errors(form.email) }}
+                        </div>
+                    {%- endif %}
                 </label>
             </div>
         </div>
@@ -27,23 +36,27 @@
             <div class="form__input form__input__item">
                 <span class="form__input__title">Пароль:</span>
                 <label class="form__input__field">
-                    {{ form_row(form.password, {'label': 'Пароль', 'label_attr': {'style':'display:none;'}, 'attr': {'class': 'form_pass'}}) }}
-                    <span class="form__input__surely"></span>
+                    {{ form_widget(form.password, {'attr': {'class': 'form_pass'}}) }}
+                    <span class="form__input__surely" {% if form.password.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                    {% if form.password.vars.errors is not empty -%}
+                        <div style="color:red;">
+                            {{ form_errors(form.password) }}
+                        </div>
+                    {%- endif %}
                 </label>
             </div>
         </div>
-        {% if error is not empty -%}
-            <div class="col-12" style="color:#ff0000; text-align:center;">{{ error.message|trans }}</div>
-        {%- endif %}
         <div class="col-12">
             {{ form_widget(form.submit, {'label': 'Войти в личный кабинет', 'attr': {'class': 'btn btn__green login__form__btn'}}) }}
         </div>
+        {% if error is not empty -%}
+            <div class="col-12" style="color:#ff0000; text-align:center; padding-top:20px">{{ error.message|trans }}</div>
+        {%- endif %}
     {{ form_end(form) }}
     
     <!-- Restore -->
     <div class="login__restore fx fx-end">
         <a href="{{ path('app_password_reset') }}">Восстановить пароль</a>
     </div>
-
 </div>
 {% endblock %}
