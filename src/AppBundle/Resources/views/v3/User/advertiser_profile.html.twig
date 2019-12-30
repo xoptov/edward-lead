@@ -1,7 +1,7 @@
 {% extends '@App/v3/layout_dark.html.twig' %}
 
 {% block content %}
-    <div class="content" id="advertiser-profile" data-company-id="{{ app.user.companyId }}">
+    <div class="content" id="advertiser-profile" data-user-id="{{ app.user.id }}">
 
         <div class="title">
             <h3 class="title__h3">Настройка компании</h3>
@@ -38,141 +38,157 @@
                 </label>
             </div>
 
-            <form action="#" class="form c-settings__form c-settings__form__step__one c-settings__entity">
-                <div class="row fx fx-wrap">
-                    <div class="col-6">
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">ИНН:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_inn" placeholder="ИНН"><span class="form__input__surely"></span>
-                                <ul class="form__input__hint">
-                                    <li class="form__input__hint__item">ООО «Ан Холдинг Групп» <p>ИНН: 6453468963</p></li>
-                                </ul>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Краткое название организации:</span>
-                            <label class="form__input__field"><input type="text" class="c_name_min" placeholder="пример: ООО «Алмаз»"><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Полное название организации:</span>
-                            <label class="form__input__field"><input type="text" class="c_name_full" placeholder="пример: Общество с ограничен..."><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">КПП:</span>
-                            <label class="form__input__field"><input type="text" class="c_cpp" placeholder="пример: 456352789"><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">ОГРН:</span>
-                            <label class="form__input__field"><input type="text" class="c_ogrn" placeholder="пример: 4537814695132"><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item form__input__item_nFlex">
-                            <span class="form__input__title">Юридический адрес:</span>
-                            <label class="form__input__field"><textarea class="c_ur_adres" placeholder="пример: г. Москва ул. Новый Арбат д. 1 оф 200"></textarea><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Индекс:</span>
-                            <label class="form__input__field"><input type="text" class="c_index" placeholder="пример: 410000"><span class="form__input__surely"></span></label>
-                        </div>
-                        <button class="btn btn__gray_not c-settings__form__btn">Далее</button>
-                    </div>
-
-                    <div class="col-6">
-                        <div class="upload">
-                            <div class="upload__icon flex-center"><img src="img/other/user-default.png" alt="Пользователь"></div>
-                            <p class="form__input__title">Логотип Вашей компании:</p>
-                            <p class="upload__name fx align-center"><span class="i-clip"></span>Без-названия.jpg<span class="form__input__remove"></span></p>
-                            <div class="upload__file">
-                                <input type="file" id="upload__file" accept="image/jpeg,image/png">
-                                <label for="upload__file" class="btn btn__green">Загрузить логотип</label>
+            <company-component inline-template>
+                <form action="#" class="form c-settings__form">
+                    <div class="row fx fx-wrap">
+                        <div class="col-6">
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">ИНН:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_inn" placeholder="ИНН"><span class="form__input__surely"></span>
+                                    <ul class="form__input__hint">
+                                        <li class="form__input__hint__item">ООО «Ан Холдинг Групп» <p>ИНН: 6453468963</p></li>
+                                    </ul>
+                                </label>
                             </div>
-                            <div class="upload__errors">
-                                <p class="upload__errors__item upload__errors_1">максимальный размер файла - 2 mb</p>
-                                <p class="upload__errors__item upload__errors_2">допустимый формат - jpg, png</p>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Краткое название организации:</span>
+                                <label class="form__input__field"><input type="text" class="c_name_min" placeholder="пример: ООО «Алмаз»"><span class="form__input__surely"></span></label>
                             </div>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Расчётный счёт:</span>
-                            <label class="form__input__field"><input type="text" class="c_score" placeholder="пример:  40730012598345785512"><span class="form__input__surely"></span></label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">БИК:</span>
-                            <label class="form__input__field"><input type="text" class="c_bik" placeholder="пример: 043521699"><span class="form__input__surely"></span></label>
-                        </div>
-                    </div>
-
-                </div>
-            </form>
-
-            <form action="#" class="form c-settings__form c-settings__form__step__one c-settings__individual">
-                <div class="row fx fx-wrap">
-
-                    <div class="col-6">
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">ФИО:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_fio" placeholder="Иванов Иван Иванович"><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Дата рождения:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_date_birth" placeholder="пример: 14.10.1982"><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Серия и номер паспорта:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_passport" placeholder="пример: 6315 256553"><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Кем выдан:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_issued" placeholder="пример: ОУФМС г. Москвы ..."><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Дата выдачи:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_issued_date" placeholder="пример: 02.04.2012"><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Адрес прописки:</span>
-                            <label class="form__input__field">
-                                <textarea class="c_adres" placeholder="пример: г. Москва ул. Новый Арбат д. 1 кв. 1"></textarea><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <div class="form__input form__input__item">
-                            <span class="form__input__title">Индекс:</span>
-                            <label class="form__input__field">
-                                <input type="text" class="c_index1" placeholder="пример: 410000"><span class="form__input__surely"></span>
-                            </label>
-                        </div>
-                        <button class="btn btn__gray_not c-settings__form__btn">Далее</button>
-                    </div>
-
-                    <div class="col-6">
-                        <div class="upload">
-                            <div class="upload__icon flex-center"><img src="img/other/user-default.png" alt="Пользователь"></div>
-                            <p class="form__input__title">Логотип Вашей компании:</p>
-                            <p class="upload__name fx align-center">
-                                <span class="i-clip"></span>Без-названия.jpg<span class="form__input__remove"></span>
-                            </p>
-                            <div class="upload__file">
-                                <input type="file" id="upload__file" accept="image/jpeg,image/png">
-                                <label for="upload__file" class="btn btn__green">Загрузить логотип</label>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Полное название организации:</span>
+                                <label class="form__input__field"><input type="text" class="c_name_full" placeholder="пример: Общество с ограничен..."><span class="form__input__surely"></span></label>
                             </div>
-                            <div class="upload__errors">
-                                <p class="upload__errors__item upload__errors_1">максимальный размер файла - 2 mb</p>
-                                <p class="upload__errors__item upload__errors_2">допустимый формат - jpg, png</p>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">КПП:</span>
+                                <label class="form__input__field"><input type="text" class="c_cpp" placeholder="пример: 456352789"><span class="form__input__surely"></span></label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">ОГРН:</span>
+                                <label class="form__input__field"><input type="text" class="c_ogrn" placeholder="пример: 4537814695132"><span class="form__input__surely"></span></label>
+                            </div>
+                            <div class="form__input form__input__item form__input__item_nFlex">
+                                <span class="form__input__title">Юридический адрес:</span>
+                                <label class="form__input__field"><textarea class="c_ur_adres" placeholder="пример: г. Москва ул. Новый Арбат д. 1 оф 200"></textarea><span class="form__input__surely"></span></label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Индекс:</span>
+                                <label class="form__input__field"><input type="text" class="c_index" placeholder="пример: 410000"><span class="form__input__surely"></span></label>
+                            </div>
+                            <button class="btn btn__gray_not c-settings__form__btn">Далее</button>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="upload">
+                                <div class="upload__icon flex-center"><img src="img/other/user-default.png" alt="Пользователь"></div>
+                                <p class="form__input__title">Логотип Вашей компании:</p>
+                                <p class="upload__name fx align-center"><span class="i-clip"></span>Без-названия.jpg<span class="form__input__remove"></span></p>
+                                <div class="upload__file">
+                                    <input type="file" id="upload__file" accept="image/jpeg,image/png">
+                                    <label for="upload__file" class="btn btn__green">Загрузить логотип</label>
+                                </div>
+                                <div class="upload__errors">
+                                    <p class="upload__errors__item upload__errors_1">максимальный размер файла - 2 mb</p>
+                                    <p class="upload__errors__item upload__errors_2">допустимый формат - jpg, png</p>
+                                </div>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Расчётный счёт:</span>
+                                <label class="form__input__field"><input type="text" class="c_score" placeholder="пример:  40730012598345785512"><span class="form__input__surely"></span></label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">БИК:</span>
+                                <label class="form__input__field"><input type="text" class="c_bik" placeholder="пример: 043521699"><span class="form__input__surely"></span></label>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-            </form>
+                    </div>
+                </form>
+            </company-component>
+
+            <personal-component inline-template>
+                <form action="#" class="form c-settings__form c-settings__form__step__one c-settings__individual">
+                    <div class="row fx fx-wrap">
+
+                        <div class="col-6">
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">ФИО:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_fio" placeholder="Иванов Иван Иванович"><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Дата рождения:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_date_birth" placeholder="пример: 14.10.1982"><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Серия и номер паспорта:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_passport" placeholder="пример: 6315 256553"><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Кем выдан:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_issued" placeholder="пример: ОУФМС г. Москвы ..."><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Дата выдачи:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_issued_date" placeholder="пример: 02.04.2012"><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Адрес прописки:</span>
+                                <label class="form__input__field">
+                                    <textarea class="c_adres" placeholder="пример: г. Москва ул. Новый Арбат д. 1 кв. 1"></textarea><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <div class="form__input form__input__item">
+                                <span class="form__input__title">Индекс:</span>
+                                <label class="form__input__field">
+                                    <input type="text" class="c_index1" placeholder="пример: 410000"><span class="form__input__surely"></span>
+                                </label>
+                            </div>
+                            <button class="btn btn__gray_not c-settings__form__btn">Далее</button>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="upload">
+                                <div class="upload__icon flex-center"><img src="img/other/user-default.png" alt="Пользователь"></div>
+                                <p class="form__input__title">Логотип Вашей компании:</p>
+                                <p class="upload__name fx align-center">
+                                    <span class="i-clip"></span>Без-названия.jpg<span class="form__input__remove"></span>
+                                </p>
+                                <div class="upload__file">
+                                    <input type="file" id="upload__file" accept="image/jpeg,image/png">
+                                    <label for="upload__file" class="btn btn__green">Загрузить логотип</label>
+                                </div>
+                                <div class="upload__errors">
+                                    <p class="upload__errors__item upload__errors_1">максимальный размер файла - 2 mb</p>
+                                    <p class="upload__errors__item upload__errors_2">допустимый формат - jpg, png</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </personal-component>
         </div>
     </div>
 {% endblock content %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% if app.environment == 'prod' %}
+        <script src="{{ asset('bundles/app/js/lib/vue.min.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.min.js') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
+        <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
+    {% endif %}
+    <script src="{{ asset('bundles/app/v3/js/user/advertiser_profile.js') }}"></script>
+{% endblock %}

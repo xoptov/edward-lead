@@ -2,7 +2,7 @@
     <div class="col-lg-3 header_logo" xmlns="http://www.w3.org/1999/html">
         <div class="logo" style="display:flex;">
             {% if is_granted('ROLE_WEBMASTER') %}
-                <a href="{{ path('app_dashboard') }}">
+                <a href="{{ path('app_user_dashboard') }}">
                     <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
                 </a>
             {% else %}
@@ -21,7 +21,7 @@
         <div class="main">
             <div class="balance">
                 <p>Баланс: <span>{{ app.user.balance|money_format }}</span></p>
-                {% if is_granted('ROLE_COMPANY') %}
+                {% if is_granted('ROLE_ADVERTISER') %}
                     <p>Холд: <span>{{ balance_hold(app.user)|money_format }}</span></p>
                 {% elseif is_granted('ROLE_WEBMASTER') %}
                     <p>Холд: <span>{{ pending_amount(app.user)|money_format }}</span></p>

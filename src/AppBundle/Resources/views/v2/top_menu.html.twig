@@ -13,7 +13,7 @@
                     <a href="{{ path('sonata_admin_dashboard') }}">Админ панель</a>
                 </li>
             {%- endif %}
-            {% if is_granted('ROLE_COMPANY') and app.user.company -%}
+            {% if is_granted('ROLE_ADVERTISER') and app.user.company -%}
                 <li>
                     <a href="{{ path('app_user_advertiser_profile') }}">Кабинет компании</a>
                 </li>
