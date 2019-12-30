@@ -78,7 +78,7 @@ class SecurityController extends Controller
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
-                return $this->render('@App/Security/registration.html.twig', [
+                return $this->render('@App/v3/Security/registration.html.twig', [
                     'form' => $form->createView()
                 ]);
             }
@@ -140,7 +140,7 @@ class SecurityController extends Controller
             }
         }
 
-        return $this->render('@App/Security/registration.html.twig', [
+        return $this->render('@App/v3/Security/registration.html.twig', [
             'form' => $form->createView()
         ]);
     }
