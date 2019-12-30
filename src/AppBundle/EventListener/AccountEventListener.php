@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Entity\ClientAccount;
 use AppBundle\Event\AccountEvent;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -26,10 +27,14 @@ class AccountEventListener extends BaseEventListener implements EventSubscriberI
      */
     public function handleBalanceApproachingZero(AccountEvent $event): void
     {
-        $this->emailNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-        $this->webPushNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-        $this->smsNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-        $this->internalNotificationContainer->accountBalanceApproachingZero($event->getAccount());
+        $account = $event->getAccount();
+
+        if ($account instanceof ClientAccount) {
+            $this->emailNotificationContainer->accountBalanceApproachingZero($account);
+            $this->webPushNotificationContainer->accountBalanceApproachingZero($account);
+            $this->smsNotificationContainer->accountBalanceApproachingZero($account);
+            $this->internalNotificationContainer->accountBalanceApproachingZero($account);
+        }
     }
 
     /**
@@ -39,9 +44,13 @@ class AccountEventListener extends BaseEventListener implements EventSubscriberI
      */
     public function handleBalanceLowerThenMinimal(AccountEvent $event): void
     {
-        $this->emailNotificationContainer->accountBalanceLowerThenMinimal($event->getAccount());
-        $this->webPushNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-        $this->smsNotificationContainer->accountBalanceApproachingZero($event->getAccount());
-        $this->internalNotificationContainer->accountBalanceLowerThenMinimal($event->getAccount());
+        $account = $event->getAccount();
+
+        if ($account instanceof ClientAccount) {
+            $this->emailNotificationContainer->accountBalanceLowerThenMinimal($account);
+            $this->webPushNotificationContainer->accountBalanceApproachingZero($account);
+            $this->smsNotificationContainer->accountBalanceApproachingZero($account);
+            $this->internalNotificationContainer->accountBalanceLowerThenMinimal($account);
+        }
     }
 }
