@@ -242,7 +242,7 @@ class ArbitrationController extends Controller
             'mimeTypes' => ['image/png', 'image/jpeg'],
             'mimeTypesMessage' => 'Поддерживаются только PNG и JPEG изображения',
             'maxSize' => $this->getParameter('upload_max_size'),
-            'maxSizeMessage' => 'Максимальный размер загружаемого изображения должен быть {size}'
+            'maxSizeMessage' => 'Максимальный размер загружаемого изображения {{size}} байт'
         ]);
 
         $violations = $validator->validate($file, $constraint);

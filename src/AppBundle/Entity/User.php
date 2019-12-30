@@ -1039,7 +1039,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function isAdvertiser(): bool
     {
-        return in_array(self::ROLE_ADVERTISER, $this->roles);
+        return in_array(self::ROLE_ADVERTISER, $this->roles)
+            || in_array(self::ROLE_COMPANY, $this->roles);
     }
 
     /**

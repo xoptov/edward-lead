@@ -6,7 +6,7 @@
                     <div class="img">
                         <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
                     </div>
-                    <a href="{{ path('app_dashboard') }}">Панель управления</a>
+                    <a href="{{ path('app_user_dashboard') }}">Панель управления</a>
                 </div>
             </li>
         {% endif %}
@@ -84,7 +84,7 @@
                         <div class="img">
                             <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
                         </div>
-                        <a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}">Кабинет компании</a>
+                        <a href="{{ path('app_user_advertiser_profile') }}">Кабинет компании</a>
                     </div>
                 </li>
             {% endif %}

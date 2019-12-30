@@ -9,6 +9,7 @@ use Doctrine\DBAL\DBALException;
 use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\ClientAccount;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;
 use AppBundle\Form\Type\PasswordResetType;

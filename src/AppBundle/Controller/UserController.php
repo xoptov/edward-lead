@@ -133,7 +133,7 @@ class UserController extends Controller
      */
     public function advertiserProfileAction(): Response
     {
-        //todo: тут надо рендерить интерфейс редактирования информации о рекламодателе.
+        return $this->render('@App/v3/User/advertiser_profile.html.twig');
     }
 
 //    /**
