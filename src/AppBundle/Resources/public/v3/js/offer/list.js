@@ -149,7 +149,7 @@ offersList.$on('advertisers-request', () => advertisersRequestModal.open());
 offerRequestModal.$on('offer-requested', () => {
     offersList.onOfferRequested();
     requestResultModal.open();
-})
+});
 
 advertisersRequestModal.$on('advertisers-requested', () => {
     offersList.onAdvertisersRequested();

@@ -21,16 +21,19 @@
                         <div class="user__balance">
                             <p>{{ 'common.balance'|trans }}: {{ app.user.balance|money_format }}</p>
                             <p>{{ 'common.hold'|trans }}:
-                                {%- if is_granted('ROLE_ADVERTISER') -%}
-                                    {{- balance_hold(app.user)|money_format -}}
-                                {%- elseif is_granted('ROLE_WEBMASTER') -%}
-                                    {{- pending_amount(app.user)|money_format -}}
-                                {%- endif -%}</p>
+                                {% spaceless %}
+                                    {% if is_granted('ROLE_ADVERTISER') %}
+                                        {{ balance_hold(app.user)|money_format }}
+                                    {% elseif is_granted('ROLE_WEBMASTER') %}
+                                        {{ pending_amount(app.user)|money_format }}
+                                    {% endif %}
+                                {% endspaceless %}
+                            </p>
                         </div>
                         <div class="user__panel">
                             <span class="user__panel__img">
-                                {% if is_granted('ROLE_ADVERTISER') and app.user.company.logotype is not empty %}
-                                    <img src="{{ app.user.company.logotype.path|imagine_filter('logotype_34x34') }}">
+                                {% if is_granted('ROLE_ADVERTISER') and app.user.logotype is not empty %}
+                                    <img src="{{ app.user.logotype.path|imagine_filter('logotype_34x34') }}">
                                 {% else %}
                                     <img src="{{ asset('bundles/app/v3/img/other/user-default-header.png') }}">
                                 {% endif %}
@@ -43,11 +46,11 @@
                                         </li>
                                     {%- elseif is_granted('ROLE_ADVERTISER') and app.user.hasCompany -%}
                                         <li class="user__panel__nav__item">
-                                            <a href="{{ path('app_updating_company', {'id': app.user.companyId}) }}" class="user__panel__nav__link">{{ 'menu.advertiser_cabinet'|trans }}</a>
+                                            <a href="{{ path('app_user_advertiser_profile') }}" class="user__panel__nav__link">{{ 'menu.advertiser_cabinet'|trans }}</a>
                                         </li>    
                                     {%- endif %}
                                     <li class="user__panel__nav__item">
-                                        <a href="{{ path('app_profile')}}" class="user__panel__nav__link">{{ 'menu.my_profile'|trans }}</a>
+                                        <a href="{{ path('app_user_profile')}}" class="user__panel__nav__link">{{ 'menu.my_profile'|trans }}</a>
                                     </li>
                                     <li class="user__panel__nav__item">
                                         <a href="{{ path('app_financial_billing') }}" class="user__panel__nav__link">{{ 'menu.billing'|trans }}</a>

@@ -9,17 +9,18 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class CompanyVoter extends Voter
 {
     const EDIT = 'edit';
+    const VIEW = 'view';
 
     /**
      * @inheritdoc
      */
     protected function supports($attribute, $subject)
     {
-        if (self::EDIT !== $attribute) {
+        if (!$subject instanceof Company) {
             return false;
         }
 
-        if (!$subject instanceof Company) {
+        if (!in_array($attribute, [self::EDIT, self::VIEW])) {
             return false;
         }
 
@@ -27,14 +28,11 @@ class CompanyVoter extends Voter
     }
 
     /**
-     * @param string         $attribute
-     * @param Company        $subject
-     * @param TokenInterface $token
-     *
-     * @return bool
+     * @inheritdoc
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        /** @var Company $subject */
         if ($subject->getUser() === $token->getUser()) {
             return true;
         }

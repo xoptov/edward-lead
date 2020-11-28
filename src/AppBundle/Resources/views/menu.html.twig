@@ -2,7 +2,7 @@
     {% if is_granted('ROLE_WEBMASTER') %}
         <li>
             <div class="sidebar__item">
-                <i class="sprite-3 sprite-ico8"></i><a href="{{ path("app_dashboard") }}" class="sidebar__link">Панель управления</a>
+                <i class="sprite-3 sprite-ico8"></i><a href="{{ path("app_user_dashboard") }}" class="sidebar__link">Панель управления</a>
             </div>
         </li>
     {% endif %}
@@ -56,7 +56,7 @@
         {% if app.user.company is not empty %}
             <li>
                 <div class="sidebar__item dropdownlink">
-                    <i class="sprite-3 sprite-ico8"></i><a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}" class="sidebar__link">Кабинет компании</a>
+                    <i class="sprite-3 sprite-ico8"></i><a href="{{ path('app_user_advertiser_profile') }}" class="sidebar__link">Кабинет компании</a>
                 </div>
             </li>
         {% endif %}

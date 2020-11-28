@@ -46,7 +46,7 @@ services:
     AppBundle\EventListener\SecuritySubscriber:
         tags: ['kernel.event_subscriber']
 
-    AppBundle\EventListener\SelectTypeSubscriber:
+    AppBundle\EventListener\SelectRoleSubscriber:
         arguments:
             $firewallMap: '@security.firewall.map'
         tags: ['kernel.event_subscriber']

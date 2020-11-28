@@ -32,6 +32,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         TimeTrackableTrait;
 
     const ROLE_USER                  = 'ROLE_USER';
+    const ROLE_COMPANY               = 'ROLE_COMPANY';
     const ROLE_WEBMASTER             = 'ROLE_WEBMASTER';
     const ROLE_ADVERTISER            = 'ROLE_ADVERTISER';
     const ROLE_ADMIN                 = 'ROLE_ADMIN';
@@ -42,10 +43,28 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const TYPE_PERSONAL     = 'personal';
     const TYPE_ORGANIZATION = 'organization';
 
+    const TMARK_ROOM_VIEW           = 'room_view';
+    const TMARK_COMPANY_UPDATE      = 'company_update';
+    const TMARK_WEBMASTER_PROFILE   = 'webmaster_profile';
+    const TMARK_OFFICE_UPDATE       = 'office_update';
+    const TMARK_ROOM_CREATE         = 'room_create';
+    const TMARK_LEAD_EDIT           = 'lead_edit';
+    const TMARK_LEAD_ADD            = 'lead_add';
+
     /**
      * @var string|null
      * 
      * @ORM\Column(type="string", length=12, nullable=true)
+
+    /**
+     * @var string|null
+     *
+     * @Assert\Length(
+     *     max=8,
+     *     maxMessage="Максимальное значение поля тип {{limit}} символов"
+     * )
+     *
+     * @ORM\Column(type="string", length=8, nullable=true)
      */
     private $type;
 
@@ -68,13 +87,19 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $personal;
 
     /**
-     * @var Office|null
-     * 
-     * @Assert\Valid
-     * 
-     * @ORM\Embedded(class="AppBundle\Entity\User\Office")
+     * @var Office[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Office", mappedBy="user")
      */
-    private $office;
+    private $offices;
+
+    /**
+     * @var Image|null
+     *
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Image")
+     * @ORM\JoinColumn(name="logotype_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $logotype;
 
     /**
      * @var ClientAccount|null
@@ -87,7 +112,10 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @var string|null
      *
      * @Assert\NotBlank(message="Имя должно быть указано")
-     * @Assert\Length(max=30, maxMessage="Имя не должно превышать {{ limit }} символов")
+     * @Assert\Length(
+     *     max=30,
+     *     maxMessage="Имя не должно превышать {{ limit }} символов"
+     * )
      *
      * @ORM\Column(name="name", type="string", length=30)
      */
@@ -265,9 +293,67 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
      */
     private $offerRequests;
+        
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="tutorial", type="array")
+     */
+    private $tutorial = [];
+
+    /**
+     * @return array
+     */
+    public function getTutorials():array
+    {
+        return $this->tutorial;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function hasTutorialMark( $tmark )
+    {
+        if (isset($this->tutorial[$tmark])) {
+            return $this->tutorial[$tmark];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function addTutorialMark($tmark) 
+    {
+        $this->tutorial[$tmark] = true;
+
+        return $this->hasTutorialMark( $tmark )? true : false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllTutorialMarks(): array
+    {
+        return [
+            self::TMARK_ROOM_VIEW,
+            self::TMARK_COMPANY_UPDATE,
+            self::TMARK_LEAD_ADD,
+            self::TMARK_LEAD_EDIT,
+            self::TMARK_OFFICE_UPDATE,
+            self::TMARK_ROOM_CREATE,
+            self::TMARK_WEBMASTER_PROFILE
+        ];
+    }
 
     public function __construct()
     {
+        $this->personal = new Personal();
+        $this->offices = new ArrayCollection();
         $this->historyActions = new ArrayCollection();
         $this->notifications = new ArrayCollection();
         $this->offerRequests = new ArrayCollection();
@@ -310,8 +396,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
-     * @param string|null $type
-     * 
+     * @param null|string $type
+     *
      * @return User
      */
     public function setType(?string $type): self
@@ -321,6 +407,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         if (in_array($type, $types)) {
             $this->type = $type;
         }
+
+        $this->type = $type;
 
         return $this;
     }
@@ -382,27 +470,31 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
-     * @param Office|null $office
-     * 
-     * @return User
+     * @return Office[]|Collection
      */
-    public function setOffice(?Office $office): self
+    public function getOffices(): Collection
     {
-        $this->office = $office;
-
-        return $this;
+        return clone $this->offices;
     }
 
     /**
-     * @return Office|null
+     * @param Office $office
+     *
+     * @return bool
      */
-    public function getOffice(): ?Office
+    public function addOffice(Office $office): bool
     {
-        if ($this->office) {
-            return clone $this->office;
-        }
+        return $this->offices->add($office);
+    }
 
-        return null;
+    /**
+     * @param Office $office
+     *
+     * @return bool
+     */
+    public function removeOffice(Office $office): bool
+    {
+        return $this->offices->removeElement($office);
     }
 
     /**
@@ -410,11 +502,67 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function getOfficePhone(): ?string
     {
-        if ($this->office) {
-            return $this->office->getPhone();
+        if ($this->offices->count()) {
+
+            /** @var Office $first */
+            $first = $this->offices->first();
+
+            return $first->getPhone();
         }
 
         return null;
+    }
+
+    /**
+     * @return Collection|null
+     */
+    public function getOfficeCities(): ?Collection
+    {
+        if ($this->offices->count()) {
+
+            /** @var Office $first */
+            $first = $this->offices->first();
+
+            return $first->getCities();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPersonal(): bool
+    {
+        return !empty($this->personal);
+    }
+
+    /**
+     * @param Image $logotype
+     *
+     * @return User
+     */
+    public function setLogotype(Image $logotype): self
+    {
+        $this->logotype = $logotype;
+
+        return $this;
+    }
+
+    /**
+     * @return Image|null
+     */
+    public function getLogotype(): ?Image
+    {
+        return $this->logotype;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLogotype(): bool
+    {
+        return !empty($this->logotype);
     }
 
     /**
@@ -847,7 +995,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         $this
             ->removeRole(self::ROLE_WEBMASTER)
             ->addRole(self::ROLE_ADVERTISER);
-        
+
         $this->roleSelected = true;
 
         return $this;
@@ -954,7 +1102,8 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function isAdvertiser(): bool
     {
-        return in_array(self::ROLE_ADVERTISER, $this->roles);
+        return in_array(self::ROLE_ADVERTISER, $this->roles)
+            || in_array(self::ROLE_COMPANY, $this->roles);
     }
 
     /**

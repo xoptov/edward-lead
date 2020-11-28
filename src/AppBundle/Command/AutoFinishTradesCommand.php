@@ -61,7 +61,10 @@ class AutoFinishTradesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $trades = $this->entityManager->getRepository(Trade::class)
+        /** @var TradeRepository $tradeRepository */
+        $tradeRepository = $this->entityManager->getRepository(Trade::class);
+
+        $trades = $tradeRepository
             ->getByWarrantyAndIncomplete();
 
         if (empty($trades)) {
@@ -69,9 +72,11 @@ class AutoFinishTradesCommand extends Command
             return;
         }
 
+        /** @var AccountRepository $accountRepository */
+        $accountRepository = $this->entityManager->getRepository(Account::class);
+
         try {
-            $feesAccount = $this->entityManager->getRepository(Account::class)
-                ->getFeesAccount();
+            $feesAccount = $accountRepository->getFeesAccount();
         } catch (UnexpectedResultException $e) {
             $output->writeln($e->getMessage());
             return;

@@ -9,6 +9,7 @@ use Doctrine\DBAL\DBALException;
 use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\ClientAccount;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;
 use AppBundle\Form\Type\PasswordResetType;
@@ -78,7 +79,7 @@ class SecurityController extends Controller
             $form->handleRequest($request);
 
             if (!$form->isSubmitted()) {
-                return $this->render('@App/Security/registration.html.twig', [
+                return $this->render('@App/v3/Security/registration.html.twig', [
                     'form' => $form->createView()
                 ]);
             }
@@ -101,7 +102,8 @@ class SecurityController extends Controller
                     $referrerToken = $request->cookies->get('referrer');
 
                     if (!empty($referrerToken)) {
-
+                        
+                        /** @var UserRepository $userRepository */
                         $userRepository = $this->entityManager->getRepository(User::class);
 
                         try {
@@ -140,7 +142,7 @@ class SecurityController extends Controller
             }
         }
 
-        return $this->render('@App/Security/registration.html.twig', [
+        return $this->render('@App/v3/Security/registration.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -194,7 +196,7 @@ class SecurityController extends Controller
 
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        return $this->render('@App/Security/login.html.twig', [
+        return $this->render('@App/v3/Security/login.html.twig', [
             'form' => $form->createView(),
             'error' => $error
         ]);
@@ -220,8 +222,11 @@ class SecurityController extends Controller
                 $user = $this->entityManager->getRepository(User::class)
                     ->findOneBy(['email' => $data['email']]);
 
-                if (!$user) {
-                    return new Response('Пользователь с указанным Email не найден', Response::HTTP_NOT_FOUND);
+                if (!$user){
+                    return $this->render('@App/v3/Security/password_reset.html.twig', [
+                        'form' => $form->createView(),
+                        'error' => 'Пользователь с указанным Email не найден'
+                    ]);
                 }
 
                 $this->userManager->updateResetToken($user);
@@ -229,11 +234,12 @@ class SecurityController extends Controller
 
                 $this->eventDispatcher->dispatch(UserEvent::RESET_TOKEN_UPDATED, new UserEvent($user));
 
-                return new Response('На указанный вами Email была отправленна ссылка для смены пароля');
+                // return new Response('На указанный вами Email была отправленна ссылка для смены пароля');
+                return $this->render('@App/v3/Security/password_reset_confirm.html.twig');
             }
         }
 
-        return $this->render('@App/Security/password_reset.html.twig', [
+        return $this->render('@App/v3/Security/password_reset.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -259,7 +265,7 @@ class SecurityController extends Controller
             'step' => PasswordResetType::STEP_SECOND
         ]);
 
-        return $this->render('@App/Security/password_resetting.html.twig', [
+        return $this->render('@App/v3/Security/password_resetting.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -299,10 +305,10 @@ class SecurityController extends Controller
                 new UserEvent($user)
             );
 
-            return new Response('Пароль пользователя успешно изменен');
+            return $this->render('@App/v3/Security/password_change_success.html.twig');
         }
 
-        return $this->render('@App/Security/password_resetting.html.twig', [
+        return $this->render('@App/v3/Security/password_resetting.html.twig', [
             'form' => $form->createView()
         ]);
     }

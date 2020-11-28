@@ -75,7 +75,7 @@ class Personal
     }
 
     /**
-     * @param DateTime|null
+     * @param DateTime|null $birthDate
      * 
      * @return Personal
      */
@@ -100,11 +100,21 @@ class Personal
 
     /**
      * @param Passport|null $passport
+     *
+     * @return Personal
      */
     public function setPassport(?Passport $passport): self
     {
         $this->passport = $passport;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBirthDate(): bool
+    {
+        return !empty($this->birthDate);
     }
 }

@@ -1,7 +1,7 @@
 <div class="logo">
     <div class="icon-logo-top">
-        {% if app.user.company and app.user.company.logotype is not empty %}
-            <img src="{{ app.user.company.logotype.path|imagine_filter('logotype_34x34') }}">
+        {% if app.user.company and app.user.logotype is not empty %}
+            <img src="{{ app.user.logotype.path|imagine_filter('logotype_34x34') }}">
         {% else %}
             <img src="{{ asset('bundles/app/img/no_logotype.png') }}">
         {% endif %}
@@ -11,9 +11,9 @@
             <a href="{{ path('sonata_admin_dashboard') }}" class="profile__link">Админ панель</a>
         {% endif %}
         {% if is_granted('ROLE_COMPANY') and app.user.company %}
-            <a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}" class="profile__link">Кабинет компании</a>
+            <a href="{{ path('app_user_advertiser_profile') }}" class="profile__link">Кабинет компании</a>
         {% endif %}
-        <a href="{{ path('app_profile') }}" class="profile__link">Мой профиль</a>
+        <a href="{{ path('app_user_profile') }}" class="profile__link">Мой профиль</a>
         <a href="{{ path('app_financial_deposit') }}" class="profile__link">Оплата</a>
         <a href="{{ path('app_logout') }}" class="profile__link">Выход</a>
     </div>

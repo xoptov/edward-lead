@@ -6,7 +6,7 @@
                     <div class="img">
                         <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
                     </div>
-                    <a href="{{ path('app_dashboard') }}">Панель управления</a>
+                    <a href="{{ path('app_user_dashboard') }}">Панель управления</a>
                 </div>
             </li>
         {% endif %}
@@ -69,7 +69,7 @@
                 <a href="{{ path('app_referral_index') }}">Реферальная программа</a>
             </div>
         </li>
-        {% if is_granted('ROLE_COMPANY') %}
+        {% if is_granted('ROLE_ADVERTISER') -%}
             <li>
                 <div class="nav_title">
                     <div class="img">
@@ -78,16 +78,14 @@
                     <a href="{{ path('app_telephony_calls') }}">Телефония</a>
                 </div>
             </li>
-            {% if app.user.company is not empty %}
-                <li>
-                    <div class="nav_title">
-                        <div class="img">
-                            <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
-                        </div>
-                        <a href="{{ path('app_updating_company', {'id': app.user.company.id}) }}">Кабинет компании</a>
+            <li>
+                <div class="nav_title">
+                    <div class="img">
+                        <img src="{{ asset('bundles/app/v2/img/icon_3.png') }}">
                     </div>
-                </li>
-            {% endif %}
-        {% endif %}
+                    <a href="{{ path('app_user_advertiser_profile') }}">Кабинет компании</a>
+                </div>
+            </li>
+        {%- endif %}
     </ul>
 </div>

@@ -251,6 +251,8 @@ common:
 header:
     already_have_an_account: Уже есть аккаунт? 
     login: Войти
+    no_account: Нет аккаунта?
+    registration: Регистрация
 menu:
     admin_panel: Админ панель
     dashboard: Панель управления

@@ -1,0 +1,124 @@
+{% extends "@App/v3/layout_light.html.twig" %}
+
+{# {% block header_widget_content -%}
+    <span>{{ 'header.no_account'|trans }}</span>
+    <a href="{{ path('app_registration') }}">{{ 'header.registration'|trans }}</a>
+{%- endblock %} #}
+
+{% block content %}
+    <!-- Wrap -->
+
+    <div class="p-external__box login">
+
+        <!-- Title -->
+        <div class="title">
+            <h3 class="title__h3">Регистрация</h3>
+        </div>
+
+        <!-- Subtxt -->
+        <p class="login__subtxt">Заполните форму ниже для регистрации на платформе Edward.</p>
+
+        <!-- Form -->
+        {{ form_start(form, {'attr': {'class': 'login__form registration__form fx fx-wrap row registration-validation', 'novalidate': true}}) }}
+            <div class="col-6">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">E-mail:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.email, {'attr': {'tabindex':1, 'class': 'form_email', 'placeholder': 'Введите Ваш Email', 'autocomplete': 'off'}}) }}
+                        <span class="form__input__surely" {% if form.email.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                        {% if form.email.vars.errors is not empty -%}
+                            <div style="color:red;">
+                                {{ form_errors(form.email) }}
+                            </div>
+                        {%- endif %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">Пароль:</span>
+                    <label class="form__input__field form__input__field_optic">
+                        {{ form_widget(form.plainPassword.first, {'attr': {'tabindex':2, 'class': 'form_pass', 'placeholder': 'Введите пароль', 'autocomplete': 'off'}}) }}
+                        <span class="form__input__optic"></span>
+                        <span class="form__input__surely" {% if form.plainPassword.first.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                        {% if form.plainPassword.first.vars.errors is not empty -%}
+                            <div style="color:red;">
+                                {{ form_errors(form.plainPassword.first) }}
+                            </div>
+                        {%- endif %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">Телефон:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.phone, {'attr': {'id':'registration_phone', 'tabindex':4, 'placeholder': 'Введите Ваш номер', 'autocomplete': 'off'}}) }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">Еще раз:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.plainPassword.second, {'attr': {'tabindex':3, 'class': 'form_pass1', 'placeholder': 'Введите пароль еще раз', 'autocomplete': 'off'}}) }}
+                        <span class="form__input__surely" {% if form.plainPassword.second.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                        {% if form.plainPassword.second.vars.errors is not empty -%}
+                            <div style="color:red;">
+                                {{ form_errors(form.plainPassword.second) }}
+                            </div>
+                        {%- endif %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form__input form__input__item">
+                    <span class="form__input__title">Имя:</span>
+                    <label class="form__input__field">
+                        {{ form_widget(form.name, {'attr': {'tabindex':5, 'class': 'form_user', 'placeholder': 'пример: Иван', 'autocomplete': 'off'}}) }}
+                        <span class="form__input__surely" {% if form.name.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                        {% if form.name.vars.errors is not empty -%}
+                            <div style="color:red;">
+                                {{ form_errors(form.name) }}
+                            </div>
+                        {%- endif %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6 text-right">
+                {{ form_widget(form.submit, {'label': 'Завершить регистрацию', 'attr': {'tabindex':6, 'class': 'btn btn__green login__form__btn'}}) }}
+            </div>
+            
+        <!-- Check -->
+        <div class="registration__form__chek fx align-start">
+        <!-- <div class="registration__form__chek registration__form__chek_error fx align-start"> -->
+            <div class="check fx">
+                <label class="check__item">
+                    {{ form_widget(form.agree, {'attr':{'checked':true}}) }}
+                    {# <input type="checkbox" name="check" checked="checked"> #}
+                    <span class="check__mark" {% if form.agree.vars.errors is not empty %}style="display:block;"{% endif %}></span>
+                </label>
+            </div>
+            <div class="registration__form__chek__txt">Отправляя сведения через электронную форму, вы соглашаетесь с условиями <a href="http://wiki.edward-lead.ru/?anchor=Polyzovatelyskoe%20soglashenie">пользовательского соглашения</a>, даете согласие на обработку персональных данных, их сбор, хранение и передачу третьим лицам представленной вами информации на условиях <a href="http://wiki.edward-lead.ru/?anchor=Politika%20konfidentsialynosti">Политики конфиденциальности</a>.<p class="registration__form__chek__txt__error">Для регистрации на платформе требуется ваше согласие с пользовательским соглашением и на обработку персональных данных</p></div>
+            {% if form.agree.vars.errors is not empty -%}
+                <div style="color:red;">
+                    {{ form_errors(form.agree) }}
+                </div>
+            {%- endif %}
+        </div>
+        {{ form_end(form) }}    
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {%- if app.environment == 'prod' -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.min.js') }}"></script>
+    {%- else -%}
+        <script src="{{ asset('bundles/app/js/lib/jquery.inputmask.js') }}"></script>
+    {%- endif -%}
+    <script>
+        $('#registration_phone').inputmask('(+7|8)(999)999-99-99');
+    </script>
+{% endblock %}

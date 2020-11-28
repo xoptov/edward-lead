@@ -38,7 +38,7 @@ class WebPushChannel extends BaseChannel
         try {
             $this->client->send($data);
         } catch (\Exception $exception) {
-            $this->logger->critical($exception->getMessage());
+            $this->logger->critical(self::NAME . ' ERROR ' .$exception->getMessage());
         }
     }
 }
