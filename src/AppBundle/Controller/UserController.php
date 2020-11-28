@@ -300,9 +300,7 @@ class UserController extends Controller
 
         $result['addedLeadsToday'] = $leadRepository->getAddedCountByDate($now);
 
-
         $totalTarget = $leadRepository->getCountByStatus(Lead::STATUS_TARGET);
-        
         $totalNotTarget = $leadRepository->getCountByStatus(Lead::STATUS_NOT_TARGET);
 
         if ($totalTarget && $totalNotTarget) {

@@ -14,11 +14,12 @@ use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Exception\RoomException;
+use AppBundle\Security\Voter\RoomVoter;
 use AppBundle\Repository\LeadRepository;
 use AppBundle\Repository\RoomRepository;
 use AppBundle\Repository\UserRepository;
-use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\MemberRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -232,7 +233,11 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/invalid", name="app_room_invite_invalid", methods={"GET"})
+     * @Route(
+     *  "/room/invite/invalid",
+     *  name="app_room_invite_invalid",
+     *  methods={"GET"}
+     * )
      *
      * @return Response
      */
@@ -242,7 +247,11 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/{token}", name="app_room_invite_confirm", methods={"GET"})
+     * @Route(
+     *  "/room/invite/{token}",
+     *  name="app_room_invite_confirm",
+     *  methods={"GET"}
+     * )
      *
      * @param string $token
      *
@@ -265,7 +274,11 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/accept/{token}", name="app_room_invite_accept", methods={"GET"})
+     * @Route(
+     *  "/room/invite/accept/{token}",
+     *  name="app_room_invite_accept",
+     *  methods={"GET"}
+     * )
      * 
      * @param EventDispatcherInterface $eventDispatcher
      * @param string                   $token
@@ -328,7 +341,11 @@ class RoomController extends Controller
     }
 
     /**
-     * @Route("/room/invite/reject/{token}", name="app_room_invite_reject", methods={"GET"})
+     * @Route(
+     *  "/room/invite/reject/{token}",
+     *  name="app_room_invite_reject",
+     *  methods={"GET"}
+     * )
      *
      * @param string $token
      *

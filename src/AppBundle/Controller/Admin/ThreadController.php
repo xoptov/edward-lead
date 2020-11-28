@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use Twig\Environment;
+use AppBundle\Entity\User;
 use Twig\Error\RuntimeError;
 use AppBundle\Entity\Thread;
 use AppBundle\Entity\Message;
@@ -71,8 +72,11 @@ class ThreadController extends CRUDController
                 /** @var Message $newMessage */
                 $newMessage = $form->getData();
 
+                /** @var User $user */
+                $user = $this->getUser();
+
                 $message = $composer->reply($existingObject)
-                    ->setSender($this->getUser())
+                    ->setSender($user)
                     ->setBody($newMessage->getBody())
                     ->getMessage();
 
@@ -99,7 +103,6 @@ class ThreadController extends CRUDController
                     return $this->redirectTo($existingObject);
                 } catch (ModelManagerException $e) {
                     $this->handleModelManagerException($e);
-
                     $isFormValid = false;
                 } catch (LockException $e) {
                     $this->addFlash('sonata_flash_error', $this->trans('flash_lock_error', [
@@ -163,9 +166,11 @@ class ThreadController extends CRUDController
         /** @var Composer $composer */
         $composer = $this->get('fos_message.composer');
 
+        $user = $this->getUser();
+
         /** @var Message $message */
         $message = $composer->newThread()
-            ->setSender($this->getUser())
+            ->setSender($user)
             ->addRecipient($existingObject->getLead()->getUser())
             ->setSubject('')
             ->setBody('')
@@ -298,6 +303,12 @@ class ThreadController extends CRUDController
         return $this->redirectToList();
     }
 
+    /**
+     * @param Request $request
+     * @param object  $object
+     *
+     * @return null|Response
+     */
     public function preShow(Request $request, $object)
     {
         $this->admin->setSubject($object);

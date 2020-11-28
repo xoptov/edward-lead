@@ -4,8 +4,8 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\UserDeleteRequest;
 use Sonata\AdminBundle\Controller\CRUDController;
-use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Sonata\AdminBundle\Exception\ModelManagerException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserDeleteRequestController extends CRUDController

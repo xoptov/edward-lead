@@ -106,7 +106,11 @@ class ArbitrationController extends Controller
     }
 
     /**
-     * @Route("/arbitration/reply", name="app_arbitration_reply", methods={"POST"})
+     * @Route(
+     *  "/arbitration/reply",
+     *  name="app_arbitration_reply",
+     *  methods={"POST"}
+     * )
      *
      * @param Request                  $request
      * @param CacheManager             $cacheManager

@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use AppBundle\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Request;

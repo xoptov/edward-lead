@@ -158,7 +158,12 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/registration/confirm/{token}", name="app_registration_confirm", methods={"GET"}, requirements={"token"="\w+"})
+     * @Route(
+     *  "/registration/confirm/{token}",
+     *  name="app_registration_confirm",
+     *  methods={"GET"},
+     *  requirements={"token"="\w+"}
+     * )
      *
      * @param $token
      *
@@ -203,7 +208,11 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/password/reset", name="app_password_reset", methods={"GET", "POST"})
+     * @Route(
+     *  "/password/reset",
+     *  name="app_password_reset",
+     *  methods={"GET", "POST"}
+     * )
      *
      * @param Request $request
      *
@@ -245,7 +254,11 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/password/reset/{token}", name="app_password_reset_confirm", methods={"GET"})
+     * @Route(
+     *  "/password/reset/{token}",
+     *  name="app_password_reset_confirm",
+     *  methods={"GET"}
+     * )
      *
      * @param string $token
      *
@@ -271,7 +284,11 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/password/resetting", name="app_password_resetting", methods={"POST"})
+     * @Route(
+     *  "/password/resetting",
+     *  name="app_password_resetting",
+     *  methods={"POST"}
+     * )
      *
      * @param Request $request
      *
@@ -314,7 +331,11 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/profile/sessions/clear", name="app_sessions_clear", methods={"GET"})
+     * @Route(
+     *  "/profile/sessions/clear",
+     *  name="app_sessions_clear",
+     *  methods={"GET"}
+     * )
      *
      * @param SessionStorageInterface $sessionStorage
      * @return Response
@@ -329,7 +350,11 @@ class SecurityController extends Controller
     /**
      * @todo Необходимо выпилить позже из соображений безопастности.
      *
-     * @Route("/confirm/links/{email}", name="app_show_confirm_links", methods={"GET"})
+     * @Route(
+     *  "/confirm/links/{email}",
+     *  name="app_show_confirm_links",
+     *  methods={"GET"}
+     * )
      *
      * @param string $email
      * @return Response

@@ -55,7 +55,12 @@ class UserController extends APIController
     }
 
     /**
-     * @Route("/user/tutorial/has/{tmark}",name="api_v1_user_has_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/user/tutorial/has/{tmark}",
+     *  name="api_v1_user_has_tutorial",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      * 
      * @param string $tmark
      * 
@@ -71,7 +76,12 @@ class UserController extends APIController
     }
 
     /**
-     * @Route("/user/tutorial/add/{tmark}",name="api_v1_user_add_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/user/tutorial/add/{tmark}",
+     *  name="api_v1_user_add_tutorial",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      * 
      * @param UserManager   $userManager
      * @param string        $tmark
@@ -180,28 +190,6 @@ class UserController extends APIController
 
         } else {
             $result['personal'] = null;
-        }
-
-        if ($user->hasCompany()) {
-            $company = $user->getCompany();
-            if ($request->get('deep')) {
-                $result['company'] = [
-                    'id' => $company->getId(),
-                    'shortName' => $company->getShortName(),
-                    'largeName' => $company->getLargeName(),
-                    'inn' => $company->getInn(),
-                    'ogrn' => $company->getOgrn(),
-                    'kpp' => $company->getKpp(),
-                    'bik' => $company->getBik(),
-                    'accountNumber' => $company->getAccountNumber(),
-                    'address' => $company->getAddress(),
-                    'zipcode' => $company->getZipcode()
-                ];
-            } else {
-                $result['company'] = ['id' => $company->getId()];
-            }
-        } else {
-            $result['company'] = null;
         }
 
         return new JsonResponse($result);

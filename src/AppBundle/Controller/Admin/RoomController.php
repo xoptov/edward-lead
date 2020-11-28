@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Lead;
 use AppBundle\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\MemberRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Sonata\AdminBundle\Admin\FieldDescriptionCollection;
