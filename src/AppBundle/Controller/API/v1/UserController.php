@@ -55,6 +55,46 @@ class UserController extends APIController
     }
 
     /**
+     * @Route("/user/tutorial/has/{tmark}",name="api_v1_user_has_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * 
+     * @param string $tmark
+     * 
+     * @return JsonResponse
+     */
+    public function hasTutorialAction($tmark): JsonResponse
+    {
+        $user = $this->getUser();
+
+        $company = $this->isGranted(User::ROLE_COMPANY,$user);
+
+        return new JsonResponse([ $tmark => $user->hasTutorialMark($tmark), 'company' => $company ]);
+    }
+
+    /**
+     * @Route("/user/tutorial/add/{tmark}",name="api_v1_user_add_tutorial", methods={"GET"}, defaults={"_format":"json"})
+     * 
+     * @param UserManager   $userManager
+     * @param string        $tmark
+     * 
+     * @return JsonResponse
+     */
+    public function addTutorialAction(
+        UserManager $userManager, 
+        $tmark
+    ) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $mark_added = $user->addTutorialMark($tmark);
+
+        if( $mark_added ){
+            $userManager->updateUser($user);
+        }
+        
+        return new JsonResponse([$tmark => $mark_added]);
+    }
+
+    /**
      * @Route("/user/me", name="api_v1_user_me_view", methods={"GET"})
      *
      * @param Request      $request
@@ -314,7 +354,6 @@ class UserController extends APIController
 
         return new JsonResponse($result);
     }
-
 
     /**
      * @Route(

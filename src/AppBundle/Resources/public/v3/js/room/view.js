@@ -1,3 +1,21 @@
+const vm = new Vue({
+    el: '#app',
+    data: {
+        roomId: roomId,
+        activated: roomEnabled,
+        deactivationError: null,
+        members: {
+            webmasters: [],
+            companies: []
+        },
+        leads: [],
+        user: {
+            tutorial: false,
+            company: false
+        }
+    }
+});
+
 const RoomLeads = {
     props: {
         roomId: {
@@ -23,7 +41,7 @@ const RoomLeads = {
                     this.$http.get('/api/v1/leads/' + this.roomId).then(
                         response => this.leads = response.data
                     );
-                }, 10000);
+                }, 5000);
             }
         );
     },
@@ -88,6 +106,36 @@ const RoomLeads = {
         }
     }
 };
+
+const tut = new Vue({
+    el: '#tutorial',
+    data: {
+        userPassTutorial: true,
+        userIsCompany: false
+    },
+    mounted: function() {
+        this.$http.get('/api/v1/user/tutorial/has/room_view').then(
+            response => {
+                this.userPassTutorial = response.body.room_view;
+                this.userIsCompany = response.body.company;
+            }
+        );
+    },
+    methods: {
+        onBtnTutorialClick(obj) {
+            this.$http.get('/api/v1/user/tutorial/add/room_view').then(
+                response => {
+                    this.userPassTutorial = response.body.room_view;
+                }
+            );
+            
+            document.getElementsByClassName(obj).forEach(element => {
+                element.style.cssText = "display:none";
+            });
+            return true;
+        }
+    }
+});
 
 const RoomMembers = {
     props: {

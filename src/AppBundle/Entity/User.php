@@ -37,6 +37,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_SUPER_ADMIN           = 'ROLE_SUPER_ADMIN';
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE               = self::ROLE_USER;
+    
+    const TMARK_ROOM_VIEW           = 'room_view';
+    const TMARK_COMPANY_UPDATE      = 'company_update';
+    const TMARK_WEBMASTER_PROFILE   = 'webmaster_profile';
+    const TMARK_OFFICE_UPDATE       = 'office_update';
+    const TMARK_ROOM_CREATE         = 'room_create';
+    const TMARK_LEAD_EDIT           = 'lead_edit';
+    const TMARK_LEAD_ADD            = 'lead_add';
 
     const TYPE_PERSONAL = 'personal';
     const TYPE_COMPANY  = 'company';
@@ -276,6 +284,62 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\OfferRequest", mappedBy="user")
      */
     private $offerRequests;
+        
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="tutorial", type="array")
+     */
+    private $tutorial = [];
+
+    /**
+     * @return array
+     */
+    public function getTutorials():array
+    {
+        return $this->tutorial;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function hasTutorialMark( $tmark )
+    {
+        if (isset($this->tutorial[$tmark])) {
+            return $this->tutorial[$tmark];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $tmark
+     * 
+     * @return bool
+     */
+    public function addTutorialMark($tmark) 
+    {
+        $this->tutorial[$tmark] = true;
+
+        return $this->hasTutorialMark( $tmark )? true : false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllTutorialMarks(): array
+    {
+        return [
+            self::TMARK_ROOM_VIEW,
+            self::TMARK_COMPANY_UPDATE,
+            self::TMARK_LEAD_ADD,
+            self::TMARK_LEAD_EDIT,
+            self::TMARK_OFFICE_UPDATE,
+            self::TMARK_ROOM_CREATE,
+            self::TMARK_WEBMASTER_PROFILE
+        ];
+    }
 
     public function __construct()
     {
@@ -459,7 +523,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @param Image $logotype
      *
-     * @return Company
+     * @return User
      */
     public function setLogotype(Image $logotype): self
     {
