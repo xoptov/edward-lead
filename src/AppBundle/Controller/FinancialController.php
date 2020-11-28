@@ -11,6 +11,7 @@ use AppBundle\Service\InvoiceManager;
 use AppBundle\Service\WithdrawManager;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\MonetaryTransaction;
+use AppBundle\Repository\InvoiceRepository;
 use AppBundle\Exception\FinancialException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -215,9 +216,11 @@ class FinancialController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $invoices = $this->entityManager
-            ->getRepository(Invoice::class)
-            ->getAllByUser($user);
+        /** @var InvoiceRepository */
+        $invoiceRepository = $this->entityManager
+            ->getRepository(Invoice::class);
+
+        $invoices = $invoiceRepository->getAllByUser($user);
 
         return $this->render('@App/Financial/invoices.html.twig', [
             'invoices' => $invoices

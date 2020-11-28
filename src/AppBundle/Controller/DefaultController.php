@@ -52,8 +52,11 @@ class DefaultController extends Controller
                     $this->addFlash('error', $violation->getMessage());
                 }
             } else {
+                /** @var RoomRepository $roomRepository */
+                $roomRepository = $entityManager->getRepository(Room::class);
+
                 try {
-                    $room = $entityManager->getRepository(Room::class)
+                    $room = $roomRepository
                         ->getByInviteShortToken($inviteShortToken);
 
                     return $this->redirectToRoute('app_room_invite_confirm', ['token' => $room->getInviteToken()]);
@@ -70,11 +73,11 @@ class DefaultController extends Controller
         $user = $this->getUser();
 
         if ($user->isWebmaster()) {
-            return $this->redirectToRoute('app_dashboard');
-        } elseif ($user->isCompany()) {
+            return $this->redirectToRoute('app_user_dashboard');
+        } elseif ($user->isAdvertiser()) {
             return $this->redirectToRoute('app_room_list');
         }
 
-        return $this->redirectToRoute('app_select_type');
+        return $this->redirectToRoute('app_user_select_role');
     }
 }

@@ -8,7 +8,6 @@ use AppBundle\Entity\IncomeAccount;
 use AppBundle\Exception\AccountException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Exception\OperationException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class InvoiceManager
 {

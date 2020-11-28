@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class SelectTypeSubscriber implements EventSubscriberInterface
+class SelectRoleSubscriber implements EventSubscriberInterface
 {
     /**
      * @var TokenStorageInterface
@@ -73,9 +73,9 @@ class SelectTypeSubscriber implements EventSubscriberInterface
         $uri = $request->getRequestUri();
 
         $excludedPaths = [
-            $this->router->generate('app_select_type'),
-            $this->router->generate('app_creating_company'),
-            $this->router->generate('app_stay_webmaster')
+            $this->router->generate('app_user_select_role'),
+            $this->router->generate('app_user_stay_advertiser'),
+            $this->router->generate('app_user_stay_webmaster')
         ];
 
         if (in_array($uri, $excludedPaths)) {
@@ -92,14 +92,15 @@ class SelectTypeSubscriber implements EventSubscriberInterface
             return;
         }
 
+        /** @var User $user */
         $user = $token->getUser();
 
         if (!$user instanceof User) {
              return;
         }
 
-        if (!$user->isTypeSelected()) {
-            $redirectUrl = $this->router->generate('app_select_type');
+        if (!$user->isRoleSelected()) {
+            $redirectUrl = $this->router->generate('app_user_select_role');
             $response = new RedirectResponse($redirectUrl);
 
             $event->setResponse($response);

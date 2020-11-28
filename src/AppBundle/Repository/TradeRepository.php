@@ -6,7 +6,6 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;

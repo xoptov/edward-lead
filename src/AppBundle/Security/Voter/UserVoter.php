@@ -2,25 +2,25 @@
 
 namespace AppBundle\Security\Voter;
 
-use AppBundle\Entity\Company;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class CompanyVoter extends Voter
+class UserVoter extends Voter
 {
-    const EDIT = 'edit';
-    const VIEW = 'view';
+    const EDIT   = 'edit';
+    const VIEW   = 'view';
 
     /**
      * @inheritdoc
      */
     protected function supports($attribute, $subject)
     {
-        if (!$subject instanceof Company) {
+        if (!in_array($attribute, [self::EDIT, self::VIEW])) {
             return false;
         }
 
-        if (!in_array($attribute, [self::EDIT, self::VIEW])) {
+        if (!$subject instanceof User) {
             return false;
         }
 
@@ -32,8 +32,7 @@ class CompanyVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        /** @var Company $subject */
-        if ($subject->getUser() === $token->getUser()) {
+        if ($token->getUser() === $subject) {
             return true;
         }
 

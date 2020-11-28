@@ -4,13 +4,8 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\Member;
 use AppBundle\Entity\Room;
-use AppBundle\Entity\RoomVisit;
-use AppBundle\Entity\User;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 class MemberRepository extends EntityRepository
 {

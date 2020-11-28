@@ -6,6 +6,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Entity\IncomeAccount;
+use AppBundle\Repository\InvoiceRepository;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,10 +87,12 @@ class PaymentController extends Controller
      */
     public function getInvoiceAction(?string $hash): JsonResponse
     {
+        /** @var InvoiceRepository $invoiceRepository */
+        $invoiceRepository = $this->entityManager
+            ->getRepository(Invoice::class);
+
         try {
-            $invoice = $this->entityManager
-                ->getRepository(Invoice::class)
-                ->getByHash($hash);
+            $invoice = $invoiceRepository->getByHash($hash);
 
             if (count($invoice) == 0 || $invoice[0] == null)
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-invoice', 'result' => null]);

@@ -9,6 +9,7 @@ use Doctrine\DBAL\DBALException;
 use AppBundle\Form\Type\LoginType;
 use AppBundle\Service\UserManager;
 use AppBundle\Entity\ClientAccount;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Form\Type\RegistrationType;
 use AppBundle\Form\Type\PasswordResetType;
@@ -101,7 +102,8 @@ class SecurityController extends Controller
                     $referrerToken = $request->cookies->get('referrer');
 
                     if (!empty($referrerToken)) {
-
+                        
+                        /** @var UserRepository $userRepository */
                         $userRepository = $this->entityManager->getRepository(User::class);
 
                         try {
