@@ -99,7 +99,7 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_view', ['id' => $data->getId()]);
         }
 
-        return $this->render('@App/v2/Room/create.html.twig', ['form' => $form->createView()]);
+        return $this->render('@App/v3/Room/create.html.twig', ['form' => $form->createView()]);
     }
 
     /**
