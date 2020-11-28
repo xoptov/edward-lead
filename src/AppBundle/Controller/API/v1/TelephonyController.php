@@ -136,6 +136,8 @@ class TelephonyController extends APIController
      *
      * @return Response
      * @todo: переделать обработку результата звонка после ответа серверу. KERNEL_TERMINATE событие.
+     *        или лучше сделать отдельный микросервис который будет через RabbitMQ получать задание
+     *        на обработку результата от PBX.
      */
     public function postCallbackAction(Request $request, LoggerInterface $logger): Response
     {
