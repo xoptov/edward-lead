@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\User\Office;
 use AppBundle\Entity\User\Personal;
+use AppBundle\Entity\User\Organization;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Entity\Part\IdentificatorTrait;
 use AppBundle\Entity\Part\TimeTrackableTrait;
@@ -37,7 +39,10 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const ROLE_SUPER_ADMIN           = 'ROLE_SUPER_ADMIN';
     const ROLE_NOTIFICATION_OPERATOR = 'ROLE_NOTIFICATION_OPERATOR';
     const DEFAULT_ROLE               = self::ROLE_USER;
-    
+
+    const TYPE_PERSONAL     = 'personal';
+    const TYPE_ORGANIZATION = 'organization';
+
     const TMARK_ROOM_VIEW           = 'room_view';
     const TMARK_COMPANY_UPDATE      = 'company_update';
     const TMARK_WEBMASTER_PROFILE   = 'webmaster_profile';
@@ -46,8 +51,10 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     const TMARK_LEAD_EDIT           = 'lead_edit';
     const TMARK_LEAD_ADD            = 'lead_add';
 
-    const TYPE_PERSONAL = 'personal';
-    const TYPE_COMPANY  = 'company';
+    /**
+     * @var string|null
+     * 
+     * @ORM\Column(type="string", length=12, nullable=true)
 
     /**
      * @var string|null
@@ -62,11 +69,22 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     private $type;
 
     /**
-     * @var Company|null
+     * @var Organization|null
+     * 
+     * @Assert\Valid(groups={"organization"})
      *
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Company", mappedBy="user")
+     * @ORM\Embedded(class="AppBundle\Entity\User\Organization")
      */
-    private $company;
+    private $organization;
+
+    /**
+     * @var Personal|null
+     * 
+     * @Assert\Valid(groups={"personal"})
+     * 
+     * @ORM\Embedded(class="AppBundle\Entity\User\Personal")
+     */
+    private $personal;
 
     /**
      * @var Office[]|ArrayCollection
@@ -74,15 +92,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Office", mappedBy="user")
      */
     private $offices;
-
-    /**
-     * @var Personal|null
-     *
-     * @Assert\Valid(groups={"personal"})
-     *
-     * @ORM\Embedded(class="AppBundle\Entity\User\Personal")
-     */
-    private $personal;
 
     /**
      * @var Image|null
@@ -368,11 +377,21 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     public static function getPossibleRoles(): array
     {
         return [
-            self::ROLE_COMPANY,
             self::ROLE_ADMIN,
             self::ROLE_SUPER_ADMIN,
             self::ROLE_WEBMASTER,
-            self::ROLE_COMPANY
+            self::ROLE_ADVERTISER
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPossibleTypes(): array
+    {
+        return [
+            self::TYPE_ORGANIZATION,
+            self::TYPE_PERSONAL
         ];
     }
 
@@ -383,13 +402,19 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
      */
     public function setType(?string $type): self
     {
+        $types = $this->getPossibleTypes();
+
+        if (in_array($type, $types)) {
+            $this->type = $type;
+        }
+
         $this->type = $type;
 
         return $this;
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getType(): ?string
     {
@@ -397,32 +422,48 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
-     * @param Company|null $company
+     * @param Organization|null $organization
      *
      * @return User
      */
-    public function setCompany(?Company $company): self
+    public function setOrganization(?Organization $organization): self
     {
-        $this->company = $company;
+        $this->organization = $organization;
 
         return $this;
     }
 
     /**
-     * @return Company|null
+     * @return Organization|null
      */
-    public function getCompany(): ?Company
+    public function getOrganization(): ?Organization
     {
-        return $this->company;
+        if ($this->organization) {
+            return clone $this->organization;
+        }
+        
+        return null;
     }
 
     /**
-     * @return int|null
+     * @param Personal|null $personal
+     * 
+     * @return User
      */
-    public function getCompanyId(): ?int
+    public function setPersonal(?Personal $personal): self
     {
-        if ($this->company) {
-            return $this->company->getId();
+        $this->personal = $personal;
+
+        return $this;
+    }
+
+    /**
+     * @return Personal|null
+     */
+    public function getPersonal(): ?Personal
+    {
+        if ($this->personal) {
+            return clone $this->personal;
         }
 
         return null;
@@ -483,30 +524,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
             $first = $this->offices->first();
 
             return $first->getCities();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Personal|null $personal
-     *
-     * @return User
-     */
-    public function setPersonal(?Personal $personal): self
-    {
-        $this->personal = $personal;
-
-        return $this;
-    }
-
-    /**
-     * @return Personal|null
-     */
-    public function getPersonal(): ?Personal
-    {
-        if ($this->personal) {
-            return clone $this->personal;
         }
 
         return null;
@@ -939,14 +956,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     /**
      * @return bool
      */
-    public function hasCompany(): bool
-    {
-        return $this->company instanceof Company;
-    }
-
-    /**
-     * @return bool
-     */
     public function isRoleSelected(): bool
     {
         return $this->roleSelected;
@@ -972,7 +981,7 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         $this
             ->removeRole(self::ROLE_ADVERTISER)
             ->addRole(self::ROLE_WEBMASTER);
-
+        
         $this->roleSelected = true;
 
         return $this;
@@ -1002,16 +1011,6 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         }
 
         return $this->account->getBalance();
-    }
-
-    /**
-     * @param int $divisor
-     *
-     * @return float
-     */
-    public function getHumanBalance(int $divisor = Account::DIVISOR): float
-    {
-        return $this->getBalance() / $divisor;
     }
 
     /**
@@ -1115,4 +1114,3 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
         return in_array(self::ROLE_WEBMASTER, $this->roles);
     }
 }
-

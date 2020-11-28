@@ -12,12 +12,17 @@ use AppBundle\Entity\HistoryAction;
 use AppBundle\Form\Type\ProfileType;
 use AppBundle\Entity\UserDeleteRequest;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\LeadRepository;
+use AppBundle\Repository\RoomRepository;
 use AppBundle\Entity\MonetaryTransaction;
 use Doctrine\ORM\NonUniqueResultException;
 use AppBundle\Form\Type\PasswordUpdateType;
+use AppBundle\Repository\MemberRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use AppBundle\Repository\HistoryActionRepository;
+use AppBundle\Repository\MonetaryTransactionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -61,6 +66,14 @@ class UserController extends Controller
     }
 
     /**
+     * @Route("/information", name="app_user_information", methods={"GET", "PUT"})
+     */
+    public function editInformationAction(Request $request)
+    {
+        
+    }
+
+    /**
      * @Route("/stay/advertiser", name="app_user_stay_advertiser", methods={"GET"})
      *
      * @param TokenStorageInterface $tokenStorage
@@ -71,8 +84,7 @@ class UserController extends Controller
     public function stayAdvertiserAction(
         TokenStorageInterface $tokenStorage,
         UserManager $userManager
-    ): Response
-    {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
 
@@ -97,13 +109,11 @@ class UserController extends Controller
      * @Route("/stay/webmaster", name="app_user_stay_webmaster", methods={"GET"})
      *
      * @param TokenStorageInterface $tokenStorage
-     * @param UserManager           $userManager
      *
      * @return Response
      */
     public function stayWebmasterAction(
-        TokenStorageInterface $tokenStorage,
-        UserManager $userManager
+        TokenStorageInterface $tokenStorage
     ): Response {
 
         /** @var User $user */
@@ -114,7 +124,7 @@ class UserController extends Controller
         }
 
         $user->switchToWebmaster();
-        $userManager->updateAccessToken($user);
+        $this->userManager->updateAccessToken($user);
 
         //todo: это костыль который пока не знаю как лучше изменить.
         $token = $tokenStorage->getToken();
@@ -135,186 +145,6 @@ class UserController extends Controller
     {
         return $this->render('@App/v3/User/advertiser_profile.html.twig');
     }
-
-//    /**
-//     * @Route("/company/create", name="app_user_creating_company", methods={"GET", "POST"})
-//     *
-//     * @param Request               $request
-//     * @param TokenStorageInterface $tokenStorage
-//     *
-//     * @return Response
-//     */
-//    public function creatingCompanyAction(Request $request, TokenStorageInterface $tokenStorage): Response
-//    {
-//        /** @var User $user */
-//        $user = $this->getUser();
-//
-//        if ($user->isTypeSelected()) {
-//            $this->addFlash('error', 'Тип пользователя уже указан');
-//            return $this->redirectToRoute('app_profile');
-//        }
-//
-//        if ($user->getCompany()) {
-//            $this->addFlash('error', 'Компания для пользователя уже создана');
-//            return $this->redirectToRoute('app_profile');
-//        }
-//
-//        $form = $this->createForm(CompanyType::class, null, [
-//            'mode' => CompanyType::MODE_COMPANY,
-//            'validation_groups' => ['Default', 'Company']
-//        ]);
-//
-//        if ($request->isMethod(Request::METHOD_POST)) {
-//            $form->handleRequest($request);
-//
-//            if ($form->isValid()) {
-//                /** @var Company $company */
-//                $company = $form->getData();
-//                $company->setUser($user);
-//                $this->entityManager->persist($company);
-//
-//                $user->switchToCompany()
-//                    ->makeTypeSelected();
-//
-//                //todo: это костыль но пока незнаю как лучше сделать.
-//                $token = $tokenStorage->getToken();
-//                $newRoles = array_merge($user->getRoles(), ['ROLE_COMPANY']);
-//                $tokenStorage->setToken(new UsernamePasswordToken($user, $token->getCredentials(), 'main', $newRoles));
-//
-//                $logotypePath = $company->getLogotypePath();
-//
-//                if ($logotypePath) {
-//                    $pathParts = pathinfo($logotypePath);
-//                    $image = $this->entityManager->getRepository(Image::class)
-//                        ->findOneBy(['filename' => $pathParts['basename']]);
-//
-//                    if ($image) {
-//                        $company->setLogotype($image);
-//                    } else {
-//                        $image = new Image();
-//                        $image
-//                            ->setFilename($pathParts['basename'])
-//                            ->setPath($logotypePath);
-//
-//                        $this->entityManager->persist($image);
-//                        $company->setLogotype($image);
-//                    }
-//                }
-//
-//                $this->entityManager->flush();
-//
-//                $this->addFlash('success', 'Компания создана');
-//
-//                return $this->redirectToRoute(
-//                    'app_updating_office',
-//                    ['id' => $company->getId()]
-//                );
-//            }
-//        }
-//
-//        return $this->render('@App/User/company.html.twig', [
-//            'form' => $form->createView()
-//        ]);
-//    }
-
-//    /**
-//     * @Route("/company/update/{id}", name="app_user_updating_company", methods={"GET", "PUT"})
-//     *
-//     * @param Request $request
-//     * @param Company $company
-//     *
-//     * @return Response
-//     */
-//    public function updateCompanyAction(Request $request, Company $company): Response
-//    {
-//        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
-//            return new Response('Редактирование чужой компании запрещено');
-//        }
-//
-//        $form = $this->createForm(CompanyType::class, $company, [
-//            'method' => Request::METHOD_PUT,
-//            'mode' => CompanyType::MODE_COMPANY,
-//            'validation_groups' => ['Default', 'Company']
-//        ]);
-//
-//        if ($request->isMethod(Request::METHOD_PUT)) {
-//            $form->handleRequest($request);
-//
-//            if ($form->isValid()) {
-//                $logotypePath = $company->getLogotypePath();
-//
-//                if ($logotypePath) {
-//                    $pathParts = pathinfo($logotypePath);
-//
-//                    $image = $this->entityManager->getRepository(Image::class)
-//                        ->findOneBy(['filename' => $pathParts['basename']]);
-//
-//                    if ($image) {
-//                        $company->setLogotype($image);
-//                    } else {
-//                        $image = new Image();
-//                        $image
-//                            ->setPath($logotypePath)
-//                            ->setFilename($pathParts['basename']);
-//
-//                        $this->entityManager->persist($image);
-//                        $company->setLogotype($image);
-//                    }
-//                }
-//
-//                $this->entityManager->flush();
-//
-//                $this->addFlash('success', 'Информация о компании обновлена');
-//
-//                return $this->redirectToRoute(
-//                    'app_updating_office',
-//                    ['id' => $company->getId()]
-//                );
-//            }
-//        }
-//
-//        return $this->render('@App/User/company.html.twig', [
-//            'form' => $form->createView(),
-//            'company' => $company
-//        ]);
-//    }
-
-//    /**
-//     * @Route("/office/update/{id}", name="app_updating_office", methods={"GET", "PUT"})
-//     *
-//     * @param Request $request
-//     * @param Company $company
-//     *
-//     * @return Response
-//     */
-//    public function updateOfficeAction(Request $request, Company $company): Response
-//    {
-//        if (!$this->isGranted(CompanyVoter::EDIT, $company)) {
-//            return new Response('Редактирование чужого офиса запрещено');
-//        }
-//
-//        $form = $this->createForm(CompanyType::class, $company, [
-//            'method' => Request::METHOD_PUT,
-//            'mode' => CompanyType::MODE_OFFICE,
-//            'validation_groups' => ['Default', 'Office']
-//        ]);
-//
-//        if ($request->isMethod(Request::METHOD_PUT)) {
-//            $form->handleRequest($request);
-//
-//            if ($form->isValid()) {
-//                $this->entityManager->flush();
-//
-//                $this->addFlash('success', 'Информация о офисе сохранена');
-//
-//                return $this->redirectToRoute('app_room_list');
-//            }
-//        }
-//
-//        return $this->render('@App/User/office.html.twig', [
-//            'form' => $form->createView()
-//        ]);
-//    }
 
     /**
      * @Route("/profile", name="app_user_profile", methods={"GET", "POST"})
@@ -357,8 +187,14 @@ class UserController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $historyLogins = $this->entityManager->getRepository('AppBundle:HistoryAction')
-            ->getByUserAndActionInDescOrder($user, HistoryAction::ACTION_LOGIN);
+        /** @var HistoryActionRepository $repository */
+        $repository = $this->entityManager
+            ->getRepository('AppBundle:HistoryAction');
+
+        $historyLogins = $repository->getByUserAndActionInDescOrder(
+            $user, 
+            HistoryAction::ACTION_LOGIN
+        );
 
         return $this->render('@App/User/history_logins.html.twig', [
             'historyLogins' => $historyLogins
@@ -457,6 +293,7 @@ class UserController extends Controller
             'averageTarget' => 0
         ];
 
+        /** @var LeadRepository $leadRepository */
         $leadRepository = $this->entityManager->getRepository(Lead::class);
 
         $now = new \DateTime();
@@ -477,18 +314,18 @@ class UserController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $rooms = $this->entityManager->getRepository(Room::class)
-            ->getByMember($user);
+        /** @var RoomRepository $roomRepository */
+        $roomRepository = $this->entityManager->getRepository(Room::class);
+        $rooms = $roomRepository->getByMember($user);
 
-        $members = $this->entityManager->getRepository(Member::class)
-            ->getByRooms($rooms);
+        /** @var MemberRepository */
+        $memberRepository = $this->entityManager->getRepository(Member::class);
+        $members = $memberRepository->getByRooms($rooms);
 
         $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
-
         $doneLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_TARGET, Lead::STATUS_NOT_TARGET]);
         
         $result['addedLeadsLastMonth'] = $leadRepository->getCountByUserLastMonth($user);
-
         $result['addedLeadsLastDay'] = $leadRepository->getCountByUserLastDay($user);
 
         /** @var Room $room */
@@ -547,8 +384,10 @@ class UserController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $lastIncomes = $this->entityManager->getRepository(MonetaryTransaction::class)
-            ->getIncoming($user->getAccount());
+        /** @var MonetaryTransactionRepository $transactionRepository */
+        $transactionRepository = $this->entityManager->getRepository(MonetaryTransaction::class);
+
+        $lastIncomes = $transactionRepository->getIncoming($user->getAccount());
         $result['lastIncomes'] = $lastIncomes;
 
         $result['lastLeads'] = $leadRepository->findBy([
