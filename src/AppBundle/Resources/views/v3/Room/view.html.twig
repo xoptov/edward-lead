@@ -1,217 +1,266 @@
 {% extends '@App/v3/layout_dark.html.twig' %}
 
-{% block content %}
+{%- block content %}
     <!-- Content -->
-
-    <div id="app" class="content">
-
+    <div id="app" class="content" data-room-id="{{ room.id }}" data-room-enabled="{{ room.enabled }}">
         <!-- Room -->
-        
         <div class="title-panel fx fx-between">
-        <div class="room-panel__box">
-            <div class="title">
-            <h3 class="title__h3 fx align-center">Комната #{{ room.id }} - {{ room.name }}<span class="dots dots__{% if room.enabled %}green{% else %}red{% endif %}"></span></h3>
+            <div class="room-panel__box">
+                <div class="title">
+                    <h3 class="title__h3 fx align-center">
+                        Комната #{{ room.id }} - {{ room.name }}
+                        <span class="dots" :class="{dots__green: roomEnabled, dots__red: !roomEnabled}"></span>
+                    </h3>
+                </div>
+                <div class="room-panel__info fx">
+                    {% if room.enabled -%}
+                        <a href="/room/{{ room.id }}/invite" class="room-panel__invite" v-show="roomEnabled">Пригласить участника</a>
+                    {%- endif %}
+                    <p class="room-panel__balance">Общий баланс покупателей: <span>{% if countCanBuy > 0 %}{{countCanBuy}} лидов{% else %}Нет покупателей{% endif %}</span></p>
+                </div>
             </div>
-            <div class="room-panel__info fx">
-            <a href="/room/{{ room.id }}/invite" class="room-panel__invite">Пригласить участника</a>
-            <p class="room-panel__balance">Общий баланс покупателей: <span>{% if countCanBuy > 0 %}{{countCanBuy}} лидов{% else %}Нет покупателей{% endif %}</span></p>
+            {% if is_granted('ROLE_WEBMASTER') and room.enabled -%}
+                <div class="room-panel__btn" v-show="roomEnabled">
+                    <a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn__green">Добавить лид</a>
+                </div>
+            {%- endif %}
+        </div>
+
+        <!-- Rooms table -->
+        <room-leads :room-id="{{ room.id }}" inline-template>
+            <div class="row room-panel-table">
+                <div class="table__box">
+                    <table class="table info-room__table">
+                        <thead class="table__head table__row_white">
+                            <tr>
+                                <th class="table__cell">Дата публикации</th>
+                                <th class="table__cell">Вебмастер</th>
+                                <th class="table__cell">Телефон</th>
+                                <th class="table__cell">Источник</th>
+                                <th class="table__cell">Компания</th>
+                                <th class="table__cell">Статус</th>
+                                <th class="table__cell table__cell__fix"></th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="leadsCount" class="table__body">
+                            <tr v-for="lead in leads" class="table__row clickable-row" @click.prevent="viewLead(lead.id)">
+                                <td class="table__cell" v-text="dateFormat(lead.created_at)"></td>
+                                <td class="table__cell" v-text="lead.user.name"></td>
+                                <td class="table__cell" v-text="lead.phone"></td>
+                                <td class="table__cell" v-text="lead.channel"></td>
+                                <td v-if="'timer' in lead" class="table__cell">
+                                    <div class="table__timer flex-center">
+                                        <i class="table__timer_icon"></i>
+                                        <div v-for="str in splitString(lead.timer.remain)" class="table__timer__box flex-center">
+                                            <span class="table__timer__item" v-text="str"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td v-else-if="lead.buyer && lead.buyer.company" class="table__cell" v-text="lead.buyer.company.short_name"></td>
+                                <td v-else class="table__cell"></td>
+                                <th class="table__cell"><span :class="getStatusObject(lead.status).class" class="status flex-center" v-text="getStatusObject(lead.status).label"></span></th>
+                                <th class="table__cell table__cell__fix"><a :href="leadViewUrl(lead)" class="table__link"></a></th>
+                            </tr>
+                        </tbody>
+                        <tbody v-else class="table__body">
+                            <tr class="table__row">
+                                <td class="table__cell" colspan="8">В данной комнате нет лидов на продажу</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        {% if app.user.webmaster and room.enabled %}
-        <div class="room-panel__btn"><a href="{{ path('app_lead_create_form', {'room': room.id}) }}" class="btn btn__green">Добавить лид</a></div>
-        {% else %}
-        <div class="room-panel__btn"><span class="btn btn__grey">Добавить лид</span></div>
-        {% endif %}
-        </div>
+        </room-leads>
+        <!--/ Rooms table -->
 
-        <!-- Room panel table -->
-        
-        <div class="row room-panel-table">
-        <div class="table__box">
-            <table class="table info-room__table">
-            <thead class="table__head table__row_white">
-                <tr>
-                <th class="table__cell">Дата публикации</th>
-                <th class="table__cell">Вебмастер</th>
-                <th class="table__cell">Телефон</th>
-                <th class="table__cell">Источник</th>
-                <th class="table__cell">Компания</th>
-                <th class="table__cell">Статус</th>
-                <th class="table__cell table__cell__fix"></th>
-                </tr>
-            </thead>
-            <tbody v-if="leadsCount" class="table__body">
-                <tr v-for="lead in leads" class="table__row clickable-row" @click.prevent="onRowClick(lead.id)">
-                <td class="table__cell" v-text="dateFormat(lead.created_at)"></td>
-                <td class="table__cell" v-text="lead.user.name"></td>
-                <td class="table__cell" v-text="lead.phone"></td>
-                <td class="table__cell" v-text="lead.channel"></td>
-                <td v-if="'timer' in lead" class="table__cell">
-                    <div class="table__timer flex-center">
-                    <i class="table__timer_icon"></i>
-                    <div v-for="str in splitString(lead.timer.remain)" class="table__timer__box flex-center">
-                        <span class="table__timer__item" v-text="str"></span>
-                    </div>
-                    </div>
-                </td>
-                <td v-else-if="lead.buyer && lead.buyer.company" class="table__cell" v-text="lead.buyer.company.short_name"></td>
-                <td v-else class="table__cell"></td>
-                
-                <th class="table__cell"><span :class="getStatusObject(lead.status).class" class="status flex-center" v-text="getStatusObject(lead.status).label"></span></th>
-                <th class="table__cell table__cell__fix"><a :href="leadViewUrl(lead)" class="table__link"></a></th>
-                </tr>
-
-            </tbody>
-            <tbody v-else class="table__body">
-                <tr class="table__row">
-                    <td class="table__cell" colspan="8">В данной комнате нет лидов на продажу</td>
-                </tr>
-            </tbody>
-            </table>
-        </div>
-        </div>
-
-        <!-- Desc room -->
-
+        <!-- Room description -->
         <div class="desc-room">
-        <div class="title">
-            <h4 class="title__h4">Информация о комнате</h4>
+            <div class="title">
+                <h4 class="title__h4">Информация о комнате</h4>
+            </div>
+            <div class="row fx fx-wrap">
+                <div class="col-4">
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Описание целевого лида:</h5>
+                        <ul class="desc-room__list">
+                            {% if room.leadCriteria is not empty -%}
+                                {%- for line in room.leadCriteria|split('\r\n') -%}
+                                    <li class="desc-room__list__item">{{ line }}</li>
+                                {%- endfor -%}
+                            {%- else -%}
+                                <li class="desc-room__list__item">Нет описания лида</li>
+                            {%- endif %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Стоимость лида:</h5>
+                        <ul class="desc-room__list">
+                            {% if room.leadPrice %}
+                                {% if is_granted('ROLE_COMPANY') and room.hasHiddenMargin %}
+                                    <li class="desc-room__list__item">{{ (room.leadPrice + room.hiddenMargin)|money_format }} рублей</li>
+                                {% else %}
+                                    <li class="desc-room__list__item">{{ room.leadPrice|money_format }} рублей</li>
+                                {% endif %}
+                            {% else %}
+                                <li class="desc-room__list__item">Зависит от населенного пункта</li>
+                            {% endif %}
+                            <li class="desc-room__list__item">{% if not room.hideFee %}{{ fee }}% комиссия{% else %}&nbsp;{% endif %}</li>
+                        </ul>
+                    </div>
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Ср. % целевых:</h5>
+                        <ul class="desc-room__list">
+                            <li class="desc-room__list__item">56%</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Гарантии Edward:</h5>
+                        <ul class="desc-room__list">
+                            <li class="desc-room__list__item">{% if room.platformWarranty %}Да{% else %}Нет{% endif %}</li>
+                        </ul>
+                    </div>
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Таймер комнаты:</h5>
+                        {% if room.timer %}
+                            <ul class="desc-room__list">
+                                <li class="desc-room__list__item">Город работы - {% if room.city is not empty %}{{ room.city.name }}{% else %}Не задан{% endif %}</li>
+                                {% if room.schedule is not empty %}
+                                    {% set schedule = room.schedule %}
+                                    {% set workRange = '' %}
+                                    {% if schedule.workTime is not empty %}
+                                        {% set workTime = schedule.workTime %}
+                                        {% set workRange = "с " ~ workTime.startAt|date('H:i') ~ " по " ~  workTime.endAt|date('H:i') %}
+                                    {% endif %}
+                                    {% set workDaysRange = [] %}
+                                    {% if schedule.workDays is not empty %}
+                                        {% set workDays = humanize_work_days(schedule.workDays) %}
+                                        {% for workDay in workDays %}
+                                            {% set workDaysRange = workDaysRange|merge([workDay]) %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    <li class="desc-room__list__item">Режим работы: {{ workRange }} {{ workDaysRange|join(", ") }} </li>
+                                    {% if room.executionHours is not empty %}
+                                        <li class="desc-room__list__item">Таймер менеджера - {{ room.executionHours }} часа</li>
+                                    {% endif %}
+                                    {% if room.leadsPerDay is not empty %}
+                                        <li class="desc-room__list__item">Лимит заявок по таймеру - {{ room.leadsPerDay }} шт.</li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="desc-room__item">
+                        <h5 class="title__h5">Дата создания:</h5>
+                        <ul class="desc-room__list">
+                            <li class="desc-room__list__item">{{ room.createdAt|date_format('d.m.Y г.') }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="row fx fx-wrap">
-            <div class="col-4">
-            <div class="desc-room__item">
-                <h5 class="title__h5">Описание целевого лида:</h5>
-                <ul class="desc-room__list">
-                {% if room.leadCriteria is not empty %}
-                    {% for line in room.leadCriteria|split('\r\n') %}
-                <li class="desc-room__list__item">{{ line }}</li>
-                    {% endfor %}
-                {% else %}
-                <li class="desc-room__list__item">Нет описания лида</li>
-                {% endif %}
-                </ul>
-            </div>
-            </div>
-            <div class="col-3">
-            <div class="desc-room__item">
-                <h5 class="title__h5">Стоимость лида:</h5>
-                <ul class="desc-room__list">
-                {% if room.leadPrice %}
-                    {% if is_granted('ROLE_COMPANY') and room.hasHiddenMargin %}
-                <li class="desc-room__list__item">{{ (room.leadPrice + room.hiddenMargin)|money_format }} рублей</li>
-                    {% else %}
-                <li class="desc-room__list__item">{{ room.leadPrice|money_format }} рублей</li>
-                    {% endif %}
-                {% else %}
-                <li class="desc-room__list__item">Зависит от населенного пункта</li>
-                {% endif %}
-                <li class="desc-room__list__item">{% if not room.hideFee %}{{ fee }}% комиссия{% else %}&nbsp;{% endif %}</li>
-                </ul>
-            </div>
-            <div class="desc-room__item">
-                <h5 class="title__h5">Ср. % целевых:</h5>
-                <ul class="desc-room__list">
-                <li class="desc-room__list__item">56%</li>
-                </ul>
-            </div>
-            </div>
-            <div class="col-3">
-            <div class="desc-room__item">
-                <h5 class="title__h5">Гарантии Edward:</h5>
-                <ul class="desc-room__list">
-                <li class="desc-room__list__item">{% if room.platformWarranty %}Да{% else %}Нет{% endif %}</li>
-                </ul>
-            </div>
-            <div class="desc-room__item">
-                <h5 class="title__h5">Таймер комнаты:</h5>
-                {% if room.timer %}
-                <ul class="desc-room__list">
-                <li class="desc-room__list__item">Город работы - {% if room.city is not empty %}{{ room.city.name }}{% else %}Не задан{% endif %}</li>
-                {% if room.schedule is not empty %}
-                    {% set schedule = room.schedule %}
-                    {% set workRange = '' %}
-                    {% if schedule.workTime is not empty %}
-                        {% set workTime = schedule.workTime %}
-                        {% set workRange = "с " ~ workTime.startAt|date('H:i') ~ " по " ~  workTime.endAt|date('H:i') %}
-                    {% endif %}
-                    {% set workDaysRange = [] %}
-                    {% if schedule.workDays is not empty %}
-                        {% set workDays = humanize_work_days(schedule.workDays) %}
-                        {% for workDay in workDays %}
-                            {% set workDaysRange = workDaysRange|merge([workDay]) %}
-                        {% endfor %}
-                    {% endif %}
-                <li class="desc-room__list__item">Режим работы: {{ workRange }} {{ workDaysRange|join(", ") }} </li>
-                    {% if room.executionHours is not empty %}
-                <li class="desc-room__list__item">Таймер менеджера - {{ room.executionHours }} часа</li>    
-                    {% endif %}
-                    {% if room.leadsPerDay is not empty %}
-                <li class="desc-room__list__item">Лимит заявок по таймеру - {{ room.leadsPerDay }} шт.</li>
-                    {% endif %}
-                {% endif %}
-                </ul>
-                {% endif %}
-            </div>
-            </div>
-            <div class="col-2">
-            <div class="desc-room__item">
-                <h5 class="title__h5">Дата создания:</h5>
-                <ul class="desc-room__list">
-                <li class="desc-room__list__item">{{ room.createdAt|date_format('d.m.Y г.') }}</li>
-                </ul>
-            </div>
-            </div>
-        </div>
-        </div>
+        <!--/ Room description -->
 
         <!-- Room members -->
-
-        <div class="room-members">
-        <div class="title">
-            <h4 class="title__h4">Участники комнаты</h4>
-        </div>
-        <div class="room-members__box fx">
-            <div class="room-members__info">
-            <p class="room-members__title">Вебмастера:</p>
-            <p class="room-members__quantity"><span v-text="'Кол: ' + webmastersCount"></span></p>
+        <room-members :members="members" v-on:revoke-member="$emit('revoke-member', $event)" inline-template>
+            <div class="room-members">
+                <div class="title">
+                    <h4 class="title__h4">Участники комнаты</h4>
+                </div>
+                <div class="room-members__box fx">
+                    <div class="room-members__info">
+                        <p class="room-members__title">Вебмастера:</p>
+                        <p class="room-members__quantity"><span v-text="'Кол: ' + webmastersCount"></span></p>
+                    </div>
+                    <div class="room-members__user">
+                        <ul class="room-members__list fx fx-wrap">
+                            <li class="room-members__list__item" v-for="member in members.webmasters">
+                            <span class="room-members__list__icon">
+                                <img :src="getLogotype(member)" :alt="member.user.name">
+                                {% if room.isOwner(app.user) -%}
+                                    <button v-if="!member.user.isOwner" @click="revokeMember(member)" class="room-members__list__item__delete"></button>
+                                {%- endif %}
+                            </span>
+                                <p v-text="member.user.name"></p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="room-members__box fx">
+                    <div class="room-members__info">
+                        <p class="room-members__title">Компании:</p>
+                        <p class="room-members__quantity"><span v-text="'Кол: ' + advertisersCount"></span></p>
+                    </div>
+                    <div class="room-members__user">
+                        <ul class="room-members__list fx fx-wrap">
+                            <li class="room-members__list__item" v-for="member in members.advertisers">
+                            <span class="room-members__list__icon">
+                                <img :src="getLogotype(member)" :alt="member.user.name">
+                                {% if room.isOwner(app.user) -%}
+                                    <button v-if="!member.user.isOwner" @click="revokeMember(member)" class="room-members__list__item__delete"></button>
+                                {%- endif %}
+                            </span>
+                                <p v-text="member.user.name"></p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="room-members__user">
-            <ul v-for="member in members.webmasters" class="room-members__list fx fx-wrap">
-                <li class="room-members__list__item">
-                    <span class="room-members__list__icon">
-                    <img :src="getLogotype(member)" :alt="member.user.name"></span>
-                    <p v-text="member.user.name"></p>
-                </li>
-            </ul>
-            </div>
-        </div>
-        <div class="room-members__box fx">
-            <div class="room-members__info">
-            <p class="room-members__title">Компании:</p>
-            <p class="room-members__quantity"><span v-text="'Кол: ' + companiesCount"></span></p>
-            </div>
-            <div class="room-members__user">
-            <ul v-for="member in members.companies" class="room-members__list fx fx-wrap">
-                <li class="room-members__list__item">
-                    <span class="room-members__list__icon">
-                        <img :src="getLogotype(member)" :alt="member.user.name">
-                        <button v-if="!member.user.isOwner" @click="onRevokeMemberClick(member)" class="room-members__list__item__delete"></button>
-                    </span>
-                    <p v-text="member.user.name"></p>
-                </li>
-            </ul>
-            </div>
-        </div>
-        </div>
+        </room-members>
+        <!--/ Room members -->
 
         <!-- Room deactivate -->
+        {% if room.enabled and room.isOwner(app.user) -%}
+            <div class="room-deactivate" v-show="roomEnabled">
+                <a href="#" @click.prevent="deactivate" class="room-deactivate__btn">Деактивировать комнату</a>
+            </div>
+        {%- endif %}
+        <!--/ Room deactivate -->
 
-        <div v-if="activated" class="room-deactivate">
-        {% if room.isOwner(app.user) %}
-            <a href="#" @click.prevent="onDeactivateClick" class="room-deactivate__btn">Деактивировать комнату</a>
-        {% endif %}
+    </div>
+    <!--/Content -->
+{% endblock -%}
+
+{% block modals %}
+    <!-- Modals -->
+    <div id="room-deactivate-modal" class="modal modal_deactivate" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_green">Вы действительно хотите <br />деактивировать комнату?</p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click.prevent="confirm">Деактивировать</button>
+                    <button class="modal__close" @click.prevent="close">Отменить</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div id="revoke-member-modal" class="modal modal_exclude" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_green">Вы действительно хотите <br />исключить участника Nikitosik?</p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click.prevent="confirm">Исключить</button>
+                    <button class="modal__close" @click.prevent="close">Отменить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="room-deactivate-impossible-modal" class="modal modal_impossible" style="display:none;" v-show="visible" @click.prevent="close">
+        <div class="modal__box flex-center">
+            <div class="modal__box__wrap text-center">
+                <p class="modal__paragraph modal__paragraph_red"><span>:(</span></p>
+                <p class="modal__paragraph">К сожаению, вы не можете деактивировать <br />комнату пока в ней есть лиды</p>
+            </div>
+        </div>
+    </div>
+
     <!--/Content -->
 
     <!-- Modal assistant -->
@@ -263,7 +312,7 @@
             </div>
         </div>
     </div>
-
+    <!--/ Modals -->
 {% endblock %}
 
 {% block javascripts %}
@@ -271,17 +320,5 @@
     <script src="{{ asset('bundles/app/js/lib/vue.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/vue-resource.js') }}"></script>
     <script src="{{ asset('bundles/app/js/lib/date.format.js') }}"></script>
-    <script>
-        let roomId = null;
-        let roomEnabled = false;
-        {%- if room -%}
-            roomId = {{ room.id }};
-            {%- if room.enabled -%}
-                roomEnabled = true;
-            {%- else -%}
-                roomEnabled = false;
-            {%- endif -%}
-        {%- endif -%}
-    </script>
     <script src="{{ asset('bundles/app/v3/js/room/view.js') }}"></script>
 {% endblock %}

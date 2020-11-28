@@ -4,7 +4,9 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Thread;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\ThreadRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\MessageBundle\EntityManager\ThreadManager;
@@ -31,8 +33,9 @@ class SupportController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $admins = $entityManager->getRepository(User::class)
-            ->getAdmins();
+        /** @var UserRepository */
+        $userRepository = $entityManager->getRepository(User::class);
+        $admins = $userRepository->getAdmins();
 
         if (empty($admins)) {
             return new JsonResponse(
@@ -42,7 +45,10 @@ class SupportController extends Controller
         }
 
         try {
-            $lastThread = $entityManager->getRepository(Thread::class)
+            /** @var ThreadRepository */
+            $threadRepository = $entityManager->getRepository(Thread::class);
+
+            $lastThread = $threadRepository
                 ->getLastSupportThreadByCreatorAndTimeBound($user, new \DateTime('-1 minute'));
         } catch (\Exception $e) {
             return new JsonResponse(

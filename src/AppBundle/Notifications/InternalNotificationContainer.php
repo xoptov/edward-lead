@@ -13,14 +13,11 @@ use AppBundle\Entity\Trade;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use NotificationBundle\Client\InternalClient;
 use NotificationBundle\Entity\Notification;
-use NotificationBundle\Exception\ValidationNotificationClientException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class InternalNotificationContainer
+class InternalNotificationContainer extends BaseNotificationContainer
 {
     /**
      * @var InternalClient
@@ -33,11 +30,6 @@ class InternalNotificationContainer
     private $router;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
-    /**
      * EmailNotificationContainer constructor.
      *
      * @param InternalClient         $client
@@ -48,15 +40,12 @@ class InternalNotificationContainer
     {
         $this->client = $client;
         $this->router = $router;
-        $this->entityManager = $entityManager;
+        parent::__construct($entityManager);
     }
 
     /**
      * @param Room $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function newRoomCreated(Room $object): void
     {
@@ -73,9 +62,6 @@ class InternalNotificationContainer
     /**
      * @param Room $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function roomDeactivated(Room $object): void
     {
@@ -91,13 +77,10 @@ class InternalNotificationContainer
     /**
      * @param Invoice $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function invoiceProcessed(Invoice $object): void
     {
-        $message = "Ваш баланс пополнен на сумму {$object->getAmount()}";
+        $message = "Ваш баланс пополнен на сумму {$object->getAmount(100)}";
         $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
@@ -109,9 +92,6 @@ class InternalNotificationContainer
     /**
      * @param ClientAccount $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function accountBalanceApproachingZero(ClientAccount $object): void
     {
@@ -129,9 +109,6 @@ class InternalNotificationContainer
     /**
      * @param ClientAccount $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function accountBalanceLowerThenMinimal(ClientAccount $object): void
     {
@@ -149,21 +126,26 @@ class InternalNotificationContainer
     /**
      * @param Message $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
-    public function messageCreated(Message $object): void
+    public function messageFromSupport(Message $object): void
     {
+        $thread = $object->getThread();
+
+        /** @var User $user */
+        $user = $thread->getCreatedBy();
+
+        if (
+            !$user instanceof User ||
+            !$thread instanceof Thread ||
+            $thread->getTypeAppeal() !== Thread::TYPE_SUPPORT
+        ) {
+            return;
+        }
+
         $message = "У вас имеется новое сообщение от службы поддержки";
         $link = $this->router->generate('app_arbitration');
         $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
-        $user = $object->getThread()->getCreatedBy();
         $type = Notification::TYPE_IMPORTANT;
-
-        if(!$user instanceof User){
-            return;
-        }
 
         $notification = new Notification($user, $html, $type);
 
@@ -173,9 +155,6 @@ class InternalNotificationContainer
     /**
      * @param Trade $trade
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function tradeAccepted(Trade $trade): void
     {
@@ -191,9 +170,6 @@ class InternalNotificationContainer
     /**
      * @param Trade $trade
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function tradeRejected(Trade $trade): void
     {
@@ -221,7 +197,7 @@ class InternalNotificationContainer
             return;
         }
 
-        $message = "Ваи поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
+        $message = "Вам поступило сообщение от службы поддержки в арбитраже по лиду {$thread->getLead()->getId()}";
         $link = $this->router->generate('app_arbitration');
         $html = "<p class='notice__item__txt'>{$message}</p><div class='notice__item__foot fx fx-wrap fx-between'><a href='{$link}' class='btn btn__green notice__item__btn'>Смотреть</a></div>";
 
@@ -235,9 +211,6 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function someOneJoinedToYou(Member $object): void
     {
@@ -250,7 +223,9 @@ class InternalNotificationContainer
                 continue;
             }
 
-            $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$member->getUser()->getAccount()->getType()}";
+            $type = $member->getUser()->isWebmaster() ? 'Вебмастер' : 'Компания';
+
+            $message = "Пользователь {$member->getUser()->getName()} присоеденился к комнате #{$member->getRoom()->getId()} - {$member->getRoom()->getName()} в качестве {$type}";
             $html = "<p class='notice__item__txt'>{$message}</p>";
             $user = $member->getUser();
 
@@ -263,9 +238,6 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function youJoinedToRoom(Member $object): void
     {
@@ -281,13 +253,10 @@ class InternalNotificationContainer
     /**
      * @param Member $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function youRemovedFromRoom(Member $object): void
     {
-        $message = "Вы были изключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
+        $message = "Вы были исключены из комнаты #{$object->getRoom()->getId()} - {$object->getRoom()->getName()}";
         $html = "<p class='notice__item__txt'>{$message}</p>";
         $user = $object->getUser();
 
@@ -299,9 +268,6 @@ class InternalNotificationContainer
     /**
      * @param Lead $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function leadNewPlaced(Lead $object): void
     {
@@ -332,9 +298,6 @@ class InternalNotificationContainer
     /**
      * @param Withdraw $object
      *
-     * @throws ORMException
-     * @throws OptimisticLockException
-     * @throws ValidationNotificationClientException
      */
     public function withdrawUser(Withdraw $object): void
     {

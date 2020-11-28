@@ -8,15 +8,15 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use AppBundle\Event\MemberEvent;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Repository\LeadRepository;
+use AppBundle\Service\RoomManager;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\MemberVoter;
-use AppBundle\Service\RoomManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -40,8 +40,9 @@ class RoomController extends APIController
         /** @var User $user */
         $user = $this->getUser();
 
-        $rooms = $this->getDoctrine()->getRepository(Room::class)
-            ->getByMember($user);
+        /** @var RoomRepository $roomRepository */
+        $roomRepository = $this->getDoctrine()->getRepository(Room::class);
+        $rooms = $roomRepository->getByMember($user);
 
         $result = [];
 
@@ -98,14 +99,14 @@ class RoomController extends APIController
                 ]
             ];
 
-            if ($user->isCompany() && $user->getCompany()->getLogotype()) {
-                $logotype = $user->getCompany()->getLogotype();
+            if ($user->isAdvertiser() && $user->getLogotype()) {
+                $logotype = $user->getLogotype();
                 $item['user']['logotype'] = $cacheManager->getBrowserPath($logotype->getPath(), 'logotype_34x34');
             }
 
             if ($user->isWebmaster()) {
                 $result['webmasters'][] = $item;
-            } elseif ($user->isCompany()) {
+            } elseif ($user->isAdvertiser()) {
                 $result['companies'][] = $item;
             }
         }
@@ -175,9 +176,14 @@ class RoomController extends APIController
             );
         }
 
-        $leads = $entityManager
-            ->getRepository(Lead::class)
-            ->getOffersByRooms([$room], [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]);
+        /** @var LeadRepository $leadRepository */
+        $leadRepository = $entityManager
+            ->getRepository(Lead::class);
+
+        $leads = $leadRepository->getOffersByRooms(
+            [$room], 
+            [Lead::STATUS_EXPECT, Lead::STATUS_IN_WORK]
+        );
 
         if (count($leads)) {
             return new JsonResponse(
@@ -286,7 +292,8 @@ class RoomController extends APIController
         Room $room,
         RoomManager $roomManager
     ): JsonResponse {
-        
+
+        /** @var User $user */
         $user = $this->getUser();
 
         try {

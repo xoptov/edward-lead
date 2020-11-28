@@ -2,7 +2,7 @@
     <ul class="nav__list">
         {% if is_granted('ROLE_WEBMASTER') -%}
             <li class="nav__item">
-                <a href="{{ path('app_dashboard') }}" class="nav__link">
+                <a href="{{ path('app_user_dashboard') }}" class="nav__link">
                     <span class="nav__icon i-panel"></span>{{ 'menu.dashboard'|trans }}
                 </a>
             </li>
@@ -24,11 +24,11 @@
         </li>
         <li class="nav__item">
             <a href="{{ path('app_arbitration') }}" class="nav__link">
-                <span class="nav__icon i-support"></span>{{ 'menu.arbitration_and_support'|trans }} <span class="notice__quantity">1111</span>
+                <span class="nav__icon i-support"></span>{{ 'menu.arbitration_and_support'|trans }}{# <span class="notice__quantity">1111</span>#}
             </a>
         </li>
-        <li class="nav__item nav__drop">
-            <span class="nav__icon i-billing"></span> {{ 'menu.billing'|trans }}
+        <li class="nav__item">
+            <span class="nav__icon i-billing"></span> <a href="#" class="nav__link nav__drop nav__drop__icon">{{ 'menu.billing'|trans }}</a>
             <ul class="nav__subnav">
                 <li class="nav__item">
                     <a href="{{ path('app_financial_billing') }}" class="nav__link">{{ 'menu.personal_account'|trans }}</a>
@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li class="nav__item">
-                <a href="{{ path('app_updating_company', {'id': app.user.companyId}) }}" class="nav__link">
+                <a href="{{ path('app_user_advertiser_profile') }}" class="nav__link">
                     <span class="nav__icon i-panel"></span>{{ 'menu.advertiser_cabinet'|trans }}
                 </a>
             </li>

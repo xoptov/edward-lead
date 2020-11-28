@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Event\TradeEvent;
+use AppBundle\Repository\AccountRepository;
 use AppBundle\Service\TradeManager;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -63,8 +64,9 @@ class TradeController extends CRUDController
 
         try {
 
-            $feesAccount = $this->getDoctrine()->getRepository(Account::class)
-                ->getFeesAccount();
+            /** @var AccountRepository */
+            $accountRepository = $this->getDoctrine()->getRepository(Account::class);
+            $feesAccount = $accountRepository->getFeesAccount();
 
             $this->tradeManager->accept($object, $feesAccount);
             $this->admin->update($object);

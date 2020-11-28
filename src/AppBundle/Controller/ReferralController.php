@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\User;
 use Doctrine\DBAL\DBALException;
 use AppBundle\Entity\ReferrerReward;
+use AppBundle\Repository\UserRepository;
 use AppBundle\Service\ReferrerManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,10 +53,12 @@ class ReferralController extends Controller
             $earned += $reward->getAmount();
         }
 
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager
+            ->getRepository(User::class);
+
         try {
-            $referralCount = $this->entityManager
-                ->getRepository(User::class)
-                ->getReferralCount($user);
+            $referralCount = $userRepository->getReferralCount($user);
         } catch (DBALException $e) {
             $referralCount = 0;
         }

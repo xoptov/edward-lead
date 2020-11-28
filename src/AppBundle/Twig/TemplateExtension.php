@@ -9,13 +9,13 @@ use AppBundle\Util\Formatter;
 use AppBundle\Entity\Operation;
 use Doctrine\DBAL\DBALException;
 use AppBundle\Service\LeadManager;
+use AppBundle\Entity\OfferRequest;
 use AppBundle\Service\TimerManager;
 use AppBundle\Entity\Room\Schedule;
 use AppBundle\Service\TradeManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Service\PhoneCallManager;
 use AppBundle\Entity\MonetaryTransaction;
-use AppBundle\Entity\OfferRequest;
 
 class TemplateExtension extends \Twig_Extension
 {

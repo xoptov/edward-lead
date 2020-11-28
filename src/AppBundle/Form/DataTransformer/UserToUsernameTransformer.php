@@ -3,11 +3,10 @@
 namespace AppBundle\Form\DataTransformer;
 
 use AppBundle\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
-
 
 class UserToUsernameTransformer implements DataTransformerInterface
 {

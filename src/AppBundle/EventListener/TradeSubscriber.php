@@ -9,6 +9,7 @@ use AppBundle\Notifications\EmailNotificationContainer;
 use AppBundle\Notifications\InternalNotificationContainer;
 use AppBundle\Notifications\SmsNotificationContainer;
 use AppBundle\Notifications\WebPushNotificationContainer;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\MessageBundle\Composer\ComposerInterface;
 use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
@@ -88,7 +89,10 @@ class TradeSubscriber extends BaseEventListener implements EventSubscriberInterf
             return;
         }
 
-        $admins = $this->entityManager->getRepository(User::class)
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        
+        $admins = $userRepository
             ->getAdmins();
 
         if (empty($admins)) {

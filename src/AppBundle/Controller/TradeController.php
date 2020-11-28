@@ -10,6 +10,8 @@ use AppBundle\Service\TradeManager;
 use AppBundle\Security\Voter\TradeVoter;
 use AppBundle\Exception\FinancialException;
 use AppBundle\Exception\OperationException;
+use AppBundle\Repository\AccountRepository;
+use AppBundle\Repository\TradeRepository;
 use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,9 +49,12 @@ class TradeController extends Controller
             return $this->redirectToRoute('app_lead_show', ['id' => $trade->getLeadId()]);
         }
 
+        /** @var AccountRepository $accountRepository */
+        $accountRepository = $this->getDoctrine()
+            ->getRepository(Account::class);
+
         try {
-            $feesAccount = $this->getDoctrine()->getRepository(Account::class)
-                ->getFeesAccount();
+            $feesAccount = $accountRepository->getFeesAccount();
 
             $this->tradeManager->accept($trade, $feesAccount);
             $eventDispatcher->dispatch(TradeEvent::ACCEPTED, new TradeEvent($trade));
@@ -139,8 +144,11 @@ class TradeController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $trades = $this->getDoctrine()
-            ->getRepository(Trade::class)
+        /** @var TradeRepository $tradeRepository */
+        $tradeRepository = $this->getDoctrine()
+            ->getRepository(Trade::class);
+
+        $trades = $tradeRepository
             ->getByBuyerAndWarrantyAndIncomplete($user);
 
         foreach ($trades as $trade) {

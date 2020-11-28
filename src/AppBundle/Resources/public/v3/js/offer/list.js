@@ -4,18 +4,8 @@ const offersList = new Vue({
         sended: [],
         success: [],
         error: [],
-        requestStatus: null
-    },
-    computed: {
-        isRequestSuccess() {
-            return this.requestStatus === 'success';
-        },
-        isRequestError() {
-            return this.requestStatus === 'error';
-        },
-        isRequestSended() {
-            return this.requestStatus !== null;
-        }
+        offerRequested: false,
+        advertisersRequested: false
     },
     methods: {
         connectRequest(roomId) {
@@ -54,76 +44,114 @@ const offersList = new Vue({
         isError(roomId) {
             return this.isSended(roomId) && this.error.indexOf(roomId) !== -1;
         },
-        setRequestStatus(status) {
-            this.requestStatus = status;
+        onOfferRequested() {
+            this.offerRequested = true;
+        },
+        onAdvertisersRequested() {
+            this.advertisersRequested = true;
         }
     }
 });
 
-const modals = new Vue({
-    el: '#modals',
+const advertisersRequestModal = new Vue({
+    el: '#advertisers-request-modal',
     data: {
-        publicationOffer: false,
-        needOffer: false,
-        requestResult: false,
-        requestPending: false,
-        requestStatus: null
-    },
-    computed: {
-        isPublicationOfferShow() {
-            return this.publicationOffer;
-        },
-        isNeedOfferShow() {
-            return this.needOffer;
-        },
-        isRequestResultShow() {
-            return this.requestResult;
-        },
-        isRequestSuccess() {
-            return this.requestStatus === 'success';
-        },
-        isRequestError() {
-            return this.requestStatus === 'error';
-        }
+        visible: false,
+        submitted: false
     },
     methods: {
-        openModal(name)
-        {
-            if (name in this)
-                this[name] = true;
+        open() {
+            this.visible = true;
         },
-        closeModal(name)
-        {
-            if (name in this)
-                this[name] = false;
+        close() {
+            this.visible = false;
         },
-        closeAll() {
-            this.closeModal('publicationOffer');
-            this.closeModal('needOffer');
-        },
-        sendRequest() {
-            if (this.requestPending) {
+        submit() {
+            if (this.submitted) {
                 return false;
             }
-
             this.$http.get('/api/v1/offer/create')
-                .then(() => this._handleResult('success'))
-                .catch(() => this._handleResult('error'));
-
-            this.requestPending = true;
-        },
-        _handleResult(status) {
-            this.closeAll();
-            this.openModal('requestResult');
-            this.requestPending = false;
-            this.requestStatus = status;
-            this.$emit('request-' + status);
+                .then(() => {
+                    this.close();
+                    this.$emit('advertisers-requested');
+                })
+                .catch(resp => {
+                    //todo: Need show server error validations.
+                    this.submitted = false;
+                });
+            this.submitted = true;
         }
     }
 });
 
-offersList.$on('publication-offer', () => modals.openModal('publicationOffer'));
-offersList.$on('need-offer', () => modals.openModal('needOffer'));
+const offerRequestModal = new Vue({
+    el: '#offer-request-modal',
+    data: {
+        visible: false,
+        agreement: true,
+        error: null,
+        submitted: false
+    },
+    methods: {
+        open() {
+            this.visible = true;
+        },
+        close() {
+            this.error = null;
+            this.visible = false;
+        },
+        submit() {
+            this.validate();
+            if (this.submitted || this.error) {
+                return false;
+            }
+            this.$http.get('/api/v1/offer/create')
+                .then(() => {
+                    this.close();
+                    this.$emit('offer-requested');
+                })
+                .catch(resp => {
+                    //todo: Need show server error validations.
+                    this.submitted = false;
+                });
+            this.submitted = true;
+        },
+        validate() {
+            if (!this.agreement) {
+                this.error = 'Чтобы отправить запрос на добавление, прочитайте и согласитесь с правилами и критериями публичных офферов';
+                return;
+            }
 
-modals.$on('request-success', () => offersList.setRequestStatus('success'))
-modals.$on('request-error', () => offersList.setRequestStatus('error'))
+            this.error = null;
+        }
+    }
+});
+
+const requestResultModal = new Vue({
+    el: '#request-result-modal',
+    data: {
+        visible: false
+    },
+    methods: {
+        open() {
+            this.visible = true;
+        },
+        close() {
+            this.visible = false;
+        },
+
+    }
+});
+
+offersList.$on('offer-request', () => offerRequestModal.open());
+offersList.$on('advertisers-request', () => advertisersRequestModal.open());
+
+offerRequestModal.$on('offer-requested', () => {
+    offersList.onOfferRequested();
+    requestResultModal.open();
+});
+
+advertisersRequestModal.$on('advertisers-requested', () => {
+    offersList.onAdvertisersRequested();
+    requestResultModal.open();
+});

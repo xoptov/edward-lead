@@ -136,6 +136,8 @@ class TelephonyController extends APIController
      *
      * @return Response
      * @todo: переделать обработку результата звонка после ответа серверу. KERNEL_TERMINATE событие.
+     *        или лучше сделать отдельный микросервис который будет через RabbitMQ получать задание
+     *        на обработку результата от PBX.
      */
     public function postCallbackAction(Request $request, LoggerInterface $logger): Response
     {
@@ -170,7 +172,13 @@ class TelephonyController extends APIController
 
         if (!$form->isValid()) {
             $errors = $form->getErrors(true);
-            $logger->error('Ошибка в формате данных Callback от PBX', ['errors' => (string)$errors]);
+            $logger->error(
+                'Ошибка в формате данных Callback от PBX',
+                [
+                    'errors' => (string)$errors,
+                    'data' => json_encode($request->request->all())
+                ]
+            );
 
             return $this->responseErrors($errors);
         }

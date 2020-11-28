@@ -86,7 +86,12 @@ class Room implements IdentifiableInterface
      *     maxMessage="Максимальная стоимость 9999.99"
      * )
      *
-     * @ORM\Column(name="lead_price", type="integer", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="lead_price", 
+     *     type="integer", 
+     *     nullable=true, 
+     *     options={"unsigned":"true"}
+     * )
      */
     private $leadPrice;
 
@@ -105,7 +110,12 @@ class Room implements IdentifiableInterface
     /**
      * @var float|null
      *
-     * @ORM\Column(name="buyer_fee", type="float", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="buyer_fee", 
+     *     type="float", 
+     *     nullable=true, 
+     *     options={"unsigned":"true"}
+     * )
      */
     private $buyerFee;
 
@@ -117,7 +127,12 @@ class Room implements IdentifiableInterface
      *     message="Значение должно быть положительным или пустым"
      * )
      *
-     * @ORM\Column(name="hidden_margin", type="integer", nullable=true, options={"unsigned":"true"})
+     * @ORM\Column(
+     *     name="hidden_margin",
+     *     type="integer",
+     *     nullable=true,
+     *     options={"unsigned":"true"}
+     * )
      */
     private $hiddenMargin;
 
@@ -179,7 +194,12 @@ class Room implements IdentifiableInterface
      *     groups={"timer"}
      * )
      *
-     * @ORM\Column(name="execution_hours", type="smallint", nullable=true, options={"unsigned":true})
+     * @ORM\Column(
+     *     name="execution_hours", 
+     *     type="smallint", 
+     *     nullable=true, 
+     *     options={"unsigned":true}
+     * )
      */
     private $executionHours;
 
@@ -198,7 +218,12 @@ class Room implements IdentifiableInterface
      *     groups={"timer"}
      * )
      *
-     * @ORM\Column(name="leads_per_day", type="smallint", nullable=true, options={"unsigned":true})
+     * @ORM\Column(
+     *     name="leads_per_day", 
+     *     type="smallint", 
+     *     nullable=true, 
+     *     options={"unsigned":true}
+     * )
      */
     private $leadsPerDay;
 
@@ -216,8 +241,15 @@ class Room implements IdentifiableInterface
 
     /**
      * @var ArrayCollection|RoomChannel[]
+     * 
+     * @Assert\Valid()
      *
-     * @ORM\OneToMany(targetEntity="RoomChannel", mappedBy="room", cascade={"persist"})
+     * @ORM\OneToMany(
+     *     targetEntity="RoomChannel",
+     *     mappedBy="room",
+     *     cascade={"persist", "remove"},
+     *     orphanRemoval=true
+     * )
      */
     private $channels;
 

@@ -7,12 +7,16 @@ use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
 use AppBundle\Event\RoomEvent;
+use AppBundle\Entity\RoomVisit;
 use AppBundle\Event\MemberEvent;
 use AppBundle\Form\Type\RoomType;
 use AppBundle\Service\FeesManager;
 use AppBundle\Service\RoomManager;
 use AppBundle\Service\AccountManager;
 use AppBundle\Exception\RoomException;
+use AppBundle\Repository\LeadRepository;
+use AppBundle\Repository\RoomRepository;
+use AppBundle\Repository\UserRepository;
 use AppBundle\Security\Voter\RoomVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,8 +111,9 @@ class RoomController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $rooms = $this->entityManager->getRepository(Room::class)
-            ->getByMember($user);
+        /** @var RoomRepository $roomRepository */
+        $roomRepository = $this->entityManager->getRepository(Room::class);
+        $rooms = $roomRepository->getByMember($user);
 
         if (empty($rooms)) {
             return $this->redirectToRoute('app_room_create');
@@ -126,10 +131,14 @@ class RoomController extends Controller
 
         $now = new \DateTime();
 
-        $repository = $this->entityManager->getRepository(Lead::class);
+        /** @var LeadRepository $leadRepository */
+        $leadRepository = $this->entityManager->getRepository(Lead::class);
 
-        $dailyLeads = $repository->getAddedInRoomsByDate($rooms, $now);
-        $expectLeads = $repository->getOffersByRooms($rooms, [Lead::STATUS_EXPECT]);
+        $dailyLeads = $leadRepository->getAddedInRoomsByDate($rooms, $now);
+        $expectLeads = $leadRepository->getOffersByRooms($rooms, [Lead::STATUS_EXPECT]);
+
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
 
         for ($i = 0; $i < count($rooms); $i++) {
 
@@ -147,14 +156,14 @@ class RoomController extends Controller
                 }
             }
 
-            $users = $this->entityManager->getRepository(User::class)
+            $users = $userRepository
                 ->getUsersInRoom($rooms[$i]['room']);
 
             /** @var User $user */
             foreach ($users as $user) {
                 if ($user->isWebmaster()) {
                     $rooms[$i]['webmasters'] +=1 ;
-                } elseif ($user->isCompany()) {
+                } elseif ($user->isAdvertiser()) {
                     $rooms[$i]['companies'] += 1;
                 }
             }
@@ -177,13 +186,16 @@ class RoomController extends Controller
         AccountManager $accountManager,
         FeesManager $feesManager
     ): Response {
+        
         if (!$this->isGranted(RoomVoter::VIEW, $room)) {
             $this->addFlash('error', 'У вас нет прав на просмотр комнаты');
 
             return $this->redirectToRoute('app_room_list');
         }
 
-        $buyers = $this->entityManager->getRepository(User::class)->getAdvertisersInRoom($room);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $buyers = $userRepository->getAdvertisersInRoom($room);
 
         $totalAvailableMoney = 0;
 
@@ -192,6 +204,13 @@ class RoomController extends Controller
         }
 
         $buyerFee = $feesManager->getCommissionForBuyerInRoom($room);
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $visit = new RoomVisit($room, $user);
+
+        $this->entityManager->persist($visit);
+        $this->entityManager->flush();
 
         return $this->render('@App/v3/Room/view.html.twig', [
             'room' => $room,
@@ -209,7 +228,7 @@ class RoomController extends Controller
      */
     public function inviteAction(Room $room): Response
     {
-        return $this->render('@App/v2/Room/invite.html.twig', ['room' => $room]);
+        return $this->render('@App/v3/Room/invite.html.twig', ['room' => $room]);
     }
 
     /**
@@ -219,7 +238,7 @@ class RoomController extends Controller
      */
     public function inviteInvalidAction(): Response
     {
-        return $this->render('@App/v2/Room/invite_invalid.html.twig');
+        return $this->render('@App/v3/Room/invite_invalid.html.twig');
     }
 
     /**
@@ -240,7 +259,7 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_invite_invalid');
         }
 
-        return $this->render('@App/v2/Room/invite_confirm.html.twig', [
+        return $this->render('@App/v3/Room/invite_confirm.html.twig', [
             'room' => $room
         ]);
     }
@@ -272,8 +291,9 @@ class RoomController extends Controller
         // Запретить добавляться в комнату если включен таймер и уже есть пользователь такого-же типа.
         if ($room->isTimer()) {
 
-            $members = $this->entityManager->getRepository(Member::class)
-                ->getByRooms([$room]);
+            /** @var MemberRepository $memberRepository */
+            $memberRepository = $this->entityManager->getRepository(Member::class);
+            $members = $memberRepository->getByRooms([$room]);
 
             $webmasters = 0;
             $advertisers = 0;
@@ -283,13 +303,13 @@ class RoomController extends Controller
                 $memberUser = $member->getUser();
                 if ($memberUser->isWebmaster()) {
                     $webmasters++;
-                } elseif ($memberUser->isCompany()) {
+                } elseif ($memberUser->isAdvertiser()) {
                     $advertisers++;
                 }
             }
 
             if (($user->isWebmaster() && $webmasters)
-                || ($user->isCompany() && $advertisers)) {
+                || ($user->isAdvertiser() && $advertisers)) {
                 return $this->redirectToRoute('app_room_invite_invalid');
             }
         }
@@ -332,7 +352,6 @@ class RoomController extends Controller
             return $this->redirectToRoute('app_room_invite_invalid');
         }
 
-        return $this->render('@App/v2/Room/invite_reject.html.twig');
+        return $this->render('@App/v3/Room/invite_reject.html.twig');
     }
 }
-

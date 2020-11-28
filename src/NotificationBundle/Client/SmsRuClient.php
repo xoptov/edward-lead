@@ -37,6 +37,7 @@ class SmsRuClient extends Client
        $this->validate($model);
 
         $sms = new Sms($model['phone'], $model['body']);
+
         $result = $this->client->smsSend($sms);
 
         if ($result->code !== 100) {

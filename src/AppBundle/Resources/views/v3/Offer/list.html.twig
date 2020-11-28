@@ -7,17 +7,19 @@
         <div class="title title__offers fx fx-between fx-wrap align-center">
             <h3 class="title__h3">Офферы</h3>
             {% if not has_offer_in_interval(app.user, offer_limit_in_seconds) -%}
-                <div class="title__links" v-if="!isRequestSended">
-                    {%- if is_granted('ROLE_ADVIRTISER') -%}
+                <div class="title__links">
+                    {%- if is_granted('ROLE_ADVERTISER') -%}
                         <a href="#" 
                            class="title__links__item"
-                           @click="$emit('publication-offer')">
+                           @click="$emit('offer-request')"
+                           v-show="!offerRequested">
                                 Опубликовать свой оффер
                         </a>
                     {%- elseif is_granted('ROLE_WEBMASTER') -%}
                         <a href="#" 
                            class="title__links__item"
-                           @click="$emit('need-offer')">
+                           @click="$emit('advertisers-request')"
+                           v-show="!advertisersRequested">
                                 Не нашли подходящий оффер?
                         </a>
                     {%- endif -%}
@@ -141,71 +143,63 @@
     </div>
 {% endblock %}
 
-{% block modals -%}  
-    <div id="modals">
-        <div class="modal modal_request" 
-            style="display:none;"
-            v-show="isRequestResultShow"
-            @click="closeModal('requestResult')">
-            <div class="modal__box flex-center">
-                <div class="modal__offer text-center" v-if="isRequestSuccess">
-                    <h4 class="modal__offer__title">Ваш запрос отправлен</h4>
-                    <p class="modal__offer__paragraph">Модератор свяжется с Вами для уточнения источника трафика и прочей информации.</p>
-                    <p class="modal__offer__paragraph">Среднее время подключения - 10 часов.</p>
+{% block modals -%}
+    <div id="offer-request-modal" class="modal modal_publish" style="display:none;" v-show="visible">
+        <div class="modal__box flex-center">
+            <div class="modal__offer">
+                <h4 class="modal__offer__title">
+                    Чтобы опубликовать свой оффер в каталоге, требуется согласовать его с администрацией платформы.
+                </h4>
+                <p class="modal__offer__paragraph">
+                    Перед тем как подать запрос на добавление своего оффера в каталог, прочитайте <br /><a href="#">правила и критерии публичных офферов.</a>
+                </p>
+                <p class="modal__offer__paragraph">
+                    Если Ваше предложение соотвествует им, Вы можете отправить запрос.
+                </p>
+                <div class="registration__form__chek fx align-start">
+                    <!-- <div class="registration__form__chek registration__form__chek_error fx align-start"> -->
+                    <div class="check fx">
+                        <label class="check__item">
+                            <input type="checkbox" name="check" checked="checked" v-model="agreement">
+                            <span class="check__mark"></span>
+                        </label>
+                    </div>
+                    <div class="registration__form__chek__txt">
+                        Я прочитал <a href="#">правила и критерии публичных офферов</a> и прошу расмотреть мою заявку на добавление в каталог.
+                    </div>
                 </div>
-                <div class="modal__offer text-center" v-else-if="isRequestError">
-                    <h4 class="modal__offer__title">Ошибка отправки запроса</h4>
-                    <p class="modal__offer__paragraph">Вам необходимо связаться со службой техподдержки для уточнения статуса запроса.</p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click="submit" :disabled="submitted">Отправить запрос</button>
+                    <button class="btn modal__close" @click="close">Отменить</button>
+                </div>
+                <div class="modal__offer__error" style="display:none;" v-show="error" v-text="error"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="request-result-modal" class="modal modal_request" style="display:none;" v-show="visible" @click="close">
+        <div class="modal__box flex-center">
+            <div class="modal__offer text-center">
+                <h4 class="modal__offer__title">Ваш запрос отправлен</h4>
+                <p class="modal__offer__paragraph">Модератор свяжется с Вами для уточнения источника трафика и прочей информации.</p>
+                <p class="modal__offer__paragraph">Среднее время подключения - 10 часов.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="advertisers-request-modal" class="modal modal_not-found" style="display:none;" v-show="visible">
+        <div class="modal__box flex-center">
+            <div class="modal__offer">
+                <h4 class="modal__offer__title">Не нашли подходящий для себя оффер?</h4>
+                <p class="modal__offer__paragraph">
+                    Оставьте запрос и наша служба поддержки свяжется с Вами и постарается подобрать подходящего рекламодателя из нашей базы.
+                </p>
+                <div class="modal__box__control flex-center">
+                    <button class="btn btn__green" @click="submit" :disabled="submitted">Отправить запрос</button>
+                    <button class="btn modal__close" @click="close">Отменить</button>
                 </div>
             </div>
         </div>
-        {% if is_granted('ROLE_WEBMASTER') -%}
-            <div class="modal modal_not-found" 
-                style="display:none;"
-                v-show="isNeedOfferShow">
-                <div class="modal__box flex-center">
-                    <div class="modal__offer">
-                        <h4 class="modal__offer__title">Не нашли подходящий для себя оффер?</h4>
-                        <p class="modal__offer__paragraph">Оставьте запрос и наша служба поддержки свяжется с Вами и постарается подобрать подходящего рекламодателя из нашей базы.</p>
-                        <div class="modal__box__control flex-center">
-                            <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
-                            <button class="btn modal__close" @click="closeModal('needOffer')">
-                                Отменить
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        {%- elseif is_granted('ROLE_ADVERTISER') -%}
-            <div class="modal modal_publish" 
-                 style="display:none;"
-                 v-show="isPublicationOfferShow">
-                <div class="modal__box flex-center">
-                    <div class="modal__offer">
-                        <h4 class="modal__offer__title">Чтобы опубликовать свой оффер в каталоге, требуется согласовать его с администрацией платформы.</h4>
-                        <p class="modal__offer__paragraph">Перед тем как подать запрос на добавление своего оффера в каталог, прочитайте <br /><a href="#">правила и критерии публичных офферов.</a></p>
-                        <p class="modal__offer__paragraph">Если Ваше предложение соотвествует им, Вы можете отправить запрос.</p>
-                        <div class="registration__form__chek fx align-start">
-                            <!-- <div class="registration__form__chek registration__form__chek_error fx align-start"> -->
-                            <div class="check fx">
-                                <label class="check__item">
-                                    <input type="checkbox" name="check" checked="checked">
-                                    <span class="check__mark"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="registration__form__chek__txt">Я прочитал <a href="#">правила и критерии публичных офферов</a> и прошу расмотреть мою заявку на добавление в каталог.</div>
-                    </div>
-                    <div class="modal__box__control flex-center">
-                        <button class="btn btn__green" @click="sendRequest">Отправить запрос</button>
-                        <button class="btn modal__close" @click="closeModal('publicationOffer')">
-                            Отменить
-                        </button>
-                    </div>
-                    <div class="modal__offer__error">Чтобы отправить запрос на добавление, прочитайте и согласитесь с правилами и критериями публичных офферов.</div>
-                </div>
-            </div>
-        {%- endif %}
     </div>
 {%- endblock %}
 

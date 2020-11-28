@@ -6,6 +6,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Entity\IncomeAccount;
+use AppBundle\Repository\InvoiceRepository;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,10 +87,12 @@ class PaymentController extends Controller
      */
     public function getInvoiceAction(?string $hash): JsonResponse
     {
+        /** @var InvoiceRepository $invoiceRepository */
+        $invoiceRepository = $this->entityManager
+            ->getRepository(Invoice::class);
+
         try {
-            $invoice = $this->entityManager
-                ->getRepository(Invoice::class)
-                ->getByHash($hash);
+            $invoice = $invoiceRepository->getByHash($hash);
 
             if (count($invoice) == 0 || $invoice[0] == null)
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-invoice', 'result' => null]);
@@ -132,7 +135,7 @@ class PaymentController extends Controller
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-user', 'result' => null]);
 
             $invoice = $this->invoiceManager->create($user[0], $sum, '', false);
-            $this->eventDispatcher->dispatch(InvoiceEvent::CREATED, new InvoiceEvent($invoice));
+            $this->eventDispatcher->dispatch(InvoiceEvent::NEW_CREATED, new InvoiceEvent($invoice));
             $this->entityManager->flush();
 
             $userOwner = null;
@@ -187,7 +190,7 @@ class PaymentController extends Controller
         try {
             $invoice = $this->entityManager
                 ->getRepository(Invoice::class)
-                ->getById($id_invoice);
+                ->find($id_invoice);
 
             if (count($invoice) == 0 || $invoice[0] == null)
                 return new JsonResponse(['code' => 1, 'response' => 'not-found-invoice', 'result' => null]);

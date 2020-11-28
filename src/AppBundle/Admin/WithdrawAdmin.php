@@ -2,7 +2,6 @@
 
 namespace AppBundle\Admin;
 
-use AppBundle\Admin\Field\DestinationAccountFieldDescription;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Withdraw;
 use AppBundle\Service\HoldManager;
@@ -15,6 +14,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use AppBundle\Admin\Field\MoneyFieldDescription;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use AppBundle\Form\DataTransformer\MoneyTransformer;
+use AppBundle\Admin\Field\DestinationAccountFieldDescription;
 
 class WithdrawAdmin extends AbstractAdmin
 {
@@ -139,6 +139,10 @@ class WithdrawAdmin extends AbstractAdmin
 
         $showMapper
             ->add('id', 'number')
+            ->add('user.id')
+            ->add('user.name')
+            ->add('user.email')
+            ->add('user.phone', null, ['template' => '@App/CRUD/show_phone_field.html.twig'])
             ->add('description')
             ->add($amountField, 'number')
             ->add('status', 'choice', [

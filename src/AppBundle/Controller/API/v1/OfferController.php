@@ -4,15 +4,19 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
+use Doctrine\DBAL\DBALException;
 use AppBundle\Entity\OfferRequest;
 use AppBundle\Entity\RoomJoinRequest;
+use AppBundle\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\OfferRepository;
 use FOS\MessageBundle\Sender\SenderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\MessageBundle\Composer\ComposerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use FOS\MessageBundle\MessageBuilder\NewThreadMessageBuilder;
 
 /**
  * @Route("/api/v1/offer")
@@ -67,9 +71,19 @@ class OfferController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        $nearestOfferRequest = $this->entityManager
-            ->getRepository(OfferRequest::class)
-            ->getCountByUserInInterval($user, $this->oneInInterval);
+        /** @var OfferRepository $offerRepository */
+        $offerRepository = $this->entityManager
+            ->getRepository(OfferRequest::class);
+
+        try {
+            $nearestOfferRequest = $offerRepository
+                ->getCountByUserInInterval($user, $this->oneInInterval);
+        } catch (DBALException $e) {
+            return new JsonResponse(
+                ['Произошла ошибка отправки запроса'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         if ($nearestOfferRequest) {
             return new JsonResponse(
@@ -78,7 +92,7 @@ class OfferController extends Controller
             );
         }
 
-        if ($user->isCompany()) {
+        if ($user->isAdvertiser()) {
             $messageSubject = 'Запрос на создание нового офера';
             $messageBody = 'Прошу Вас создать оффер';
         } elseif ($user->isWebmaster()) {
@@ -91,7 +105,9 @@ class OfferController extends Controller
             );
         }
 
-        $admins = $this->entityManager->getRepository(User::class)->getAdmins();
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $admins = $userRepository->getAdmins();
 
         if (empty($admins)) {
             return new JsonResponse(['В системе нет администраторов'], Response::HTTP_BAD_REQUEST);
@@ -135,14 +151,19 @@ class OfferController extends Controller
             );
         }
 
-        if ($room->hasJoinRequest($this->getUser())) {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($room->hasJoinRequest($user)) {
             return new JsonResponse(
                 ['Вы уже отправляли запрос на подключение к данной комнате'],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
-        $admins = $this->entityManager->getRepository(User::class)->getAdmins();
+        /** @var UserRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $admins = $userRepository->getAdmins();
 
         if (empty($admins)) {
             return new JsonResponse(
@@ -158,7 +179,7 @@ class OfferController extends Controller
         $threadBuilder = $this->composer->newThread();
         $threadBuilder
             ->setSubject($messageSubject)
-            ->setSender($this->getUser())
+            ->setSender($user)
             ->setBody($messageBody);
 
         foreach ($admins as $admin) {
@@ -169,7 +190,7 @@ class OfferController extends Controller
 
         $joinRequest = new RoomJoinRequest();
         $joinRequest
-            ->setUser($this->getUser())
+            ->setUser($user)
             ->setRoom($room);
 
         $this->entityManager->persist($joinRequest);

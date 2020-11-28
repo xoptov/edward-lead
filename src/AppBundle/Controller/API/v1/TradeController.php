@@ -6,6 +6,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Trade;
 use AppBundle\Entity\Account;
 use AppBundle\Service\LeadManager;
+use AppBundle\Repository\TradeRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,19 +38,14 @@ class TradeController extends Controller
     {
         /** @var User $user */
         $user = $this->getUser();
-        $company = $user->getCompany();
 
+        /** @var TradeRepository */
         $tradeRepository = $this->getDoctrine()->getRepository(Trade::class);
 
-        if ($company) {
-            $cities = $company->getCities();
-
-            if ($cities->isEmpty()) {
-                return new JsonResponse();
-            }
+        if ($user->getOfficeCities()) {
 
             $trades = $tradeRepository->getByCitiesAndStatus(
-                $cities->toArray(),
+                $user->getOfficeCities()->toArray(),
                 Trade::STATUS_ACCEPTED
             );
         } else {

@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Invoice;
-use AppBundle\Event\AccountEvent;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Service\InvoiceManager;
 use AppBundle\Form\Type\InvoiceProcessType;
@@ -78,11 +77,6 @@ class InvoiceController extends CRUDController
                 )
             );
 
-            $this->eventDispatcher->dispatch(
-                InvoiceEvent::PROCESSED,
-                new InvoiceEvent($object)
-            );
-
         } catch (ModelManagerException $e) {
             $this->handleModelManagerException($e);
 
@@ -142,6 +136,12 @@ class InvoiceController extends CRUDController
                             'SonataAdminBundle'
                         )
                     );
+
+                    $this->eventDispatcher->dispatch(
+                        InvoiceEvent::PROCESSED,
+                        new InvoiceEvent($object)
+                    );
+
                 } catch(\Exception $e) {
                     $this->handleModelManagerException($e);
 

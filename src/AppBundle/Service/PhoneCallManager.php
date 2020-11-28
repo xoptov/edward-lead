@@ -128,13 +128,11 @@ class PhoneCallManager
      */
     public function create(User $caller, Trade $trade): PhoneCall
     {
-        $company = $caller->getCompany();
-
-        if (!$company) {
-            throw new RequestCallException($caller, $trade, 'Пользователь должен быть представителем компании');
+        if (!$caller->isAdvertiser()) {
+            throw new RequestCallException($caller, $trade, 'Пользователь должен быть рекламодателем');
         }
 
-        $officePhone = $company->getOfficePhone();
+        $officePhone = $caller->getOfficePhone();
 
         if (!$officePhone) {
             throw new RequestCallException($caller, $trade, 'Для совершения звонка лиду необходимо указать номер телефона офиса в профиле компании');

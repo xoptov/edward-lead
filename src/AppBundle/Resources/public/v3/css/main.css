@@ -196,7 +196,8 @@ body {
   border-radius: 2px;
   padding: 7px 11px 7px 3px;
   border: 1px solid #d2d2d2;
-  width: 304px;height: 400px;
+  width: 304px;
+  max-height: 400px;
   -webkit-box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
           box-shadow: 5px 0 5px rgba(0, 0, 0, 0.2);
 }
@@ -286,11 +287,6 @@ body {
   -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%);
           transform: translateY(-50%);
-}
-
-
-.notice__btn.hide{
-  display: none;
 }
 
 .notice__btn_check {
@@ -786,14 +782,11 @@ span.i-panel {
 .room-panel__invite {
   color: #00a368;
   font-size: 14px;
+  margin-right: 40px;
 }
 
 .room-panel__invite:hover {
   color: #01c37d;
-}
-
-.room-panel__balance {
-  margin-left: 40px;
 }
 
 .room-panel__balance span {
@@ -4454,7 +4447,7 @@ span.i-yes {
 }
 
 .modal__offer__error {
-  display: none;
+  /* display: none; */
   color: #e82d2d;
   font-size: 12px;
   margin-top: 15px;
@@ -4512,4 +4505,9 @@ span.i-yes {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.clickable-row:hover {
+  cursor: pointer;
+  background-color: #e8e8e8;
 }

@@ -4,6 +4,7 @@ namespace AppBundle\Controller\API\v1;
 
 use AppBundle\Entity\City;
 use AppBundle\Entity\Lead;
+use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
 use AppBundle\Entity\Company;
@@ -14,6 +15,7 @@ use AppBundle\Form\Type\LeadType;
 use AppBundle\Service\LeadManager;
 use AppBundle\Service\TimerManager;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\LeadRepository;
 use AppBundle\Security\Voter\LeadEditVoter;
 use AppBundle\Security\Voter\LeadViewVoter;
 use AppBundle\Security\Voter\LeadCreateVoter;
@@ -320,15 +322,16 @@ class LeadController extends APIController
     /**
      * @Route("/leads/{room}", name="api_v1_leads", methods={"GET"}, defaults={"_format":"json", "room": null})
      *
-     * @param string $room
+     * @param Room $room
      *
      * @return JsonResponse
      */
-    public function getOffersAction(?string $room = null): JsonResponse
+    public function getOffersAction(Room $room = null): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
 
+        /** @var LeadRepository $repository */
         $repository = $this->entityManager->getRepository(Lead::class);
 
         if ($room) {
@@ -336,9 +339,12 @@ class LeadController extends APIController
                 Lead::STATUS_EXPECT,
                 Lead::STATUS_IN_WORK
             ]);
-        } elseif ($user->isCompany() && $user->hasCompany()) {
-            $company = $user->getCompany();
-            $leads = $repository->getOffersByCities($company->getCities()->toArray(), [Lead::STATUS_EXPECT]);
+        } elseif (
+            $user->isAdvertiser()
+            && $user->hasCompany()
+            && $user->getOfficeCities()
+        ) {
+            $leads = $repository->getOffersByCities($user->getOfficeCities()->toArray(), [Lead::STATUS_EXPECT]);
         } else {
             $leads = $repository->getOffers([Lead::STATUS_EXPECT]);
         }

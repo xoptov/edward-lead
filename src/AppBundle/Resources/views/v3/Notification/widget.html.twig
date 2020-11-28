@@ -8,9 +8,7 @@
     </div>
     <div class="notice__list__box">
         <ul class="notice__list">
-
-            {% for notification in notifications %}
-
+            {% for notification in notifications -%}
                 <li class="notice__item  notifications__popup__item {{ notification.readStatus == 'NEW' ? 'notice__item_red' : '' }}" data-id="{{ notification.id }}">
                     <div class="notice__item__top fx align-center">
                         <span class="notice__item__status {{ notification.readStatus == 'NEW' ? 'notice__item__status_green' : '' }}">{{ notification.type | trans }}</span>
@@ -18,17 +16,13 @@
                     </div>
                     <div class="notice__item__body">
                         {{ notification.message | raw }}
-
                         <button class="notice__btn notice__btn_check notifications__popup__item_read {{ notification.readStatus == 'NEW' ? 'show' : 'hide' }}" data-id="{{ notification.id }}"></button>
                         <button class="notice__btn notice__btn_refresh notifications__popup__item_unread {{ notification.readStatus == 'NEW' ?'hide' :  'show' }}" data-id="{{ notification.id }}"></button>
-
                     </div>
                 </li>
-
-            {% else %}
+            {%- else -%}
                 <div class="notifications__popup__empty">Нет уведомлений</div>
-            {% endfor %}
-
+            {%- endfor %}
         </ul>
     </div>
 </div>

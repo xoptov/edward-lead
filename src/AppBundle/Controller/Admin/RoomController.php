@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Lead;
-use AppBundle\Entity\Room;
 use AppBundle\Entity\Member;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +34,10 @@ class RoomController extends CRUDController
         $fields = $this->admin->getShow();
         \assert($fields instanceof FieldDescriptionCollection);
 
-        $members = $this->entityManager->getRepository(Member::class)
+        /** @var MemberRepository */
+        $memberRepository = $this->entityManager->getRepository(Member::class);
+
+        $members = $memberRepository
             ->getByRooms([$object]);
 
         $leads = $this->entityManager->getRepository(Lead::class)

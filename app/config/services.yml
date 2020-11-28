@@ -46,7 +46,7 @@ services:
     AppBundle\EventListener\SecuritySubscriber:
         tags: ['kernel.event_subscriber']
 
-    AppBundle\EventListener\SelectTypeSubscriber:
+    AppBundle\EventListener\SelectRoleSubscriber:
         arguments:
             $firewallMap: '@security.firewall.map'
         tags: ['kernel.event_subscriber']
@@ -275,6 +275,11 @@ services:
         arguments:
             $minimalAmount: '%minimal_withdraw%'
 
+    AppBundle\Service\TransactionManager:
+        arguments:
+            $firstMinimalBound: '%first_minimal_bound%'
+            $secondMinimalBound: '%second_minimal_bound%'
+
     AppBundle\Service\Uploader:
         arguments:
             $storePath: '%upload_store_path%'
@@ -326,10 +331,6 @@ services:
     AppBundle\Controller\API\v1\PaymentController:
         arguments:
             $paymentGatewayToken: '%payment_gateway_token%'
-
-    AppBundle\Command\ArchiveStaledLeadsCommand:
-        arguments:
-            $ttl: '%stale_after_hours%'
 
     AppBundle\Command\AutoFinishTradesCommand:
         arguments:
