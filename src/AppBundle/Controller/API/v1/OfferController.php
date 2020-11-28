@@ -136,7 +136,11 @@ class OfferController extends Controller
     }
 
     /**
-     * @Route("/{room}/connect-request", name="api_v1_offer_connect", methods={"GET"})
+     * @Route(
+     *  "/{room}/connect-request",
+     *  name="api_v1_offer_connect",
+     *  methods={"GET"}
+     * )
      * 
      * @param Room $room
      * 

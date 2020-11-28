@@ -30,7 +30,12 @@ class TradeController extends Controller
     }
 
     /**
-     * @Route("/trades", name="api_v1_trades", methods={"GET"}, defaults={"_format"="json"})
+     * @Route(
+     *  "/trades",
+     *  name="api_v1_trades",
+     *  methods={"GET"},
+     *  defaults={"_format"="json"}
+     * )
      *
      * @return JsonResponse
      */

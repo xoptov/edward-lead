@@ -34,7 +34,12 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/create/form/{room}", name="app_lead_create_form", methods={"GET"}, defaults={"room": null})
+     * @Route(
+     *  "/lead/create/form/{room}",
+     *  name="app_lead_create_form",
+     *  methods={"GET"},
+     *  defaults={"room": null}
+     * )
      *
      * @param Room|null $room
      *
@@ -48,7 +53,11 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/edit/form/{lead}", name="app_lead_edit_form", methods={"GET"})
+     * @Route(
+     *  "/lead/edit/form/{lead}",
+     *  name="app_lead_edit_form",
+     *  methods={"GET"}
+     * )
      *
      * @param Lead $lead
      *
@@ -110,7 +119,12 @@ class LeadController extends Controller
     }
 
     /**
-     * @Route("/lead/{id}", name="app_lead_show", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route(
+     *  "/lead/{id}",
+     *  name="app_lead_show",
+     *  methods={"GET"},
+     *  requirements={"id"="\d+"}
+     * )
      *
      * @param Lead             $lead
      * @param TradeManager     $tradeManager

@@ -6,9 +6,9 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Invoice;
 use AppBundle\Event\InvoiceEvent;
 use AppBundle\Entity\IncomeAccount;
-use AppBundle\Repository\InvoiceRepository;
 use AppBundle\Service\InvoiceManager;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Repository\InvoiceRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,7 +60,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/app/status", name="api_app_status", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/app/status",
+     *  name="api_app_status",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Request $request
      *
@@ -69,15 +74,28 @@ class PaymentController extends Controller
     public function apiAppStatusAction(Request $request): JsonResponse
     {
         try {
-            return new JsonResponse(['code' => 0, 'response' => 'ok', 'result' => null]);
+            return new JsonResponse([
+                'code' => 0,
+                'response' => 'ok',
+                'result' => null
+            ]);
         } catch (\Exception $ex) {
             // TODO: Какая то ошибка....
-            return new JsonResponse(['code' => 500, 'response' => 'server-error', 'result' => null], 500);
+            return new JsonResponse([
+                'code' => 500,
+                'response' => 'server-error',
+                'result' => null
+            ], 500);
         }
     }
 
     /**
-     * @Route("/payment/getinvoice/{hash}", name="api_payment_getinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/payment/getinvoice/{hash}",
+     *  name="api_payment_getinvoice",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param null|string $hash
      *
@@ -105,7 +123,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/payment/createinvoice/{id_user}/{sum}", name="api_payment_createinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/payment/createinvoice/{id_user}/{sum}",
+     *  name="api_payment_createinvoice",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Request  $request
      * @param null|int $id_user
@@ -166,7 +189,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/payment/successinvoice/{id_invoice}/{description_name_account}", name="api_payment_invoice_success", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/payment/successinvoice/{id_invoice}/{description_name_account}",
+     *  name="api_payment_invoice_success",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Request     $request
      * @param null|int    $id_invoice
@@ -240,7 +268,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/payment/getcompanyfromuser/{id_user}", name="api_payment_successinvoice", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/payment/getcompanyfromuser/{id_user}",
+     *  name="api_payment_successinvoice",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param null|int $id_user
      *

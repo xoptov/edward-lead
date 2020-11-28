@@ -7,7 +7,6 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Util\Formatter;
-use AppBundle\Entity\Company;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Property;
 use AppBundle\Event\LeadEvent;
@@ -62,7 +61,12 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/lead/{id}", name="api_v1_lead_view", methods={"GET"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/lead/{id}",
+     *  name="api_v1_lead_view",
+     *  methods={"GET"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Lead $lead
      *
@@ -140,7 +144,11 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/lead/form/settings", name="api_v1_lead_form_settings", methods={"GET"})
+     * @Route(
+     *  "/lead/form/settings",
+     *  name="api_v1_lead_form_settings",
+     *  methods={"GET"}
+     * )
      *
      * @return JsonResponse
      */
@@ -181,7 +189,12 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/lead", name="api_v1_lead_create", methods={"POST"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/lead",
+     *  name="api_v1_lead_create",
+     *  methods={"POST"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Request                  $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -236,13 +249,21 @@ class LeadController extends APIController
         $this->entityManager->persist($newLead);
         $this->entityManager->flush();
 
-        $eventDispatcher->dispatch(LeadEvent::NEW_PLACED, new LeadEvent($newLead));
+        $eventDispatcher->dispatch(
+            LeadEvent::NEW_PLACED,
+            new LeadEvent($newLead)
+        );
 
         return new JsonResponse(['id' => $newLead->getId()]);
     }
 
     /**
-     * @Route("/lead/estimate", name="api_v1_lead_estimate", methods={"POST"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/lead/estimate",
+     *  name="api_v1_lead_estimate",
+     *  methods={"POST"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Request $request
      *
@@ -280,7 +301,12 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/lead/{id}", name="api_v1_lead_update", methods={"PUT"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/lead/{id}",
+     *  name="api_v1_lead_update",
+     *  methods={"PUT"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Lead                     $lead
      * @param Request                  $request
@@ -320,7 +346,12 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/leads/{room}", name="api_v1_leads", methods={"GET"}, defaults={"_format":"json", "room": null})
+     * @Route(
+     *  "/leads/{room}",
+     *  name="api_v1_leads",
+     *  methods={"GET"},
+     *  defaults={"_format":"json", "room": null}
+     * )
      *
      * @param Room $room
      *
@@ -341,7 +372,7 @@ class LeadController extends APIController
             ]);
         } elseif (
             $user->isAdvertiser()
-            && $user->hasCompany()
+            && $user->isAdvertiser()
             && $user->getOfficeCities()
         ) {
             $leads = $repository->getOffersByCities($user->getOfficeCities()->toArray(), [Lead::STATUS_EXPECT]);
@@ -380,15 +411,6 @@ class LeadController extends APIController
                     'id' => $buyer->getId(),
                     'name' => $buyer->getName()
                 ];
-                /** @var Company $company */
-                $company = $buyer->getCompany();
-                if ($company) {
-                    $row['buyer']['company'] = [
-                        'id' => $company->getId(),
-                        'shortName' => $company->getShortName(),
-                        'largeName' => $company->getLargeName()
-                    ];
-                }
             }
 
             $now = $this->timerManager->createDateTime();
@@ -411,7 +433,12 @@ class LeadController extends APIController
     }
 
     /**
-     * @Route("/lead/{id}/archive", name="api_v1_archive_lead", methods={"GET"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/lead/{id}/archive",
+     *  name="api_v1_archive_lead",
+     *  methods={"GET"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param EventDispatcherInterface $eventDispatcher
      * @param Lead                     $lead

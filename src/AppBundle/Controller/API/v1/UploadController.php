@@ -67,7 +67,11 @@ class UploadController extends Controller
     }
 
     /**
-     * @Route("/upload/logotype/{filter}", name="api_v1_upload_logotype", methods={"POST"})
+     * @Route(
+     *  "/upload/logotype/{filter}",
+     *  name="api_v1_upload_logotype",
+     *  methods={"POST"}
+     * )
      *
      * @param CacheManager $imagineCacheManager
      * @param Request      $request

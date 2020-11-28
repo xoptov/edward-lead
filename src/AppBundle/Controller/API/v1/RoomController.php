@@ -6,11 +6,12 @@ use AppBundle\Entity\Lead;
 use AppBundle\Entity\Room;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Member;
-use AppBundle\Event\MemberEvent;
 use AppBundle\Event\RoomEvent;
-use AppBundle\Repository\LeadRepository;
+use AppBundle\Event\MemberEvent;
 use AppBundle\Service\RoomManager;
 use AppBundle\Security\Voter\RoomVoter;
+use AppBundle\Repository\LeadRepository;
+use AppBundle\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Security\Voter\MemberVoter;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class RoomController extends APIController
 {
     /**
-     * @Route("/rooms", name="api_v1_rooms", methods={"GET"}, options={"_format": "json"})
+     * @Route(
+     *  "/rooms",
+     *  name="api_v1_rooms",
+     *  methods={"GET"},
+     *  options={"_format": "json"}
+     * )
      *
      * @return JsonResponse
      */
@@ -61,7 +67,12 @@ class RoomController extends APIController
     }
 
     /**
-     * @Route("/room/{room}/members", name="api_v1_room_members", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/room/{room}/members",
+     *  name="api_v1_room_members",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Room         $room
      * @param CacheManager $cacheManager
@@ -115,7 +126,12 @@ class RoomController extends APIController
     }
 
     /**
-     * @Route("/room/{room}/revoke/{member}", name="api_v1_room_revoke_member", methods={"DELETE"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/room/{room}/revoke/{member}",
+     *  name="api_v1_room_revoke_member",
+     *  methods={"DELETE"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Room                     $room
      * @param Member                   $member
@@ -155,7 +171,12 @@ class RoomController extends APIController
     }
 
     /**
-     * @Route("/room/{room}/deactivate", name="api_v1_room_deactivate", methods={"GET"}, defaults={"_format":"json"})
+     * @Route(
+     *  "/room/{room}/deactivate",
+     *  name="api_v1_room_deactivate",
+     *  methods={"GET"},
+     *  defaults={"_format":"json"}
+     * )
      *
      * @param Room                     $room
      * @param EntityManagerInterface   $entityManager
@@ -208,7 +229,12 @@ class RoomController extends APIController
     }
 
     /**
-     * @Route("/room/send/invite", name="api_v1_send_invite", methods={"POST"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/room/send/invite",
+     *  name="api_v1_send_invite",
+     *  methods={"POST"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Request                $request
      * @param \Swift_Mailer          $mailer

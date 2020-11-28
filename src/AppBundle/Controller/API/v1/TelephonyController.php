@@ -58,7 +58,12 @@ class TelephonyController extends APIController
 
 
     /**
-     * @Route("/telephony/call/{trade}", name="api_v1_telephony_make_call", methods={"GET"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/telephony/call/{trade}",
+     *  name="api_v1_telephony_make_call",
+     *  methods={"GET"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param LoggerInterface $logger
      * @param Trade           $trade
@@ -129,7 +134,12 @@ class TelephonyController extends APIController
     }
 
     /**
-     * @Route("/telephony/callback", name="api_v1_telephony_callback", methods={"POST"}, defaults={"_format": "json"})
+     * @Route(
+     *  "/telephony/callback",
+     *  name="api_v1_telephony_callback",
+     *  methods={"POST"},
+     *  defaults={"_format": "json"}
+     * )
      *
      * @param Request         $request
      * @param LoggerInterface $logger
