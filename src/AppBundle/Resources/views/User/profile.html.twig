@@ -66,7 +66,7 @@
                         <!-- enter -->
                         <p class="profile-enter">
                             <span class="profile-enter__text">Последний вход :</span>
-                            <a href="{{ path('app_history_login') }}" class="profile-enter__link">Посмотреть историю активности</a>
+                            <a href="{{ path('app_user_history_login') }}" class="profile-enter__link">Посмотреть историю активности</a>
                         </p>
                         {{ form_start(passwordForm, {'attr': {'class': 'form form_security', 'novalidate': true}}) }}
                             {{ form_row(passwordForm.password.first, {'label': 'Новый пароль:', 'label_attr': {'class': 'form__label'}, 'attr': {'class': 'form__input'}}) }}
@@ -83,7 +83,7 @@
                         <h3 class="profile-tabs__head">Аккаунт</h3>
                         {% if app.user.deleteRequest is empty %}
                             <p>Вы можете отправить запрос на удаление аккаунта.</p>
-                            <a class="btn btn-danger" href="{{ path('app_request_delete') }}">Удалить аккаунт</a>
+                            <a class="btn btn-danger" href="{{ path('app_user_request_delete') }}">Удалить аккаунт</a>
                         {% else %}
                             <p>Запрос на удаление ваше аккаунта в обработке</p>
                         {% endif %}
