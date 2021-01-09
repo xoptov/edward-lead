@@ -1,6 +1,6 @@
 <div class="logo">
     <div class="icon-logo-top">
-        {% if app.user.company and app.user.logotype is not empty %}
+        {% if app.user.logotype is not empty %}
             <img src="{{ app.user.logotype.path|imagine_filter('logotype_34x34') }}">
         {% else %}
             <img src="{{ asset('bundles/app/img/no_logotype.png') }}">
@@ -10,7 +10,7 @@
         {% if is_granted('ROLE_ADMIN') %}
             <a href="{{ path('sonata_admin_dashboard') }}" class="profile__link">Админ панель</a>
         {% endif %}
-        {% if is_granted('ROLE_COMPANY') and app.user.company %}
+        {% if is_granted('ROLE_COMPANY') and app.user.hasOrganization() %}
             <a href="{{ path('app_user_advertiser_profile') }}" class="profile__link">Кабинет компании</a>
         {% endif %}
         <a href="{{ path('app_user_profile') }}" class="profile__link">Мой профиль</a>

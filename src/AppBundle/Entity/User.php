@@ -446,6 +446,14 @@ class User implements AdvancedUserInterface, ParticipantInterface, IdentifiableI
     }
 
     /**
+     * @return bool
+     */
+    public function hasOrganization(): bool
+    {
+        return !empty($this->organization);
+    }
+
+    /**
      * @param Personal|null $personal
      * 
      * @return User

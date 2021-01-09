@@ -22,7 +22,7 @@
             <div class="header__content">
                 <div class="header__logo">
                     {% if is_granted('ROLE_WEBMASTER') %}
-                        <a href="{{ path('app_dashboard') }}" style="display:inline-block;vertical-align:middle;">
+                        <a href="{{ path('app_user_dashboard') }}" style="display:inline-block;vertical-align:middle;">
                             <img src="{{ asset('bundles/app/v2/img/logo.png') }}">
                         </a>
                     {% else %}
@@ -35,7 +35,7 @@
                 {{ render(controller('NotificationBundle\\Controller\\NotificationController::widgetAction')) }}
 
                 <div class="header__balance-box">
-                    <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.humanbalance() }} руб.</div>
+                    <div class="header__text text-white" style="margin-bottom: 6px;">Баланс: {{ app.user.balance|money_format }}</div>
                     {% if is_granted('ROLE_COMPANY') %}
                         <div class="header__text text-white">Холд: {{ balance_hold(app.user)|money_format }}</div>
                     {% elseif is_granted('ROLE_WEBMASTER') %}
