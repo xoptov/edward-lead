@@ -26,7 +26,7 @@ var data = {
                         sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
                         body: '{{ message.body }}',
                         time: '{{ message.createdAt|date('d.m.Y H:i') }}',
-                        logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_34x34') }}"{% else %}null{% endif %}{% else %}null{% endif %},
+                        logotype: {% if sender.logotype is not empty %}"{{ sender.logotype.path|imagine_filter('logotype_34x34') }}"{% else %}null{% endif %},
                         images: [
                             {%- for image in message.images -%}
                                 {
@@ -61,7 +61,7 @@ var data = {
                     sender: {% if app.user == sender %}'Ваше сообщение'{% else %}'{{ sender.name }} - служба поддержки'{% endif %},
                     body: '{{ message.body }}',
                     time: '{{ message.createdAt|date('d.m.Y H:i') }}',
-                    logotype: {% if sender.iscompany and sender.company is not empty %}{% set logotype = sender.company.logotype %}{% if logotype is not empty %}"{{ logotype.path|imagine_filter('logotype_34x34') }}"{% else %}null{% endif %}{% else %}null{% endif %},
+                    logotype: {% if sender.logotype is not empty %}"{{ sender.logotype.path|imagine_filter('logotype_34x34') }}"{% else %}null{% endif %},
                     images: [
                         {%- for image in message.images -%}
                             {
